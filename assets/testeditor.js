@@ -46,7 +46,11 @@ var TestEditor = {
                     td_num.innerText = (index + 1) + '.';
 
                     let td_text = document.createElement('td');
-                    td_text.innerText = answer.text;
+                    let text_input = document.createElement('input');
+                    text_input.classList.add('discreet');
+                    text_input.type = 'text';
+                    text_input.value = answer.text;
+                    td_text.appendChild(text_input);
 
                     let td_correct = document.createElement('td');
                     td_correct.classList.add('center');
@@ -55,9 +59,17 @@ var TestEditor = {
                     correct_cb.checked = answer.correct;
                     td_correct.appendChild(correct_cb);
 
+                    let td_rem = document.createElement('td');
+                    let rem_btn = document.createElement('button');
+                    rem_btn.classList.add('compact', 'error', 'fa', 'fa-trash');
+                    rem_btn.title = 'Usuń';
+                    td_rem.appendChild(rem_btn);
+
+
                     tr.appendChild(td_num);
                     tr.appendChild(td_text);
                     tr.appendChild(td_correct);
+                    tr.appendChild(td_rem);
 
                     TestEditor.EditQuestionDialog.Features.Answers.appendChild(tr);
                 });
@@ -90,90 +102,3 @@ var TestEditor = {
         }
     }
 }
-
-/*let dialog = Dialogs.CreateDialog();
-dialog.AddClasses(['rich']);
-dialog.SetHeader('Edytuj pytanie<a href="pomoc" class="get-help" title="Pomoc"><i class="fa fa-question-circle"></i></a>');
-
-let form = document.createElement('div');
-form.classList.add('grid-form');
-
-let text_lbl = document.createElement('label');
-text_lbl.htmlFor = 'question-text';
-text_lbl.innerText = 'Treść:';
-let text_area = document.createElement('textarea');
-text_area.rows = 3;
-text_area.id = 'question-text';
-
-form.appendChild(text_lbl);
-form.appendChild(text_area);
-
-let type_lbl = document.createElement('label');
-type_lbl.htmlFor = 'question-type';
-type_lbl.innerText = 'Rodzaj:';
-let type_select = document.createElement('select');
-type_select.id = 'question-type';
-
-let types = [[0, 'Wielokrotnego wyboru']];
-types.forEach((option) => {
-    let option_elem = document.createElement('option');
-    option_elem.value = option[0];
-    option_elem.innerText = option[1];
-    type_select.appendChild(option_elem);
-});
-
-form.appendChild(type_lbl);
-form.appendChild(type_select);
-
-let points_lbl = document.createElement('label');
-points_lbl.htmlFor = 'points';
-points_lbl.innerText = 'Liczba punktów:';
-let points_input = document.createElement('input');
-points_input.type = 'text';
-points_input.id = 'points';
-points_input.size = 4;
-points_input.classList.add('narrow');
-
-form.appendChild(points_lbl);
-form.appendChild(points_input);
-
-let fieldset = document.createElement('div');
-fieldset.classList.add('fieldset');
-
-let points_counting_text = document.createElement('p');
-points_counting_text.innerText = 'Sposób liczenia punktów:';
-fieldset.appendChild(points_counting_text);
-
-let points_counting_binary_radio = document.createElement('input');
-points_counting_binary_radio.type = 'radio';
-points_counting_binary_radio.name = 'points_counting';
-points_counting_binary_radio.id = 'points-counting-binary';
-let points_counting_binary_lbl = document.createElement('label');
-points_counting_binary_lbl.htmlFor = 'points-counting-binary';
-points_counting_binary_lbl.innerText = 'Zero-jedynkowo';
-fieldset.appendChild(points_counting_binary_radio);
-fieldset.appendChild(points_counting_binary_lbl);
-
-fieldset.appendChild(document.createElement('br'));
-
-let points_counting_linear_radio = document.createElement('input');
-points_counting_linear_radio.type = 'radio';
-points_counting_linear_radio.name = 'points_counting';
-points_counting_linear_radio.id = 'points-counting-linear';
-let points_counting_linear_lbl = document.createElement('label');
-points_counting_linear_lbl.htmlFor = 'points-counting-linear';
-points_counting_linear_lbl.innerText = 'Po ułamku za każdą poprawną odpowiedź';
-fieldset.appendChild(points_counting_linear_radio);
-fieldset.appendChild(points_counting_linear_lbl);
-
-form.appendChild(fieldset);
-dialog.AddContent(form);
-
-let separator_hr = document.createElement('hr');
-separator_hr.classList.add('spaced');
-dialog.AddContent(separator_hr);
-
-dialog.AddButton('Zapisz', () => {});
-dialog.AddButton('Anuluj', dialog.Hide, ['secondary']);
-
-dialog.Show();*/

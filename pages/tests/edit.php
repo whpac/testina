@@ -60,18 +60,26 @@ $questions = $test->GetQuestions();
             <th>Punkty</th>
             <th></th>
         </tr>
-        <?php
-        $i = 1;
-        foreach($questions as $question){
-            echo('<tr>');
-            echo('<td class="secondary">'.$i.'.</td>');
-            echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
-            echo('<td class="center">'.$question->GetPoints().'</td>');
-            echo('<td><button class="compact todo" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
-            echo('</tr>');
-            $i++;
-        }
-        ?>
+        <tbody class="content-tbody"><?php
+            $i = 1;
+            foreach($questions as $question){
+                echo('<tr>');
+                echo('<td class="secondary">'.$i.'.</td>');
+                echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
+                echo('<td class="center">'.$question->GetPoints().'</td>');
+                echo('<td><button class="compact todo" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
+                echo('</tr>');
+                $i++;
+            }
+      ?></tbody>
+        <tbody class="nocontent-tbody">
+            <tr>
+                <td></td>
+                <td><i class="secondary">Nie ma jeszcze żadnych pytań</i></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
     </table>
     <div class="center">
         <button class="todo">Dodaj pytanie</button>
@@ -151,27 +159,32 @@ for($i=0; $i<count($questions); $i++){
                 <col class="shrink" />
                 <col />
                 <col class="shrink" />
+                <col class="shrink" />
             </colgroup>
             <tbody>
                 <tr>
                     <th></th>
                     <th>Odpowiedzi</th>
                     <th>Poprawna</th>
+                    <th></th>
                 </tr>
+            </tbody>
+            <tbody class="content-tbody" id="answers-tbody"></tbody>
+            <tbody class="nocontent-tbody">
                 <tr>
                     <td></td>
                     <td><i class="secondary">Nie ma żadnych odpowiedzi</i></td>
                     <td></td>
+                    <td></td>
                 </tr>
-            </tbody>
-            <tbody id="answers-tbody">
             </tbody>
             <tbody>
                 <tr>
                     <td></td>
                     <td>
-                        <button class="compact">Dodaj</button>
+                        <button class="compact todo">Dodaj</button>
                     </td>
+                    <td></td>
                     <td></td>
                 </tr>
             </tbody>

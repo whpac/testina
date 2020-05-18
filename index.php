@@ -98,7 +98,6 @@ $url['testy/szczegóły'] = 'tests/details.php';
 $url['testy/wynik'] = 'tests/result.php';
 
 $url['_dev'] = '_dev.php';
-$url['_todo'] = '_todo.php';
 
 $api = [];
 $api['get_test'] = 'get_test.php';
@@ -132,7 +131,7 @@ NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out'
 
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Strona testowa', ['href' => '_dev', 'icon' => 'fa-code']);
-NavbarStorage::AddItem('Do zrobienia', ['href' => '_todo', 'icon' => 'fa-code']);
+NavbarStorage::AddItem('Do zrobienia', ['href' => 'https://github.com/whpac/testina/issues', 'icon' => 'fa-code']);
 
 // The handled site is being included and buffered here
 PageManager::BeginFetchingContent();
