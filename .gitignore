@@ -1,0 +1,4 @@
+# Ignore FontAwesome files
+assets/fonts
+assets/font-awesome*
+assets/jquery*
