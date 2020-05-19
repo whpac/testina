@@ -128,7 +128,7 @@ for($i=0; $i<count($questions); $i++){
 <div class="dialog rich" id="question-dialog">
     <h2>
         Edytuj pytanie
-        <a href="pomoc" class="get-help" title="Pomoc" target="_blank">
+        <a href="pomoc" class="get-help todo" title="Pomoc" target="_blank">
             <i class="fa fa-question-circle"></i>
         </a>
     </h2>
@@ -145,7 +145,7 @@ for($i=0; $i<count($questions); $i++){
             <input type="text" id="points" class="narrow" size="4" />
             <div class="fieldset">
                 Sposób liczenia punktów:
-                <a href="pomoc" class="get-help" target="_blank"><i class="fa fa-question-circle"></i></a>
+                <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <br />
                 <input type="radio" name="points-counting" id="points-counting-binary" />
                 <label for="points-counting-binary">Zero-jedynkowo</label><br />
@@ -182,7 +182,7 @@ for($i=0; $i<count($questions); $i++){
                 <tr>
                     <td></td>
                     <td>
-                        <button class="compact todo">Dodaj</button>
+                        <button class="compact" onclick="TestEditor.EditQuestionDialog.AddAnswer()">Dodaj</button>
                     </td>
                     <td></td>
                     <td></td>
@@ -191,7 +191,7 @@ for($i=0; $i<count($questions); $i++){
         </table>
     </div>
     <div class="buttons">
-        <button class="todo">Zapisz</button>
+        <button class="todo" onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
         <button class="secondary" onclick="TestEditor.EditQuestionDialog.Hide()">Anuluj</button>
     </div>
 </div>
