@@ -12,14 +12,14 @@ var TestEditor = {
     },
 
     EditQuestion: function(question_id){
+        this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.map(o => Object.assign({}, o)); // clone
+        this.EditQuestionDialog.QuestionId = question_id;
+
         this.EditQuestionDialog.Features.QuestionText.value = this.Questions[question_id].text;
         this.EditQuestionDialog.Features.QuestionType.value = this.Questions[question_id].type;
         this.EditQuestionDialog.Features.Points.value = this.Questions[question_id].points;
         this.EditQuestionDialog.Features.CheckCountingField(this.Questions[question_id].points_counting);
-        this.EditQuestionDialog.Features.DisplayAnswers(this.Questions[question_id].answers);
-
-        this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.map(o => Object.assign({}, o)); // clone
-        this.EditQuestionDialog.QuestionId = question_id;
+        this.EditQuestionDialog.Features.DisplayAnswers();
 
         this.EditQuestionDialog.Display();
     },
@@ -48,10 +48,10 @@ var TestEditor = {
                 return 0;
             },
 
-            DisplayAnswers: function(answers){
+            DisplayAnswers: function(){
                 this.Answers.textContent = '';
 
-                answers.forEach(this.AppendAnswer.bind(this));
+                TestEditor.EditQuestionDialog.AnswerList.forEach(this.AppendAnswer.bind(this));
             },
 
             AppendAnswer: function(answer, index){
@@ -134,23 +134,34 @@ var TestEditor = {
 
         SaveChanges: function(){
             Dialogs.HideDialog(this.Element);
-            /*let save = $.post('api/save_question', JSON.stringify(data));
 
-            save.fail(() => {alert('Nie udało się zapisać pytania.');});
-            save.done((data) => {
+            let data_to_send = {};
+            data_to_send.question_id = this.QuestionId;
+            data_to_send.text = this.Features.QuestionText.value;
+            data_to_send.type = this.Features.QuestionType.value;
+            data_to_send.points = this.Features.Points.value;
+            data_to_send.points_counting = this.Features.GetCountingValue();
+            data_to_send.answers = this.AnswerList;
+
+            let saving_toast = Toasts.ShowPersistent('Zapisywanie...');
+
+            let saver = $.post('api/save_question', JSON.stringify(data_to_send));
+
+            saver.fail(() => {
+                saving_toast.Hide();
+                alert('Nie udało się zapisać pytania.');
+            });
+            saver.done((data) => {
+                saving_toast.Hide();
                 if(data.is_success === undefined)
                     alert('Wystąpił nieznany błąd podczas zapisywania pytania.');
                 else if(data.is_success === false)
                     alert('Błąd: ' + data.message);
-                else{*/
+                else{
                     Toasts.Show('Pytanie zostało zapisane.');
-                    TestEditor.Questions[this.QuestionId].answers = this.AnswerList.map(a => Object.assign({}, a));
-                    TestEditor.Questions[this.QuestionId].text = this.Features.QuestionText.value;
-                    TestEditor.Questions[this.QuestionId].type = this.Features.QuestionType.value;
-                    TestEditor.Questions[this.QuestionId].points = this.Features.Points.value;
-                    TestEditor.Questions[this.QuestionId].points_counting = this.Features.GetCountingValue();
-                /*}
-            });*/
+                    this.UpdateQuestion(this.QuestionId);
+                }
+            });
         },
 
         Initialize: function(){
@@ -184,11 +195,30 @@ var TestEditor = {
             this.AreChangesMade = true;
             this.AnswerList.push(ans);
             this.Features.AppendAnswer(ans, this.AnswerList.length - 1);
+        },
+
+        UpdateQuestion: function(question_id){
+            TestEditor.Questions[question_id].answers = this.AnswerList.map(a => Object.assign({}, a));
+            TestEditor.Questions[question_id].text = this.Features.QuestionText.value;
+            TestEditor.Questions[question_id].type = this.Features.QuestionType.value;
+            TestEditor.Questions[question_id].points = this.Features.Points.value;
+            TestEditor.Questions[question_id].points_counting = this.Features.GetCountingValue();
+            TestEditor.UpdateQuestionRow(question_id, this.Features.QuestionText.value, this.Features.Points.value)
         }
     },
 
     UpdateRowNumber: function(tr, row_number){
         tr.dataset.rowNumber = row_number;
         tr.children[0].innerText = row_number + '.';
+    },
+
+    UpdateQuestionRow: function(question_id, text, points){
+        let tbody = document.getElementById('questions-tbody');
+        let children_array = Array.prototype.slice.call(tbody.children);
+        children_array.forEach((tr) => {
+            if(tr.dataset.questionId != question_id) return;
+            tr.children[1].innerText = truncate(text, 60);
+            tr.children[2].innerText = points;
+        });
     }
 }

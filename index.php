@@ -101,6 +101,7 @@ $url['_dev'] = '_dev.php';
 
 $api = [];
 $api['get_test'] = 'get_test.php';
+$api['save_question'] = 'save_question.php';
 $api['save_test_results'] = 'save_test_results.php';
 
 Properties::Set('pages.handlers.main_page', 'home');

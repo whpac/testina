@@ -278,7 +278,7 @@ table.table col.shrink {width:min-content;}
     background:var(--toast-background-color); color:var(--toast-text-color);
     padding:10px 20px; box-sizing:border-box; border-radius:3px;
     box-shadow:var(--toast-box-shadow); opacity:1;
-    transition:opacity 0.3s, bottom 0.3s;
+    transition:opacity 0.5s, bottom 0.5s;
 }
 .toast.hidden {opacity:0; bottom:-100px;}
 
@@ -289,7 +289,7 @@ a.button, button {
     display:inline-block; background:transparent; border-radius:2px; border:none;
     padding:5px 12px; font-weight:500; text-transform:uppercase; line-height:1.2em;
     color:var(--button-colored-text-color); text-decoration:none; font-size:0.9em;
-    font-family:inherit; cursor:pointer; transition: background 0.3s;
+    font-family:inherit; cursor:pointer; transition: background 0.2s;
 }
 a.button.compact, button.compact {padding:3px 10px; margin:-1px 0;}
 a.button.big, button.big {padding:8px 20px; font-size:1.05em;}

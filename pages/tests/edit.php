@@ -60,10 +60,10 @@ $questions = $test->GetQuestions();
             <th>Punkty</th>
             <th></th>
         </tr>
-        <tbody class="content-tbody"><?php
+        <tbody class="content-tbody" id="questions-tbody"><?php
             $i = 1;
             foreach($questions as $question){
-                echo('<tr>');
+                echo('<tr data-row-number="'.$i.'" data-question-id="'.$question->GetId().'">');
                 echo('<td class="secondary">'.$i.'.</td>');
                 echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
                 echo('<td class="center">'.$question->GetPoints().'</td>');

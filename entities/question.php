@@ -86,6 +86,25 @@ class Question extends Entity {
         return $questions;
     }
 
+    public function Update($text = null, $type = null, $points = null, $points_counting = null){
+        if($text == null) $text = $this->text;
+        if($type == null) $type = $this->type;
+        if($points == null) $points = $this->points;
+        if($points_counting == null) $points_counting = $this->points_counting;
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTIONS)
+                ->Update()
+                ->Set('text', $text)
+                ->Set('type', $type)
+                ->Set('points', $points)
+                ->Set('points_counting', $points_counting)
+                ->Where('id', '=', $this->id)
+                ->Run();
+        
+        return $result;
+    }
+
     public /* float */ function CountPoints(/* UserAnswer[] */ array $user_answers){
         foreach($user_answers as $user_answer){
             if($user_answer->IsNoAnswer()) return 0;
