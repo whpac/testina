@@ -18,7 +18,7 @@ var TestEditor = {
         this.EditQuestionDialog.Features.CheckCountingField(this.Questions[question_id].points_counting);
         this.EditQuestionDialog.Features.DisplayAnswers(this.Questions[question_id].answers);
 
-        this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.slice(0); // clone
+        this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.map(o => Object.assign({}, o)); // clone
         this.EditQuestionDialog.QuestionId = question_id;
 
         this.EditQuestionDialog.Display();
@@ -107,7 +107,6 @@ var TestEditor = {
             },
 
             OnAnswerChange: function(ans_id, new_val){
-                // Cancel doesn't discard changes #13
                 TestEditor.EditQuestionDialog.AnswerList.forEach((answer, index) => {
                     if(answer.id == ans_id){
                         TestEditor.EditQuestionDialog.AnswerList[index].text = new_val;
@@ -145,7 +144,7 @@ var TestEditor = {
                     alert('Błąd: ' + data.message);
                 else{*/
                     Toasts.Show('Pytanie zostało zapisane.');
-                    TestEditor.Questions[this.QuestionId].answers = this.AnswerList.slice(0);
+                    TestEditor.Questions[this.QuestionId].answers = this.AnswerList.map(a => Object.assign({}, a));
                     TestEditor.Questions[this.QuestionId].text = this.Features.QuestionText.value;
                     TestEditor.Questions[this.QuestionId].type = this.Features.QuestionType.value;
                     TestEditor.Questions[this.QuestionId].points = this.Features.Points.value;
