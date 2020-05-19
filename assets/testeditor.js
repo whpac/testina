@@ -19,6 +19,7 @@ var TestEditor = {
         this.EditQuestionDialog.Features.DisplayAnswers(this.Questions[question_id].answers);
 
         this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.slice(0); // clone
+        this.EditQuestionDialog.QuestionId = question_id;
 
         this.EditQuestionDialog.Display();
     },
@@ -27,6 +28,8 @@ var TestEditor = {
         AnswerList: [],
         AreChangesMade: false,
         Element: undefined,
+        QuestionId: 0,
+
         Features: {
             CheckCountingField: function(counting){
                 switch(counting){
@@ -37,6 +40,12 @@ var TestEditor = {
                         this.PointsCounting.Linear.checked = true;
                         break;
                 }
+            },
+
+            GetCountingValue: function(){
+                if(this.PointsCounting.Binary.checked) return Tests.COUNTING_BINARY;
+                if(this.PointsCounting.Linear.checked) return Tests.COUNTING_LINEAR;
+                return 0;
             },
 
             DisplayAnswers: function(answers){
@@ -59,6 +68,7 @@ var TestEditor = {
                 text_input.classList.add('discreet');
                 text_input.type = 'text';
                 text_input.value = answer.text;
+                text_input.addEventListener('change', () => {this.OnAnswerChange(answer.id, text_input.value);});
                 td_text.appendChild(text_input);
 
                 let td_correct = document.createElement('td');
@@ -94,6 +104,16 @@ var TestEditor = {
                         ans_number++;
                     }
                 });
+            },
+
+            OnAnswerChange: function(ans_id, new_val){
+                // Cancel doesn't discard changes #13
+                TestEditor.EditQuestionDialog.AnswerList.forEach((answer, index) => {
+                    if(answer.id == ans_id){
+                        TestEditor.EditQuestionDialog.AnswerList[index].text = new_val;
+                        TestEditor.EditQuestionDialog.AreChangesMade = true;
+                    }
+                });
             }
         },
 
@@ -114,7 +134,24 @@ var TestEditor = {
         },
 
         SaveChanges: function(){
-            //TODO
+            Dialogs.HideDialog(this.Element);
+            /*let save = $.post('api/save_question', JSON.stringify(data));
+
+            save.fail(() => {alert('Nie udało się zapisać pytania.');});
+            save.done((data) => {
+                if(data.is_success === undefined)
+                    alert('Wystąpił nieznany błąd podczas zapisywania pytania.');
+                else if(data.is_success === false)
+                    alert('Błąd: ' + data.message);
+                else{*/
+                    Toasts.Show('Pytanie zostało zapisane.');
+                    TestEditor.Questions[this.QuestionId].answers = this.AnswerList.slice(0);
+                    TestEditor.Questions[this.QuestionId].text = this.Features.QuestionText.value;
+                    TestEditor.Questions[this.QuestionId].type = this.Features.QuestionType.value;
+                    TestEditor.Questions[this.QuestionId].points = this.Features.Points.value;
+                    TestEditor.Questions[this.QuestionId].points_counting = this.Features.GetCountingValue();
+                /*}
+            });*/
         },
 
         Initialize: function(){
