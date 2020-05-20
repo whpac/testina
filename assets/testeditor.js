@@ -183,6 +183,10 @@ var TestEditor = {
             this.Features.Answers = document.getElementById('answers-tbody');
         },
 
+        MadeChanges: function(){
+            this.AreChangesMade = true;
+        },
+
         RemoveAnswer: function(ans_id){
             this.AnswerList.forEach((answer, index) => {
                 if(ans_id != answer.id) return;

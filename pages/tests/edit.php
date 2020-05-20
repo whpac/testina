@@ -135,21 +135,21 @@ for($i=0; $i<count($questions); $i++){
     <div class="content">
         <div class="grid-form">
             <label for="question-text">Treść:</label>
-            <textarea rows="3" id="question-text"></textarea>
+            <textarea rows="3" id="question-text" onchange="TestEditor.EditQuestionDialog.MadeChanges()"></textarea>
             <label for="question-type">Rodzaj:</label>
-            <select id="question-type">
+            <select id="question-type" onchange="TestEditor.EditQuestionDialog.MadeChanges()">
                 <option value="0">Jednokrotnego wyboru</option>
                 <option value="1">Wielokrotnego wyboru</option>
             </select>
             <label for="points">Liczba punktów:</label>
-            <input type="text" id="points" class="narrow" size="4" />
+            <input type="text" id="points" class="narrow" size="4" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
             <div class="fieldset">
                 Sposób liczenia punktów:
                 <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <br />
-                <input type="radio" name="points-counting" id="points-counting-binary" />
+                <input type="radio" name="points-counting" id="points-counting-binary" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
                 <label for="points-counting-binary">Zero-jedynkowo</label><br />
-                <input type="radio" name="points-counting" id="points-counting-linear" />
+                <input type="radio" name="points-counting" id="points-counting-linear" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
                 <label for="points-counting-linear">Po ułamku za każdą poprawną odpowiedź</label>
             </div>
         </div>
