@@ -25,7 +25,42 @@ if(!$test->IsMadeByUser($current_user)){
 $result = $question->Update($json->text, $json->type, $json->points, $json->points_counting);
 
 if(!$result){
-    Layout\ApiRenderer::ThrowError('Nie udało się zapisać pytania do bazy danych.');
+    Layout\ApiRenderer::ThrowError('Nie udało się zmodyfikować pytania w bazie danych.');
+    return;
+}
+
+$ans_error = 0;
+foreach($json->answers as $json_answer){
+    if($json_answer->id < 0){
+        try{
+            Entities\Answer::Create($question, $json_answer->text, ['correct' => $json_answer->correct]);
+        }catch(Exception $e){
+            $ans_error++;
+        }
+    }else{
+        $answer = new Entities\Answer($json_answer->id);
+        $res = $answer->Update($json_answer->text, ['correct' => $json_answer->correct]);
+        if(!res) $ans_error++;
+    }
+}
+
+if($ans_error > 0){
+    Layout\ApiRenderer::ThrowError('Nie udało się zapisać '.$ans_error.' odpowiedzi.');
+    return;
+}
+
+$rem_error = 0;
+foreach($json->removed_answers as $removed_answer_id){
+    try{
+        $answer = new Entities\Answer($removed_answer_id);
+        $answer->Remove();
+    }catch(Exception $e){
+        $rem_error++;
+    }
+}
+
+if($rem_error > 0){
+    Layout\ApiRenderer::ThrowError('Nie udało się usunąć '.$ans_error.' odpowiedzi.');
     return;
 }
 

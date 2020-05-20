@@ -67,7 +67,7 @@ $questions = $test->GetQuestions();
                 echo('<td class="secondary">'.$i.'.</td>');
                 echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
                 echo('<td class="center">'.$question->GetPoints().'</td>');
-                echo('<td><button class="compact todo" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
+                echo('<td><button class="compact" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
                 echo('</tr>');
                 $i++;
             }
@@ -191,7 +191,7 @@ for($i=0; $i<count($questions); $i++){
         </table>
     </div>
     <div class="buttons">
-        <button class="todo" onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
+        <button onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
         <button class="secondary" onclick="TestEditor.EditQuestionDialog.Hide()">Anuluj</button>
     </div>
 </div>

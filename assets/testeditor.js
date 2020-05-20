@@ -27,8 +27,10 @@ var TestEditor = {
     EditQuestionDialog: {
         AnswerList: [],
         AreChangesMade: false,
+        AutoAnswerId: -1,
         Element: undefined,
         QuestionId: 0,
+        RemovedAnswers: [],
 
         Features: {
             CheckCountingField: function(counting){
@@ -68,7 +70,7 @@ var TestEditor = {
                 text_input.classList.add('discreet');
                 text_input.type = 'text';
                 text_input.value = answer.text;
-                text_input.addEventListener('change', () => {this.OnAnswerChange(answer.id, text_input.value);});
+                text_input.addEventListener('change', () => {this.OnAnswerChange(answer.id, text_input.value, undefined);});
                 td_text.appendChild(text_input);
 
                 let td_correct = document.createElement('td');
@@ -76,6 +78,7 @@ var TestEditor = {
                 let correct_cb = document.createElement('input');
                 correct_cb.type = 'checkbox';
                 correct_cb.checked = answer.correct;
+                correct_cb.addEventListener('change', () => {this.OnAnswerChange(answer.id, undefined, correct_cb.checked);});
                 td_correct.appendChild(correct_cb);
 
                 let td_rem = document.createElement('td');
@@ -106,10 +109,11 @@ var TestEditor = {
                 });
             },
 
-            OnAnswerChange: function(ans_id, new_val){
+            OnAnswerChange: function(ans_id, new_val, is_correct){
                 TestEditor.EditQuestionDialog.AnswerList.forEach((answer, index) => {
                     if(answer.id == ans_id){
-                        TestEditor.EditQuestionDialog.AnswerList[index].text = new_val;
+                        if(new_val !== undefined) TestEditor.EditQuestionDialog.AnswerList[index].text = new_val;
+                        if(is_correct !== undefined) TestEditor.EditQuestionDialog.AnswerList[index].correct = is_correct;
                         TestEditor.EditQuestionDialog.AreChangesMade = true;
                     }
                 });
@@ -121,6 +125,7 @@ var TestEditor = {
                 this.Initialize();
 
             this.AreChangesMade = false;
+            this.RemovedAnswers = [];
             Dialogs.ShowDialog(this.Element);
         },
 
@@ -142,6 +147,7 @@ var TestEditor = {
             data_to_send.points = this.Features.Points.value;
             data_to_send.points_counting = this.Features.GetCountingValue();
             data_to_send.answers = this.AnswerList;
+            data_to_send.removed_answers = this.RemovedAnswers;
 
             let saving_toast = Toasts.ShowPersistent('Zapisywanie...');
 
@@ -183,18 +189,20 @@ var TestEditor = {
                 this.AreChangesMade = true;
                 this.Features.RemoveAnswer(ans_id);
                 this.AnswerList.splice(index, 1);
+                this.RemovedAnswers.push(ans_id);
             });
         },
 
         AddAnswer: function(){
             let ans = {
-                id: -1,
+                id: this.AutoAnswerId,
                 text: '',
                 correct: false
             };
             this.AreChangesMade = true;
             this.AnswerList.push(ans);
             this.Features.AppendAnswer(ans, this.AnswerList.length - 1);
+            this.AutoAnswerId--;
         },
 
         UpdateQuestion: function(question_id){

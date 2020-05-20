@@ -86,11 +86,11 @@ class Question extends Entity {
         return $questions;
     }
 
-    public function Update($text = null, $type = null, $points = null, $points_counting = null){
-        if($text == null) $text = $this->text;
-        if($type == null) $type = $this->type;
-        if($points == null) $points = $this->points;
-        if($points_counting == null) $points_counting = $this->points_counting;
+    public /* bool */ function Update(/* string? */ $text = null, /* int? */ $type = null, /* float? */ $points = null, /* int? */ $points_counting = null){
+        if(is_null($text)) $text = $this->text;
+        if(is_null($type)) $type = $this->type;
+        if(is_null($points)) $points = $this->points;
+        if(is_null($points_counting)) $points_counting = $this->points_counting;
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
