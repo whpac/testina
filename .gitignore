@@ -4,3 +4,6 @@ assets/font-awesome*
 
 # Ignore jQuery file
 assets/jquery*
+
+# Ignore test page
+pages/_dev.php

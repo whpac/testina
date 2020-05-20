@@ -31,6 +31,7 @@ html {
     --button-hover-background:rgba(0,0,0,0.06);
     --button-active-background:rgba(0,0,0,0.09);
     --button-focus-background:rgba(33,150,243,0.13);
+    --button-error-focus-background:rgba(255,0,0,0.15);
     --button-text-color:rgba(0,0,0,0.75);
     --button-colored-text-color:#2196f3;
     --button-border-color:#aaa;
@@ -76,6 +77,7 @@ html {
         --button-hover-background:rgba(255,255,255,0.09);
         --button-active-background:rgba(255,255,255,0.13);
         --button-focus-background:rgba(100,181,246,0.2);
+        --button-error-focus-background:rgba(244,67,54,0.2);
         --button-text-color:rgba(255,255,255,0.75);
         --button-colored-text-color:#64b5f6;
         --button-border-color:#666;
@@ -222,6 +224,12 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus {
 input[type=radio] {margin-left:15px;}
 .get-help {font-size:0.95em; margin-left:5px;}
 
+input.discreet, textarea.discreet {transition:border-color 0.3s, background 0.3s;}
+input.discreet:not(:hover):not(:active):not(:focus),
+    textarea.discreet:not(:hover):not(:active):not(:focus) {
+    background:transparent; border-color:transparent;
+}
+
 table.full-width {width:100%;}
 table.table {border-spacing:0; margin-top:0.5rem;}
 table.table:first-child {margin-top:0;}
@@ -231,7 +239,9 @@ table.table td.right {text-align:right;}
 table.table th {font-weight:500;}
 table.table tr:first-child:not(.not-header) th {border-bottom:1px solid var(--table-main-border-color);}
 table.table td button:only-child {margin-left:-10px; margin-right:-10px;}
+table.table td input[type=text]:only-child {width:calc(100% + 10px); box-sizing:border-box; margin:0 -5px;}
 table.table col.shrink {width:min-content;}
+.content-tbody:not(:empty) + .nocontent-tbody {display:none}
 
 .dialog {
     padding:15px; color:var(--text-primary-color); background:var(--elevated-surface-background-color);
@@ -268,7 +278,7 @@ table.table col.shrink {width:min-content;}
     background:var(--toast-background-color); color:var(--toast-text-color);
     padding:10px 20px; box-sizing:border-box; border-radius:3px;
     box-shadow:var(--toast-box-shadow); opacity:1;
-    transition:opacity 0.3s, bottom 0.3s;
+    transition:opacity 0.5s, bottom 0.5s;
 }
 .toast.hidden {opacity:0; bottom:-100px;}
 
@@ -279,7 +289,7 @@ a.button, button {
     display:inline-block; background:transparent; border-radius:2px; border:none;
     padding:5px 12px; font-weight:500; text-transform:uppercase; line-height:1.2em;
     color:var(--button-colored-text-color); text-decoration:none; font-size:0.9em;
-    font-family:inherit; cursor:pointer;
+    font-family:inherit; cursor:pointer; transition: background 0.2s;
 }
 a.button.compact, button.compact {padding:3px 10px; margin:-1px 0;}
 a.button.big, button.big {padding:8px 20px; font-size:1.05em;}
@@ -288,6 +298,8 @@ a.button:active, button:active {background:var(--button-active-background);}
 a.button:focus, button:focus {outline:none;}
 a.button:focus:not(:active),
     button:focus:not(:active):not(.answer-button) {background:var(--button-focus-background);}
+a.button.error:focus:not(:active),
+    button.error:focus:not(:active):not(.answer-button) {background:var(--button-error-focus-background);}
 
 a.button.with-border, button.with-border {
     border-radius:calc(0.5em + 6px); border:1px solid var(--button-border-color);

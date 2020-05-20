@@ -60,18 +60,26 @@ $questions = $test->GetQuestions();
             <th>Punkty</th>
             <th></th>
         </tr>
-        <?php
-        $i = 1;
-        foreach($questions as $question){
-            echo('<tr>');
-            echo('<td class="secondary">'.$i.'.</td>');
-            echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
-            echo('<td class="center">'.$question->GetPoints().'</td>');
-            echo('<td><button class="compact todo" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
-            echo('</tr>');
-            $i++;
-        }
-        ?>
+        <tbody class="content-tbody" id="questions-tbody"><?php
+            $i = 1;
+            foreach($questions as $question){
+                echo('<tr data-row-number="'.$i.'" data-question-id="'.$question->GetId().'">');
+                echo('<td class="secondary">'.$i.'.</td>');
+                echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
+                echo('<td class="center">'.$question->GetPoints().'</td>');
+                echo('<td><button class="compact" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
+                echo('</tr>');
+                $i++;
+            }
+      ?></tbody>
+        <tbody class="nocontent-tbody">
+            <tr>
+                <td></td>
+                <td><i class="secondary">Nie ma jeszcze żadnych pytań</i></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
     </table>
     <div class="center">
         <button class="todo">Dodaj pytanie</button>
@@ -120,28 +128,28 @@ for($i=0; $i<count($questions); $i++){
 <div class="dialog rich" id="question-dialog">
     <h2>
         Edytuj pytanie
-        <a href="pomoc" class="get-help" title="Pomoc" target="_blank">
+        <a href="pomoc" class="get-help todo" title="Pomoc" target="_blank">
             <i class="fa fa-question-circle"></i>
         </a>
     </h2>
     <div class="content">
         <div class="grid-form">
             <label for="question-text">Treść:</label>
-            <textarea rows="3" id="question-text"></textarea>
+            <textarea rows="3" id="question-text" onchange="TestEditor.EditQuestionDialog.MadeChanges()"></textarea>
             <label for="question-type">Rodzaj:</label>
-            <select id="question-type">
+            <select id="question-type" onchange="TestEditor.EditQuestionDialog.MadeChanges()">
                 <option value="0">Jednokrotnego wyboru</option>
                 <option value="1">Wielokrotnego wyboru</option>
             </select>
             <label for="points">Liczba punktów:</label>
-            <input type="text" id="points" class="narrow" size="4" />
+            <input type="text" id="points" class="narrow" size="4" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
             <div class="fieldset">
                 Sposób liczenia punktów:
-                <a href="pomoc" class="get-help" target="_blank"><i class="fa fa-question-circle"></i></a>
+                <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <br />
-                <input type="radio" name="points-counting" id="points-counting-binary" />
+                <input type="radio" name="points-counting" id="points-counting-binary" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
                 <label for="points-counting-binary">Zero-jedynkowo</label><br />
-                <input type="radio" name="points-counting" id="points-counting-linear" />
+                <input type="radio" name="points-counting" id="points-counting-linear" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
                 <label for="points-counting-linear">Po ułamku za każdą poprawną odpowiedź</label>
             </div>
         </div>
@@ -151,34 +159,39 @@ for($i=0; $i<count($questions); $i++){
                 <col class="shrink" />
                 <col />
                 <col class="shrink" />
+                <col class="shrink" />
             </colgroup>
             <tbody>
                 <tr>
                     <th></th>
                     <th>Odpowiedzi</th>
                     <th>Poprawna</th>
+                    <th></th>
                 </tr>
+            </tbody>
+            <tbody class="content-tbody" id="answers-tbody"></tbody>
+            <tbody class="nocontent-tbody">
                 <tr>
                     <td></td>
                     <td><i class="secondary">Nie ma żadnych odpowiedzi</i></td>
                     <td></td>
+                    <td></td>
                 </tr>
-            </tbody>
-            <tbody id="answers-tbody">
             </tbody>
             <tbody>
                 <tr>
                     <td></td>
                     <td>
-                        <button class="compact">Dodaj</button>
+                        <button class="compact" onclick="TestEditor.EditQuestionDialog.AddAnswer()">Dodaj</button>
                     </td>
+                    <td></td>
                     <td></td>
                 </tr>
             </tbody>
         </table>
     </div>
     <div class="buttons">
-        <button class="todo">Zapisz</button>
+        <button onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
         <button class="secondary" onclick="TestEditor.EditQuestionDialog.Hide()">Anuluj</button>
     </div>
 </div>

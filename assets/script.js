@@ -65,3 +65,18 @@ function shuffleArray(array) {
 function round(num, decimals = 0){
     return Math.round((num + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
+
+/**
+ * Truncates text at specified length - at the end of word
+ * @param {string} str - string to truncate
+ * @param {number} length - minimum number of characters to preserve
+ */
+function truncate(str, length){
+    if(str.length <= length) return str;
+
+    sp_pos = str.indexOf(' ', length);
+    if(sp_pos === false) return str;
+
+    str = str.substr(0, sp_pos);
+    return str + '…';
+}

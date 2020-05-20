@@ -3,8 +3,8 @@ var TestEditor = {
     Questions: [],
 
     LoadQuestions: function(questions){
-        TestEditor.Questions = questions;
-        TestEditor.EditQuestionDialog.Initialize();
+        this.Questions = questions;
+        this.EditQuestionDialog.Initialize();
     },
 
     AddQuestion: function(){
@@ -12,168 +12,225 @@ var TestEditor = {
     },
 
     EditQuestion: function(question_id){
-        TestEditor.EditQuestionDialog.Features.QuestionText.value = TestEditor.Questions[question_id].text;
-        TestEditor.EditQuestionDialog.Features.QuestionType.value = TestEditor.Questions[question_id].type;
-        TestEditor.EditQuestionDialog.Features.Points.value = TestEditor.Questions[question_id].points;
-        TestEditor.EditQuestionDialog.Features.CheckCountingField(TestEditor.Questions[question_id].points_counting);
-        TestEditor.EditQuestionDialog.Features.DisplayAnswers(TestEditor.Questions[question_id].answers);
+        this.EditQuestionDialog.AnswerList = this.Questions[question_id].answers.map(o => Object.assign({}, o)); // clone
+        this.EditQuestionDialog.QuestionId = question_id;
 
-        TestEditor.EditQuestionDialog.Display();
+        this.EditQuestionDialog.Features.QuestionText.value = this.Questions[question_id].text;
+        this.EditQuestionDialog.Features.QuestionType.value = this.Questions[question_id].type;
+        this.EditQuestionDialog.Features.Points.value = this.Questions[question_id].points;
+        this.EditQuestionDialog.Features.CheckCountingField(this.Questions[question_id].points_counting);
+        this.EditQuestionDialog.Features.DisplayAnswers();
+
+        this.EditQuestionDialog.Display();
     },
 
     EditQuestionDialog: {
+        AnswerList: [],
+        AreChangesMade: false,
+        AutoAnswerId: -1,
         Element: undefined,
+        QuestionId: 0,
+        RemovedAnswers: [],
+
         Features: {
             CheckCountingField: function(counting){
                 switch(counting){
                     case Tests.COUNTING_BINARY:
-                        TestEditor.EditQuestionDialog.Features.PointsCounting.Binary.checked = true;
+                        this.PointsCounting.Binary.checked = true;
                         break;
                     case Tests.COUNTING_LINEAR:
-                        TestEditor.EditQuestionDialog.Features.PointsCounting.Linear.checked = true;
+                        this.PointsCounting.Linear.checked = true;
                         break;
                 }
             },
 
-            DisplayAnswers: function(answers){
-                TestEditor.EditQuestionDialog.Features.Answers.textContent = '';
+            GetCountingValue: function(){
+                if(this.PointsCounting.Binary.checked) return Tests.COUNTING_BINARY;
+                if(this.PointsCounting.Linear.checked) return Tests.COUNTING_LINEAR;
+                return 0;
+            },
 
-                answers.forEach((answer, index) => {
-                    let tr = document.createElement('tr');
+            DisplayAnswers: function(){
+                this.Answers.textContent = '';
 
-                    let td_num = document.createElement('td');
-                    td_num.classList.add('secondary');
-                    td_num.innerText = (index + 1) + '.';
+                TestEditor.EditQuestionDialog.AnswerList.forEach(this.AppendAnswer.bind(this));
+            },
 
-                    let td_text = document.createElement('td');
-                    td_text.innerText = answer.text;
+            AppendAnswer: function(answer, index){
+                let tr = document.createElement('tr');
+                tr.dataset.answerId = answer.id;
+                tr.dataset.rowNumber = index + 1;
 
-                    let td_correct = document.createElement('td');
-                    td_correct.classList.add('center');
-                    let correct_cb = document.createElement('input');
-                    correct_cb.type = 'checkbox';
-                    correct_cb.checked = answer.correct;
-                    td_correct.appendChild(correct_cb);
+                let td_num = document.createElement('td');
+                td_num.classList.add('secondary');
+                td_num.innerText = (index + 1) + '.';
 
-                    tr.appendChild(td_num);
-                    tr.appendChild(td_text);
-                    tr.appendChild(td_correct);
+                let td_text = document.createElement('td');
+                let text_input = document.createElement('input');
+                text_input.classList.add('discreet');
+                text_input.type = 'text';
+                text_input.value = answer.text;
+                text_input.addEventListener('change', () => {this.OnAnswerChange(answer.id, text_input.value, undefined);});
+                td_text.appendChild(text_input);
 
-                    TestEditor.EditQuestionDialog.Features.Answers.appendChild(tr);
+                let td_correct = document.createElement('td');
+                td_correct.classList.add('center');
+                let correct_cb = document.createElement('input');
+                correct_cb.type = 'checkbox';
+                correct_cb.checked = answer.correct;
+                correct_cb.addEventListener('change', () => {this.OnAnswerChange(answer.id, undefined, correct_cb.checked);});
+                td_correct.appendChild(correct_cb);
+
+                let td_rem = document.createElement('td');
+                let rem_btn = document.createElement('button');
+                rem_btn.classList.add('compact', 'error', 'fa', 'fa-trash');
+                rem_btn.title = 'Usuń';
+                rem_btn.addEventListener('click', () => {TestEditor.EditQuestionDialog.RemoveAnswer(answer.id);});
+                td_rem.appendChild(rem_btn);
+
+                tr.appendChild(td_num);
+                tr.appendChild(td_text);
+                tr.appendChild(td_correct);
+                tr.appendChild(td_rem);
+
+                this.Answers.appendChild(tr);
+            },
+
+            RemoveAnswer: function(ans_id){
+                ans_number = 1;
+                let children_array = Array.prototype.slice.call(this.Answers.children);
+                children_array.forEach((tr) => {
+                    if(tr.dataset.answerId == ans_id){
+                        tr.remove();
+                    }else{
+                        TestEditor.UpdateRowNumber(tr, ans_number);
+                        ans_number++;
+                    }
+                });
+            },
+
+            OnAnswerChange: function(ans_id, new_val, is_correct){
+                TestEditor.EditQuestionDialog.AnswerList.forEach((answer, index) => {
+                    if(answer.id == ans_id){
+                        if(new_val !== undefined) TestEditor.EditQuestionDialog.AnswerList[index].text = new_val;
+                        if(is_correct !== undefined) TestEditor.EditQuestionDialog.AnswerList[index].correct = is_correct;
+                        TestEditor.EditQuestionDialog.AreChangesMade = true;
+                    }
                 });
             }
         },
 
         Display: function(){
-            if(TestEditor.EditQuestionDialog.Element === undefined)
-                TestEditor.EditQuestionDialog.Initialize();
+            if(this.Element === undefined)
+                this.Initialize();
 
-            Dialogs.ShowDialog(TestEditor.EditQuestionDialog.Element);
-            return;
+            this.AreChangesMade = false;
+            this.RemovedAnswers = [];
+            Dialogs.ShowDialog(this.Element);
         },
 
         Hide: function(){
-            Dialogs.HideDialog(TestEditor.EditQuestionDialog.Element);
+            if(this.AreChangesMade)
+                if(!window.confirm('Wszystkie zmiany w tym pytaniu zostaną odrzucone.\nCzy kontynuować?'))
+                    return;
+            
+            Dialogs.HideDialog(this.Element);
+        },
+
+        SaveChanges: function(){
+            Dialogs.HideDialog(this.Element);
+
+            let data_to_send = {};
+            data_to_send.question_id = this.QuestionId;
+            data_to_send.text = this.Features.QuestionText.value;
+            data_to_send.type = this.Features.QuestionType.value;
+            data_to_send.points = this.Features.Points.value;
+            data_to_send.points_counting = this.Features.GetCountingValue();
+            data_to_send.answers = this.AnswerList;
+            data_to_send.removed_answers = this.RemovedAnswers;
+
+            let saving_toast = Toasts.ShowPersistent('Zapisywanie...');
+
+            let saver = $.post('api/save_question', JSON.stringify(data_to_send));
+
+            saver.fail(() => {
+                saving_toast.Hide();
+                alert('Nie udało się zapisać pytania.');
+            });
+            saver.done((data) => {
+                saving_toast.Hide();
+                if(data.is_success === undefined)
+                    alert('Wystąpił nieznany błąd podczas zapisywania pytania.');
+                else if(data.is_success === false)
+                    alert('Błąd: ' + data.message);
+                else{
+                    Toasts.Show('Pytanie zostało zapisane.');
+                    this.UpdateQuestion(this.QuestionId);
+                }
+            });
         },
 
         Initialize: function(){
-            TestEditor.EditQuestionDialog.Element = document.getElementById('question-dialog');
-            TestEditor.EditQuestionDialog.Features.QuestionText = document.getElementById('question-text');
-            TestEditor.EditQuestionDialog.Features.QuestionType = document.getElementById('question-type');
-            TestEditor.EditQuestionDialog.Features.Points = document.getElementById('points');
+            this.Element = document.getElementById('question-dialog');
+            this.Features.QuestionText = document.getElementById('question-text');
+            this.Features.QuestionType = document.getElementById('question-type');
+            this.Features.Points = document.getElementById('points');
 
-            TestEditor.EditQuestionDialog.Features.PointsCounting = {};
-            TestEditor.EditQuestionDialog.Features.PointsCounting.Binary = document.getElementById('points-counting-binary');
-            TestEditor.EditQuestionDialog.Features.PointsCounting.Linear = document.getElementById('points-counting-linear');
-            
-            TestEditor.EditQuestionDialog.Features.Answers = document.getElementById('answers-tbody');
+            this.Features.PointsCounting = {};
+            this.Features.PointsCounting.Binary = document.getElementById('points-counting-binary');
+            this.Features.PointsCounting.Linear = document.getElementById('points-counting-linear');
+
+            this.Features.Answers = document.getElementById('answers-tbody');
+        },
+
+        MadeChanges: function(){
+            this.AreChangesMade = true;
+        },
+
+        RemoveAnswer: function(ans_id){
+            this.AnswerList.forEach((answer, index) => {
+                if(ans_id != answer.id) return;
+                this.AreChangesMade = true;
+                this.Features.RemoveAnswer(ans_id);
+                this.AnswerList.splice(index, 1);
+                this.RemovedAnswers.push(ans_id);
+            });
+        },
+
+        AddAnswer: function(){
+            let ans = {
+                id: this.AutoAnswerId,
+                text: '',
+                correct: false
+            };
+            this.AreChangesMade = true;
+            this.AnswerList.push(ans);
+            this.Features.AppendAnswer(ans, this.AnswerList.length - 1);
+            this.AutoAnswerId--;
+        },
+
+        UpdateQuestion: function(question_id){
+            TestEditor.Questions[question_id].answers = this.AnswerList.map(a => Object.assign({}, a));
+            TestEditor.Questions[question_id].text = this.Features.QuestionText.value;
+            TestEditor.Questions[question_id].type = this.Features.QuestionType.value;
+            TestEditor.Questions[question_id].points = this.Features.Points.value;
+            TestEditor.Questions[question_id].points_counting = this.Features.GetCountingValue();
+            TestEditor.UpdateQuestionRow(question_id, this.Features.QuestionText.value, this.Features.Points.value)
         }
+    },
+
+    UpdateRowNumber: function(tr, row_number){
+        tr.dataset.rowNumber = row_number;
+        tr.children[0].innerText = row_number + '.';
+    },
+
+    UpdateQuestionRow: function(question_id, text, points){
+        let tbody = document.getElementById('questions-tbody');
+        let children_array = Array.prototype.slice.call(tbody.children);
+        children_array.forEach((tr) => {
+            if(tr.dataset.questionId != question_id) return;
+            tr.children[1].innerText = truncate(text, 60);
+            tr.children[2].innerText = points;
+        });
     }
 }
-
-/*let dialog = Dialogs.CreateDialog();
-dialog.AddClasses(['rich']);
-dialog.SetHeader('Edytuj pytanie<a href="pomoc" class="get-help" title="Pomoc"><i class="fa fa-question-circle"></i></a>');
-
-let form = document.createElement('div');
-form.classList.add('grid-form');
-
-let text_lbl = document.createElement('label');
-text_lbl.htmlFor = 'question-text';
-text_lbl.innerText = 'Treść:';
-let text_area = document.createElement('textarea');
-text_area.rows = 3;
-text_area.id = 'question-text';
-
-form.appendChild(text_lbl);
-form.appendChild(text_area);
-
-let type_lbl = document.createElement('label');
-type_lbl.htmlFor = 'question-type';
-type_lbl.innerText = 'Rodzaj:';
-let type_select = document.createElement('select');
-type_select.id = 'question-type';
-
-let types = [[0, 'Wielokrotnego wyboru']];
-types.forEach((option) => {
-    let option_elem = document.createElement('option');
-    option_elem.value = option[0];
-    option_elem.innerText = option[1];
-    type_select.appendChild(option_elem);
-});
-
-form.appendChild(type_lbl);
-form.appendChild(type_select);
-
-let points_lbl = document.createElement('label');
-points_lbl.htmlFor = 'points';
-points_lbl.innerText = 'Liczba punktów:';
-let points_input = document.createElement('input');
-points_input.type = 'text';
-points_input.id = 'points';
-points_input.size = 4;
-points_input.classList.add('narrow');
-
-form.appendChild(points_lbl);
-form.appendChild(points_input);
-
-let fieldset = document.createElement('div');
-fieldset.classList.add('fieldset');
-
-let points_counting_text = document.createElement('p');
-points_counting_text.innerText = 'Sposób liczenia punktów:';
-fieldset.appendChild(points_counting_text);
-
-let points_counting_binary_radio = document.createElement('input');
-points_counting_binary_radio.type = 'radio';
-points_counting_binary_radio.name = 'points_counting';
-points_counting_binary_radio.id = 'points-counting-binary';
-let points_counting_binary_lbl = document.createElement('label');
-points_counting_binary_lbl.htmlFor = 'points-counting-binary';
-points_counting_binary_lbl.innerText = 'Zero-jedynkowo';
-fieldset.appendChild(points_counting_binary_radio);
-fieldset.appendChild(points_counting_binary_lbl);
-
-fieldset.appendChild(document.createElement('br'));
-
-let points_counting_linear_radio = document.createElement('input');
-points_counting_linear_radio.type = 'radio';
-points_counting_linear_radio.name = 'points_counting';
-points_counting_linear_radio.id = 'points-counting-linear';
-let points_counting_linear_lbl = document.createElement('label');
-points_counting_linear_lbl.htmlFor = 'points-counting-linear';
-points_counting_linear_lbl.innerText = 'Po ułamku za każdą poprawną odpowiedź';
-fieldset.appendChild(points_counting_linear_radio);
-fieldset.appendChild(points_counting_linear_lbl);
-
-form.appendChild(fieldset);
-dialog.AddContent(form);
-
-let separator_hr = document.createElement('hr');
-separator_hr.classList.add('spaced');
-dialog.AddContent(separator_hr);
-
-dialog.AddButton('Zapisz', () => {});
-dialog.AddButton('Anuluj', dialog.Hide, ['secondary']);
-
-dialog.Show();*/
