@@ -125,7 +125,8 @@ class Answer extends Entity {
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ANSWERS)
                 ->Delete()
-                ->Where('id', '=', $this->GetId());
+                ->Where('id', '=', $this->GetId())
+                ->Run();
         
         return $result;
     }

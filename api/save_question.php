@@ -51,16 +51,17 @@ if($ans_error > 0){
 
 $rem_error = 0;
 foreach($json->removed_answers as $removed_answer_id){
+    if($removed_answer_id < 0) continue;
     try{
         $answer = new Entities\Answer($removed_answer_id);
-        $answer->Remove();
+        if(!$answer->Remove()) $rem_error++;
     }catch(Exception $e){
         $rem_error++;
     }
 }
 
 if($rem_error > 0){
-    Layout\ApiRenderer::ThrowError('Nie udało się usunąć '.$ans_error.' odpowiedzi.');
+    Layout\ApiRenderer::ThrowError('Nie udało się usunąć '.$rem_error.' odpowiedzi.');
     return;
 }
 
