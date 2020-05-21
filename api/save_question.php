@@ -7,26 +7,47 @@ $json = json_decode($input);
 
 $question_id = $json->question_id;
 if(!is_numeric($question_id)){
-    Layout\ApiRenderer::ThrowError('Parametr id jest w niewłaściwym formacie.');
+    Layout\ApiRenderer::ThrowError('Parametr question_id jest w niewłaściwym formacie.');
     return;
 }
 
-// Check if this question is made by current user
-$question = new Entities\Question($question_id);
+if(!is_numeric($json->test_id)){
+    Layout\ApiRenderer::ThrowError('Parametr test_id jest w niewłaściwym formacie.');
+    return;
+}
 
-$test = $question->GetTest();
 $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
 
-if(!$test->IsMadeByUser($current_user)){
-    Layout\ApiRenderer::ThrowError('Nie możesz edytować cudych pytań.');
-    return;
-}
+if($question_id > 0){
+    // Check if this question is made by current user
+    $question = new Entities\Question($question_id);
 
-$result = $question->Update($json->text, $json->type, $json->points, $json->points_counting);
+    $test = $question->GetTest();
 
-if(!$result){
-    Layout\ApiRenderer::ThrowError('Nie udało się zmodyfikować pytania w bazie danych.');
-    return;
+    if(!$test->IsMadeByUser($current_user)){
+        Layout\ApiRenderer::ThrowError('Nie możesz edytować cudzych pytań.');
+        return;
+    }
+
+    $result = $question->Update($json->text, $json->type, $json->points, $json->points_counting);
+    if(!$result){
+        Layout\ApiRenderer::ThrowError('Nie udało się zmodyfikować pytania w bazie danych.');
+        return;
+    }
+}else{
+    $test = new Entities\Test($json->test_id);
+
+    if(!$test->IsMadeByUser($current_user)){
+        Layout\ApiRenderer::ThrowError('Nie możesz dodawać pytań do cudzego testu.');
+        return;
+    }
+
+    try{
+        $question = Entities\Question::Create($test, $json->text, $json->type, $json->points, $json->points_counting);
+    }catch(Exception $e){
+        Layout\ApiRenderer::ThrowError('Nie udało się zapisać pytania w bazie danych.');
+        return;
+    }
 }
 
 $ans_error = 0;
