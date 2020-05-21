@@ -43,6 +43,10 @@ var TestEditor = {
     RemoveQuestion: function(question_id){
         delete this.Questions[question_id];
         this.RemoveQuestionRow(question_id);
+
+        if(question_id > 0){
+            // Send message to server
+        }
     },
 
     EditQuestionDialog: {
@@ -298,9 +302,14 @@ var TestEditor = {
     RemoveQuestionRow: function(question_id){
         let tbody = document.getElementById('questions-tbody');
         let children_array = Array.prototype.slice.call(tbody.children);
+        let q_index = 1;
         children_array.forEach((tr) => {
-            if(tr.dataset.questionId != question_id) return;
-            tr.remove();
+            if(tr.dataset.questionId == question_id){
+                tr.remove();
+            }else{
+                this.UpdateRowNumber(tr, q_index);
+                q_index++;
+            }
         });
     }
 }

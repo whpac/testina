@@ -53,11 +53,13 @@ $questions = $test->GetQuestions();
             <col />
             <col class="shrink" />
             <col class="shrink" />
+            <col class="shrink" />
         </colgroup>
         <tr>
             <th></th>
             <th>Treść</th>
             <th>Punkty</th>
+            <th></th>
             <th></th>
         </tr>
         <tbody class="content-tbody" id="questions-tbody"><?php
@@ -68,6 +70,7 @@ $questions = $test->GetQuestions();
                 echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
                 echo('<td class="center">'.$question->GetPoints().'</td>');
                 echo('<td><button class="compact" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
+                echo('<td><button class="compact error fa fa-trash todo" title="Usuń pytanie" onclick="TestEditor.RemoveQuestion('.$question->GetId().')"></button></td>');
                 echo('</tr>');
                 $i++;
             }
@@ -76,6 +79,7 @@ $questions = $test->GetQuestions();
             <tr>
                 <td></td>
                 <td><i class="secondary">Nie ma jeszcze żadnych pytań</i></td>
+                <td></td>
                 <td></td>
                 <td></td>
             </tr>
