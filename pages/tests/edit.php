@@ -82,7 +82,7 @@ $questions = $test->GetQuestions();
         </tbody>
     </table>
     <div class="center">
-        <button class="todo">Dodaj pytanie</button>
+        <button class="todo" onclick="TestEditor.AddQuestion();">Dodaj pytanie</button>
     </div>
 </div>
 
@@ -93,6 +93,7 @@ $questions = $test->GetQuestions();
 
 <script>
     $(function(){
+        TestEditor.TestId = <?php echo($test->GetId()); ?>;
         TestEditor.LoadQuestions({
 <?php
 for($i=0; $i<count($questions); $i++){
@@ -103,6 +104,7 @@ for($i=0; $i<count($questions); $i++){
     echo('type: '.$question->GetType().',');
     echo('points: '.$question->GetPoints().',');
     echo('points_counting: '.$question->GetPointsCounting().',');
+    echo('persistent: true,');
 
     echo('answers: [');
     $answers = $question->GetAnswers();
@@ -192,6 +194,6 @@ for($i=0; $i<count($questions); $i++){
     </div>
     <div class="buttons">
         <button onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
-        <button class="secondary" onclick="TestEditor.EditQuestionDialog.Hide()">Anuluj</button>
+        <button class="secondary" onclick="TestEditor.EditQuestionDialog.CancelChanges()">Anuluj</button>
     </div>
 </div>

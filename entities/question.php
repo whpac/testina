@@ -105,6 +105,34 @@ class Question extends Entity {
         return $result;
     }
 
+    public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting){
+        if(is_null($text)) throw new RichExcpetion('Treść pytania nie może być null.');
+        if(is_null($type)) throw new RichExcpetion('Typ pytania nie może być null.');
+        if(is_null($points)) throw new RichExcpetion('Ilość punktów nie może być null.');
+        if(is_null($points_counting)) throw new RichExcpetion('Metoda liczenia punktów nie może być null.');
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTIONS)
+                ->Insert()
+                ->Value('test_id', $test->GetId())
+                ->Value('text', $text)
+                ->Value('type', $type)
+                ->Value('points', $points)
+                ->Value('points_counting', $points_counting)
+                ->Run();
+        
+        if($result === false) throw new RichException('Nie udało się dodać pytania.');
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTIONS)
+                ->Select()
+                ->OrderBy('id', 'DESC')
+                ->Limit(1)
+                ->Run();
+
+        return new Question($result->fetch_assoc());
+    }
+
     public /* float */ function CountPoints(/* UserAnswer[] */ array $user_answers){
         foreach($user_answers as $user_answer){
             if($user_answer->IsNoAnswer()) return 0;

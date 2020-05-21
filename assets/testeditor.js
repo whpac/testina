@@ -1,6 +1,8 @@
 var TestEditor = {
 
-    Questions: [],
+    AutoQuestionId: -1,
+    Questions: {},
+    TestId: 0,
 
     LoadQuestions: function(questions){
         this.Questions = questions;
@@ -8,7 +10,21 @@ var TestEditor = {
     },
 
     AddQuestion: function(){
+        let new_question = {};
 
+        new_question.id = this.AutoQuestionId;
+        new_question.text = '';
+        new_question.type = Tests.TYPE_SINGLE_CHOICE;
+        new_question.points = 1;
+        new_question.points_counting = Tests.COUNTING_BINARY;
+        new_question.answers = [];
+        new_question.persistent = false;
+
+        this.Questions[this.AutoQuestionId] = new_question;
+        this.AutoQuestionId--;
+
+        this.AppendQuestionRow(new_question.id);
+        this.EditQuestion(new_question.id);
     },
 
     EditQuestion: function(question_id){
@@ -22,6 +38,11 @@ var TestEditor = {
         this.EditQuestionDialog.Features.DisplayAnswers();
 
         this.EditQuestionDialog.Display();
+    },
+
+    RemoveQuestion: function(question_id){
+        delete this.Questions[question_id];
+        this.RemoveQuestionRow(question_id);
     },
 
     EditQuestionDialog: {
@@ -130,17 +151,25 @@ var TestEditor = {
         },
 
         Hide: function(){
+            Dialogs.HideDialog(this.Element);
+        },
+
+        CancelChanges: function(){
             if(this.AreChangesMade)
                 if(!window.confirm('Wszystkie zmiany w tym pytaniu zostaną odrzucone.\nCzy kontynuować?'))
                     return;
             
-            Dialogs.HideDialog(this.Element);
+            if(!TestEditor.Questions[this.QuestionId].persistent)
+                TestEditor.RemoveQuestion(this.QuestionId);
+
+            this.Hide();
         },
 
         SaveChanges: function(){
             Dialogs.HideDialog(this.Element);
 
             let data_to_send = {};
+            data_to_send.test_id = TestEditor.TestId;
             data_to_send.question_id = this.QuestionId;
             data_to_send.text = this.Features.QuestionText.value;
             data_to_send.type = this.Features.QuestionType.value;
@@ -215,7 +244,8 @@ var TestEditor = {
             TestEditor.Questions[question_id].type = this.Features.QuestionType.value;
             TestEditor.Questions[question_id].points = this.Features.Points.value;
             TestEditor.Questions[question_id].points_counting = this.Features.GetCountingValue();
-            TestEditor.UpdateQuestionRow(question_id, this.Features.QuestionText.value, this.Features.Points.value)
+            TestEditor.Questions[question_id].persistent = true;
+            TestEditor.UpdateQuestionRow(question_id);
         }
     },
 
@@ -224,13 +254,53 @@ var TestEditor = {
         tr.children[0].innerText = row_number + '.';
     },
 
-    UpdateQuestionRow: function(question_id, text, points){
+    AppendQuestionRow: function(question_id){
+        let questions_tbody = document.getElementById('questions-tbody');
+        let tr = document.createElement('tr');
+        tr.dataset.rowNumber = Object.keys(this.Questions).length;
+        tr.dataset.questionId = question_id;
+
+        let td_num = document.createElement('td');
+        td_num.classList.add('secondary');
+        td_num.innerText = tr.dataset.rowNumber + '.';
+        tr.appendChild(td_num);
+
+        let td_text = document.createElement('td');
+        td_text.innerHTML = truncate(this.Questions[question_id].text, 60);
+        tr.appendChild(td_text);
+
+        let td_pts = document.createElement('td');
+        td_pts.classList.add('center');
+        td_pts.innerText = this.Questions[question_id].points;
+        tr.appendChild(td_pts);
+
+        let td_btn = document.createElement('td');
+        let edit_btn = document.createElement('button');
+        edit_btn.classList.add('compact');
+        edit_btn.innerText = 'Edytuj';
+        edit_btn.addEventListener('click', () => {TestEditor.EditQuestion(question_id);});
+        td_btn.appendChild(edit_btn);
+        tr.appendChild(td_btn);
+
+        questions_tbody.appendChild(tr);
+    },
+
+    UpdateQuestionRow: function(question_id){
         let tbody = document.getElementById('questions-tbody');
         let children_array = Array.prototype.slice.call(tbody.children);
         children_array.forEach((tr) => {
             if(tr.dataset.questionId != question_id) return;
-            tr.children[1].innerText = truncate(text, 60);
-            tr.children[2].innerText = points;
+            tr.children[1].innerText = truncate(this.Questions[question_id].text, 60);
+            tr.children[2].innerText = this.Questions[question_id].points;
+        });
+    },
+
+    RemoveQuestionRow: function(question_id){
+        let tbody = document.getElementById('questions-tbody');
+        let children_array = Array.prototype.slice.call(tbody.children);
+        children_array.forEach((tr) => {
+            if(tr.dataset.questionId != question_id) return;
+            tr.remove();
         });
     }
 }
