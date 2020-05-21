@@ -41,11 +41,29 @@ var TestEditor = {
     },
 
     RemoveQuestion: function(question_id){
-        delete this.Questions[question_id];
-        this.RemoveQuestionRow(question_id);
-
         if(question_id > 0){
-            // Send message to server
+            let data_to_send = {};
+            data_to_send.question_id = question_id;
+
+            let remover = $.post('api/remove_question', JSON.stringify(data_to_send));
+
+            remover.fail(() => {
+                Toasts.Show('Nie udało się usunąć pytania.');
+            });
+            remover.done((data) => {
+                if(data.is_success === undefined)
+                    Toasts.Show('Wystąpił nieznany błąd podczas usuwania pytania.');
+                else if(data.is_success === false)
+                    Toasts.Show('Błąd: ' + data.message);
+                else{
+                    Toasts.Show('Pytanie zostało usunięte.');
+                    delete this.Questions[question_id];
+                    this.RemoveQuestionRow(question_id);
+                }
+            });
+        }else{
+            delete this.Questions[question_id];
+            this.RemoveQuestionRow(question_id);
         }
     },
 

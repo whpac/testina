@@ -101,6 +101,7 @@ $url['_dev'] = '_dev.php';
 
 $api = [];
 $api['get_test'] = 'get_test.php';
+$api['remove_question'] = 'remove_question.php';
 $api['save_question'] = 'save_question.php';
 $api['save_test_results'] = 'save_test_results.php';
 

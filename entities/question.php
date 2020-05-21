@@ -105,6 +105,16 @@ class Question extends Entity {
         return $result;
     }
 
+    public /* bool */ function Remove(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTIONS)
+                ->Delete()
+                ->Where('id', '=', $this->id)
+                ->Run();
+
+        return $result;
+    }
+
     public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting){
         if(is_null($text)) throw new RichExcpetion('Treść pytania nie może być null.');
         if(is_null($type)) throw new RichExcpetion('Typ pytania nie może być null.');
