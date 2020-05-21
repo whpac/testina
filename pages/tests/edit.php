@@ -82,7 +82,7 @@ $questions = $test->GetQuestions();
         </tbody>
     </table>
     <div class="center">
-        <button class="todo" onclick="TestEditor.AddQuestion();">Dodaj pytanie</button>
+        <button onclick="TestEditor.AddQuestion();">Dodaj pytanie</button>
     </div>
 </div>
 
