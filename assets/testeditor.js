@@ -37,6 +37,8 @@ var TestEditor = {
         this.EditQuestionDialog.Features.CheckCountingField(this.Questions[question_id].points_counting);
         this.EditQuestionDialog.Features.DisplayAnswers();
 
+        this.EditQuestionDialog.ClearErrorStates();
+
         this.EditQuestionDialog.Display();
     },
 
@@ -176,6 +178,7 @@ var TestEditor = {
 
         Hide: function(){
             Dialogs.HideDialog(this.Element);
+            GlobalState.PreventFromExit = false;
         },
 
         CancelChanges: function(){
@@ -190,7 +193,8 @@ var TestEditor = {
         },
 
         SaveChanges: function(){
-            Dialogs.HideDialog(this.Element);
+            if(!this.Validate()) return;
+            this.Hide();
 
             let data_to_send = {};
             data_to_send.test_id = TestEditor.TestId;
@@ -223,6 +227,42 @@ var TestEditor = {
             });
         },
 
+        ClearErrorStates: function(){
+            this.Features.ErrorBox.innerText = '';
+            this.Features.QuestionText.classList.remove('error');
+        },
+
+        Validate: function(){
+            let errors = [];
+            this.ClearErrorStates();
+            
+            if(this.Features.QuestionText.value.length == 0){
+                this.Features.QuestionText.classList.add('error');
+                errors.push('Treść pytania nie może być pusta.');
+            }
+
+            let correct_answers_count = 0;
+            this.AnswerList.forEach((answer) => {
+                if(answer.correct) correct_answers_count++;
+            });
+            if(TestEditor.Questions[this.QuestionId].type == Tests.TYPE_SINGLE_CHOICE){
+                if(correct_answers_count != 1)
+                    errors.push('Pytanie jednokrotnego wyboru musi mieć dokładnie jedną poprawną odpowiedź.');
+            }
+            if(TestEditor.Questions[this.QuestionId].type == Tests.TYPE_MULTI_CHOICE){
+                if(correct_answers_count == 0)
+                    errors.push('Pytanie wielokrotnego wyboru musi mieć przynajmniej jedną poprawną odpowiedź.');
+            }
+
+            error_text = '';
+            errors.forEach((err) => {
+                error_text += err + '<br />';
+            });
+            this.Features.ErrorBox.innerHTML = error_text;
+
+            return errors.length == 0;
+        },
+
         Initialize: function(){
             this.Element = document.getElementById('question-dialog');
             this.Features.QuestionText = document.getElementById('question-text');
@@ -234,10 +274,12 @@ var TestEditor = {
             this.Features.PointsCounting.Linear = document.getElementById('points-counting-linear');
 
             this.Features.Answers = document.getElementById('answers-tbody');
+            this.Features.ErrorBox = document.getElementById('edit-question-error');
         },
 
         MadeChanges: function(){
             this.AreChangesMade = true;
+            GlobalState.PreventFromExit = true;
         },
 
         RemoveAnswer: function(ans_id){

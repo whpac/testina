@@ -14,6 +14,16 @@ function onLoad(){
     $('#check-button').on('click', Tests.MarkAnswers);
     $('#next-button').on('click', Tests.GoToNextQuestion);
     $('#end-button').on('click', Tests.EndTest);
+
+    window.addEventListener('beforeunload', (event) => {
+        if(GlobalState.PreventFromExit){
+            // Cancel the event as stated by the standard.
+            event.preventDefault();
+            // Chrome requires returnValue to be set.
+            event.returnValue = '';
+            return '';
+        }
+      });
 }
 
 /**
@@ -80,3 +90,7 @@ function truncate(str, length){
     str = str.substr(0, sp_pos);
     return str + '…';
 }
+
+var GlobalState = {
+    PreventFromExit: false
+};

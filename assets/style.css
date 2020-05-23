@@ -208,21 +208,25 @@ aside.mobile-header h1 {
 .grid-form input.narrow {justify-self:start;}
 .grid-form .fieldset {grid-column:1 / span 2;}
 .fieldset p {margin:0 0;}
+.get-help {font-size:0.95em; margin-left:5px;}
 
 textarea {resize:vertical; min-height:3em; font-family:inherit;}
-input[type=text], input[type=password], textarea {
+input[type=text], input[type=password], input[type=number], textarea {
     background:var(--input-background-color); border:1px solid var(--input-border-color);
     transition:border-color 0.3s; padding:2px 5px; font-size:0.9em; color:var(--text-primary-color);
 }
-input[type=text]:hover, input[type=password]:hover, textarea:hover {
+input[type=text]:hover, input[type=password]:hover, input[type=number]:hover, textarea:hover {
     border-color:var(--input-hover-border-color);
 }
-input[type=text]:focus, input[type=password]:focus, textarea:focus {
+input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, textarea:focus {
     border-color:var(--input-active-border-color); outline:none;
     box-shadow:0 0 2px var(--input-active-border-color);
 }
+input[type=text].error, input[type=password].error, input[type=number].error, textarea.error {
+    border-color:var(--error-color); color:var(--text-primary-color);
+}
 input[type=radio] {margin-left:15px;}
-.get-help {font-size:0.95em; margin-left:5px;}
+input[type=number] {width:6ch;}
 
 input.discreet, textarea.discreet {transition:border-color 0.3s, background 0.3s;}
 input.discreet:not(:hover):not(:active):not(:focus),
@@ -447,6 +451,9 @@ button.answer-button.wrong.selected::after {
         border-bottom:var(--mobile-header-border); color:var(--mobile-header-text-color);
         box-shadow:var(--mobile-header-box-shadow); position:fixed; top:0; left:0;
     }
+    .dialog.rich > h2:first-of-type .get-help {
+        color:var(--mobile-header-text-color); font-size:1em;
+    }
     .dialog.rich section {
         padding:15px; margin:0 0 20px 0; background:var(--surface-background-color);
         border:var(--surface-border-width) solid var(--surface-border-color);
@@ -458,6 +465,7 @@ button.answer-button.wrong.selected::after {
         display:grid; margin:0; padding:5px; gap:5px; grid-auto-flow:column;
         grid-auto-columns:1fr; direction:rtl; position:fixed; bottom:0; left:0;
         width:100vw; box-shadow:0 -1px 6px 3px var(--background-empty-color);
+        background:var(--background-empty-color);
     }
     .dialog.rich > .buttons > button {margin:0; direction:ltr;}
     .toast {left:15px; width:calc(100vw - 30px);}

@@ -92,7 +92,21 @@ $questions = $test->GetQuestions();
 
 <div class="card">
     <h2 class="todo">Ustawienia testu</h2>
-    Limit czasu na podejście, mnożnik pytań, nazwa
+    <div class="grid-form">
+        <label>Nazwa:</label>
+        <?php echo($test->GetName()); ?>
+        <label>Mnożnik pytań:</label>
+        <?php echo($test->GetQuestionMultiplier()); ?>
+        <div class="fieldset">
+            Limit czasu na podejście<br />
+            <input type="radio" name="time-limit" checked />
+            <input type="number" id="set-time-limit" />
+            <label for="set-time-limit">minut</label><br />
+            <input type="radio" name="time-limit" id="no-time-limit"/>
+            <label for="no-time-limit">Brak limitu</label>
+            <?php echo($test->HasTimeLimit() ? $test->GetTimeLimit() : 'brak'); ?>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -148,7 +162,7 @@ for($i=0; $i<count($questions); $i++){
                 <option value="1">Wielokrotnego wyboru</option>
             </select>
             <label for="points">Liczba punktów:</label>
-            <input type="text" id="points" class="narrow" size="4" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
+            <input type="number" min="0" step="any" id="points" class="narrow" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
             <div class="fieldset">
                 Sposób liczenia punktów:
                 <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
@@ -195,6 +209,7 @@ for($i=0; $i<count($questions); $i++){
                 </tr>
             </tbody>
         </table>
+        <div class="error" id="edit-question-error"></div>
     </div>
     <div class="buttons">
         <button onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
