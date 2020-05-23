@@ -70,7 +70,7 @@ $questions = $test->GetQuestions();
                 echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
                 echo('<td class="center">'.$question->GetPoints().'</td>');
                 echo('<td><button class="compact" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
-                echo('<td><button class="compact error fa fa-trash todo" title="Usuń pytanie" onclick="TestEditor.RemoveQuestion('.$question->GetId().')"></button></td>');
+                echo('<td><button class="compact error fa fa-trash" title="Usuń pytanie" onclick="TestEditor.RemoveQuestion('.$question->GetId().')"></button></td>');
                 echo('</tr>');
                 $i++;
             }

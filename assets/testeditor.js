@@ -41,6 +41,8 @@ var TestEditor = {
     },
 
     RemoveQuestion: function(question_id){
+        if(!window.confirm('Usunięcie pytania jest nieodwracalne.\nKontynuować?')) return;
+
         if(question_id > 0){
             let data_to_send = {};
             data_to_send.question_id = question_id;
@@ -239,6 +241,8 @@ var TestEditor = {
         },
 
         RemoveAnswer: function(ans_id){
+            if(!window.confirm('Jeżeli zapiszesz pytanie, usuniętej odpowiedzi nie będzie się dało przywrócić.\nKontynuować?')) return;
+
             this.AnswerList.forEach((answer, index) => {
                 if(ans_id != answer.id) return;
                 this.AreChangesMade = true;
@@ -303,6 +307,13 @@ var TestEditor = {
         edit_btn.addEventListener('click', () => {TestEditor.EditQuestion(question_id);});
         td_btn.appendChild(edit_btn);
         tr.appendChild(td_btn);
+
+        let td_rem = document.createElement('td');
+        let rem_btn = document.createElement('button');
+        rem_btn.classList.add('compact', 'red', 'fa', 'fa-trash');
+        rem_btn.addEventListener('click', () => {TestEditor.RemoveQuestion(question_id);});
+        td_rem.appendChild(rem_btn);
+        tr.appendChild(td_rem);
 
         questions_tbody.appendChild(tr);
     },
