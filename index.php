@@ -95,6 +95,7 @@ $url['testy/edytuj'] = 'tests/edit.php';
 $url['testy/lista'] = 'tests/list.php';
 $url['testy/rozwiąż'] = 'tests/solve.php';
 $url['testy/szczegóły'] = 'tests/details.php';
+$url['testy/utwórz'] = 'tests/edit.php';
 $url['testy/wynik'] = 'tests/result.php';
 
 $url['_dev'] = '_dev.php';
@@ -102,6 +103,7 @@ $url['_dev'] = '_dev.php';
 $api = [];
 $api['get_test'] = 'get_test.php';
 $api['remove_question'] = 'remove_question.php';
+$api['remove_test'] = 'remove_test.php';
 $api['save_question'] = 'save_question.php';
 $api['save_test'] = 'save_test.php';
 $api['save_test_results'] = 'save_test_results.php';

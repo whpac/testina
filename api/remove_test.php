@@ -17,13 +17,13 @@ $test = new Entities\Test($test_id);
 
 // Check if this test is made by current user
 if(!$test->IsMadeByUser($current_user)){
-    Layout\ApiRenderer::ThrowError('Nie możesz edytować cudzego testu.');
+    Layout\ApiRenderer::ThrowError('Nie możesz usunąć cudzego testu.');
     return;
 }
 
-$result = $test->Update($json->test_name, $json->question_multiplier, $json->time_limit);
+$result = $test->Remove();
 if(!$result){
-    Layout\ApiRenderer::ThrowError('Nie udało się zmodyfikować testu w bazie danych.');
+    Layout\ApiRenderer::ThrowError('Nie udało się usunąć testu z bazy danych.');
     return;
 }
 

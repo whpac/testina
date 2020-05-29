@@ -119,5 +119,42 @@ class Test extends Entity{
         
         return $result;
     }
+
+    public static /* void */ function Create(User $author){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_TESTS)
+                ->Insert()
+                ->Value('name', 'Test bez nazwy')
+                ->Value('author_id', $author->GetId())
+                ->Value('creation_date', (new \DateTime())->format('Y-m-d H:i:s'))
+                ->Value('time_limit', 0)
+                ->Value('question_multiplier', 1)
+                ->Run();
+            
+        if($result === false)
+            throw new RichException('Nie udało się stworzyć testu.');
+        
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_TESTS)
+                ->Select()
+                ->OrderBy('id', 'DESC')
+                ->Limit(1)
+                ->Run();
+        
+        if($result === false || $result->num_rows == 0)
+            throw new RichException('Nie udało się wczytać utworzonego właśnie testu.');
+
+        return new Test($result->fetch_assoc());
+    }
+
+    public /* void */ function Remove(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_TESTS)
+                ->Delete()
+                ->Where('id', '=', $this->GetId())
+                ->Run();
+        
+        return $result === true;
+    }
 }
 ?>

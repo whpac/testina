@@ -1,43 +1,49 @@
 <?php
-$test_id = $_GET[0];
-
-try{
-    $test = new Entities\Test($test_id);
-}catch(Exception $e){
-    \UEngine\Modules\Pages\PageManager::SetTitle('Test nie istnieje');
-    ?>
-    <h1>Test nie istnieje</h1>
-    <div class="card">
-        <h2 class="emoji center">🔍</h2>
-        <p>
-            Wskazany test nie istnieje.
-        </p>
-        <div class="card-buttons">
-            <a class="button" href="testy/lista">Wróć do listy testów</a>
-        </div>
-    </div>
-    <?php
-    return;
-}
-
 $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
 
-if(!$test->IsMadeByUser($current_user)){
-    \UEngine\Modules\Pages\PageManager::SetTitle('Brak dostępu');
-    ?>
-    <h1>Brak dostępu</h1>
-    <div class="empty-placeholder">
-        <img src="images/access_denied.svg" />
-        <em>Nie masz dostępu do tego testu.</em>
-        <p>
-            Możesz edytować wyłącznie swoje testy.
-        </p>
-        <p>
-            <a href="testy/lista">Przejdź do listy testów</a>
-        </p>
-    </div>
-    <?php
-    return;
+if(!isset($_GET[0])){
+    // create a new test
+    $test = Entities\Test::Create($current_user);
+    $test_id = $test->GetId();
+}else{
+    $test_id = $_GET[0];
+
+    try{
+        $test = new Entities\Test($test_id);
+    }catch(Exception $e){
+        \UEngine\Modules\Pages\PageManager::SetTitle('Test nie istnieje');
+        ?>
+        <h1>Test nie istnieje</h1>
+        <div class="card">
+            <h2 class="emoji center">🔍</h2>
+            <p>
+                Wskazany test nie istnieje.
+            </p>
+            <div class="card-buttons">
+                <a class="button" href="testy/lista">Wróć do listy testów</a>
+            </div>
+        </div>
+        <?php
+        return;
+    }
+
+    if(!$test->IsMadeByUser($current_user)){
+        \UEngine\Modules\Pages\PageManager::SetTitle('Brak dostępu');
+        ?>
+        <h1>Brak dostępu</h1>
+        <div class="empty-placeholder">
+            <img src="images/access_denied.svg" />
+            <em>Nie masz dostępu do tego testu.</em>
+            <p>
+                Możesz edytować wyłącznie swoje testy.
+            </p>
+            <p>
+                <a href="testy/lista">Przejdź do listy testów</a>
+            </p>
+        </div>
+        <?php
+        return;
+    }
 }
 
 \UEngine\Modules\Pages\PageManager::SetTitle('Edycja: '.$test->GetName());
@@ -115,6 +121,7 @@ $questions = $test->GetQuestions();
     </div>
     <div class="card-buttons">
         <button onclick="TestEditor.SaveTestSettings()">Zapisz</button>
+        <button class="error" onclick="TestEditor.RemoveTest()">Usuń test</button>
     </div>
 </div>
 

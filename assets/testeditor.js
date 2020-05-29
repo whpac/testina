@@ -425,5 +425,32 @@ var TestEditor = {
 
     UpdateTestTitle: function(new_title){
         document.getElementById('heading-test-title').innerText = new_title;
+    },
+
+    RemoveTest: function(){
+        if(!window.confirm('Usunięcia testu nie da się cofnąć. Usunąć mimo to?')) return;
+
+        let data_to_send = {};
+        data_to_send.test_id = this.TestId;
+
+        let removing_toast = Toasts.ShowPersistent('Usuwanie...');
+
+        let remover = $.post('api/remove_test', JSON.stringify(data_to_send));
+
+        remover.fail(() => {
+            removing_toast.Hide();
+            alert('Nie udało się usunąć testu.');
+        });
+        remover.done((data) => {
+            if(data.is_success === undefined){
+                removing_toast.Hide();
+                alert('Wystąpił nieznany błąd podczas usuwania testu.');
+            }else if(data.is_success === false){
+                removing_toast.Hide();
+                alert('Błąd: ' + data.message);
+            }else{
+                window.location = 'testy/biblioteka';
+            }
+        });
     }
 }
