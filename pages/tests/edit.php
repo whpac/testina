@@ -44,7 +44,7 @@ if(!$test->IsMadeByUser($current_user)){
 
 $questions = $test->GetQuestions();
 ?>
-<h1><span class="secondary">Edycja:</span> <?php echo($test->GetName()); ?></h1>
+<h1><span class="secondary">Edycja:</span> <span id="heading-test-title"><?php echo($test->GetName()); ?></span></h1>
 <div class="card">
     <h2>Pytania</h2>
     <table class="table full-width">
@@ -91,21 +91,30 @@ $questions = $test->GetQuestions();
 </div>
 
 <div class="card">
-    <h2 class="todo">Ustawienia testu</h2>
+    <h2>Ustawienia testu</h2>
     <div class="grid-form">
-        <label>Nazwa:</label>
-        <?php echo($test->GetName()); ?>
-        <label>Mnożnik pytań:</label>
-        <?php echo($test->GetQuestionMultiplier()); ?>
+        <label for="question-name-input">Nazwa:</label>
+        <input id="question-name-input" type="text" size="45" class="narrow" onchange="TestEditor.MadeChangesToTestSettings()" value="<?php echo($test->GetName()); ?>" />
+        <label for="question-multiplier">Mnożnik pytań:</label>
+        <span>
+            <input id="question-multiplier" type="number" value="<?php echo($test->GetQuestionMultiplier()); ?>" step="any" min="0" onchange="TestEditor.MadeChangesToTestSettings()" />
+            <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a>
+        </span>
+        <p class="description secondary">
+            Ta wartość oznacza, ile razy każde pytanie zostanie wyświetlone użytkownikowi.
+            Szczegółowy opis znajduje się w <a href="pomoc" class="todo" target="_blank">artykule pomocy</a>.
+        </p>
         <div class="fieldset">
-            Limit czasu na podejście<br />
-            <input type="radio" name="time-limit" checked />
-            <input type="number" id="set-time-limit" />
+            Limit czasu na podejście <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a><br />
+            <input type="radio" name="time-limit" <?php if($test->HasTimeLimit()) echo('checked'); ?> onchange="TestEditor.UpdateTimeLimitInput();" />
+            <input type="number" id="set-time-limit" min="1" <?php echo($test->HasTimeLimit() ? ('value="'.($test->GetTimeLimit() / 60).'"') : 'value="15" disabled'); ?> onchange="TestEditor.MadeChangesToTestSettings()" />
             <label for="set-time-limit">minut</label><br />
-            <input type="radio" name="time-limit" id="no-time-limit"/>
+            <input type="radio" name="time-limit" id="no-time-limit" <?php if(!$test->HasTimeLimit()) echo('checked'); ?> onchange="TestEditor.UpdateTimeLimitInput();" />
             <label for="no-time-limit">Brak limitu</label>
-            <?php echo($test->HasTimeLimit() ? $test->GetTimeLimit() : 'brak'); ?>
         </div>
+    </div>
+    <div class="card-buttons">
+        <button onclick="TestEditor.SaveTestSettings()">Zapisz</button>
     </div>
 </div>
 

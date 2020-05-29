@@ -103,6 +103,7 @@ $api = [];
 $api['get_test'] = 'get_test.php';
 $api['remove_question'] = 'remove_question.php';
 $api['save_question'] = 'save_question.php';
+$api['save_test'] = 'save_test.php';
 $api['save_test_results'] = 'save_test_results.php';
 
 Properties::Set('pages.handlers.main_page', 'home');
@@ -130,8 +131,9 @@ NavbarStorage::AddItem('Biblioteka testów', ['href' => 'testy/biblioteka', 'ico
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Konto', ['href' => 'konto', 'icon' => 'fa-user-o']);
 NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out', 'css' => 'vulnerable']);
-
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
+NavbarStorage::AddItem('Pomoc', ['href' => 'pomoc', 'icon' => 'fa-question-circle']);
+
 NavbarStorage::AddItem('Strona testowa', ['href' => '_dev', 'icon' => 'fa-code']);
 NavbarStorage::AddItem('Do zrobienia', ['href' => 'https://github.com/whpac/testina/issues', 'icon' => 'fa-code']);
 

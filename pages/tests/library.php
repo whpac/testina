@@ -38,7 +38,7 @@ $tests = Entities\Test::GetTestsCreatedByUser($current_user);
         foreach($tests as $test){
             echo('<tr>');
             echo('<td>'.$test->GetName().'</td>');
-            echo('<td class="center wide-screen-only">'.$test->GetQuestionCount().'</td>');
+            echo('<td class="center wide-screen-only">'.count($test->GetQuestions()).' (×'.$test->GetQuestionMultiplier().')</td>');
             echo('<td class="center wide-screen-only">'.$test->GetCreationDate()->format('d.m.Y H:i').'</td>');
             echo('<td class="wide-screen-only"><button class="compact">Przypisz</button></td>');
             echo('<td class="wide-screen-only"><a class="button compact" href="testy/edytuj/'.$test->GetId().'">Edytuj</a></td>');

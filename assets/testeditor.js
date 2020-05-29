@@ -178,7 +178,7 @@ var TestEditor = {
 
         Hide: function(){
             Dialogs.HideDialog(this.Element);
-            GlobalState.PreventFromExit = false;
+            GlobalState.RemovePreventFromExitReason('question_editor');
         },
 
         CancelChanges: function(){
@@ -279,7 +279,7 @@ var TestEditor = {
 
         MadeChanges: function(){
             this.AreChangesMade = true;
-            GlobalState.PreventFromExit = true;
+            GlobalState.AddPreventFromExitReason('question_editor');
         },
 
         RemoveAnswer: function(ans_id){
@@ -382,5 +382,48 @@ var TestEditor = {
                 q_index++;
             }
         });
+    },
+
+    UpdateTimeLimitInput: function(){
+        this.MadeChangesToTestSettings();
+        document.getElementById('set-time-limit').disabled = document.getElementById('no-time-limit').checked;
+    },
+
+    MadeChangesToTestSettings: function(){
+        GlobalState.AddPreventFromExitReason('test_settings');
+    },
+
+    SaveTestSettings: function(){
+        let data_to_send = {};
+        data_to_send.test_id = this.TestId;
+        data_to_send.test_name = document.getElementById('question-name-input').value;
+        data_to_send.question_multiplier = document.getElementById('question-multiplier').value;
+        data_to_send.time_limit = document.getElementById('set-time-limit').value * 60;
+        if(document.getElementById('set-time-limit').disabled) data_to_send.time_limit = 0;
+
+        let saving_toast = Toasts.ShowPersistent('Zapisywanie...');
+
+        let saver = $.post('api/save_test', JSON.stringify(data_to_send));
+
+        saver.fail(() => {
+            saving_toast.Hide();
+            alert('Nie udało się zapisać ustawień.');
+        });
+        saver.done((data) => {
+            saving_toast.Hide();
+            if(data.is_success === undefined)
+                alert('Wystąpił nieznany błąd podczas zapisywania ustawień.');
+            else if(data.is_success === false)
+                alert('Błąd: ' + data.message);
+            else{
+                Toasts.Show('Ustawienia zostały zapisane.');
+                this.UpdateTestTitle(data_to_send.test_name);
+                GlobalState.RemovePreventFromExitReason('test_settings');
+            }
+        });
+    },
+
+    UpdateTestTitle: function(new_title){
+        document.getElementById('heading-test-title').innerText = new_title;
     }
 }

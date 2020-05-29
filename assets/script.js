@@ -16,7 +16,7 @@ function onLoad(){
     $('#end-button').on('click', Tests.EndTest);
 
     window.addEventListener('beforeunload', (event) => {
-        if(GlobalState.PreventFromExit){
+        if(GlobalState.PreventsFromExit()){
             // Cancel the event as stated by the standard.
             event.preventDefault();
             // Chrome requires returnValue to be set.
@@ -92,5 +92,16 @@ function truncate(str, length){
 }
 
 var GlobalState = {
-    PreventFromExit: false
+    PreventFromExitReasons: new Set(),
+    PreventsFromExit: function(){
+        return this.PreventFromExitReasons.size != 0;
+    },
+
+    AddPreventFromExitReason: function(reason){
+        this.PreventFromExitReasons.add(reason);
+    },
+
+    RemovePreventFromExitReason: function(reason){
+        this.PreventFromExitReasons.delete(reason);
+    }
 };

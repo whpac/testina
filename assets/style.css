@@ -114,6 +114,7 @@ body.preload * {transition:none !important;}
 em {font-weight:500; font-style:normal;}
 hr {border:none; border-top:1px solid var(--nav-separator-color); margin:0.5em 0;}
 hr.spaced {margin:1em 0;}
+p {text-align:justify;}
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
 
@@ -207,8 +208,9 @@ aside.mobile-header h1 {
 .grid-form button, .grid-form select {grid-column:2; justify-self:start;}
 .grid-form input.narrow {justify-self:start;}
 .grid-form .fieldset {grid-column:1 / span 2;}
+.grid-form .description {grid-column:1 / span 2; margin:-5px 0 5px 10px; font-size:0.9em;}
 .fieldset p {margin:0 0;}
-.get-help {font-size:0.95em; margin-left:5px;}
+.get-help {font-size:0.95em; margin-left:5px; text-decoration:none;}
 
 textarea {resize:vertical; min-height:3em; font-family:inherit;}
 input[type=text], input[type=password], input[type=number], textarea {
@@ -221,6 +223,10 @@ input[type=text]:hover, input[type=password]:hover, input[type=number]:hover, te
 input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, textarea:focus {
     border-color:var(--input-active-border-color); outline:none;
     box-shadow:0 0 2px var(--input-active-border-color);
+}
+input[type=text]:disabled, input[type=password]:disabled, input[type=number]:disabled, textarea:disabled {
+    background:var(--background-empty-color); border:1px solid var(--input-border-color);
+    color:var(--text-secondary-color);
 }
 input[type=text].error, input[type=password].error, input[type=number].error, textarea.error {
     border-color:var(--error-color); color:var(--text-primary-color);
