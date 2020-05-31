@@ -176,6 +176,7 @@ for($i=0; $i<count($questions); $i++){
             <select id="question-type" onchange="TestEditor.EditQuestionDialog.MadeChanges()">
                 <option value="0">Jednokrotnego wyboru</option>
                 <option value="1">Wielokrotnego wyboru</option>
+                <option value="2">Otwarte</option>
             </select>
             <label for="points">Liczba punktów:</label>
             <input type="number" min="0" step="any" id="points" class="narrow" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
