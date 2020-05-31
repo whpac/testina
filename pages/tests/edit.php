@@ -100,7 +100,7 @@ $questions = $test->GetQuestions();
     <h2>Ustawienia testu</h2>
     <div class="grid-form">
         <label for="question-name-input">Nazwa:</label>
-        <input id="question-name-input" type="text" size="45" class="narrow" onchange="TestEditor.MadeChangesToTestSettings()" value="<?php echo($test->GetName()); ?>" />
+        <input id="question-name-input" type="text" class="narrow" onchange="TestEditor.MadeChangesToTestSettings()" value="<?php echo($test->GetName()); ?>" />
         <label for="question-multiplier">Mnożnik pytań:</label>
         <span>
             <input id="question-multiplier" type="number" value="<?php echo($test->GetQuestionMultiplier()); ?>" step="any" min="0" onchange="TestEditor.MadeChangesToTestSettings()" />

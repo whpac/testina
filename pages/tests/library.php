@@ -35,7 +35,7 @@ $tests = Entities\Test::GetTestsCreatedByUser($current_user);
             echo('<td class="wide-screen-only"><button class="compact todo">Przypisz</button></td>');
             echo('<td class="wide-screen-only"><a class="button compact" href="testy/edytuj/'.$test->GetId().'">Edytuj</a></td>');
             echo('<td class="narrow-screen-only right"><button onclick="');
-            echo('Library.DisplaySummaryDialog('.$test->GetId().', \''.$test->GetName().'\', '.$test->GetQuestionCount().', \''.$test->GetCreationDate()->format('d.m.Y H:i').'\')');
+            echo('Library.DisplaySummaryDialog('.$test->GetId().', \''.$test->GetName().'\', \''.count($test->GetQuestions()).' (×'.$test->GetQuestionMultiplier().')\', \''.$test->GetCreationDate()->format('d.m.Y H:i').'\')');
             echo('"><i class="fa fa-ellipsis-h"></i></button>');
             echo('</td>');
             echo('</tr>');
