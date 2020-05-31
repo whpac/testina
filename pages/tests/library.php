@@ -6,7 +6,7 @@ $tests = Entities\Test::GetTestsCreatedByUser($current_user);
 ?>
 <h1>Biblioteka testów</h1>
 <div class="card semi-wide">
-    <a class="button header-button todo" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>
+    <a class="button header-button" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>
     <h2>Moje testy</h2>
     <p class="secondary">Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.</p>
     <table class="table full-width">
@@ -26,21 +26,13 @@ $tests = Entities\Test::GetTestsCreatedByUser($current_user);
             <th class="wide-screen-only"></th>
             <th class="narrow-screen-only"></th>
         </tr>
-        <tr>
-            <td>Lorem ipsum</td>
-            <td class="center wide-screen-only">5</td>
-            <td class="center wide-screen-only">01.04. 12:34</td>
-            <td class="wide-screen-only"><button class="compact todo" onclick="Dialogs.ShowDialog('assign-dialog')">Przypisz</button></td>
-            <td class="wide-screen-only"><a class="button compact todo">Edytuj</a></td>
-            <td class="narrow-screen-only right"><button><i class="fa fa-ellipsis-h"></i></button></td>
-        </tr>
         <?php
         foreach($tests as $test){
             echo('<tr>');
             echo('<td>'.$test->GetName().'</td>');
             echo('<td class="center wide-screen-only">'.count($test->GetQuestions()).' (×'.$test->GetQuestionMultiplier().')</td>');
             echo('<td class="center wide-screen-only">'.$test->GetCreationDate()->format('d.m.Y H:i').'</td>');
-            echo('<td class="wide-screen-only"><button class="compact">Przypisz</button></td>');
+            echo('<td class="wide-screen-only"><button class="compact todo">Przypisz</button></td>');
             echo('<td class="wide-screen-only"><a class="button compact" href="testy/edytuj/'.$test->GetId().'">Edytuj</a></td>');
             echo('<td class="narrow-screen-only right"><button onclick="');
             echo('Library.DisplaySummaryDialog('.$test->GetId().', \''.$test->GetName().'\', '.$test->GetQuestionCount().', \''.$test->GetCreationDate()->format('d.m.Y H:i').'\')');
