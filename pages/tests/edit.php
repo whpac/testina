@@ -138,6 +138,7 @@ for($i=0; $i<count($questions); $i++){
     echo('type: '.$question->GetType().',');
     echo('points: '.$question->GetPoints().',');
     echo('points_counting: '.$question->GetPointsCounting().',');
+    echo('max_typos: '.$question->GetMaxNumberOfTypos().',');
     echo('persistent: true,');
 
     echo('answers: [');
@@ -173,14 +174,14 @@ for($i=0; $i<count($questions); $i++){
             <label for="question-text">Treść:</label>
             <textarea rows="3" id="question-text" onchange="TestEditor.EditQuestionDialog.MadeChanges()"></textarea>
             <label for="question-type">Rodzaj:</label>
-            <select id="question-type" onchange="TestEditor.EditQuestionDialog.MadeChanges()">
+            <select id="question-type" onchange="TestEditor.EditQuestionDialog.OnQuestionTypeChange()">
                 <option value="0">Jednokrotnego wyboru</option>
                 <option value="1">Wielokrotnego wyboru</option>
                 <option value="2">Otwarte</option>
             </select>
             <label for="points">Liczba punktów:</label>
             <input type="number" min="0" step="any" id="points" class="narrow" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
-            <div class="fieldset">
+            <div class="fieldset" id="points-counting-fieldset">
                 Sposób liczenia punktów:
                 <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <br />
@@ -188,6 +189,13 @@ for($i=0; $i<count($questions); $i++){
                 <label for="points-counting-binary">Zero-jedynkowo</label><br />
                 <input type="radio" name="points-counting" id="points-counting-linear" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
                 <label for="points-counting-linear">Po ułamku za każdą poprawną odpowiedź</label>
+            </div>
+            <div class="fieldset" id="typos-fieldset">
+                Literówki:<br />
+                <input type="radio" name="typos" id="typos-disallow" onchange="TestEditor.EditQuestionDialog.MadeChanges(); TestEditor.EditQuestionDialog.Features.EnableMaxTyposInputFieldIfNeeded()" />
+                <label for="typos-disallow">Nie toleruj</label><br />
+                <input type="radio" name="typos" id="typos-allow" onchange="TestEditor.EditQuestionDialog.MadeChanges(); TestEditor.EditQuestionDialog.Features.EnableMaxTyposInputFieldIfNeeded()" />
+                <label for="typos-allow">Toleruj tyle literówek: <input type="number" id="typos-allow-count" step="1" min="0" onchange="TestEditor.EditQuestionDialog.MadeChanges();" /></label>
             </div>
         </div>
         <hr class="spaced" />

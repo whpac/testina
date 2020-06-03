@@ -10,9 +10,10 @@ class Question extends Entity {
     protected /* int */ $id;
     protected /* int */ $test_id;
     protected /* string */ $text;
-    protected /* int */ $type;
+    protected /* int8 */ $type;
     protected /* float */ $points;
-    protected /* int */ $points_counting;
+    protected /* int8 */ $points_counting;
+    protected /* int8 */ $max_typos;
 
     const TYPE_SINGLE_CHOICE = 0;
     const TYPE_MULTI_CHOICE = 1;
@@ -35,6 +36,7 @@ class Question extends Entity {
         settype($this->type, 'int');
         settype($this->points, 'float');
         settype($this->points_counting, 'int');
+        settype($this->max_typos, 'int');
     }
 
     public /* int */ function GetId(){
@@ -67,6 +69,11 @@ class Question extends Entity {
         return $this->points_counting;
     }
 
+    public /* int */ function GetMaxNumberOfTypos(){
+        $this->FetchIfNeeded();
+        return $this->max_typos;
+    }
+
     public /* Answer[] */ function GetAnswers(){
         return Answer::GetAnswersForQuestion($this);
     }
@@ -87,11 +94,12 @@ class Question extends Entity {
         return $questions;
     }
 
-    public /* bool */ function Update(/* string? */ $text = null, /* int? */ $type = null, /* float? */ $points = null, /* int? */ $points_counting = null){
-        if(is_null($text)) $text = $this->text;
-        if(is_null($type)) $type = $this->type;
-        if(is_null($points)) $points = $this->points;
-        if(is_null($points_counting)) $points_counting = $this->points_counting;
+    public /* bool */ function Update(/* string? */ $text = null, /* int? */ $type = null, /* float? */ $points = null, /* int? */ $points_counting = null, /* int? */ $max_typos = null){
+        if(is_null($text)) $text = $this->GetText();
+        if(is_null($type)) $type = $this->GetType();
+        if(is_null($points)) $points = $this->GetPoints();
+        if(is_null($points_counting)) $points_counting = $this->GetPointsCounting();
+        if(is_null($max_typos)) $max_typos = $this->GetMaxNumberOfTypos();
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
@@ -100,6 +108,7 @@ class Question extends Entity {
                 ->Set('type', $type)
                 ->Set('points', $points)
                 ->Set('points_counting', $points_counting)
+                ->Set('max_typos', $max_typos)
                 ->Where('id', '=', $this->id)
                 ->Run();
         
@@ -116,11 +125,12 @@ class Question extends Entity {
         return $result;
     }
 
-    public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting){
+    public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting, /* int */ $max_typos){
         if(is_null($text)) throw new RichExcpetion('Treść pytania nie może być null.');
         if(is_null($type)) throw new RichExcpetion('Typ pytania nie może być null.');
         if(is_null($points)) throw new RichExcpetion('Ilość punktów nie może być null.');
         if(is_null($points_counting)) throw new RichExcpetion('Metoda liczenia punktów nie może być null.');
+        if(is_null($max_typos)) throw new RichException('Maksymalna ilość literówek nie może być null.');
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
@@ -130,6 +140,7 @@ class Question extends Entity {
                 ->Value('type', $type)
                 ->Value('points', $points)
                 ->Value('points_counting', $points_counting)
+                ->Value('max_typos', $max_typos)
                 ->Run();
         
         if($result === false) throw new RichException('Nie udało się dodać pytania.');

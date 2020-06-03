@@ -35,6 +35,8 @@ var TestEditor = {
         this.EditQuestionDialog.Features.QuestionType.value = this.Questions[question_id].type;
         this.EditQuestionDialog.Features.Points.value = this.Questions[question_id].points;
         this.EditQuestionDialog.Features.CheckCountingField(this.Questions[question_id].points_counting);
+        this.EditQuestionDialog.Features.CheckTyposField(this.Questions[question_id].max_typos);
+        this.EditQuestionDialog.Features.OnQuestionTypeChange();
         this.EditQuestionDialog.Features.DisplayAnswers();
 
         this.EditQuestionDialog.ClearErrorStates();
@@ -95,6 +97,29 @@ var TestEditor = {
                 if(this.PointsCounting.Binary.checked) return Tests.COUNTING_BINARY;
                 if(this.PointsCounting.Linear.checked) return Tests.COUNTING_LINEAR;
                 return 0;
+            },
+
+            OnQuestionTypeChange: function(){
+                this.PointsCounting.Root.style.display = this.QuestionType.value == Tests.TYPE_MULTI_CHOICE ? 'block' : 'none';
+                this.Typos.Root.style.display = this.QuestionType.value == Tests.TYPE_OPEN_ANSWER ? 'block' : 'none';
+            },
+
+            GetMaxTypos: function(){
+                if(this.QuestionType.value != Tests.TYPE_OPEN_ANSWER) return 0;
+                if(this.Typos.Disallow.checked) return 0;
+                return this.Typos.AllowCount.value;
+            },
+
+            CheckTyposField: function(max_typos){
+                if(max_typos == 0) this.Typos.Disallow.checked = true;
+                else this.Typos.Allow.checked = true;
+
+                this.Typos.AllowCount.value = max_typos;
+                this.EnableMaxTyposInputFieldIfNeeded();
+            },
+
+            EnableMaxTyposInputFieldIfNeeded: function(){
+                this.Typos.AllowCount.disabled = !this.Typos.Allow.checked;
             },
 
             DisplayAnswers: function(){
@@ -203,6 +228,7 @@ var TestEditor = {
             data_to_send.type = this.Features.QuestionType.value;
             data_to_send.points = this.Features.Points.value;
             data_to_send.points_counting = this.Features.GetCountingValue();
+            data_to_send.max_typos = this.Features.GetMaxTypos();
             data_to_send.answers = this.AnswerList;
             data_to_send.removed_answers = this.RemovedAnswers;
 
@@ -270,8 +296,15 @@ var TestEditor = {
             this.Features.Points = document.getElementById('points');
 
             this.Features.PointsCounting = {};
+            this.Features.PointsCounting.Root = document.getElementById('points-counting-fieldset');
             this.Features.PointsCounting.Binary = document.getElementById('points-counting-binary');
             this.Features.PointsCounting.Linear = document.getElementById('points-counting-linear');
+
+            this.Features.Typos = {};
+            this.Features.Typos.Root = document.getElementById('typos-fieldset');
+            this.Features.Typos.Disallow = document.getElementById('typos-disallow');
+            this.Features.Typos.Allow = document.getElementById('typos-allow');
+            this.Features.Typos.AllowCount = document.getElementById('typos-allow-count');
 
             this.Features.Answers = document.getElementById('answers-tbody');
             this.Features.ErrorBox = document.getElementById('edit-question-error');
@@ -312,8 +345,14 @@ var TestEditor = {
             TestEditor.Questions[question_id].type = this.Features.QuestionType.value;
             TestEditor.Questions[question_id].points = this.Features.Points.value;
             TestEditor.Questions[question_id].points_counting = this.Features.GetCountingValue();
+            TestEditor.Questions[question_id].max_typos = this.Features.GetMaxTypos();
             TestEditor.Questions[question_id].persistent = true;
             TestEditor.UpdateQuestionRow(question_id);
+        },
+
+        OnQuestionTypeChange: function(){
+            this.MadeChanges();
+            this.Features.OnQuestionTypeChange();
         }
     },
 

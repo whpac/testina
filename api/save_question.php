@@ -29,7 +29,7 @@ if($question_id > 0){
         return;
     }
 
-    $result = $question->Update($json->text, $json->type, $json->points, $json->points_counting);
+    $result = $question->Update($json->text, $json->type, $json->points, $json->points_counting, $json->max_typos);
     if(!$result){
         Layout\ApiRenderer::ThrowError('Nie udało się zmodyfikować pytania w bazie danych.');
         return;
@@ -43,7 +43,7 @@ if($question_id > 0){
     }
 
     try{
-        $question = Entities\Question::Create($test, $json->text, $json->type, $json->points, $json->points_counting);
+        $question = Entities\Question::Create($test, $json->text, $json->type, $json->points, $json->points_counting, $json->max_typos);
     }catch(Exception $e){
         Layout\ApiRenderer::ThrowError('Nie udało się zapisać pytania w bazie danych.');
         return;
