@@ -267,6 +267,10 @@ var TestEditor = {
                 errors.push('Treść pytania nie może być pusta.');
             }
 
+            if(this.AnswerList.length == 0){
+                errors.push('Pytanie musi mieć przynajmniej jeden wariant odpowiedzi.');
+            }
+
             let correct_answers_count = 0;
             this.AnswerList.forEach((answer) => {
                 if(answer.correct) correct_answers_count++;
