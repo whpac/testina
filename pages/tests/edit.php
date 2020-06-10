@@ -75,8 +75,8 @@ $questions = $test->GetQuestions();
                 echo('<td class="secondary">'.$i.'.</td>');
                 echo('<td>'.Utils\String::Truncate($question->GetText(), 60).'</td>');
                 echo('<td class="center">'.$question->GetPoints().'</td>');
-                echo('<td><button class="compact" onclick="TestEditor.EditQuestion('.$question->GetId().');">Edytuj</button></td>');
-                echo('<td><button class="compact error fa fa-trash" title="Usuń pytanie" onclick="TestEditor.RemoveQuestion('.$question->GetId().')"></button></td>');
+                echo('<td><button class="compact event-edit-question" data-question-id="'.$question->GetId().'">Edytuj</button></td>');
+                echo('<td><button class="compact error fa fa-trash event-remove-question" data-question-id="'.$question->GetId().'" title="Usuń pytanie"></button></td>');
                 echo('</tr>');
                 $i++;
             }
@@ -92,7 +92,7 @@ $questions = $test->GetQuestions();
         </tbody>
     </table>
     <div class="center">
-        <button onclick="TestEditor.AddQuestion();">Dodaj pytanie</button>
+        <button id="add-question-button">Dodaj pytanie</button>
     </div>
 </div>
 
@@ -100,10 +100,10 @@ $questions = $test->GetQuestions();
     <h2>Ustawienia testu</h2>
     <div class="grid-form">
         <label for="question-name-input">Nazwa:</label>
-        <input id="question-name-input" type="text" class="narrow" onchange="TestEditor.MadeChangesToTestSettings()" value="<?php echo($test->GetName()); ?>" />
+        <input id="question-name-input" type="text" class="narrow event-made-changes-to-settings" value="<?php echo($test->GetName()); ?>" />
         <label for="question-multiplier">Mnożnik pytań:</label>
         <span>
-            <input id="question-multiplier" type="number" value="<?php echo($test->GetQuestionMultiplier()); ?>" step="any" min="0" onchange="TestEditor.MadeChangesToTestSettings()" />
+            <input id="question-multiplier" class="event-made-changes-to-settings" type="number" value="<?php echo($test->GetQuestionMultiplier()); ?>" step="any" min="0" />
             <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a>
         </span>
         <p class="description secondary">
@@ -112,23 +112,24 @@ $questions = $test->GetQuestions();
         </p>
         <div class="fieldset">
             Limit czasu na podejście <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a><br />
-            <input type="radio" name="time-limit" <?php if($test->HasTimeLimit()) echo('checked'); ?> onchange="TestEditor.UpdateTimeLimitInput();" />
-            <input type="number" id="set-time-limit" min="1" <?php echo($test->HasTimeLimit() ? ('value="'.($test->GetTimeLimit() / 60).'"') : 'value="15" disabled'); ?> onchange="TestEditor.MadeChangesToTestSettings()" />
+            <input type="radio" name="time-limit" id="with-time-limit" class="event-update-test-time-limit" <?php if($test->HasTimeLimit()) echo('checked'); ?> />
+            <input type="number" id="set-time-limit" min="1" class="event-made-changes-to-settings" <?php echo($test->HasTimeLimit() ? ('value="'.($test->GetTimeLimit() / 60).'"') : 'value="15" disabled'); ?> />
             <label for="set-time-limit">minut</label><br />
-            <input type="radio" name="time-limit" id="no-time-limit" <?php if(!$test->HasTimeLimit()) echo('checked'); ?> onchange="TestEditor.UpdateTimeLimitInput();" />
+            <input type="radio" name="time-limit" id="no-time-limit" class="event-update-test-time-limit" <?php if(!$test->HasTimeLimit()) echo('checked'); ?> />
             <label for="no-time-limit">Brak limitu</label>
         </div>
     </div>
     <div class="card-buttons">
-        <button onclick="TestEditor.SaveTestSettings()">Zapisz</button>
-        <button class="error" onclick="TestEditor.RemoveTest()">Usuń test</button>
+        <button id="save-test-settings-button">Zapisz</button>
+        <button class="error" id="remove-test-button">Usuń test</button>
     </div>
 </div>
 
-<script>
+<script type="module">
+    import * as TestEditor from './scripts/js/testeditor';
     $(function(){
-        TestEditor.TestId = <?php echo($test->GetId()); ?>;
-        TestEditor.LoadQuestions({
+        let test_id = <?php echo($test->GetId()); ?>;
+        TestEditor.LoadQuestions(test_id, {
 <?php
 for($i=0; $i<count($questions); $i++){
     $question = $questions[$i];
@@ -172,7 +173,7 @@ for($i=0; $i<count($questions); $i++){
     <div class="content">
         <div class="grid-form">
             <label for="question-text">Treść:</label>
-            <textarea rows="3" id="question-text" onchange="TestEditor.EditQuestionDialog.MadeChanges()"></textarea>
+            <textarea rows="3" id="question-text" class="event-edit-question-made-changes"></textarea>
             <label for="question-type">Rodzaj:</label>
             <select id="question-type" onchange="TestEditor.EditQuestionDialog.OnQuestionTypeChange()">
                 <option value="0">Jednokrotnego wyboru</option>
@@ -180,22 +181,22 @@ for($i=0; $i<count($questions); $i++){
                 <option value="2">Otwarte</option>
             </select>
             <label for="points">Liczba punktów:</label>
-            <input type="number" min="0" step="any" id="points" class="narrow" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
+            <input type="number" min="0" step="any" id="points" class="narrow event-edit-question-made-changes" />
             <div class="fieldset" id="points-counting-fieldset">
                 Sposób liczenia punktów:
                 <a href="pomoc" class="get-help todo" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <br />
-                <input type="radio" name="points-counting" id="points-counting-binary" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
+                <input type="radio" name="points-counting" id="points-counting-binary" class="event-edit-question-made-changes" />
                 <label for="points-counting-binary">Zero-jedynkowo</label><br />
-                <input type="radio" name="points-counting" id="points-counting-linear" onchange="TestEditor.EditQuestionDialog.MadeChanges()" />
+                <input type="radio" name="points-counting" id="points-counting-linear" class="event-edit-question-made-changes" />
                 <label for="points-counting-linear">Po ułamku za każdą poprawną odpowiedź</label>
             </div>
             <div class="fieldset" id="typos-fieldset">
                 Literówki:<br />
-                <input type="radio" name="typos" id="typos-disallow" onchange="TestEditor.EditQuestionDialog.MadeChanges(); TestEditor.EditQuestionDialog.Features.EnableMaxTyposInputFieldIfNeeded()" />
+                <input type="radio" name="typos" id="typos-disallow" class="event-edit-question-made-changes" />
                 <label for="typos-disallow">Nie toleruj</label><br />
-                <input type="radio" name="typos" id="typos-allow" onchange="TestEditor.EditQuestionDialog.MadeChanges(); TestEditor.EditQuestionDialog.Features.EnableMaxTyposInputFieldIfNeeded()" />
-                <label for="typos-allow">Toleruj tyle literówek: <input type="number" id="typos-allow-count" step="1" min="0" onchange="TestEditor.EditQuestionDialog.MadeChanges();" /></label>
+                <input type="radio" name="typos" id="typos-allow" class="event-edit-question-made-changes" />
+                <label for="typos-allow">Toleruj tyle literówek: <input type="number" id="typos-allow-count" step="1" min="0" class="event-edit-question-made-changes" /></label>
             </div>
         </div>
         <hr class="spaced" />
@@ -227,7 +228,7 @@ for($i=0; $i<count($questions); $i++){
                 <tr>
                     <td></td>
                     <td>
-                        <button class="compact" onclick="TestEditor.EditQuestionDialog.AddAnswer()">Dodaj</button>
+                        <button class="compact" id="add-answer-button">Dodaj</button>
                     </td>
                     <td></td>
                     <td></td>
@@ -237,7 +238,7 @@ for($i=0; $i<count($questions); $i++){
         <div class="error" id="edit-question-error"></div>
     </div>
     <div class="buttons">
-        <button onclick="TestEditor.EditQuestionDialog.SaveChanges()">Zapisz</button>
-        <button class="secondary" onclick="TestEditor.EditQuestionDialog.CancelChanges()">Anuluj</button>
+        <button id="save-question-button">Zapisz</button>
+        <button class="secondary" id="cancel-question-changes-button">Anuluj</button>
     </div>
 </div>

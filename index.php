@@ -66,12 +66,12 @@ PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:300,4
 PageManager::AddStylesheet('font-awesome.min.css');
 PageManager::AddStylesheet('style.css');
 PageManager::AddScript('jquery-3.4.1.min.js');
-PageManager::AddScript('script.js');
-PageManager::AddScript('tests.js');
+PageManager::AddScript('scripts/js/script.js', true);
+/*PageManager::AddScript('tests.js');
 PageManager::AddScript('dialogs.js');
 PageManager::AddScript('library.js');
 PageManager::AddScript('toasts.js');
-PageManager::AddScript('testeditor.js');
+PageManager::AddScript('testeditor.js');*/
 PageManager::AddHeadTag('<base href="/p/" />');
 PageManager::SetRenderer(new \Layout\StandardRenderer());
 
