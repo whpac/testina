@@ -75,6 +75,9 @@ if($test->HasTimeLimit()){
     $time_limit = $assignment->GetTimeLimit()->format('d.m. H:i');
 }
 ?>
+<script type="module">
+import * as Tests from './scripts/js/tests';
+</script>
 <h1><span class="secondary">Rozwiąż:</span> <?php echo($test->GetName()); ?></h1>
 <div class="card semi-wide" id="test-invitation">
     <h2 class="center"><?php echo($test->GetName()); ?></h2>

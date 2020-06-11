@@ -9,6 +9,7 @@ import * as Dialogs from './dialogs';
 import * as Toasts from './toasts';
 import * as Typedefs from './typedefs';
 
+import { $Handles } from './eventhandlers';
 import { FormatTime, Round, ShuffleArray } from './functions';
 import { SaveTestResultsXHR } from './remote_ifaces';
 
@@ -69,11 +70,20 @@ export const TYPE_OPEN_ANSWER = 2;
 export const COUNTING_LINEAR = 0;
 export const COUNTING_BINARY = 1;
 
+$Handles('.start-test', 'click', LoadTestHandler);
+function LoadTestHandler(e: Event){
+    if(e.target == null) return;
+
+    let test_id = (<HTMLElement>e.target).dataset.testId;
+    if(test_id === undefined) throw 'Nie odnaleziono parametru data-test-id w tym elemencie.';
+    LoadTest(parseInt(test_id));
+}
+
 /**
  * Downloads a test from server and initialises it. Automatically displays the first question.
  * @param test_id - id of the test to display
  */
-export function LoadTest(test_id: number){
+function LoadTest(test_id: number){
     $('.test-summary > .buttons').hide();
     $('#test-loading-information').show();
 
@@ -169,10 +179,11 @@ function ShowQuestion(question_number: number){
     DisableAnswers = false;
 }
 
+$Handles('#check-button', 'click', MarkAnswers);
 /**
  * Marks answer buttons as good or wrong and updates score
  */
-export function MarkAnswers(){
+function MarkAnswers(){
     CurrentQuestion.number = CurrentQuestion.number ?? 0;
 
     $('#check-button').hide();
@@ -242,17 +253,19 @@ function CountPoints(question_number: number){
     }
 }
 
+$Handles('#next-button', 'click', GoToNextQuestion);
 /**
  * Switches to the next question
  */
-export function GoToNextQuestion(){
+function GoToNextQuestion(){
     ShowQuestion((CurrentQuestion.number ?? 0) + 1);
 }
 
+$Handles('#end-button', 'click', EndTest);
 /**
  * Finishes test, displays summary and sends results to the server
  */
-export function EndTest(){
+function EndTest(){
     $('#question-wrapper').hide();
     SendResults();
     ShowSummary();

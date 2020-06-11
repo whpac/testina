@@ -6,6 +6,7 @@ import * as Toasts from './toasts';
 import * as Typedefs from './typedefs';
 import EditQuestionDialogFeatures from './editquestiondialog_features';
 
+import { $Handles } from './eventhandlers';
 import { GetElement } from './functions';
 
 import { SaveQuestionXHR } from './remote_ifaces';
@@ -21,11 +22,11 @@ export default class EditQuestionDialog{
 
     constructor(){
         this.DialogElement = GetElement('question-dialog');
-        
-        this.MadeChanges = this.MadeChanges.bind(this);
-        this.AddAnswer = this.AddAnswer.bind(this);
-        this.SaveChanges = this.SaveChanges.bind(this);
-        this.CancelChanges = this.CancelChanges.bind(this);
+
+        $Handles('.event-edit-question-made-changes', 'change', this.MadeChanges.bind(this));
+        $Handles('#add-answer-button', 'click', this.AddAnswer.bind(this));
+        $Handles('#save-question-button', 'click', this.SaveChanges.bind(this));
+        $Handles('#cancel-question-changes-button', 'click', this.CancelChanges.bind(this));
     }
 
     Display(question_id: number){

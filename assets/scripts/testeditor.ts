@@ -4,6 +4,7 @@ import * as Toasts from './toasts';
 import * as Typedefs from './typedefs';
 
 import EditQuestionDialog from './editquestiondialog';
+import { $Handles } from './eventhandlers';
 import { GetElement, Truncate } from './functions';
 import { RemoveQuestionXHR, RemoveTestXHR, SaveTestXHR } from './remote_ifaces';
 
@@ -39,7 +40,8 @@ export function GetDialog(){
     return Dialog;
 }
 
-export function AddQuestion(){
+$Handles('#add-question-button', 'click', AddQuestion);
+function AddQuestion(){
     let new_question: Typedefs.QuestionDescriptor = {
         id: AutoQuestionId,
         text: '',
@@ -58,7 +60,16 @@ export function AddQuestion(){
     EditQuestion(new_question.id);
 }
 
-export function EditQuestion(question_id: number){
+$Handles('.event-edit-question', 'click', EditQuestionHandler);
+function EditQuestionHandler(e: Event){
+    if(e.target == null) return;
+
+    let question_id = (<HTMLElement>e.target).dataset.questionId;
+    if(question_id === undefined) throw 'Nie odnaleziono parametru data-question-id w tym elemencie.';
+    EditQuestion(parseInt(question_id));
+}
+
+function EditQuestion(question_id: number){
     Questions[question_id].persistent = Questions[question_id].persistent ?? true;
     Dialog.AnswerList = Questions[question_id].answers.map(o => Object.assign({}, o)); // clone
 
@@ -73,6 +84,15 @@ export function EditQuestion(question_id: number){
     Dialog.ClearErrorStates();
 
     Dialog.Display(question_id);
+}
+
+$Handles('.event-remove-question', 'click', RemoveQuestionHandler);
+function RemoveQuestionHandler(e: Event){
+    if(e.target == null) return;
+
+    let question_id = (<HTMLElement>e.target).dataset.questionId;
+    if(question_id === undefined) throw 'Nie odnaleziono parametru data-question-id w tym elemencie.';
+    RemoveQuestion(parseInt(question_id));
 }
 
 export function RemoveQuestion(question_id: number){
@@ -177,7 +197,8 @@ function RemoveQuestionRow(question_id: number){
     });
 }
 
-export function UpdateTimeLimitInput(){
+$Handles('.event-update-test-time-limit', 'change', UpdateTimeLimitInput);
+function UpdateTimeLimitInput(){
     MadeChangesToTestSettings();
 
     let time_limit_input = GetElement('set-time-limit') as HTMLInputElement;
@@ -186,11 +207,13 @@ export function UpdateTimeLimitInput(){
     time_limit_input.disabled = !with_time_limit_input.checked;
 }
 
-export function MadeChangesToTestSettings(){
+$Handles('.event-made-changes-to-settings', 'change', MadeChangesToTestSettings);
+function MadeChangesToTestSettings(){
     GlobalState.AddPreventFromExitReason('test_settings');
 }
 
-export function SaveTestSettings(){
+$Handles('#save-test-settings-button', 'click', SaveTestSettings);
+function SaveTestSettings(){
     let question_name_input = GetElement('question-name-input') as HTMLInputElement;
     let question_multiplier_input = GetElement('question-multiplier') as HTMLInputElement;
     let time_limit_input = GetElement('set-time-limit') as HTMLInputElement;
@@ -231,7 +254,8 @@ function UpdateTestTitle(new_title: string){
     heading_element.innerText = new_title;
 }
 
-export function RemoveTest(){
+$Handles('#remove-test-button', 'click', RemoveTest);
+function RemoveTest(){
     if(!window.confirm('Usunięcia testu nie da się cofnąć. Usunąć mimo to?')) return;
 
     let data_to_send: RemoveTestXHR = {
