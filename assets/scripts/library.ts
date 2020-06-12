@@ -1,6 +1,38 @@
 import * as Dialogs from './dialogs';
 
-function DisplaySummaryDialog(test_id: number, test_name: string, question_count: string, creation_date: string){
+import { $Handles } from './eventhandlers';
+import { GetElement } from './functions';
+import { Hide } from './dialog_backdrop';
+
+class QuestionSummaryDialog{
+    DialogElement: HTMLElement;
+
+    constructor(){
+        this.DialogElement = GetElement('question-summary-dialog');
+    }
+
+    Show(){
+        Dialogs.ShowDialog(this.DialogElement);
+    }
+
+    Hide(){
+        Dialogs.HideDialog(this.DialogElement);
+    }
+}
+
+let Dialog = new QuestionSummaryDialog();
+
+$Handles('.event-display-question-summary', 'click', DisplaySummaryDialog);
+function DisplaySummaryDialog(){
+    Dialog.Show();
+}
+
+$Handles('.event-hide-question-summary', 'click', HideSummaryDialog);
+function HideSummaryDialog(){
+    Dialog.Hide();
+}
+
+function DisplaySummaryDialog2(test_id: number, test_name: string, question_count: string, creation_date: string){
     let content = document.createElement('table');
     content.classList.add('table', 'full-width', 'center');
 
