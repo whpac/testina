@@ -76,7 +76,7 @@ if($test->HasTimeLimit()){
 }
 ?>
 <script type="module">
-import * as Tests from './scripts/js/tests';
+import * as Tests from './js/tests';
 </script>
 <h1><span class="secondary">Rozwiąż:</span> <?php echo($test->GetName()); ?></h1>
 <div class="card semi-wide" id="test-invitation">

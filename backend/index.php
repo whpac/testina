@@ -21,7 +21,7 @@ use \UEngine\Modules\Pages\Navbar;
 use \UEngine\Modules\Pages\Navbar\NavbarStorage;
 
 // Uses UE.dev not to duplicate files
-require('../ue/uengine/uengine.php');
+require('../../ue/uengine/uengine.php');
 require('autoincluder.php');
 
 UEngine\SetLanguageList(['pl']);
@@ -65,8 +65,8 @@ PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:400&d
 PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:300,400i,500,700&display=fallback');
 PageManager::AddStylesheet('font-awesome.min.css');
 PageManager::AddStylesheet('style.css');
-PageManager::AddScript('jquery-3.4.1.min.js');
-PageManager::AddScript('scripts/js/script.js', true);
+PageManager::AddScript('js/jquery-3.4.1.min.js');
+PageManager::AddScript('js/script.js', true);
 /*PageManager::AddScript('tests.js');
 PageManager::AddScript('dialogs.js');
 PageManager::AddScript('library.js');
@@ -122,7 +122,7 @@ UrlHandler::AddHandler($handler);
 UrlHandler::AddHandler($api_handler);
 
 // Initializing a resource handler (stylesheets, scripts, fonts etc.)
-$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'json'], 'assets/');
+$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'json'], '../assets/');
 UrlHandler::AddHandler($res_handler);
 
 // Initializing a navbar

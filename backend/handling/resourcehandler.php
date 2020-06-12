@@ -10,7 +10,7 @@ class ResourceHandler extends Handlers\ResourceHandler{
     public /* string */ function GetPageByUrl($url){
         $res = parent::GetPageByUrl($url);
 
-        $scripts_path = 'scripts/js';
+        $scripts_path = 'js';
         if(is_null($res) && substr($url, 0, strlen($scripts_path)) == $scripts_path){
             $res = parent::GetPageByUrl($url.'.js');
         }

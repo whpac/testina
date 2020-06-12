@@ -5,7 +5,7 @@ $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser(
 $tests = Entities\Test::GetTestsCreatedByUser($current_user);
 ?>
 <script type="module">
-import * as Library from './scripts/js/library';
+import * as Library from './js/library';
 </script>
 <h1>Biblioteka testów</h1>
 <div class="card semi-wide">

@@ -8,17 +8,15 @@
         ],
         "allowJs": false,
         "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "module": "esnext",
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "outDir": "assets/scripts/js"
+        "outDir": "assets/js"
     },
     "include": [
-        "assets/scripts"
+        "assets/ts"
     ]
 }

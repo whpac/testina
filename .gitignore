@@ -2,15 +2,12 @@
 assets/fonts
 assets/font-awesome*
 
-# Ignore jQuery file
-assets/jquery*
+# Ignore compiled TS
+assets/js/
 
 # Ignore node modules
 node_modules/
 package-lock.json
-
-# Ignore compiled TS
-assets/scripts/js/
 
 # Ignore test page
 backend/pages/_dev.php

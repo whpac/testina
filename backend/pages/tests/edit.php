@@ -126,7 +126,7 @@ $questions = $test->GetQuestions();
 </div>
 
 <script type="module">
-    import * as TestEditor from './scripts/js/testeditor';
+    import * as TestEditor from './js/testeditor';
     $(function(){
         let test_id = <?php echo($test->GetId()); ?>;
         TestEditor.LoadQuestions(test_id, {
