@@ -13,4 +13,4 @@ package-lock.json
 assets/scripts/js/
 
 # Ignore test page
-pages/_dev.php
+backend/pages/_dev.php

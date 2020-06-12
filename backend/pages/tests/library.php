@@ -4,6 +4,9 @@
 $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
 $tests = Entities\Test::GetTestsCreatedByUser($current_user);
 ?>
+<script type="module">
+import * as Library from './scripts/js/library';
+</script>
 <h1>Biblioteka testów</h1>
 <div class="card semi-wide">
     <a class="button header-button" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>
@@ -34,14 +37,27 @@ $tests = Entities\Test::GetTestsCreatedByUser($current_user);
             echo('<td class="center wide-screen-only">'.$test->GetCreationDate()->format('d.m.Y H:i').'</td>');
             echo('<td class="wide-screen-only"><button class="compact todo">Przypisz</button></td>');
             echo('<td class="wide-screen-only"><a class="button compact" href="testy/edytuj/'.$test->GetId().'">Edytuj</a></td>');
-            echo('<td class="narrow-screen-only right"><button onclick="');
-            echo('Library.DisplaySummaryDialog('.$test->GetId().', \''.$test->GetName().'\', \''.count($test->GetQuestions()).' (×'.$test->GetQuestionMultiplier().')\', \''.$test->GetCreationDate()->format('d.m.Y H:i').'\')');
-            echo('"><i class="fa fa-ellipsis-h"></i></button>');
+            echo('<td class="narrow-screen-only right"><button class="event-display-question-summary"><i class="fa fa-ellipsis-h"></i></button>');
             echo('</td>');
             echo('</tr>');
         }
         ?>
     </table>
+</div>
+
+<div class="dialog" id="question-summary-dialog">
+    <div class="content">
+        <table class="table full-width center">
+            <tr><th></th><th></th></tr>
+            <tr><td>Ilość pytań</td><td>0</td></tr>
+            <tr><td>Data utworzenia</td><td>1.01.1970</td></tr>
+        </table>
+    </div>
+    <div class="buttons">
+        <button class="event-hide-question-summary">Zamknij</button>
+        <button class="secondary">Przypisz</button>
+        <button class="secondary">Edytuj</button>
+    </div>
 </div>
 
 <div class="dialog rich" id="assign-dialog">
