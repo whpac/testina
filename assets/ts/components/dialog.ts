@@ -1,4 +1,4 @@
-import * as Dialogs from './dialogs';
+import * as Dialogs from '../dialogs';
 
 interface DialogButtonDescriptor{
     Text: string,
@@ -6,16 +6,20 @@ interface DialogButtonDescriptor{
     Classes: string[]
 }
 
-export default class DialogObject{
+export default class Dialog{
     DialogElement: HTMLElement;
-    DialogClasses: string[] = [];
-    Header: string = '';
+    HeaderElement: HTMLHeadingElement;
     Content: (string | HTMLElement)[] = [];
     Buttons: DialogButtonDescriptor[] = [];
     IsRendered: boolean = false;
 
     constructor(){
         this.DialogElement = document.createElement('div');
+        this.DialogElement.setAttribute('role', 'alertdialog');
+        this.DialogElement.classList.add('dialog');
+
+        this.HeaderElement = document.createElement('h2');
+        this.DialogElement.appendChild(this.HeaderElement);
     }
 
     /**
@@ -23,7 +27,7 @@ export default class DialogObject{
      * @param text Header
      */
     SetHeader(text: string){
-        this.Header = text;
+        this.HeaderElement.innerText = text;
     }
 
     /**
@@ -49,23 +53,13 @@ export default class DialogObject{
      * @param classes - array of classes to add
      */
     AddClasses(classes: string[]){
-        this.DialogClasses.push(...classes);
+        this.DialogElement.classList.add(...classes);
     }
 
     /**
      * Prepares dialog object to be displayed
      */
     Render(){
-        this.DialogElement.setAttribute('role', 'alertdialog');
-        this.DialogElement.classList.add('dialog');
-        this.DialogElement.classList.add(...this.DialogClasses);
-        
-        if(this.Header != ''){
-            let h2 = document.createElement('h2');
-            h2.innerHTML = this.Header;
-            this.DialogElement.appendChild(h2);
-        }
-        
         var content_wrapper = document.createElement('div');
         content_wrapper.classList.add('content');
         

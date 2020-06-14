@@ -1,5 +1,5 @@
 import * as DialogBackdrop from './dialog_backdrop';
-import DialogObject from './dialog_object';
+import Dialog from './components/dialog';
 
 type DialogButtonDescriptorWithHide = Array<[string, ('[hide]' | ( () => void )), string[]]>;
 
@@ -47,7 +47,7 @@ export function HideDialog(target: string | HTMLElement){
  * Creates dialog object
  */
 export function CreateDialog(){
-    return new DialogObject();
+    return new Dialog();
 }
 
 /**

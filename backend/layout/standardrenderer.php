@@ -26,11 +26,12 @@ class StandardRenderer extends Renderers\HTMLRenderer{
         
         echo('<h1>'.$title.'</h1>');
         echo('</aside>');
-        echo('<main>');
+        echo('<main id="content-container">');
     }
 
     public /* void */ function Append(array $options){
         echo('</main>');
+        echo('<aside id="loading-wrapper" class="loading-wrapper">Loading</aside>');
         parent::Append($options);
     }
 

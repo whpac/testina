@@ -30,7 +30,7 @@ class Navbar{
             echo('<li class="separator" role="separator">');
         }else{
             echo('<li class="link '.$item->css.'" role="menuitem">');
-            echo('<a href="'.$item->href.'">');
+            echo('<a href="'.$item->href.'" class="event-navigation-link" data-href="'.$item->href.'">');
             if(isset($item->icon)) echo('<i class="icon fa fa-fw '.$item->icon.'"  title="'.$item->GetContent().'"></i>');
             else echo('<i class="icon fa fa-fw"></i>');
             echo('<span>'.$item->GetContent().'</span>');

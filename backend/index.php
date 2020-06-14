@@ -66,12 +66,7 @@ PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:300,4
 PageManager::AddStylesheet('font-awesome.min.css');
 PageManager::AddStylesheet('style.css');
 PageManager::AddScript('js/jquery-3.4.1.min.js');
-PageManager::AddScript('js/script.js', true);
-/*PageManager::AddScript('tests.js');
-PageManager::AddScript('dialogs.js');
-PageManager::AddScript('library.js');
-PageManager::AddScript('toasts.js');
-PageManager::AddScript('testeditor.js');*/
+PageManager::AddScript('js/script', true);
 PageManager::AddHeadTag('<base href="/p/" />');
 PageManager::SetRenderer(new \Layout\StandardRenderer());
 
@@ -107,6 +102,7 @@ $api['remove_test'] = 'remove_test.php';
 $api['save_question'] = 'save_question.php';
 $api['save_test'] = 'save_test.php';
 $api['save_test_results'] = 'save_test_results.php';
+$api['_list_tests'] = '_list_tests.php';
 
 Properties::Set('pages.handlers.main_page', 'home');
 if(AuthManager::IsAuthorized()){
