@@ -107,7 +107,7 @@ $api['_list_tests'] = '_list_tests.php';
 Properties::Set('pages.handlers.main_page', 'home');
 if(AuthManager::IsAuthorized()){
     foreach($url as $u => $p) $handler->AddPage($u, $p);
-    foreach($api as $u => $p) $api_handler->AddPage('api/'.$u, $p);
+    foreach($api as $u => $p) $api_handler->AddPage('api_old/'.$u, $p);
 }else{
     Properties::Set('pages.handlers.main_page', 'login');
     PageManager::SetRenderer(new \Layout\LoginRenderer());
