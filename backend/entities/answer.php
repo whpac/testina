@@ -11,7 +11,7 @@ class Answer extends Entity {
     protected /* int */ $question_id;
     protected /* string */ $text;
     protected /* int */ $flags;       // flags & 1 = correct
-    protected  static /* array */ $flag_map = ['correct' => 1];
+    protected static /* array */ $flag_map = ['correct' => 1];
 
     protected static /* string */ function GetTableName(){
         return TABLE_ANSWERS;
