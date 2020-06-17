@@ -2,17 +2,17 @@
 namespace Api\Exceptions;
 
 class MethodNotAllowed extends \Exception{
-    protected $resource_name;
+    protected $method;
 
-    public function __construct($resource_name = null, $code = 0, \Exception $previous = null){
-        $full_message = 'Method `'.$resource_name.'` is not allowed.';
+    public function __construct($method = null, $code = 0, \Exception $previous = null){
+        $full_message = 'Method `'.$method.'` is not allowed.';
         parent::__construct($full_message, $code, $previous);
 
-        $this->resource_name = $resource_name;
+        $this->method = $method;
     }
 
-    public function GetResourceName(){
-        return $this->resource_name;
+    public function GetMethod(){
+        return $this->method;
     }
 }
 ?>

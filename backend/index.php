@@ -76,7 +76,7 @@ UrlHandler::RegisterErrorDocument(404, __DIR__.'/pages/404.php');
 $handler = new RegistryHandler(['root_path' => 'pages/']);
 $handler->SetOption('default_mode', RegistryHandler::MATCH_STARTS_WITH);
 
-$api_handler = new RegistryHandler(['root_path' => 'api/']);
+$api_handler = new RegistryHandler(['root_path' => 'api_old/']);
 $api_handler->SetOption('default_mode', RegistryHandler::MATCH_STARTS_WITH);
 
 $url = [];
@@ -107,7 +107,7 @@ $api['_list_tests'] = '_list_tests.php';
 Properties::Set('pages.handlers.main_page', 'home');
 if(AuthManager::IsAuthorized()){
     foreach($url as $u => $p) $handler->AddPage($u, $p);
-    foreach($api as $u => $p) $api_handler->AddPage('api_old/'.$u, $p);
+    foreach($api as $u => $p) $api_handler->AddPage('api/'.$u, $p);
 }else{
     Properties::Set('pages.handlers.main_page', 'login');
     PageManager::SetRenderer(new \Layout\LoginRenderer());

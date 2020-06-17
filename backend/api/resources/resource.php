@@ -45,7 +45,7 @@ abstract class Resource {
             try{
                 $value->AssertAccessible($context);
                 $res[$key] = $value;
-            }catch(\Exception $e){
+            }catch(Exceptions\ResourceInaccessible $e){
 
             }
         }
@@ -82,6 +82,18 @@ abstract class Resource {
 
     public function AssertAccessible(/* undefined yet */ $context = null){
         // If inaccessible, throw an Exceptions\ResourceInaccessible exception
+    }
+
+    public function CreateSubResource(/* object */ $source, /* undefined yet */ $context = null){
+        throw new Exceptions\MethodNotAllowed('POST');
+    }
+
+    public function Update(/* object */ $source, /* undefined yet */ $context = null){
+        throw new Exceptions\MethodNotAllowed('PUT');
+    }
+
+    public function Delete(/* undefined yet */ $context = null){
+        throw new Exceptions\MethodNotAllowed('DELETE');
     }
 }
 ?>

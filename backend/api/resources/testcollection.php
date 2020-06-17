@@ -13,5 +13,9 @@ class TestCollection extends Resource {
 
         return true;
     }
+
+    public function CreateSubResource($source, $context){
+        
+    }
 }
 ?>
