@@ -1,17 +1,10 @@
 import Dialog from './dialog';
-
-interface TestDescriptor {
-    id: number;
-    name: string;
-    creation_date: string;
-    question_count: number;
-    question_multiplier: number;
-}
+import Test from '../entities/test';
 
 export default class TestSummaryDialog extends Dialog {
     protected QuestionCountElement: HTMLTableDataCellElement;
     protected QuestionCreationDateElement: HTMLTableDataCellElement;
-    protected CurrentTest: (TestDescriptor | undefined);
+    protected CurrentTest: (Test | undefined);
 
     constructor(){
         super();
@@ -37,7 +30,7 @@ export default class TestSummaryDialog extends Dialog {
     
         this.AddContent(content);
         this.AddButton('Zamknij', () => {this.Hide();});
-        this.AddButton('Edytuj', () => {window.location.href = 'testy/edytuj/' + (this.CurrentTest?.id.toString() ?? '')}, ['secondary']);
+        this.AddButton('Edytuj', () => {window.location.href = 'testy/edytuj/' + (this.CurrentTest?.GetId().toString() ?? '')}, ['secondary']);
         this.AddButton('Przypisz', () => {
             this.Hide();
             
@@ -46,10 +39,10 @@ export default class TestSummaryDialog extends Dialog {
         }, ['secondary']);
     }
 
-    Prepare(test: TestDescriptor){
-        this.QuestionCountElement.innerText = test.question_count + ' (×' + test.question_multiplier + ')';
-        this.QuestionCreationDateElement.innerText = test.creation_date;
-        this.SetHeader(test.name);
+    async Prepare(test: Test){
+        this.QuestionCountElement.innerText = (await test.GetQuestionCount()).toString() + ' (×' +  (await test.GetQuestionMultiplier()).toString() + ')';
+        this.QuestionCreationDateElement.innerText = (await test.GetCreationDate()).toDateString() ?? '';
+        this.SetHeader(await test.GetName());
         this.CurrentTest = test;
     }
 }

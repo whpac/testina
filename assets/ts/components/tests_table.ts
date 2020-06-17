@@ -1,18 +1,21 @@
 import * as XHR from '../xhr';
 import Component from './component';
+import Test from '../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
 import { HandleLinkClick } from '../script';
 
 interface TestDescriptor {
     id: number,
     name: string,
-    question_count: number,
+    author: {},
+    creation_date: string,
+    time_limit: number,
     question_multiplier: number,
-    creation_date: string
+    questions: {}
 }
 
-type TestsListResponse = {
-    tests: TestDescriptor[]
+interface TestsListResponse {
+    [test_id: number]: TestDescriptor,
 }
 
 export default class TestsTable extends Component {
@@ -54,16 +57,18 @@ export default class TestsTable extends Component {
     async LoadTests(){
         if(this.IsLoaded) return;
 
-        let response = await XHR.Request('api/_list_tests', 'GET');
-        let json: TestsListResponse = JSON.parse(response.ResponseText);
+        //let response = await XHR.Request('_dev?target=tests&depth=3', 'GET');
+        //let json: TestsListResponse = JSON.parse(response.ResponseText);
+        let json: Test[] = await Test.GetAll();
 
         this.TestRowsContainer.innerText = '';
-        json.tests.forEach((test) => {
+        json.forEach(async (test) => {
+            //let test = json[parseInt(test_id)];
             let tr = document.createElement('tr');
             let html = '';
-            html += '<td>' + test.name + '</td>';
-            html += '<td class="center wide-screen-only">' + test.question_count + ' (×' + test.question_multiplier + ')</td>';
-            html += '<td class="center wide-screen-only">' + test.creation_date + '</td>';
+            html += '<td>' + (await test.GetName()).toString() + '</td>';
+            html += '<td class="center wide-screen-only">' + (await test.GetQuestionCount()).toString() + ' (×' + (await test.GetQuestionMultiplier()).toString() + ')</td>';
+            html += '<td class="center wide-screen-only">' + (await test.GetCreationDate()).toLocaleString(undefined, {year: 'numeric', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit'}) + '</td>';
             html += '<td class="wide-screen-only"><button class="compact todo">Przypisz</button></td>';
             //html += '<td class="wide-screen-only"><a class="button compact" href="testy/edytuj/' + test.id + '">Edytuj</a></td>';
 
@@ -73,7 +78,7 @@ export default class TestsTable extends Component {
             let a_edit = document.createElement('a');
             a_edit.classList.add('button', 'compact');
             a_edit.innerText = 'Edytuj';
-            a_edit.href = 'testy/edytuj/' + test.id;
+            a_edit.href = 'testy/edytuj/' + test.GetId();
             a_edit.addEventListener('click', (e) => HandleLinkClick(e, 'testy/edytuj', {test: test}));
             td_edit.appendChild(a_edit);
 

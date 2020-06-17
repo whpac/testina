@@ -1,4 +1,5 @@
 import Component from './component';
+import Test from '../entities/test';
 
 export default class QuestionsTable extends Component {
     ContentWrapperElem: HTMLTableSectionElement;
@@ -42,7 +43,7 @@ export default class QuestionsTable extends Component {
         this.Element.appendChild(nocontent_tbody);
     }
 
-    async LoadQuestions(test){
+    async LoadQuestions(test: Test){
         this.ContentWrapperElem.innerText = '';
         let tr = this.ContentWrapperElem.insertRow(-1);
         let td = tr.insertCell(-1);

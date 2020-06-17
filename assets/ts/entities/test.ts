@@ -1,3 +1,19 @@
+import * as XHR from '../xhr';
+
+interface TestDescriptor {
+    id: number,
+    name: string,
+    author: {},
+    creation_date: string,
+    time_limit: number,
+    question_multiplier: number,
+    questions: {}
+}
+
+type TestCollection = {
+    [test_id: number]: TestDescriptor
+}
+
 export default class Test {
     protected id: number;
     protected name: string | undefined;
@@ -5,33 +21,78 @@ export default class Test {
     protected creation_date: Date | undefined;
     protected time_limit: number | undefined;
     protected question_multiplier: number | undefined;
+    protected question_count: number | undefined;
 
-    constructor(id: number){
-        this.id = id;
-        // fetch();
+    private _fetch_awaiter: Promise<void> | undefined;
+
+    constructor(test: number | TestDescriptor){
+        if(typeof test === 'number'){
+            this.id = test;
+            this._fetch_awaiter = this.Fetch();
+        }else{
+            this.id = test.id;
+            this.Populate(test);
+        }
     }
 
-    GetId(){
+    static async GetAll(){
+        let response = await XHR.Request('_dev?target=tests&depth=3', 'GET');
+        let json: TestCollection = JSON.parse(response.ResponseText);
+        let out_array: Test[] = [];
+
+        Object.keys(json).forEach((test_id) => {
+            out_array.push(new Test(json[parseInt(test_id)]));
+        });
+
+        return out_array;
+    }
+
+    protected async Fetch(){
+        let response = await XHR.Request('_dev?target=tests/' + this.id + '&depth=2', 'GET');
+        let json: TestDescriptor = JSON.parse(response.ResponseText);
+        this.Populate(json);
+    }
+
+    protected Populate(descriptor: TestDescriptor){
+        this.name = descriptor.name;
+        //this.author_id = descriptor.author.id;
+        this.creation_date = new Date(descriptor.creation_date);
+        this.time_limit = descriptor.time_limit;
+        this.question_multiplier = descriptor.question_multiplier;
+        this.question_count = Object.keys(descriptor.questions).length;
+    }
+
+    GetId(): number{
         return this.id;
     }
 
-    GetName(){
-        return this.name;
+    async GetName(): Promise<string>{
+        await this?._fetch_awaiter;
+        return this.name as string;
     }
 
-    GetAuthor(){
+    /*async GetAuthor(): Promise<never>{
+        await this?._fetch_awaiter;
         return this.author_id;
+    }*/
+
+    async GetCreationDate(): Promise<Date>{
+        await this?._fetch_awaiter;
+        return this.creation_date as Date;
     }
 
-    GetCreationDate(){
-        return this.creation_date;
+    async GetTimeLimit(): Promise<number>{
+        await this?._fetch_awaiter;
+        return this.time_limit as number;
     }
 
-    GetTimeLimit(){
-        return this.time_limit;
+    async GetQuestionMultiplier(): Promise<number>{
+        await this?._fetch_awaiter;
+        return this.question_multiplier as number;
     }
 
-    GetQuestionMultiplier(){
-        return this.question_multiplier;
+    async GetQuestionCount(): Promise<number>{
+        await this?._fetch_awaiter;
+        return this.question_count as number;
     }
 }

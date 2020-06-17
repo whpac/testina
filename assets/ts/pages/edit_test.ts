@@ -1,11 +1,12 @@
 import Page from '../1page/page';
 import Card from '../components/card';
 import QuestionsTable from '../components/questions_table';
+import Test from '../entities/test';
 
 export default class EditTestPage extends Page {
     PageElem: HTMLElement;
     QuestionsTable: QuestionsTable;
-    Test;
+    Test: Test | undefined;
 
     constructor(){
         super();
@@ -62,6 +63,7 @@ export default class EditTestPage extends Page {
         //let json = JSON.parse(response.ResponseText);
         //this.GreetingElem.innerText = 'Hi, Lorem!';
         this.Test = params.test;
+        if(this.Test === undefined) throw '';
         this.QuestionsTable.LoadQuestions(this.Test)
         container.appendChild(this.PageElem);
     }
@@ -71,7 +73,7 @@ export default class EditTestPage extends Page {
     }
 
     GetUrlPath(){
-        return 'testy/edytuj/' + (this.Test?.id ?? 0);
+        return 'testy/edytuj/' + (this.Test?.GetId() ?? 0);
     }
 
     GetTitle(){
