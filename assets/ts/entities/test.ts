@@ -1,4 +1,5 @@
 import * as XHR from '../xhr';
+import Entity from './entity';
 
 interface TestDescriptor {
     id: number,
@@ -14,7 +15,7 @@ type TestCollection = {
     [test_id: number]: TestDescriptor
 }
 
-export default class Test {
+export default class Test extends Entity {
     protected id: number;
     protected name: string | undefined;
     protected author_id: number | undefined;
@@ -26,6 +27,8 @@ export default class Test {
     private _fetch_awaiter: Promise<void> | undefined;
 
     constructor(test: number | TestDescriptor){
+        super();
+        
         if(typeof test === 'number'){
             this.id = test;
             this._fetch_awaiter = this.Fetch();
@@ -36,7 +39,7 @@ export default class Test {
     }
 
     static async GetAll(){
-        let response = await XHR.Request('_dev?target=tests&depth=3', 'GET');
+        let response = await XHR.Request('api/tests?depth=3', 'GET');
         let json: TestCollection = JSON.parse(response.ResponseText);
         let out_array: Test[] = [];
 
@@ -48,7 +51,7 @@ export default class Test {
     }
 
     protected async Fetch(){
-        let response = await XHR.Request('_dev?target=tests/' + this.id + '&depth=2', 'GET');
+        let response = await XHR.Request('api/tests/' + this.id + '?depth=2', 'GET');
         let json: TestDescriptor = JSON.parse(response.ResponseText);
         this.Populate(json);
     }
@@ -94,5 +97,17 @@ export default class Test {
     async GetQuestionCount(): Promise<number>{
         await this?._fetch_awaiter;
         return this.question_count as number;
+    }
+
+    async HasTimeLimit(): Promise<boolean>{
+        return (await this.GetTimeLimit()) != 0;
+    }
+
+    async Remove(){
+        let result = await XHR.Request('api/tests/' + this.id, 'DELETE');
+        if(result.Status == 204){
+            // this.OnChange();
+            return true;
+        } else return false;
     }
 }

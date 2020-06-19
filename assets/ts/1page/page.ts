@@ -4,5 +4,5 @@ export default abstract class Page {
     abstract UnloadFrom(container: HTMLElement): void;
 
     abstract GetUrlPath(): string;
-    abstract GetTitle(): string;
+    abstract async GetTitle(): Promise<string>;
 }

@@ -181,8 +181,8 @@ aside.mobile-header h1 {
 .card.auto-width {margin-left:auto; margin-right:auto; width:max-content;}
 .card.semi-wide {margin-left:3px; margin-right:3px;}
 .card.wide {margin-left:3px; margin-right:3px;}
-.card > h2:first-of-type {margin-top:0; font-weight:var(--header-font-weight); margin-bottom:1em;}
-.card > h2:first-of-type + .subtitle {
+.card-content > h2:first-of-type {margin-top:0; font-weight:var(--header-font-weight); margin-bottom:1em;}
+.card-content > h2:first-of-type + .subtitle {
     display:block; color:var(--text-secondary-color); margin-top:-1.3em; margin-bottom:1em;
 }
 .card .header-button {
@@ -192,7 +192,8 @@ aside.mobile-header h1 {
 .card .header-button > .icon {color:var(--button-colored-text-color);}
 .card .header-button > span {margin-left:1ch;}
 
-.card > .card-buttons {margin-top:15px; margin-bottom:-8px; display:flex; flex-direction:row-reverse;}
+.card-buttons {margin-top:15px; margin-bottom:-8px; display:flex; flex-direction:row-reverse;}
+.card-buttons:empty {display:none;}
 
 .grid-form.login-form {
     width:fit-content; padding:15px 30px; margin:150px auto 0 auto !important;
@@ -209,10 +210,10 @@ aside.mobile-header h1 {
 .grid-form input, .grid-form textarea {grid-column:2;}
 .grid-form button, .grid-form select {grid-column:2; justify-self:start;}
 .grid-form input.narrow {justify-self:start;}
-.grid-form .fieldset {grid-column:1 / span 2;}
+.grid-form .fieldset, .grid-form h2 {grid-column:1 / span 2;}
 .grid-form .description {grid-column:1 / span 2; margin:-5px 0 5px 10px; font-size:0.9em;}
 .fieldset p {margin:0 0;}
-.get-help {font-size:0.95em; margin-left:5px; text-decoration:none;}
+.get-help {font-size:0.95em; margin-left:10px; text-decoration:none;}
 
 textarea {resize:vertical; min-height:3em; font-family:inherit;}
 input[type=text], input[type=password], input[type=number], textarea {

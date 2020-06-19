@@ -38,6 +38,6 @@ export function HandleLinkClick(e: MouseEvent, page_id: string, params?: any){
     DisplayPage(page_id, params);
 }
 
-function DisplayPage(page: string, params?: any){
+export function DisplayPage(page: string, params?: any){
     PageManager.GoToPage(page, params);
 }

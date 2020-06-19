@@ -1,4 +1,5 @@
 import * as Dialogs from '../dialogs';
+import HelpLink from './help_link';
 
 interface DialogButtonDescriptor{
     Text: string,
@@ -9,7 +10,8 @@ interface DialogButtonDescriptor{
 export default class Dialog{
     DialogElement: HTMLElement;
     HeaderElement: HTMLHeadingElement;
-    Content: (string | HTMLElement)[] = [];
+    HeaderContentElement: HTMLSpanElement;
+    Content: Node[] = [];
     Buttons: DialogButtonDescriptor[] = [];
     IsRendered: boolean = false;
 
@@ -20,21 +22,24 @@ export default class Dialog{
 
         this.HeaderElement = document.createElement('h2');
         this.DialogElement.appendChild(this.HeaderElement);
+
+        this.HeaderContentElement = document.createElement('span');
+        this.HeaderElement.appendChild(this.HeaderContentElement);
     }
 
     /**
      * Sets dialog header to given text
-     * @param text Header
+     * @param text Header text
      */
     SetHeader(text: string){
-        this.HeaderElement.innerText = text;
+        this.HeaderContentElement.innerText = text;
     }
 
     /**
      * Adds button to dialog
-     * @param btn_text button text
-     * @param callback function called on click
-     * @param classes button CSS classes
+     * @param btn_text Button text
+     * @param callback Function called on click
+     * @param classes Button CSS classes
      */
     AddButton(btn_text: string, callback: () => void, classes: string[] = []){
         this.Buttons.push({Text: btn_text, Callback: callback, Classes: classes}); 
@@ -42,18 +47,25 @@ export default class Dialog{
 
     /**
      * Appends content
-     * @param elem element to append
+     * @param elem Element to append
      */
-    AddContent(elem: string | HTMLElement){
+    AddContent(elem: Node){
         this.Content.push(elem);
     }
 
     /**
      * Adds CSS classes to the dialog
-     * @param classes - array of classes to add
+     * @param classes Array of classes to add
      */
     AddClasses(classes: string[]){
         this.DialogElement.classList.add(...classes);
+    }
+
+    /**
+     * Displays question mark button, leading to a help page
+     */
+    DisplayHelpButton(target?: string){
+        this.HeaderElement.appendChild(new HelpLink(target).GetElement());
     }
 
     /**
@@ -64,8 +76,7 @@ export default class Dialog{
         content_wrapper.classList.add('content');
         
         this.Content.forEach((elem) => {
-            if(typeof elem == 'string') content_wrapper.innerHTML += elem;
-            else content_wrapper.appendChild(elem);
+            content_wrapper.appendChild(elem);
         });
         this.DialogElement.appendChild(content_wrapper);
 

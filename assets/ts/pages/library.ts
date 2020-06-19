@@ -13,7 +13,7 @@ export default class LibraryPage extends Page {
         this.PageElem.innerHTML = '<h1>Biblioteka testów</h1>';
 
         let card = new Card('semi-wide');
-        card.GetElement().innerHTML =
+        card.GetContentElement().innerHTML =
                 '<a class="button header-button" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>' +
                 '<h2>Moje testy</h2>' +
                 '<p class="secondary">Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.</p>';
@@ -37,7 +37,7 @@ export default class LibraryPage extends Page {
         return 'testy/biblioteka';
     }
 
-    GetTitle(){
+    async GetTitle(){
         return 'Biblioteka testów';
     }
 }

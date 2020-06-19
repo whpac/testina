@@ -62,7 +62,7 @@ export function CreateSimpleDialog(text: string, buttons?: DialogButtonDescripto
     buttons = buttons ?? [['OK', '[hide]', []]];
 
     if(header !== undefined) dialog.SetHeader(header);
-    dialog.AddContent(text);
+    dialog.AddContent(document.createTextNode(text));
 
     buttons.forEach((btn) => {
         let callback = btn[1];

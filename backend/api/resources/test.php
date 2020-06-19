@@ -14,5 +14,10 @@ class Test extends Resource{
         $this->AddSubResource('questions', new QuestionCollection($test));
         return true;
     }
+
+    public function Delete(/* undefined yet */ $context){
+        $test = $this->GetConstructorArgument();
+        $test->Remove();
+    }
 }
 ?>

@@ -2,4 +2,5 @@ Options FollowSymLinks
 RewriteEngine On
 RewriteBase "/p/"
 
+RewriteRule "^api/(.*)$" "backend/api_endpoint.php?target=$1" [END,QSA]
 RewriteRule "^([^?]*)?$" "backend/index.php?_path=$1" [END,QSA]

@@ -80,6 +80,10 @@ abstract class Resource {
         return true;
     }
 
+    protected /* object */ function GetConstructorArgument(){
+        return $this->CreationArg;
+    }
+
     public function AssertAccessible(/* undefined yet */ $context = null){
         // If inaccessible, throw an Exceptions\ResourceInaccessible exception
     }

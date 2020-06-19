@@ -22,8 +22,8 @@ export function AddPage(page_id: string, page: Page){
 }
 
 export function GoToPage(page_id: string, params?: any){
-    DisplayPage(page_id, params).then(() => {
-        SetTitle(CurrentPage?.GetTitle() ?? '');
+    DisplayPage(page_id, params).then(async () => {
+        SetTitle(await CurrentPage?.GetTitle() ?? '');
         AlterCurrentUrl(CurrentPage?.GetUrlPath() ?? '', page_id, params);
     }).catch((r) => {alert('Nie udało się załadować strony: ' + r)});
 }

@@ -30,7 +30,7 @@ export default class HomePage extends Page {
         return '';
     }
 
-    GetTitle(){
+    async GetTitle(){
         return '';
     }
 }

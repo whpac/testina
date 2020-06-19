@@ -1,7 +1,53 @@
 <?php
-namespace Api;
+use Api\Exceptions;
+use Api\Formats;
+use Api\Resources;
 
-$SUPPORTED_METHODS = ['GET', 'POST'];
+use \UEngine\Modules\Auth\AuthHandler;
+use \UEngine\Modules\Auth\AccessControl\AuthManager;
+use \UEngine\Modules\Core\Properties;
+use \UEngine\Modules\Loader;
+use \UEngine\Modules\Pages\PageManager;
+
+require('../../ue/uengine/uengine.php');
+require('autoincluder.php');
+
+UEngine\SetLanguageList(['pl']);
+UEngine\Load();
+
+// Loading modules
+Loader::LoadModule('database');
+Loader::LoadModule('session');
+Loader::LoadModule('pages');
+Loader::LoadModule('auth');
+
+// Passing some tables' names
+Properties::Set('core.tables.exceptions', 'exceptions');
+Properties::Set('session.tables.sessions', 'sessions');
+Properties::Set('session.tables.session_data', 'session_data');
+
+// Initializing MySQL and session
+$db = new UEngine\Modules\Database\MySQL('localhost', 'rr', 'rada', 'p');
+$db->Connect();
+UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
+
+$kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
+UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
+UEngine\Modules\Session\SessionManager::Start(36000);
+
+// Set UserFactory
+AuthManager::RegisterUserFactory(new Entities\UserFactory());
+
+// Handle potential login attempt
+AuthHandler::HandleAuthIfNecessary();
+AuthManager::RestoreCurrentUser();
+
+// Initializing the page manager
+PageManager::SetRenderer(new \Layout\ApiRenderer());
+
+PageManager::BeginFetchingContent();
+
+$SUPPORTED_METHODS = ['GET', 'POST', 'DELETE'];
 
 // This should be extended to support mutable objects
 try{
@@ -27,8 +73,8 @@ try{
         case 'POST':
             // Create a resource
             $current_resource->CreateSubResource(null, null);
-            // Response with 204 No Content
-            echo('204');
+            // Response with 201 Created
+            echo('201');
         break;
         case 'PUT':
             // Update a resource
@@ -40,6 +86,7 @@ try{
             // Delete a resource
             $current_resource->Delete(null);
             // Response with 204 No Content
+            header('X-Response-Code: 204', true, 204);
             echo('204');
         break;
     }
@@ -60,6 +107,12 @@ try{
     echo('500');
     echo('Exception thrown: '.$e->getMessage());
 }
+
+PageManager::EndFetchingContent();
+
+// Generating the whole website and flushing it
+PageManager::Render(['cache' => 'no']);
+
 
 function ReadMethod(array $supported_methods){
     $method = $_SERVER['REQUEST_METHOD'];
