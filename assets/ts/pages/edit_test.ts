@@ -48,6 +48,9 @@ export default class EditTestPage extends Page {
         container.appendChild(this.PageElem);
         
         this.TestNameHeading.textContent = await this.Test.GetName();
+        this.Test.AddEventListener('change', (async () => {
+            this.TestNameHeading.textContent = (await this.Test?.GetName()) ?? '';
+        }).bind(this));
     }
 
     UnloadFrom(container: HTMLElement){

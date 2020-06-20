@@ -41,7 +41,7 @@ export default class Test extends Entity implements PageParams {
 
     static async GetAll(){
         let response = await XHR.Request('api/tests?depth=3', 'GET');
-        let json: TestCollection = JSON.parse(response.ResponseText);
+        let json = response.Response as TestCollection;
         let out_array: Test[] = [];
 
         Object.keys(json).forEach((test_id) => {
@@ -53,7 +53,7 @@ export default class Test extends Entity implements PageParams {
 
     protected async Fetch(){
         let response = await XHR.Request('api/tests/' + this.id + '?depth=2', 'GET');
-        let json: TestDescriptor = JSON.parse(response.ResponseText);
+        let json = response.Response as TestDescriptor;
         this.Populate(json);
     }
 
@@ -108,6 +108,22 @@ export default class Test extends Entity implements PageParams {
         let result = await XHR.Request('api/tests/' + this.id, 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
+            return true;
+        } else return false;
+    }
+
+    async UpdateSettings(name: string, question_multiplier: number, time_limit: number){
+        let request_data = {
+            name: name,
+            question_multiplier: question_multiplier,
+            time_limit: time_limit
+        };
+        let result = await XHR.Request('api/tests/' + this.id, 'PUT', request_data);
+        if(result.Status == 204){
+            this.name = name;
+            this.question_multiplier = question_multiplier;
+            this.time_limit = time_limit;
+            this.FireEvent('change');
             return true;
         } else return false;
     }

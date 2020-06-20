@@ -1,18 +1,20 @@
 import * as Toasts from '../toasts';
+import * as PageManager from '../1page/pagemanager';
 import { DisplayPage } from '../script';
 
 import Test from '../entities/test';
 import Card from './card';
 
 export default class TestSettings extends Card {
-    QuestionMultiplierInput: HTMLInputElement;
-    TestNameInput: HTMLInputElement;
+    protected QuestionMultiplierInput: HTMLInputElement;
+    protected TestNameInput: HTMLInputElement;
 
-    NoTimeLimitRadio: HTMLInputElement;
-    TimeLimitPresentRadio: HTMLInputElement;
-    TimeLimitInput: HTMLInputElement;
+    protected NoTimeLimitRadio: HTMLInputElement;
+    protected TimeLimitPresentRadio: HTMLInputElement;
+    protected TimeLimitInput: HTMLInputElement;
 
-    Test: Test | undefined;
+    protected Test: Test | undefined;
+    protected IgnoreChange: boolean = false;
 
     /**
      * Creates the element and prepares HTML to be displayed
@@ -110,13 +112,17 @@ export default class TestSettings extends Card {
 
         this.AppendChild(time_limit_fieldset);
 
-        // Przyłączenie obsługi zdarzeń, docelowo należy przechwytywać onchange ze wszystkich pól
+        // Przyłączenie obsługi zdarzeń
         this.TimeLimitPresentRadio.addEventListener('change', this.UpdateTimeLimitInputEnabledState.bind(this));
         this.NoTimeLimitRadio.addEventListener('change', this.UpdateTimeLimitInputEnabledState.bind(this));
+        this.TestNameInput.addEventListener('change', this.StateChanged.bind(this));
+        this.QuestionMultiplierInput.addEventListener('change', this.StateChanged.bind(this));
+        this.TimeLimitInput.addEventListener('change', this.StateChanged.bind(this));
 
         let btn_save = document.createElement('button');
         btn_save.classList.add('todo');
-        btn_save.innerText = 'Zapisz';
+        btn_save.innerText = 'Zapisz ustawienia';
+        btn_save.addEventListener('click', this.SaveTestSettings.bind(this));
         this.AddButton(btn_save);
 
         let btn_remove = document.createElement('button');
@@ -131,6 +137,7 @@ export default class TestSettings extends Card {
      * @param test Source of data to display
      */
     async Populate(test: Test){
+        this.IgnoreChange = true;
         this.Test = test;
         this.TestNameInput.value = (await test.GetName());
         this.QuestionMultiplierInput.value = (await test.GetQuestionMultiplier()).toString();
@@ -143,12 +150,22 @@ export default class TestSettings extends Card {
             this.TimeLimitInput.value = '15';
         }
         this.UpdateTimeLimitInputEnabledState();
+        this.IgnoreChange = false;
+    }
+
+    /**
+     * Used to track changes and prevent from closing the browser window
+     */
+    protected StateChanged(){
+        if(this.IgnoreChange) return;
+        PageManager.PreventFromNavigation('test-settings');
     }
 
     /**
      * Enables or disables the time limit input field according to checked radio button
      */
     protected UpdateTimeLimitInputEnabledState(){
+        this.StateChanged();
         this.TimeLimitInput.disabled = !this.TimeLimitPresentRadio.checked;
     }
 
@@ -172,5 +189,28 @@ export default class TestSettings extends Card {
         }else{
             Toasts.Show('Nie udało się usunąć testu „' + test_name + '”.');
         }
+    }
+
+    /**
+     * Saves the settings
+     */
+    protected async SaveTestSettings(){
+        let update_result_promise = (this.Test as Test).UpdateSettings(
+            this.TestNameInput.value,
+            parseInt(this.QuestionMultiplierInput.value),
+            this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
+        );
+        let toast = Toasts.ShowPersistent('Zapisywanie zmian...');
+        let update_result = await update_result_promise;
+
+        toast.Hide();
+
+        if(update_result){
+            Toasts.Show('Zmiany w ustawieniach testu zostały zapisane.');
+        }else{
+            Toasts.Show('Nie udało się zapisać zmian w ustawieniach testu.');
+        }
+
+        PageManager.UnpreventFromNavigation('test-settings');
     }
 }

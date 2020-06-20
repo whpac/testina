@@ -40,7 +40,7 @@ export default class Question {
 
     static async GetForTest(test: Test){
         let response = await XHR.Request('api/tests/' + test.GetId() + '/questions?depth=3', 'GET');
-        let json: QuestionCollection = JSON.parse(response.ResponseText);
+        let json = response.Response as QuestionCollection;
         let out_array: Question[] = [];
 
         Object.keys(json).forEach((test_id) => {
@@ -52,7 +52,7 @@ export default class Question {
 
     protected async Fetch(){
         let response = await XHR.Request('api/tests/' + this.test_id + '/questions/' + this.id + '?depth=2', 'GET');
-        let json: QuestionDescriptor = JSON.parse(response.ResponseText);
+        let json = response.Response as QuestionDescriptor;
         this.Populate(json);
     }
 
