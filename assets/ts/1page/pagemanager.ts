@@ -72,6 +72,14 @@ export function IsPreventedFromNavigation(){
 }
 
 /**
+ * Checks if the given reason prevents from navigating
+ * @param reason reason to check
+ */
+export function IsPreventedFromNavigationBy(reason: string){
+    return PreventFromNavigationReasons.has(reason);
+}
+
+/**
  * Navigates to page
  * @param page_id identifier of page to navigate to
  * @param params parameters passed to the new page

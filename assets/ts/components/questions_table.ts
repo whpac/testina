@@ -64,19 +64,19 @@ export default class QuestionsTable extends Component {
 
             let td_num = tr.insertCell(-1);
             td_num.classList.add('secondary');
-            td_num.appendChild(document.createTextNode((index + 1).toString() + '.'));
+            td_num.textContent = (index + 1).toString() + '.';
 
             let td_text = tr.insertCell(-1);
-            td_text.appendChild(document.createTextNode(await question.GetText()));
+            td_text.textContent = (await question.GetText());
 
             let td_pts = tr.insertCell(-1);
             td_pts.classList.add('center');
-            td_pts.appendChild(document.createTextNode((await question.GetPoints()).toLocaleString()));
+            td_pts.textContent = (await question.GetPoints()).toLocaleString();
 
             let td_edit = tr.insertCell(-1);
             let btn_edit = document.createElement('button');
             btn_edit.classList.add('compact');
-            btn_edit.innerText = 'Edytuj';
+            btn_edit.textContent = 'Edytuj';
             btn_edit.addEventListener('click', () => this.EditDialog.PopulateAndShow(question));
             td_edit.appendChild(btn_edit);
 

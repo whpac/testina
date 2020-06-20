@@ -123,13 +123,12 @@ export default class TestSettings extends Card {
         this.TimeLimitInput.addEventListener('change', this.StateChanged.bind(this));
 
         let btn_save = document.createElement('button');
-        btn_save.classList.add('todo');
         btn_save.innerText = 'Zapisz ustawienia';
         btn_save.addEventListener('click', this.SaveTestSettings.bind(this));
         this.AddButton(btn_save);
 
         let btn_remove = document.createElement('button');
-        btn_remove.classList.add('error', 'todo');
+        btn_remove.classList.add('error');
         btn_remove.innerText = 'Usuń test';
         btn_remove.addEventListener('click', this.RemoveTest.bind(this));
         this.AddButton(btn_remove);
@@ -210,10 +209,9 @@ export default class TestSettings extends Card {
 
         if(update_result){
             Toasts.Show('Zmiany w ustawieniach testu zostały zapisane.');
+            PageManager.UnpreventFromNavigation('test-settings');
         }else{
             Toasts.Show('Nie udało się zapisać zmian w ustawieniach testu.');
         }
-
-        PageManager.UnpreventFromNavigation('test-settings');
     }
 }

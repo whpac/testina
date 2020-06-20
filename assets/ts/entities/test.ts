@@ -52,7 +52,7 @@ export default class Test extends Entity implements PageParams {
     }
 
     protected async Fetch(){
-        let response = await XHR.Request('api/tests/' + this.id + '?depth=2', 'GET');
+        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as TestDescriptor;
         this.Populate(json);
     }
@@ -64,6 +64,10 @@ export default class Test extends Entity implements PageParams {
         this.time_limit = descriptor.time_limit;
         this.question_multiplier = descriptor.question_multiplier;
         this.question_count = Object.keys(descriptor.questions).length;
+    }
+
+    GetApiUrl(){
+        return 'api/tests/' + this.id;
     }
 
     GetId(): number{

@@ -1,5 +1,7 @@
 import * as XHR from '../xhr';
 import Test from './test';
+import Entity from './entity';
+import { RemoveTestXHR } from '../remote_ifaces';
 
 interface QuestionDescriptor {
     id: number,
@@ -15,9 +17,16 @@ type QuestionCollection = {
     [question_id: number]: QuestionDescriptor
 }
 
-export default class Question {
+export default class Question extends Entity {
+    public static TYPE_SINGLE_CHOICE = 0;
+    public static TYPE_MULTI_CHOICE = 1;
+    public static TYPE_OPEN_ANSWER = 2;
+
+    public static COUNTING_LINEAR = 0;
+    public static COUNTING_BINARY = 1;
+
     protected id: number;
-    protected test_id: number;
+    protected test: Test;
     protected text: string | undefined;
     protected type: number | undefined;
     protected points: number | undefined;
@@ -28,7 +37,9 @@ export default class Question {
     private _fetch_awaiter: Promise<void> | undefined;
 
     constructor(test: Test, question: number | QuestionDescriptor){
-        this.test_id = test.GetId();
+        super();
+
+        this.test = test;
         if(typeof question === 'number'){
             this.id = question;
             this._fetch_awaiter = this.Fetch();
@@ -39,7 +50,7 @@ export default class Question {
     }
 
     static async GetForTest(test: Test){
-        let response = await XHR.Request('api/tests/' + test.GetId() + '/questions?depth=3', 'GET');
+        let response = await XHR.Request(test.GetApiUrl() + '/questions?depth=3', 'GET');
         let json = response.Response as QuestionCollection;
         let out_array: Question[] = [];
 
@@ -51,7 +62,7 @@ export default class Question {
     }
 
     protected async Fetch(){
-        let response = await XHR.Request('api/tests/' + this.test_id + '/questions/' + this.id + '?depth=2', 'GET');
+        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as QuestionDescriptor;
         this.Populate(json);
     }
@@ -63,6 +74,10 @@ export default class Question {
         this.points_counting = descriptor.points_counting;
         this.max_typos = descriptor.max_typos;
         this.answer_count = Object.keys(descriptor.answers).length;
+    }
+
+    GetApiUrl(){
+        return this.test.GetApiUrl() + '/questions/' + this.id;
     }
 
     GetId(): number{
