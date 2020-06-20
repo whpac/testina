@@ -1,7 +1,7 @@
 import * as EventHandlers from './eventhandlers';
 
-import * as PageManager from './1page/pagemanager.js';
-import LoadingIndicator from './1page/loadingindicator.js';
+import * as PageManager from './1page/pagemanager';
+import LoadingIndicator from './1page/loadingindicator';
 import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
