@@ -1,5 +1,6 @@
 import * as XHR from '../xhr';
 import Entity from './entity';
+import PageParams from '../1page/pageparams';
 
 interface TestDescriptor {
     id: number,
@@ -15,7 +16,7 @@ type TestCollection = {
     [test_id: number]: TestDescriptor
 }
 
-export default class Test extends Entity {
+export default class Test extends Entity implements PageParams {
     protected id: number;
     protected name: string | undefined;
     protected author_id: number | undefined;
@@ -28,7 +29,7 @@ export default class Test extends Entity {
 
     constructor(test: number | TestDescriptor){
         super();
-        
+
         if(typeof test === 'number'){
             this.id = test;
             this._fetch_awaiter = this.Fetch();
@@ -106,8 +107,15 @@ export default class Test extends Entity {
     async Remove(){
         let result = await XHR.Request('api/tests/' + this.id, 'DELETE');
         if(result.Status == 204){
-            // this.OnChange();
+            this.FireEvent('remove');
             return true;
         } else return false;
+    }
+
+    GetSimpleRepresentation(){
+        return {
+            type: 'test',
+            id: this.GetId()
+        };
     }
 }

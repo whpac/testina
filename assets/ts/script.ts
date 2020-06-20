@@ -5,6 +5,7 @@ import LoadingIndicator from './1page/loadingindicator.js';
 import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
+import PageParams from './1page/pageparams';
 
 // Initialize the page manager
 let root = document.getElementById('content-container');
@@ -31,13 +32,13 @@ nav_items.forEach((element) => {
 
 DisplayPage('home');
 
-export function HandleLinkClick(e: MouseEvent, page_id: string, params?: any){
+export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
     if(e.button != 0) return;
 
     e.preventDefault();
     DisplayPage(page_id, params);
 }
 
-export function DisplayPage(page: string, params?: any){
+export function DisplayPage(page: string, params?: PageParams){
     PageManager.GoToPage(page, params);
 }

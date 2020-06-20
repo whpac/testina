@@ -3,6 +3,7 @@ import Card from '../components/card';
 import QuestionsTable from '../components/questions_table';
 import TestSettings from '../components/test_settings';
 import Test from '../entities/test';
+import PageParams from '../1page/pageparams';
 
 export default class EditTestPage extends Page {
     PageElem: HTMLElement;
@@ -38,8 +39,8 @@ export default class EditTestPage extends Page {
         this.PageElem.appendChild(this.TestSettingsCard.GetElement());
     }
 
-    async LoadInto(container: HTMLElement, params?: any){
-        this.Test = params.test;
+    async LoadInto(container: HTMLElement, params?: PageParams){
+        this.Test = params as Test;
         if(this.Test === undefined) throw '';
 
         this.QuestionsTable.LoadQuestions(this.Test);

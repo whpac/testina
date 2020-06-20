@@ -30,7 +30,7 @@ export default class TestSummaryDialog extends Dialog {
     
         this.AddContent(content_table);
         this.AddButton('Zamknij', () => {this.Hide();});
-        this.AddButton('Edytuj', () => {this.Hide(); DisplayPage('testy/edytuj', {test: this.CurrentTest})}, ['secondary']);
+        this.AddButton('Edytuj', () => {this.Hide(); DisplayPage('testy/edytuj', this.CurrentTest)}, ['secondary']);
         this.AddButton('Przypisz', () => {
             this.Hide();
             

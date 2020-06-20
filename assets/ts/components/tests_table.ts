@@ -52,6 +52,7 @@ export default class TestsTable extends Component {
     }
 
     async LoadTests(){
+        // Należałoby sprawdzić, kiedy została załadowana ta lista
         if(this.IsLoaded) return;
 
         let json: Test[] = await Test.GetAll();
@@ -59,6 +60,8 @@ export default class TestsTable extends Component {
         this.TestRowsContainer.innerText = '';
         json.forEach(async (test) => {
             let tr = this.TestRowsContainer.insertRow(0);
+
+            test.AddEventListener('remove', () => tr.remove());
 
             let td_name = tr.insertCell(-1);
             td_name.textContent = (await test.GetName()).toString();
@@ -87,7 +90,7 @@ export default class TestsTable extends Component {
             link_edit.classList.add('button', 'compact');
             link_edit.innerText = 'Edytuj';
             link_edit.href = 'testy/edytuj/' + test.GetId();
-            link_edit.addEventListener('click', (e) => HandleLinkClick(e, 'testy/edytuj', {test: test}));
+            link_edit.addEventListener('click', (e) => HandleLinkClick(e, 'testy/edytuj', test));
             td_edit.appendChild(link_edit);
 
             let td_details = tr.insertCell(-1);
