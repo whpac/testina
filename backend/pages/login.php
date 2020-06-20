@@ -18,9 +18,9 @@ if($target == '') $target = 'home';
         <h2>Zaloguj się</h2>
         <input type="hidden" name="_handle_auth" value="login" />
         <label for="login">Login:</label>
-        <input type="text" name="login" id="login" />
+        <input type="text" name="login" id="login" autocomplete="username" />
         <label for="password">Hasło:</label>
-        <input type="password" name="password" id="password" />
+        <input type="password" name="password" id="password" autocomplete="current-password" />
         <button type="submit">Zaloguj</button>
         <span class="login-message"><?php echo($error_msg); ?></span>
     </div>

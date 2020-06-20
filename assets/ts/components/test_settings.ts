@@ -36,6 +36,7 @@ export default class TestSettings extends Card {
 
         this.TestNameInput = document.createElement('input');
         this.TestNameInput.id = 'test-name-input';
+        this.TestNameInput.autocomplete = 'off';
         this.TestNameInput.type = 'text';
         this.TestNameInput.classList.add('narrow');
         this.AppendChild(this.TestNameInput);
@@ -53,6 +54,7 @@ export default class TestSettings extends Card {
         this.QuestionMultiplierInput.type = 'number';
         this.QuestionMultiplierInput.step = 'any';
         this.QuestionMultiplierInput.min = '0';
+        this.QuestionMultiplierInput.autocomplete = 'off';
         question_multiplier_input_span.appendChild(this.QuestionMultiplierInput);
 
         // Link do pomocy
@@ -89,6 +91,7 @@ export default class TestSettings extends Card {
         this.TimeLimitInput.type = 'number';
         this.TimeLimitInput.id = 'time-limit-input';
         this.TimeLimitInput.min = '1';
+        this.TimeLimitInput.autocomplete = 'off';
         time_limit_fieldset.appendChild(this.TimeLimitInput);
 
         let time_limit_input_label = document.createElement('label');
