@@ -19,10 +19,23 @@ export function Request(url: string, method?: string, request_data?: any){
             if(xhr.readyState != 4) return;
 
             if (xhr.status >= 200 && xhr.status < 300){
+                let parsed_json = {};
+                if(xhr.responseText !== ''){
+                    try{
+                        parsed_json = JSON.parse(xhr.responseText);
+                    }catch(e){
+                        reject({
+                            Status: xhr.status,
+                            StatusText: xhr.statusText,
+                            Response: {}
+                        });
+                    }
+                }
+
                 resolve({
                     Status: xhr.status,
                     StatusText: xhr.statusText,
-                    Response: JSON.parse(xhr.responseText)
+                    Response: parsed_json
                 });
             }else{
                 reject({
