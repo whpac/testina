@@ -5,6 +5,8 @@ import TestSettings from '../components/test_settings';
 import Test from '../entities/test';
 import PageParams from '../1page/pageparams';
 
+import * as PageManager from '../1page/pagemanager';
+
 export default class EditTestPage extends Page {
     PageElem: HTMLElement;
     QuestionsTable: QuestionsTable;
@@ -49,7 +51,9 @@ export default class EditTestPage extends Page {
         
         this.TestNameHeading.textContent = await this.Test.GetName();
         this.Test.AddEventListener('change', (async () => {
-            this.TestNameHeading.textContent = (await this.Test?.GetName()) ?? '';
+            let new_name = (await this.Test?.GetName()) ?? ''
+            this.TestNameHeading.textContent = new_name;
+            PageManager.SetTitle('Edycja: ' + new_name);
         }).bind(this));
     }
 

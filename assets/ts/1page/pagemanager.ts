@@ -104,7 +104,7 @@ function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams){
     history.pushState({page_id: page_id, params: params?.GetSimpleRepresentation()}, '', new_url);
 }
 
-function SetTitle(new_title: string){
+export function SetTitle(new_title: string){
     if(new_title == '') document.title = 'Lorem Ipsum';
     else document.title = new_title + ' – Lorem Ipsum';
 }
