@@ -103,6 +103,13 @@ export default class TestsTable extends Component {
                 this.SummaryDialog.Show();
             });
             td_details.appendChild(btn_details);
+
+            test.AddEventListener('change', async () => {
+                td_name.textContent = (await test.GetName()).toString();
+                td_qcount.textContent =
+                    (await test.GetQuestionCount()).toString() + 
+                    ' (×' + (await test.GetQuestionMultiplier()).toString() + ')';
+            });
         });
         this.IsLoaded = true;
     }

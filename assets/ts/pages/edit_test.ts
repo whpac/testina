@@ -51,7 +51,7 @@ export default class EditTestPage extends Page {
         
         this.TestNameHeading.textContent = await this.Test.GetName();
         this.Test.AddEventListener('change', (async () => {
-            let new_name = (await this.Test?.GetName()) ?? ''
+            let new_name = (await this.Test?.GetName()) ?? '';
             this.TestNameHeading.textContent = new_name;
             PageManager.SetTitle('Edycja: ' + new_name);
         }).bind(this));
