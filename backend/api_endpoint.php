@@ -47,7 +47,7 @@ PageManager::SetRenderer(new \Layout\ApiRenderer());
 
 PageManager::BeginFetchingContent();
 
-$SUPPORTED_METHODS = ['GET', 'POST', 'DELETE'];
+$SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
 // This should be extended to support mutable objects
 try{
@@ -72,38 +72,47 @@ try{
         break;
         case 'POST':
             // Create a resource
-            $current_resource->CreateSubResource(null, null);
+            $current_resource->CreateSubResource(ParseRequestBody(), null);
             // Response with 201 Created
+            SetResponseCode(201);
             echo('201');
         break;
         case 'PUT':
             // Update a resource
-            $current_resource->Update(null, null);
+            $current_resource->Update(ParseRequestBody(), null);
             // Response with 204 No Content
+            SetResponseCode(204);
             echo('204');
         break;
         case 'DELETE':
             // Delete a resource
             $current_resource->Delete(null);
             // Response with 204 No Content
-            header('X-Response-Code: 204', true, 204);
+            SetResponseCode(204);
             echo('204');
         break;
     }
 
 }catch(Exceptions\AuthorizationRequired $e){
+    SetResponseCode(401);
     echo('401');
 }catch(Exceptions\ResourceInaccessible $e){
+    SetResponseCode(403);
     echo('403');
 }catch(Exceptions\ResourceNotFound $e){
+    SetResponseCode(404);
     echo('404');
 }catch(Exceptions\MethodNotAllowed $e){
+    SetResponseCode(405);
     echo('405');
 }catch(Exceptions\NotAcceptable $e){
+    SetResponseCode(406);
     echo('406');
 }catch(Exceptions\NotImplemented $e){
+    SetResponseCode(501);
     echo('501');
 }catch(\Exception $e){
+    SetResponseCode(500);
     echo('500');
     echo('Exception thrown: '.$e->getMessage());
 }
@@ -174,6 +183,15 @@ function GetResource(/* string */ $target, /* undefined yet */ $context = null){
     }
 
     return $current_resource;
+}
+
+function ParseRequestBody(){
+    $body = file_get_contents('php://input');
+    return json_decode($body);
+}
+
+function SetResponseCode(/* int */ $code){
+    header('X-Response-Code: '.$code, true, $code);
 }
 
 function ParseQList(/* string */ $qlist){
