@@ -15,16 +15,6 @@ export function AttachHandlers(){
     // Add event handlers for toggling the navbar
     AttachToSelector('.nav-toggle', 'click', UI.ToggleNavigationVisibility);
     AttachToSelector('.nav-backdrop', 'click', UI.HideNavigation);
-
-    window.addEventListener('beforeunload', (event) => {
-        if(GlobalState.PreventsFromExit()){
-            // Cancel the event as stated by the standard.
-            event.preventDefault();
-            // Chrome requires returnValue to be set.
-            event.returnValue = '';
-            return '';
-        }
-      });
 }
 
 /**
