@@ -103,7 +103,7 @@ class Test extends Entity{
         return ($result->num_rows == 1);
     }
 
-    public /* void */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
@@ -117,10 +117,10 @@ class Test extends Entity{
                 ->Where('id', '=', $this->id)
                 ->Run();
         
-        return $result;
+        return $result === true;
     }
 
-    public static /* void */ function Create(User $author){
+    public static /* Test */ function Create(User $author){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Insert()
@@ -147,7 +147,7 @@ class Test extends Entity{
         return new Test($result->fetch_assoc());
     }
 
-    public /* void */ function Remove(){
+    public /* bool */ function Remove(){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Delete()
