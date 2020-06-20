@@ -36,7 +36,7 @@ class JsonFormatter extends Formatter {
             }elseif(is_numeric($value)){
                 $out = $value;
             }else{
-                $out = '"'.$value.'"';
+                $out = '"'.addslashes($value).'"';
             }
         }
         return $out;
