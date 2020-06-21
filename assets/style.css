@@ -265,8 +265,8 @@ table.table col.shrink {width:min-content;}
 .dialog:not(.shown) {display:none;}
 .dialog-backdrop {
     background-color:var(--dialog-backdrop-background-color);position:fixed;
-    top:0; bottom:0; left:0; right:0; z-index:999; -webkit-backdrop-filter:blur(1px); backdrop-filter:blur(1px);
-    display:grid; grid-template-rows:1fr auto 2fr; grid-template-columns:1fr auto 1fr;
+    top:0; bottom:0; left:0; right:0; z-index:999; display:grid;
+    grid-template-rows:1fr auto 2fr; grid-template-columns:1fr auto 1fr;
 }
 .dialog-backdrop:not(.shown) {display:none;}
 .dialog > h2:first-of-type {
