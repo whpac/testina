@@ -29,14 +29,32 @@ export default class TestSummaryDialog extends Dialog {
         this.QuestionCreationDateElement = row[2].insertCell(-1);
     
         this.AddContent(content_table);
-        this.AddButton('Zamknij', () => {this.Hide();});
-        this.AddButton('Edytuj', () => {this.Hide(); DisplayPage('testy/edytuj', this.CurrentTest)}, ['secondary']);
-        this.AddButton('Przypisz', () => {
+
+        let close_btn = document.createElement('button');
+        close_btn.textContent = 'Zamknij';
+        close_btn.addEventListener('click', this.Hide.bind(this));
+        this.AddButton(close_btn);
+
+        let edit_btn = document.createElement('button');
+        edit_btn.classList.add('secondary');
+        edit_btn.textContent = 'Edytuj';
+        edit_btn.addEventListener('click', (() => {
+            this.Hide();
+            DisplayPage('testy/edytuj', this.CurrentTest);
+        }).bind(this));
+        this.AddButton(edit_btn);
+
+        let assign_btn = document.createElement('button');
+        assign_btn.classList.add('secondary');
+        assign_btn.textContent = 'Przypisz';
+        assign_btn.disabled = true;
+        assign_btn.addEventListener('click', (() => {
             this.Hide();
             
             if(this.CurrentTest === undefined) return;
             /*AssignTest(this.CurrentTest);*/
-        }, ['secondary']);
+        }).bind(this));
+        this.AddButton(assign_btn);
     }
 
     async Prepare(test: Test){

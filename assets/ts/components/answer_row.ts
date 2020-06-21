@@ -5,10 +5,13 @@ export default class AnswerRow extends Component {
     protected RowNumberCell: HTMLTableCellElement;
     protected TextInput: HTMLInputElement;
     protected CorrectCheckbox: HTMLInputElement;
+    protected RemoveButton: HTMLButtonElement;
+    protected RestoreButton: HTMLButtonElement;
 
     protected Answer: Answer | undefined;
 
-    OnRemove: (() => void) | undefined;
+    public IsRemoved = false;
+    OnChange: (() => void) | undefined;
 
     constructor(row_number: number, answer?: Answer){
         super();
@@ -35,11 +38,19 @@ export default class AnswerRow extends Component {
         td_correct.appendChild(this.CorrectCheckbox);
 
         let td_rem = (this.Element as HTMLTableRowElement).insertCell(-1);
-        let rem_btn = document.createElement('button');
-        rem_btn.classList.add('compact', 'error', 'fa', 'fa-trash');
-        rem_btn.addEventListener('click', (() => this.RemoveAnswer(this.Element as HTMLTableRowElement)).bind(this));
-        rem_btn.title = 'Usuń';
-        td_rem.appendChild(rem_btn);
+
+        this.RemoveButton = document.createElement('button');
+        this.RemoveButton.classList.add('compact', 'error', 'fa', 'fa-trash');
+        this.RemoveButton.addEventListener('click', this.RemoveAnswer.bind(this));
+        this.RemoveButton.title = 'Usuń';
+        td_rem.appendChild(this.RemoveButton);
+
+        this.RestoreButton = document.createElement('button');
+        this.RestoreButton.classList.add('compact', 'fa', 'fa-undo');
+        this.RestoreButton.style.display = 'none';
+        this.RestoreButton.addEventListener('click', this.RestoreAnswer.bind(this));
+        this.RestoreButton.title = 'Przywróć';
+        td_rem.appendChild(this.RestoreButton);
 
         this.Populate();
     }
@@ -49,12 +60,25 @@ export default class AnswerRow extends Component {
         this.CorrectCheckbox.checked = (await this.Answer?.IsCorrect()) ?? false;
     }
 
-    protected RemoveAnswer(row: HTMLTableRowElement){
-        row.remove();
-        this.OnRemove?.();
+    protected RemoveAnswer(){
+        this.IsRemoved = true;
+        this.TextInput.style.textDecoration = 'line-through';
+        this.CorrectCheckbox.style.display = 'none';
+        this.RemoveButton.style.display = 'none';
+        this.RestoreButton.style.display = '';
+        this.OnChange?.();
+    }
+
+    protected RestoreAnswer(){
+        this.IsRemoved = false;
+        this.TextInput.style.textDecoration = '';
+        this.CorrectCheckbox.style.display = '';
+        this.RemoveButton.style.display = '';
+        this.RestoreButton.style.display = 'none';
+        this.OnChange?.();
     }
 
     UpdateRowNumber(row_number: number){
-        this.RowNumberCell.textContent = row_number.toString() + '.';
+        this.RowNumberCell.textContent = (row_number != 0) ? (row_number.toString() + '.') : '–';
     }
 }

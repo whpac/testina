@@ -68,7 +68,12 @@ export function CreateSimpleDialog(text: string, buttons?: DialogButtonDescripto
         let callback = btn[1];
         if(callback == '[hide]') callback = () => {dialog.Hide()};
 
-        dialog.AddButton(btn[0], callback, btn[2]);
+        let button = document.createElement('button');
+        button.textContent = btn[0];
+        button.addEventListener('click', callback);
+        button.classList.add(...btn[2]);
+
+        dialog.AddButton(button);
     });
 
     return dialog;

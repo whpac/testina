@@ -12,7 +12,7 @@ export default class Dialog{
     HeaderElement: HTMLHeadingElement;
     HeaderContentElement: HTMLSpanElement;
     Content: Node[] = [];
-    Buttons: DialogButtonDescriptor[] = [];
+    Buttons: HTMLButtonElement[] = [];
     IsRendered: boolean = false;
 
     constructor(){
@@ -41,8 +41,9 @@ export default class Dialog{
      * @param callback Function called on click
      * @param classes Button CSS classes
      */
-    AddButton(btn_text: string, callback: () => void, classes: string[] = []){
-        this.Buttons.push({Text: btn_text, Callback: callback, Classes: classes}); 
+    AddButton(btn: HTMLButtonElement){ //btn_text: string, callback: () => void, classes: string[] = []){
+        //this.Buttons.push({Text: btn_text, Callback: callback, Classes: classes}); 
+        this.Buttons.push(btn);
     }
 
     /**
@@ -83,7 +84,7 @@ export default class Dialog{
         var button_wrapper = document.createElement('div');
         button_wrapper.classList.add('buttons');
 
-        this.Buttons.forEach((button) => {
+        /*this.Buttons.forEach((button) => {
             let btn = document.createElement('button');
             btn.innerText = button.Text;
             btn.addEventListener('click', button.Callback);
@@ -91,6 +92,9 @@ export default class Dialog{
                 btn.classList.add(...button.Classes);
 
             button_wrapper.appendChild(btn);
+        });*/
+        this.Buttons.forEach((button) => {
+            button_wrapper.appendChild(button);
         });
         this.DialogElement.appendChild(button_wrapper);
         this.IsRendered = true;

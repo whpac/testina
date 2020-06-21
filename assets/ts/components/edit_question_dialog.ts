@@ -2,9 +2,10 @@ import Dialog from './dialog';
 import Question from '../entities/question';
 import HelpLink from './help_link';
 import AnswersTable from './answers_table';
+import Answer from '../entities/answer';
 
 import * as PageManager from '../1page/pagemanager';
-import Answer from '../entities/answer';
+import * as Toasts from '../toasts';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;
@@ -22,7 +23,11 @@ export default class EditQuestionDialog extends Dialog {
 
     protected AnswersTable: AnswersTable;
 
+    protected SaveButton: HTMLButtonElement;
+    protected CancelButton: HTMLButtonElement;
+
     protected IgnoreChanges: boolean = false;
+    protected Question: Question | undefined;
 
     constructor(){
         super();
@@ -179,11 +184,21 @@ export default class EditQuestionDialog extends Dialog {
 
         this.SetHeader('Edytuj pytanie');
         this.DisplayHelpButton();
-        this.AddButton('Zapisz', this.SaveChanges.bind(this));
-        this.AddButton('Anuluj', this.CancelChanges.bind(this), ['secondary']);
+
+        this.SaveButton = document.createElement('button');
+        this.SaveButton.textContent = 'Zapisz';
+        this.SaveButton.addEventListener('click', this.SaveChanges.bind(this));
+        this.AddButton(this.SaveButton);
+
+        this.CancelButton = document.createElement('button');
+        this.CancelButton.classList.add('secondary');
+        this.CancelButton.textContent = 'Anuluj';
+        this.CancelButton.addEventListener('click', this.CancelChanges.bind(this));
+        this.AddButton(this.CancelButton);
     }
 
     async PopulateAndShow(question: Question){
+        this.Question = question;
         this.IgnoreChanges = true;
         this.TextTextarea.value = await question.GetText();
         this.TypeSelect.value = (await question.GetType()).toString();
@@ -225,12 +240,48 @@ export default class EditQuestionDialog extends Dialog {
         PageManager.UnpreventFromNavigation('question-editor');
     }
 
-    protected SaveChanges(){
-        // Zapisać pytanie
-        // Wywołać AnswersTable.Save(question) //question jest kontekstem do dodawania odpowiedzi
-        this.Hide();
-        this.AnswersTable.ClearContent();
-        PageManager.UnpreventFromNavigation('question-editor');
+    protected async SaveChanges(){
+        if(this.Question === undefined){
+            this.Hide();
+            return;
+        }
+        // Validate()
+
+        let saving_toast = Toasts.ShowPersistent('Zapisywanie pytania...');
+        this.SaveButton.disabled = true;
+        this.CancelButton.disabled = true;
+
+        let points_counting = 0;
+        if(this.CountingBinaryRadio.checked) points_counting = Question.COUNTING_BINARY;
+        if(this.CountingLinearRadio.checked) points_counting = Question.COUNTING_LINEAR;
+
+        let max_typos = parseInt(this.TyposAllowCountInput.value);
+        if(this.TyposDisallowRadio.checked) max_typos = 0;
+
+        try{
+            let result_async = this.Question.Update(
+                this.TextTextarea.value,
+                parseInt(this.TypeSelect.value),
+                parseFloat(this.PointsInput.value),
+                points_counting,
+                max_typos
+            );
+            // Wywołać AnswersTable.Save(this.Question) //question jest kontekstem do dodawania odpowiedzi
+
+            await result_async;
+
+            Toasts.Show('Pytanie zostało zapisane.');
+            this.Hide();
+            this.AnswersTable.ClearContent();
+            PageManager.UnpreventFromNavigation('question-editor');
+            
+        }catch(e){
+            Toasts.Show('Nie udało się zapisać pytania. ' + e?.Status);
+        }finally{
+            saving_toast.Hide();
+            this.SaveButton.disabled = false;
+            this.CancelButton.disabled = false;
+        }
     }
 
     protected StateChanged(){

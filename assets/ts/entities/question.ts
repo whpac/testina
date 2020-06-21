@@ -113,4 +113,23 @@ export default class Question extends Entity {
         await this?._fetch_awaiter;
         return this.answer_count as number;
     }
+
+    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number){
+        let request_data = {
+            text: text,
+            type: type,
+            points: points,
+            points_counting: points_counting,
+            max_typos: max_typos,
+        };
+        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
+        if(result.Status == 204){
+            this.text = text;
+            this.type = type;
+            this.points = points;
+            this.points_counting = points_counting;
+            this.max_typos = max_typos;
+            this.FireEvent('change');
+        } else throw result;
+    }
 }

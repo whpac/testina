@@ -112,8 +112,7 @@ export default class Test extends Entity implements PageParams {
         let result = await XHR.Request('api/tests/' + this.id, 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
-            return true;
-        } else return false;
+        }else throw result;
     }
 
     async UpdateSettings(name: string, question_multiplier: number, time_limit: number){
@@ -122,14 +121,13 @@ export default class Test extends Entity implements PageParams {
             question_multiplier: question_multiplier,
             time_limit: time_limit
         };
-        let result = await XHR.Request('api/tests/' + this.id, 'PUT', request_data);
+        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
         if(result.Status == 204){
             this.name = name;
             this.question_multiplier = question_multiplier;
             this.time_limit = time_limit;
             this.FireEvent('change');
-            return true;
-        } else return false;
+        }else throw result;
     }
 
     GetSimpleRepresentation(){

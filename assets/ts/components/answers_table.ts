@@ -81,13 +81,21 @@ export default class AnswersTable extends Component {
 
     protected async AppendRow(answer?: Answer){
         let ar = new AnswerRow(this.AnswerRows.length + 1, answer);
-        ar.OnRemove = this.UpdateRowNumbers.bind(this);
+        ar.OnChange = this.UpdateRowNumbers.bind(this);
         this.AnswerRows.push(ar);
         this.ContentWrapper.appendChild(ar.GetElement());
     }
 
     protected UpdateRowNumbers(){
-        this.AnswerRows.forEach((row, index) => row.UpdateRowNumber(index + 1));
+        let row_number = 1;
+        this.AnswerRows.forEach((row) => {
+            if(row.IsRemoved){
+                row.UpdateRowNumber(0);
+            }else{
+                row.UpdateRowNumber(row_number);
+                row_number++;
+            }
+        });
     }
 
     protected AddAnswer(){

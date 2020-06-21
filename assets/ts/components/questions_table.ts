@@ -85,6 +85,11 @@ export default class QuestionsTable extends Component {
             btn_rem.classList.add('compact', 'error', 'fa', 'fa-trash');
             btn_rem.title = 'Usuń pytanie';
             td_rem.appendChild(btn_rem);
+
+            question.AddEventListener('change', async () => {
+                td_text.textContent = (await question.GetText());
+                td_pts.textContent = (await question.GetPoints()).toLocaleString();
+            });
         });
     }
 }

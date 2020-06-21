@@ -180,16 +180,16 @@ export default class TestSettings extends Card {
 
         let test_name = await (this.Test as Test).GetName();
 
-        let removal_result_promise = (this.Test as Test).Remove();
-        let toast = Toasts.ShowPersistent('Usuwanie testu „' + test_name + '”...');
-        let removal_result = await removal_result_promise;
-        toast.Hide();
-
-        if(removal_result){
+        let removing_toast = Toasts.ShowPersistent('Usuwanie testu „' + test_name + '”...');
+        try{
+            await (this.Test as Test).Remove();
             Toasts.Show('Test „' + test_name + '” został usunięty.');
             DisplayPage('testy/biblioteka');
-        }else{
+
+        }catch(e){
             Toasts.Show('Nie udało się usunąć testu „' + test_name + '”.');
+        }finally{
+            removing_toast.Hide();
         }
     }
 
@@ -197,21 +197,22 @@ export default class TestSettings extends Card {
      * Saves the settings
      */
     protected async SaveTestSettings(){
-        let update_result_promise = (this.Test as Test).UpdateSettings(
-            this.TestNameInput.value,
-            parseInt(this.QuestionMultiplierInput.value),
-            this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
-        );
-        let toast = Toasts.ShowPersistent('Zapisywanie zmian...');
-        let update_result = await update_result_promise;
+        let saving_toast = Toasts.ShowPersistent('Zapisywanie zmian...');
 
-        toast.Hide();
+        try{
+            await (this.Test as Test).UpdateSettings(
+                this.TestNameInput.value,
+                parseInt(this.QuestionMultiplierInput.value),
+                this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
+            );
 
-        if(update_result){
             Toasts.Show('Zmiany w ustawieniach testu zostały zapisane.');
             PageManager.UnpreventFromNavigation('test-settings');
-        }else{
+            
+        }catch(e){
             Toasts.Show('Nie udało się zapisać zmian w ustawieniach testu.');
+        }finally{
+            saving_toast.Hide();
         }
     }
 }
