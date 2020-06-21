@@ -24,6 +24,7 @@ export function Request(url: string, method?: string, request_data?: any){
                     try{
                         parsed_json = JSON.parse(xhr.responseText);
                     }catch(e){
+                        console.log('Response contains malformed JSON.');
                         reject({
                             Status: xhr.status,
                             StatusText: xhr.statusText,

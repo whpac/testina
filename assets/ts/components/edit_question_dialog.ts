@@ -226,7 +226,7 @@ export default class EditQuestionDialog extends Dialog {
 
         this.Show();
 
-        this.AnswersTable.Populate(await Answer.GetForQuestion(question));
+        this.AnswersTable.Populate(question);
         this.IgnoreChanges = false;
     }
 
@@ -274,7 +274,7 @@ export default class EditQuestionDialog extends Dialog {
             this.Hide();
             this.AnswersTable.ClearContent();
             PageManager.UnpreventFromNavigation('question-editor');
-            
+
         }catch(e){
             Toasts.Show('Nie udało się zapisać pytania. ' + e?.Status);
         }finally{

@@ -14,5 +14,12 @@ class Question extends Resource{
         $this->AddSubResource('answers', new AnswerCollection($question));
         return true;
     }
+
+    public function Update(/* mixed */ $data, /* undefined yet */ $context){
+        $question = $this->GetConstructorArgument();
+        $res = $question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
+
+        if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
+    }
 }
 ?>

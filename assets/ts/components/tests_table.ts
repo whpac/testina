@@ -37,28 +37,38 @@ export default class TestsTable extends Component {
             '</tr>';
         
         this.TestRowsContainer = document.createElement('tbody');
+        this.ClearContent();
+        this.Element.appendChild(this.TestRowsContainer);
+
+        this.SummaryDialog = new TestSummaryDialog();
+    }
+
+    ClearContent(message?: string){
+        message = message ?? 'Ładowanie...';
         this.TestRowsContainer.innerHTML = 
             '<tr>' +
-                '<td>Ładowanie...</td>' +
+                '<td>' + message + '</td>' +
                 '<td class="wide-screen-only"></td>' +
                 '<td class="wide-screen-only"></td>' +
                 '<td class="wide-screen-only"></td>' +
                 '<td class="wide-screen-only"></td>' +
                 '<td class="narrow-screen-only"></td>' +
             '</tr>';
-        this.Element.appendChild(this.TestRowsContainer);
-
-        this.SummaryDialog = new TestSummaryDialog();
     }
 
     async LoadTests(){
         // Należałoby sprawdzić, kiedy została załadowana ta lista
         if(this.IsLoaded) return;
 
-        let json: Test[] = await Test.GetAll();
+        let tests: Test[] = [];
+        try{
+            tests = await Test.GetAll();
+            this.TestRowsContainer.innerText = '';
+        }catch(e){
+            this.ClearContent('Nie udało się załadować listy testów.');
+        }
 
-        this.TestRowsContainer.innerText = '';
-        json.forEach(async (test) => {
+        tests.forEach(async (test) => {
             let tr = this.TestRowsContainer.insertRow(0);
 
             test.AddEventListener('remove', () => tr.remove());

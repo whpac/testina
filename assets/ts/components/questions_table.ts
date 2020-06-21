@@ -30,14 +30,7 @@ export default class QuestionsTable extends Component {
 
         this.ContentWrapperElem = document.createElement('tbody');
         this.ContentWrapperElem.classList.add('content-tbody');
-        this.ContentWrapperElem.innerHTML = 
-            '<tr>' +
-                '<td></td>' +
-                '<td>Ładowanie...</td>' +
-                '<td></td>' +
-                '<td></td>' +
-                '<td></td>' +
-            '</tr>';
+        this.ClearContent();
         this.Element.appendChild(this.ContentWrapperElem);
 
         let nocontent_tbody = document.createElement('tbody');
@@ -55,9 +48,26 @@ export default class QuestionsTable extends Component {
         this.EditDialog = new EditQuestionDialog();
     }
 
+    ClearContent(message?: string){
+        message = message ?? 'Ładowanie...';
+        this.ContentWrapperElem.innerHTML = 
+            '<tr>' +
+                '<td></td>' +
+                '<td>' + message + '</td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+            '</tr>';
+    }
+
     async LoadQuestions(test: Test){
-        let questions = await Question.GetForTest(test);
-        this.ContentWrapperElem.innerText = '';
+        let questions: Question[] = [];
+        try{
+            questions = await Question.GetForTest(test);
+            this.ContentWrapperElem.innerText = '';
+        }catch(e){
+            this.ClearContent('Nie udało się wczytać pytań');
+        }
 
         questions.forEach(async (question, index) => {
             let tr = this.ContentWrapperElem.insertRow(-1);

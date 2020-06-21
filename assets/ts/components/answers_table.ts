@@ -1,6 +1,7 @@
 import Component from './component';
 import Answer from '../entities/answer';
 import AnswerRow from './answer_row';
+import Question from '../entities/question';
 
 export default class AnswersTable extends Component {
     ContentWrapper: HTMLTableSectionElement;
@@ -63,17 +64,23 @@ export default class AnswersTable extends Component {
         td_add.appendChild(btn_add);
     }
 
-    Populate(answers: Answer[]){
-        this.ContentWrapper.innerHTML = '';
-        answers.forEach((answer) => this.AppendRow(answer));
+    async Populate(question: Question){
+        try{
+            let answers = await Answer.GetForQuestion(question);
+            this.ContentWrapper.innerHTML = '';
+            answers.forEach((answer) => this.AppendRow(answer));
+        }catch(e){
+            this.ClearContent('Nie udało się wczytać odpowiedzi');
+        }
     }
 
-    ClearContent(){
+    ClearContent(message?: string){
+        message = message ?? 'Wczytywanie...';
         this.AnswerRows = [];
         this.ContentWrapper.innerHTML = `
             <tr>
                 <td></td>
-                <td>Wczytywanie...</td>
+                <td>${message}</td>
                 <td></td>
                 <td></td>
             </tr>`;

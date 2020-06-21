@@ -109,7 +109,7 @@ export default class Test extends Entity implements PageParams {
     }
 
     async Remove(){
-        let result = await XHR.Request('api/tests/' + this.id, 'DELETE');
+        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
         }else throw result;
