@@ -16,19 +16,19 @@ class JsonFormatter extends Formatter {
         if(is_array($value)){
             // Don't go deeper and return an empty object
             if($depth <= 0) return '{}';
-            $out .= "\n{\n";
+            $out .= '{';
 
             // Used to separate properties
             $add_comma = false;
             foreach($value as $key => $resource){
-                if($add_comma) $out .= ",\n";
+                if($add_comma) $out .= ',';
                 $add_comma = true;
 
                 // Append the key: value pair
                 $out .= '"'.$key.'":';
                 $out .= $this->FormatObject($resource, $depth - 1);
             }
-            $out .= "\n}\n";
+            $out .= '}';
         }else{
             // Print numbers and bools without quotes
             if(is_bool($value)){
@@ -36,7 +36,13 @@ class JsonFormatter extends Formatter {
             }elseif(is_numeric($value)){
                 $out = $value;
             }else{
-                $out = '"'.addslashes($value).'"';
+                $v = addslashes($value);
+                $v = str_replace("\n", '\n', $v);
+                $v = str_replace("\r", '\r', $v);
+                $v = str_replace("\010", '\b', $v);
+                $v = str_replace("\f", '\f', $v);
+                $v = str_replace("\t", '\t', $v);
+                $out = '"'.$v.'"';
             }
         }
         return $out;
