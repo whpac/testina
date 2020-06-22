@@ -5,6 +5,7 @@ import Question from '../entities/question';
 
 export default class AnswersTable extends Component {
     ContentWrapper: HTMLTableSectionElement;
+    Question: Question | undefined;
     AnswerRows: AnswerRow[] = [];
 
     constructor(){
@@ -64,7 +65,14 @@ export default class AnswersTable extends Component {
         td_add.appendChild(btn_add);
     }
 
-    async Populate(question: Question){
+    async Populate(question?: Question){
+        this.Question = question;
+
+        if(question === undefined){
+            this.ContentWrapper.innerHTML = '';
+            return;
+        }
+
         try{
             let answers = await Answer.GetForQuestion(question);
             this.ContentWrapper.innerHTML = '';
@@ -107,5 +115,18 @@ export default class AnswersTable extends Component {
 
     protected AddAnswer(){
         this.AppendRow(undefined);
+    }
+
+    async Save(){
+        if(this.Question === undefined) return;
+        let awaiters: Promise<void>[] = [];
+
+        for(let i = 0; i < this.AnswerRows.length; i++){
+            awaiters.push(this.AnswerRows[i].Save(this.Question));
+        }
+
+        for(let i = 0; i < awaiters.length; i++){
+            await awaiters[i];
+        }
     }
 }

@@ -243,6 +243,8 @@ input.discreet:not(:hover):not(:active):not(:focus),
     background:transparent; border-color:transparent;
 }
 
+input.deleted {opacity:0.5; text-decoration:line-through;}
+
 table.full-width {width:100%;}
 table.table {border-spacing:0; margin-top:0.5rem;}
 table.table:first-child {margin-top:0;}

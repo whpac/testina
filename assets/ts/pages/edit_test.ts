@@ -30,11 +30,6 @@ export default class EditTestPage extends Page {
         this.QuestionsTable = new QuestionsTable();
         question_list_card.AppendChild(this.QuestionsTable.GetElement());
 
-        let center_div = document.createElement('div');
-        center_div.classList.add('center');
-        center_div.innerHTML = '<button id="add-question-button">Dodaj pytanie</button>';
-        question_list_card.AppendChild(center_div);
-
         this.PageElem.appendChild(question_list_card.GetElement());
 
         this.TestSettingsCard = new TestSettings();

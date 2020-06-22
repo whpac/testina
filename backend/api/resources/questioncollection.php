@@ -12,5 +12,19 @@ class QuestionCollection extends Resource {
 
         return true;
     }
+
+    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+        $test = $this->GetConstructorArgument();
+        $question = \Entities\Question::Create(
+            $test,
+            $source->text,
+            $source->type,
+            $source->points,
+            $source->points_counting,
+            $source->max_typos
+        );
+
+        header('Content-Location: '.$question->GetId());
+    }
 }
 ?>

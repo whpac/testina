@@ -3,6 +3,8 @@ import Test from '../entities/test';
 import Question from '../entities/question';
 import EditQuestionDialog from './edit_question_dialog';
 
+import { Truncate } from '../functions';
+
 export default class QuestionsTable extends Component {
     ContentWrapperElem: HTMLTableSectionElement;
     EditDialog: EditQuestionDialog;
@@ -28,12 +30,11 @@ export default class QuestionsTable extends Component {
                 '<th></th>' +
             '</tr>';
 
-        this.ContentWrapperElem = document.createElement('tbody');
+        this.ContentWrapperElem = (this.Element as HTMLTableElement).createTBody();
         this.ContentWrapperElem.classList.add('content-tbody');
         this.ClearContent();
-        this.Element.appendChild(this.ContentWrapperElem);
 
-        let nocontent_tbody = document.createElement('tbody');
+        let nocontent_tbody = (this.Element as HTMLTableElement).createTBody();
         nocontent_tbody.classList.add('nocontent-tbody');
         nocontent_tbody.innerHTML = 
             '<tr>' +
@@ -42,8 +43,21 @@ export default class QuestionsTable extends Component {
                 '<td></td>' +
                 '<td></td>' +
                 '<td></td>' +
-            '</tr>'
-        this.Element.appendChild(nocontent_tbody);
+            '</tr>';
+        
+        let button_footer = (this.Element as HTMLTableElement).createTFoot();
+        let tr = button_footer.insertRow(-1);
+
+        let add_button = document.createElement('button');
+        add_button.classList.add('compact');
+        add_button.textContent = 'Dodaj pytanie';
+        add_button.addEventListener('click', this.AddQuestion.bind(this));
+
+        tr.insertCell(-1);
+        tr.insertCell(-1).appendChild(add_button);
+        tr.insertCell(-1);
+        tr.insertCell(-1);
+        tr.insertCell(-1);
 
         this.EditDialog = new EditQuestionDialog();
     }
@@ -68,38 +82,48 @@ export default class QuestionsTable extends Component {
         }catch(e){
             this.ClearContent('Nie udało się wczytać pytań');
         }
+        this.EditDialog.Test = test;
 
-        questions.forEach(async (question, index) => {
-            let tr = this.ContentWrapperElem.insertRow(-1);
+        questions.forEach(this.AppendRow.bind(this));
+    }
 
-            let td_num = tr.insertCell(-1);
-            td_num.classList.add('secondary');
-            td_num.textContent = (index + 1).toString() + '.';
+    async AppendRow(question: Question){
+        let tr = this.ContentWrapperElem.insertRow(-1);
+        let row_number = this.ContentWrapperElem.rows.length;
 
-            let td_text = tr.insertCell(-1);
-            td_text.textContent = (await question.GetText());
+        let td_num = tr.insertCell(-1);
+        td_num.classList.add('secondary');
+        td_num.textContent = row_number.toString() + '.';
 
-            let td_pts = tr.insertCell(-1);
-            td_pts.classList.add('center');
+        let td_text = tr.insertCell(-1);
+        td_text.textContent = Truncate(await question.GetText(), 60);
+
+        let td_pts = tr.insertCell(-1);
+        td_pts.classList.add('center');
+        td_pts.textContent = (await question.GetPoints()).toLocaleString();
+
+        let td_edit = tr.insertCell(-1);
+        let btn_edit = document.createElement('button');
+        btn_edit.classList.add('compact');
+        btn_edit.textContent = 'Edytuj';
+        btn_edit.addEventListener('click', () => this.EditDialog.PopulateAndShow(question));
+        td_edit.appendChild(btn_edit);
+
+        let td_rem = tr.insertCell(-1);
+        let btn_rem = document.createElement('button');
+        btn_rem.classList.add('compact', 'error', 'fa', 'fa-trash', 'todo');
+        btn_rem.title = 'Usuń pytanie';
+        td_rem.appendChild(btn_rem);
+
+        question.AddEventListener('change', async () => {
+            td_text.textContent = Truncate(await question.GetText(), 60);
             td_pts.textContent = (await question.GetPoints()).toLocaleString();
+        });
+    }
 
-            let td_edit = tr.insertCell(-1);
-            let btn_edit = document.createElement('button');
-            btn_edit.classList.add('compact');
-            btn_edit.textContent = 'Edytuj';
-            btn_edit.addEventListener('click', () => this.EditDialog.PopulateAndShow(question));
-            td_edit.appendChild(btn_edit);
-
-            let td_rem = tr.insertCell(-1);
-            let btn_rem = document.createElement('button');
-            btn_rem.classList.add('compact', 'error', 'fa', 'fa-trash');
-            btn_rem.title = 'Usuń pytanie';
-            td_rem.appendChild(btn_rem);
-
-            question.AddEventListener('change', async () => {
-                td_text.textContent = (await question.GetText());
-                td_pts.textContent = (await question.GetPoints()).toLocaleString();
-            });
+    AddQuestion(){
+        this.EditDialog.PopulateAndShow(undefined).then((question) => {
+            this.AppendRow(question);
         });
     }
 }

@@ -74,4 +74,34 @@ export default class Answer extends Entity {
         await this._fetch_awaiter;
         return this.correct as boolean;
     }
+
+    static async Create(question: Question, text: string, correct: boolean){
+        let request_data = {
+            text: text,
+            correct: correct
+        };
+        let result = await XHR.Request(question.GetApiUrl() + '/answers', 'POST', request_data);
+        
+        if(result.Status != 201) throw result;
+    }
+
+    async Update(text: string, correct: boolean){
+        let request_data = {
+            text: text,
+            correct: correct
+        };
+        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
+        if(result.Status == 204){
+            this.text = text;
+            this.correct = correct;
+            this.FireEvent('change');
+        } else throw result;
+    }
+
+    async Remove(){
+        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
+        if(result.Status == 204){
+            this.FireEvent('remove');
+        } else throw result;
+    }
 }

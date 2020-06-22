@@ -2,7 +2,7 @@ import Dialog from './dialog';
 import Question from '../entities/question';
 import HelpLink from './help_link';
 import AnswersTable from './answers_table';
-import Answer from '../entities/answer';
+import Test from '../entities/test';
 
 import * as PageManager from '../1page/pagemanager';
 import * as Toasts from '../toasts';
@@ -22,12 +22,18 @@ export default class EditQuestionDialog extends Dialog {
     protected TyposAllowCountInput: HTMLInputElement;
 
     protected AnswersTable: AnswersTable;
+    protected ErrorWrapper: HTMLElement;
 
     protected SaveButton: HTMLButtonElement;
     protected CancelButton: HTMLButtonElement;
 
-    protected IgnoreChanges: boolean = false;
+    protected IgnoreChanges = false;
+    protected IsChanged = false;
     protected Question: Question | undefined;
+    public Test: Test | undefined;
+
+    protected PromiseResolve: ((question: Question) => void) | undefined;
+    protected PromiseReject: (() => void) | undefined;
 
     constructor(){
         super();
@@ -178,9 +184,9 @@ export default class EditQuestionDialog extends Dialog {
         this.AnswersTable = new AnswersTable();
         this.AddContent(this.AnswersTable.GetElement());
 
-        let error_wrapper = document.createElement('div');
-        error_wrapper.classList.add('error');
-        this.AddContent(error_wrapper);
+        this.ErrorWrapper = document.createElement('div');
+        this.ErrorWrapper.classList.add('error');
+        this.AddContent(this.ErrorWrapper);
 
         this.SetHeader('Edytuj pytanie');
         this.DisplayHelpButton();
@@ -197,15 +203,15 @@ export default class EditQuestionDialog extends Dialog {
         this.AddButton(this.CancelButton);
     }
 
-    async PopulateAndShow(question: Question){
+    async PopulateAndShow(question?: Question){
         this.Question = question;
         this.IgnoreChanges = true;
-        this.TextTextarea.value = await question.GetText();
-        this.TypeSelect.value = (await question.GetType()).toString();
-        this.PointsInput.value = (await question.GetPoints()).toString();
+        this.TextTextarea.value = await question?.GetText() ?? '';
+        this.TypeSelect.value = (await question?.GetType() ?? 0).toString();
+        this.PointsInput.value = (await question?.GetPoints() ?? 1).toString();
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
 
-        switch(await question.GetPointsCounting()){
+        switch(await question?.GetPointsCounting() ?? Question.COUNTING_BINARY){
             case Question.COUNTING_BINARY:
                 this.CountingBinaryRadio.checked = true;
                 break;
@@ -214,7 +220,7 @@ export default class EditQuestionDialog extends Dialog {
                 break;
         }
 
-        let typos_count = await question.GetMaxTypos();
+        let typos_count = await question?.GetMaxTypos() ?? 0;
         if(typos_count == 0){
             this.TyposDisallowRadio.checked = true;
             this.TyposAllowCountInput.value = '1';
@@ -228,6 +234,11 @@ export default class EditQuestionDialog extends Dialog {
 
         this.AnswersTable.Populate(question);
         this.IgnoreChanges = false;
+
+        return new Promise<Question>((resolve, reject) => {
+            this.PromiseResolve = resolve;
+            this.PromiseReject = reject;
+        });
     }
 
     protected CancelChanges(){
@@ -238,18 +249,21 @@ export default class EditQuestionDialog extends Dialog {
         this.Hide();
         this.AnswersTable.ClearContent();
         PageManager.UnpreventFromNavigation('question-editor');
+        this.PromiseReject?.();
     }
 
     protected async SaveChanges(){
-        if(this.Question === undefined){
+        if(this.Test === undefined){
             this.Hide();
+            this.PromiseReject?.();
             return;
         }
+
         // Validate()
 
-        let saving_toast = Toasts.ShowPersistent('Zapisywanie pytania...');
-        this.SaveButton.disabled = true;
-        this.CancelButton.disabled = true;
+        let text = this.TextTextarea.value;
+        let type = parseInt(this.TypeSelect.value);
+        let points = parseFloat(this.PointsInput.value);
 
         let points_counting = 0;
         if(this.CountingBinaryRadio.checked) points_counting = Question.COUNTING_BINARY;
@@ -258,25 +272,54 @@ export default class EditQuestionDialog extends Dialog {
         let max_typos = parseInt(this.TyposAllowCountInput.value);
         if(this.TyposDisallowRadio.checked) max_typos = 0;
 
-        try{
-            let result_async = this.Question.Update(
-                this.TextTextarea.value,
-                parseInt(this.TypeSelect.value),
-                parseFloat(this.PointsInput.value),
-                points_counting,
-                max_typos
-            );
-            // Wywołać AnswersTable.Save(this.Question) //question jest kontekstem do dodawania odpowiedzi
+        let saving_toast = Toasts.ShowPersistent('Zapisywanie pytania...');
+        this.SaveButton.disabled = true;
+        this.CancelButton.disabled = true;
 
-            await result_async;
+        try{
+            
+            if(this.Question === undefined){
+                // Create a question
+                let new_question = await Question.Create(
+                    this.Test,
+                    text,
+                    type,
+                    points,
+                    points_counting,
+                    max_typos
+                );
+
+                this.Question = new_question;
+                this.AnswersTable.Question = new_question;
+                await this.AnswersTable.Save();
+            }else{
+                // Update the question - only if it's been changed
+                let update_awaiter: (Promise<void> | undefined) = undefined;
+                if(this.IsChanged){
+                    update_awaiter = this.Question.Update(
+                        text,
+                        type,
+                        points,
+                        points_counting,
+                        max_typos
+                    );
+                }
+
+                let answers_table_awaiter = this.AnswersTable.Save();
+
+                if(update_awaiter !== undefined)
+                    await update_awaiter;
+                await answers_table_awaiter;
+            }
 
             Toasts.Show('Pytanie zostało zapisane.');
             this.Hide();
             this.AnswersTable.ClearContent();
             PageManager.UnpreventFromNavigation('question-editor');
+            this.PromiseResolve?.(this.Question);
 
         }catch(e){
-            Toasts.Show('Nie udało się zapisać pytania. ' + e?.Status);
+            Toasts.Show('Nie udało się zapisać pytania.');
         }finally{
             saving_toast.Hide();
             this.SaveButton.disabled = false;
@@ -286,6 +329,7 @@ export default class EditQuestionDialog extends Dialog {
 
     protected StateChanged(){
         if(this.IgnoreChanges) return;
+        this.IsChanged = true;
         PageManager.PreventFromNavigation('question-editor');
     }
 

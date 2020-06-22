@@ -1,7 +1,8 @@
 type XHRResult = {
     Status: number,
     StatusText: string,
-    Response: {}
+    Response: {},
+    ContentLocation: string
 };
 
 /**
@@ -20,6 +21,7 @@ export function Request(url: string, method?: string, request_data?: any){
 
             if (xhr.status >= 200 && xhr.status < 300){
                 let parsed_json = {};
+                let content_location = xhr.getResponseHeader('Content-Location') ?? '';
                 if(xhr.responseText !== ''){
                     try{
                         parsed_json = JSON.parse(xhr.responseText);
@@ -28,7 +30,8 @@ export function Request(url: string, method?: string, request_data?: any){
                         reject({
                             Status: xhr.status,
                             StatusText: xhr.statusText,
-                            Response: {}
+                            Response: {},
+                            ContentLocation: content_location
                         });
                     }
                 }
@@ -36,13 +39,15 @@ export function Request(url: string, method?: string, request_data?: any){
                 resolve({
                     Status: xhr.status,
                     StatusText: xhr.statusText,
-                    Response: parsed_json
+                    Response: parsed_json,
+                    ContentLocation: content_location
                 });
             }else{
                 reject({
                     Status: xhr.status,
                     StatusText: xhr.statusText,
-                    Response: {}
+                    Response: {},
+                    ContentLocation: ''
                 });
             }
         };

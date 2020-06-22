@@ -114,13 +114,28 @@ export default class Question extends Entity {
         return this.answer_count as number;
     }
 
+    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number){
+        let request_data = {
+            text: text,
+            type: type,
+            points: points,
+            points_counting: points_counting,
+            max_typos: max_typos
+        };
+        let result = await XHR.Request(test.GetApiUrl() + '/questions', 'POST', request_data);
+        
+        if(result.Status != 201) throw result;
+        
+        return new Question(test, parseInt(result.ContentLocation));
+    }
+
     async Update(text: string, type: number, points: number, points_counting: number, max_typos: number){
         let request_data = {
             text: text,
             type: type,
             points: points,
             points_counting: points_counting,
-            max_typos: max_typos,
+            max_typos: max_typos
         };
         let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
         if(result.Status == 204){

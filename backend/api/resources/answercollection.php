@@ -12,5 +12,12 @@ class AnswerCollection extends Resource {
 
         return true;
     }
+
+    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+        $question = $this->GetConstructorArgument();
+        $res = \Entities\Answer::Create($question, $source->text, ['correct' => $source->correct]);
+
+        if(!$res) throw new \Exception('Nie udało się utworzyć odpowiedzi.');
+    }
 }
 ?>
