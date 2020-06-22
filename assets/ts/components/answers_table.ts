@@ -94,6 +94,22 @@ export default class AnswersTable extends Component {
             </tr>`;
     }
 
+    CountPresentRows(){
+        let count = 0;
+        this.AnswerRows.forEach((row) => {
+            if(!row.IsRemoved) count++;
+        });
+        return count;
+    }
+
+    CountCorrectRows(){
+        let count = 0;
+        this.AnswerRows.forEach((row) => {
+            if(row.IsCorrect()) count++;
+        });
+        return count;
+    }
+
     protected async AppendRow(answer?: Answer){
         let ar = new AnswerRow(this.AnswerRows.length + 1, answer);
         ar.OnChange = this.UpdateRowNumbers.bind(this);

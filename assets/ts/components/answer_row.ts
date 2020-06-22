@@ -69,6 +69,10 @@ export default class AnswerRow extends Component {
         this.IgnoreChanges = false;
     }
 
+    IsCorrect(){
+        return this.CorrectCheckbox.checked;
+    }
+
     protected StateChanged(){
         if(this.IgnoreChanges) return;
         PageManager.PreventFromNavigation('question-editor');

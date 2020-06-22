@@ -184,8 +184,8 @@ export default class EditQuestionDialog extends Dialog {
         this.AnswersTable = new AnswersTable();
         this.AddContent(this.AnswersTable.GetElement());
 
-        this.ErrorWrapper = document.createElement('div');
-        this.ErrorWrapper.classList.add('error');
+        this.ErrorWrapper = document.createElement('p');
+        this.ErrorWrapper.classList.add('dialog-error');
         this.AddContent(this.ErrorWrapper);
 
         this.SetHeader('Edytuj pytanie');
@@ -259,7 +259,7 @@ export default class EditQuestionDialog extends Dialog {
             return;
         }
 
-        // Validate()
+        if(!this.Validate()) return;
 
         let text = this.TextTextarea.value;
         let type = parseInt(this.TypeSelect.value);
@@ -325,6 +325,40 @@ export default class EditQuestionDialog extends Dialog {
             this.SaveButton.disabled = false;
             this.CancelButton.disabled = false;
         }
+    }
+
+    protected Validate(){
+        let errors = [];
+
+        if(this.TextTextarea.value == ''){
+            errors.push('Treść pytania nie może być pusta.');
+            this.TextTextarea.classList.add('error');
+        }else{
+            this.TextTextarea.classList.remove('error');
+        }
+
+        if(this.AnswersTable.CountPresentRows() == 0){
+            errors.push('Pytanie musi mieć co najmniej jeden wariant odpowiedzi.');
+        }
+
+        let correct_answer_count = this.AnswersTable.CountCorrectRows();
+        if(this.TypeSelect.value == Question.TYPE_MULTI_CHOICE.toString()
+            && correct_answer_count == 0){
+                errors.push('Pytanie wielokrotnego wyboru musi mieć co najmniej jedną poprawną odpowiedź.');
+        }
+        if(this.TypeSelect.value == Question.TYPE_SINGLE_CHOICE.toString()
+            && correct_answer_count != 1){
+                errors.push('Pytanie jednokrotnego wyboru musi mieć dokładnie jedną poprawną odpowiedź.');
+        }
+
+        let errors_html = '';
+        for(let i = 0; i < errors.length; i++){
+            if(i > 0) errors_html += '<br/>';
+            errors_html += errors[i];
+        }
+        this.ErrorWrapper.innerHTML = errors_html;
+
+        return errors.length == 0;
     }
 
     protected StateChanged(){
