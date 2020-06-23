@@ -338,6 +338,13 @@ export default class EditQuestionDialog extends Dialog {
             this.TextTextarea.classList.remove('error');
         }
 
+        if(parseFloat(this.PointsInput.value) <= 0){
+            errors.push('Liczba punktów musi być dodatnia.');
+            this.PointsInput.classList.add('error');
+        }else{
+            this.PointsInput.classList.remove('error');
+        }
+
         if(this.AnswersTable.CountPresentRows() < 2){
             errors.push('Pytanie musi mieć co najmniej dwa warianty odpowiedzi.');
         }

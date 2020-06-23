@@ -13,6 +13,8 @@ export default class TestSettings extends Card {
     protected TimeLimitPresentRadio: HTMLInputElement;
     protected TimeLimitInput: HTMLInputElement;
 
+    protected ErrorWrapper: HTMLElement;
+
     protected Test: Test | undefined;
     protected IgnoreChange: boolean = false;
 
@@ -115,6 +117,10 @@ export default class TestSettings extends Card {
 
         this.AppendChild(time_limit_fieldset);
 
+        this.ErrorWrapper = document.createElement('p');
+        this.ErrorWrapper.classList.add('dialog-error');
+        this.AppendChild(this.ErrorWrapper);
+
         // Przyłączenie obsługi zdarzeń
         this.TimeLimitPresentRadio.addEventListener('change', this.UpdateTimeLimitInputEnabledState.bind(this));
         this.NoTimeLimitRadio.addEventListener('change', this.UpdateTimeLimitInputEnabledState.bind(this));
@@ -197,6 +203,8 @@ export default class TestSettings extends Card {
      * Saves the settings
      */
     protected async SaveTestSettings(){
+        if(!this.Validate()) return;
+
         let saving_toast = Toasts.ShowPersistent('Zapisywanie zmian...');
 
         try{
@@ -214,5 +222,39 @@ export default class TestSettings extends Card {
         }finally{
             saving_toast.Hide();
         }
+    }
+
+    protected Validate(){
+        let errors = [];
+
+        if(this.TestNameInput.value == ''){
+            errors.push('Nazwa testu nie może być pusta.');
+            this.TestNameInput.classList.add('error');
+        }else{
+            this.TestNameInput.classList.remove('error');
+        }
+
+        if(parseFloat(this.QuestionMultiplierInput.value) <= 0){
+            errors.push('Mnożnik pytań musi być dodatni.');
+            this.QuestionMultiplierInput.classList.add('error');
+        }else{
+            this.QuestionMultiplierInput.classList.remove('error');
+        }
+
+        if(parseFloat(this.TimeLimitInput.value) <= 0 && this.TimeLimitPresentRadio.checked){
+            errors.push('Limit czasu musi być liczbą dodatnią.');
+            this.TimeLimitInput.classList.add('error');
+        }else{
+            this.TimeLimitInput.classList.remove('error');
+        }
+
+        let errors_html = '';
+        for(let i = 0; i < errors.length; i++){
+            if(i > 0) errors_html += '<br/>';
+            errors_html += errors[i];
+        }
+        this.ErrorWrapper.innerHTML = errors_html;
+
+        return errors.length == 0;
     }
 }

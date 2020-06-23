@@ -210,7 +210,7 @@ aside.mobile-header h1 {
 .grid-form input, .grid-form textarea {grid-column:2;}
 .grid-form button, .grid-form select {grid-column:2; justify-self:start;}
 .grid-form input.narrow {justify-self:start;}
-.grid-form .fieldset, .grid-form h2 {grid-column:1 / span 2;}
+.grid-form .fieldset, .grid-form h2, .grid-form .dialog-error {grid-column:1 / span 2;}
 .grid-form .description {grid-column:1 / span 2; margin:-5px 0 5px 10px; font-size:0.9em;}
 .fieldset p {margin:0 0;}
 .get-help {font-size:0.95em; margin-left:10px; text-decoration:none;}

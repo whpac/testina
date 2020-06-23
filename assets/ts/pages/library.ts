@@ -14,7 +14,7 @@ export default class LibraryPage extends Page {
 
         let card = new Card('semi-wide');
         card.GetContentElement().innerHTML =
-                '<a class="button header-button" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>' +
+                '<a class="button header-button todo" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>' +
                 '<h2>Moje testy</h2>' +
                 '<p class="secondary">Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.</p>';
         this.PageElem.appendChild(card.GetElement());
