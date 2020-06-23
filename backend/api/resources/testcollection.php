@@ -14,8 +14,11 @@ class TestCollection extends Resource {
         return true;
     }
 
-    public function CreateSubResource($source, $context){
-        
+    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+        $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier);
+
+        header('Content-Location: '.$test->GetId());
     }
 }
 ?>

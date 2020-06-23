@@ -120,15 +120,15 @@ class Test extends Entity{
         return $result === true;
     }
 
-    public static /* Test */ function Create(User $author){
+    public static /* Test */ function Create(User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Insert()
-                ->Value('name', 'Test bez nazwy')
+                ->Value('name', $name)
                 ->Value('author_id', $author->GetId())
                 ->Value('creation_date', (new \DateTime())->format('Y-m-d H:i:s'))
-                ->Value('time_limit', 0)
-                ->Value('question_multiplier', 1)
+                ->Value('time_limit', $time_limit)
+                ->Value('question_multiplier', $question_multiplier)
                 ->Run();
             
         if($result === false)

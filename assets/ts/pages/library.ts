@@ -13,10 +13,22 @@ export default class LibraryPage extends Page {
         this.PageElem.innerHTML = '<h1>Biblioteka testów</h1>';
 
         let card = new Card('semi-wide');
-        card.GetContentElement().innerHTML =
-                '<a class="button header-button todo" href="testy/utwórz"><i class="fa fa-plus icon"></i><span>Utwórz nowy</span></a>' +
-                '<h2>Moje testy</h2>' +
-                '<p class="secondary">Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.</p>';
+
+        let create_button = document.createElement('button');
+        create_button.classList.add('button', 'header-button');
+        create_button.innerHTML = '<i class="fa fa-plus icon"></i><span>Utwórz nowy</span>';
+        create_button.addEventListener('click', this.CreateTest.bind(this));
+        card.AppendChild(create_button);
+
+        let header = document.createElement('h2');
+        header.textContent = 'Moje testy';
+        card.AppendChild(header);
+
+        let description = document.createElement('p');
+        description.classList.add('secondary');
+        description.textContent = 'Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.';
+        card.AppendChild(description);
+
         this.PageElem.appendChild(card.GetElement());
 
         this.TestsListTable = new TestsTable();
@@ -31,6 +43,10 @@ export default class LibraryPage extends Page {
 
     UnloadFrom(container: HTMLElement){
         container.removeChild(this.PageElem);
+    }
+
+    CreateTest(){
+        this.TestsListTable.CreateTest();
     }
 
     GetUrlPath(){

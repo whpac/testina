@@ -108,6 +108,19 @@ export default class Test extends Entity implements PageParams {
         return (await this.GetTimeLimit()) != 0;
     }
 
+    static async Create(name: string, question_multiplier: number, time_limit: number){
+        let request_data = {
+            name: name,
+            question_multiplier: question_multiplier,
+            time_limit: time_limit
+        };
+        let result = await XHR.Request('api/tests', 'POST', request_data);
+        
+        if(result.Status != 201) throw result;
+        
+        return new Test(parseInt(result.ContentLocation));
+    }
+
     async Remove(){
         let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
         if(result.Status == 204){
