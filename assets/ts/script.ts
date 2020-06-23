@@ -6,6 +6,7 @@ import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
 import PageParams from './1page/pageparams';
+import AssignedTestsList from './pages/assigned_tests_list';
 
 // Initialize the page manager
 let root = document.getElementById('content-container');
@@ -16,6 +17,7 @@ PageManager.Initialize(root, loading_wrapper);
 PageManager.AddPage('home', new HomePage());
 PageManager.AddPage('testy/biblioteka', new LibraryPage());
 PageManager.AddPage('testy/edytuj', new EditTestPage());
+PageManager.AddPage('testy/lista', new AssignedTestsList());
 
 // Attach necessary event handlers
 EventHandlers.AttachHandlersIfDOMLoaded();
