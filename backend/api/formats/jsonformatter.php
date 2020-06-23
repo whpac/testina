@@ -36,7 +36,9 @@ class JsonFormatter extends Formatter {
             }elseif(is_numeric($value)){
                 $out = $value;
             }else{
-                $v = addslashes($value);
+                $v = $value;
+                $v = str_replace("\\", "\\\\", $v);
+                $v = str_replace('"', '\"', $v);
                 $v = str_replace("\n", '\n', $v);
                 $v = str_replace("\r", '\r', $v);
                 $v = str_replace("\010", '\b', $v);
