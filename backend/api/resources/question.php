@@ -21,5 +21,12 @@ class Question extends Resource{
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
+
+    public function Delete(/* undefined yet */ $context){
+        $question = $this->GetConstructorArgument();
+        $res = $question->Remove();
+
+        if(!$res) throw new \Exception('Nie udało się usunąć pytania.');
+    }
 }
 ?>

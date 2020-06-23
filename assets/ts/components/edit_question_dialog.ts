@@ -210,6 +210,7 @@ export default class EditQuestionDialog extends Dialog {
         this.TypeSelect.value = (await question?.GetType() ?? 0).toString();
         this.PointsInput.value = (await question?.GetPoints() ?? 1).toString();
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
+        this.ErrorWrapper.textContent = '';
 
         switch(await question?.GetPointsCounting() ?? Question.COUNTING_BINARY){
             case Question.COUNTING_BINARY:
@@ -337,8 +338,8 @@ export default class EditQuestionDialog extends Dialog {
             this.TextTextarea.classList.remove('error');
         }
 
-        if(this.AnswersTable.CountPresentRows() == 0){
-            errors.push('Pytanie musi mieć co najmniej jeden wariant odpowiedzi.');
+        if(this.AnswersTable.CountPresentRows() < 2){
+            errors.push('Pytanie musi mieć co najmniej dwa warianty odpowiedzi.');
         }
 
         let correct_answer_count = this.AnswersTable.CountCorrectRows();

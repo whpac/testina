@@ -125,6 +125,8 @@ export default class Question extends Entity {
         let result = await XHR.Request(test.GetApiUrl() + '/questions', 'POST', request_data);
         
         if(result.Status != 201) throw result;
+
+        test.OnQuestionAdded();
         
         return new Question(test, parseInt(result.ContentLocation));
     }
@@ -146,5 +148,13 @@ export default class Question extends Entity {
             this.max_typos = max_typos;
             this.FireEvent('change');
         } else throw result;
+    }
+
+    async Remove(){
+        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
+        if(result.Status == 204){
+            this.FireEvent('remove');
+            this.test.OnQuestionRemoved();
+        }else throw result;
     }
 }

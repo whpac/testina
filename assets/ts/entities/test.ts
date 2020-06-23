@@ -136,4 +136,16 @@ export default class Test extends Entity implements PageParams {
             id: this.GetId()
         };
     }
+
+    OnQuestionAdded(){
+        if(this.question_count === undefined) this.question_count = 0;
+        this.question_count++;
+        this.FireEvent('change');
+    }
+
+    OnQuestionRemoved(){
+        if(this.question_count === undefined || this.question_count < 1) return;
+        this.question_count--;
+        this.FireEvent('change');
+    }
 }
