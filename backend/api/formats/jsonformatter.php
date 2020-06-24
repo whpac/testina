@@ -33,6 +33,8 @@ class JsonFormatter extends Formatter {
             // Print numbers and bools without quotes
             if(is_bool($value)){
                 $out = $value ? 'true' : 'false';
+            }elseif(is_null($value)){
+                $out = 'null';
             }elseif(is_numeric($value)){
                 $out = $value;
             }else{

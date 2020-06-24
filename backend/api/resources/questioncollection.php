@@ -1,6 +1,8 @@
 <?php
 namespace Api\Resources;
 
+use Api\Exceptions;
+
 class QuestionCollection extends Resource {
 
     protected function LazyLoad($test, $test_id){
@@ -25,6 +27,14 @@ class QuestionCollection extends Resource {
         );
 
         header('Content-Location: '.$question->GetId());
+    }
+
+    public function AssertAccessible(/* undefined yet */ $context){
+        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+        $test = $this->GetConstructorArgument();
+        if($current_user->GetId() != $test->GetAuthor()->GetId()){
+            throw new Exceptions\ResourceInaccessible('questions');
+        }
     }
 }
 ?>

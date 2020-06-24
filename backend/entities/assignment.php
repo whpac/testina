@@ -110,10 +110,10 @@ class Assignment extends Entity {
         foreach($this->targets as $target){
             switch($target[1]){
                 case self::TARGET_TYPE_USER:
-                    $targets[] = new User($row['target_id']);
+                    $targets[] = new User($target[0]);
                 break;
                 case self::TARGET_TYPE_GROUP:
-                    $targets[] = new Group($row['target_id']);
+                    $targets[] = new Group($target[0]);
                 break;
             }
         }

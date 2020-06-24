@@ -10,6 +10,7 @@ class Test extends Resource{
         $this->AddSubResource('creation_date', new ValueResource($test->GetCreationDate()->format('Y-m-d H:i:s')));
         $this->AddSubResource('time_limit', new ValueResource($test->GetTimeLimit()));
         $this->AddSubResource('question_multiplier', new ValueResource($test->GetQuestionMultiplier()));
+        $this->AddSubResource('question_count', new ValueResource($test->GetQuestionCount()));
         
         $this->AddSubResource('questions', new QuestionCollection($test));
         return true;

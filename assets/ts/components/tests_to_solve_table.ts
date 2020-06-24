@@ -1,5 +1,6 @@
 import Card from './card';
 import AssignedTestRow from './assigned_test_row';
+import Assignment from '../entities/assignment';
 
 export default class TestsToSolveTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
@@ -17,7 +18,7 @@ export default class TestsToSolveTable extends Card {
         table.classList.add('table', 'full-width');
         this.AppendChild(table);
 
-        let colgroup = document.createElement('colgroup');
+        /*let colgroup = document.createElement('colgroup');
         let col_shrink = document.createElement('col');
         col_shrink.classList.add('shrink');
         colgroup.appendChild(document.createElement('col'));
@@ -26,6 +27,18 @@ export default class TestsToSolveTable extends Card {
         colgroup.appendChild(col_shrink.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
+        colgroup.appendChild(col_shrink.cloneNode(false));
+        table.appendChild(colgroup);*/
+
+        let colgroup = document.createElement('colgroup');
+        let col_shrink = document.createElement('col');
+        col_shrink.classList.add('shrink');
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(document.createElement('col'));
         colgroup.appendChild(col_shrink.cloneNode(false));
         table.appendChild(colgroup);
 
@@ -69,8 +82,8 @@ export default class TestsToSolveTable extends Card {
         nocontent_tbody.classList.add('nocontent-tbody');
         let tr = nocontent_tbody.insertRow();
 
-        tr.insertCell();
         tr.insertCell().textContent = 'Wczytywanie...';
+        tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
@@ -78,7 +91,9 @@ export default class TestsToSolveTable extends Card {
         tr.insertCell();
     }
 
-    Populate(){
-        this.ContentWrapper.appendChild(new AssignedTestRow().GetElement());
+    Populate(assignments: Assignment[]){
+        for(let i = assignments.length - 1; i >= 0; i--){
+            this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
+        }
     }
 }

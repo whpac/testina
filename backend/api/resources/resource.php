@@ -6,6 +6,7 @@ use Api\Exceptions;
 abstract class Resource {
     protected $SubResources = [];
     protected $Value = null;
+    protected $IsValueResource = false;
 
     private $CreationArg = null;
     private $IsLoaded = false;
@@ -54,12 +55,12 @@ abstract class Resource {
     }
 
     public /* mixed */ function GetValue(){
-        if(is_null($this->Value)){
-            // If value is null, this resource is a collection and thus should return all of its subresources
-            return $this->GetAllSubResources();
-        }else{
+        if($this->IsValueResource){
             $this->LoadIfNeeded('');
             return $this->Value;
+        }else{
+            // This resource is a collection and thus should return all of its subresources
+            return $this->GetAllSubResources();
         }
     }
 

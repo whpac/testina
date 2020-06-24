@@ -2,13 +2,14 @@ import * as XHR from '../xhr';
 import Entity from './entity';
 import PageParams from '../1page/pageparams';
 
-interface TestDescriptor {
+export interface TestDescriptor {
     id: number,
     name: string,
     author: {},
     creation_date: string,
     time_limit: number,
     question_multiplier: number,
+    question_count: number,
     questions: {}
 }
 
@@ -63,7 +64,7 @@ export default class Test extends Entity implements PageParams {
         this.creation_date = new Date(descriptor.creation_date);
         this.time_limit = descriptor.time_limit;
         this.question_multiplier = descriptor.question_multiplier;
-        this.question_count = Object.keys(descriptor.questions).length;
+        this.question_count = descriptor.question_count;
     }
 
     GetApiUrl(){
