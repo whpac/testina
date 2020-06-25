@@ -1,10 +1,12 @@
 import Page from '../1page/page';
 import TestsToSolveTable from '../components/tests_to_solve_table';
 import Assignment from '../entities/assignment';
+import TestsSolvedTable from '../components/tests_solved_table';
 
 export default class AssignedTestsList extends Page{
     PageElem: HTMLElement;
     ToSolveTable: TestsToSolveTable;
+    SolvedTable: TestsSolvedTable;
 
     constructor(){
         super();
@@ -17,6 +19,9 @@ export default class AssignedTestsList extends Page{
 
         this.ToSolveTable = new TestsToSolveTable();
         this.PageElem.appendChild(this.ToSolveTable.GetElement());
+
+        this.SolvedTable = new TestsSolvedTable();
+        this.PageElem.appendChild(this.SolvedTable.GetElement());
     }
 
     async LoadInto(container: HTMLElement){
@@ -26,6 +31,7 @@ export default class AssignedTestsList extends Page{
         (async () => {
             let assignments = await Assignment.GetAll();
             this.ToSolveTable.Populate(assignments);
+            this.SolvedTable.Populate(assignments);
         })();
     }
 

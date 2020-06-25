@@ -105,4 +105,18 @@ export default class Assignment extends Entity {
         await this?._fetch_awaiter;
         return this.test as Test;
     }
+
+    async AreRemainingAttempts(): Promise<boolean>{
+        let attempt_count = await this.GetAttemptCount();
+        let attempt_limit = await this.GetAttemptLimit();
+        return (attempt_count < attempt_limit) || (attempt_limit == 0);
+    }
+
+    async HasTimeLimitExceeded(): Promise<boolean>{
+        return (await this.GetTimeLimit()) < new Date();
+    }
+
+    async IsActive(): Promise<boolean>{
+        return !(await this.HasTimeLimitExceeded()) && (await this.AreRemainingAttempts());
+    }
 }

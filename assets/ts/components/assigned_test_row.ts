@@ -10,6 +10,8 @@ export default class AssignedTestRow extends Component {
     AuthorCell: HTMLTableCellElement;
     ScoreCell: HTMLTableCellElement;
     AttemptsCell: HTMLTableCellElement;
+    ButtonsCell: HTMLTableCellElement;
+    SolveButton: HTMLButtonElement;
 
     constructor(assignment: Assignment){
         super();
@@ -28,14 +30,17 @@ export default class AssignedTestRow extends Component {
         this.AttemptsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.AttemptsCell.classList.add('wide-screen-only', 'center');
 
-        let solve_cell = (this.Element as HTMLTableRowElement).insertCell(-1);
-        let solve_btn = document.createElement('button');
-        solve_btn.classList.add('compact', 'wide-screen-only', 'todo');
-        solve_btn.textContent = 'Rozwiąż';
-        solve_cell.appendChild(solve_btn);
+        this.ButtonsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
+        this.ButtonsCell.classList.add('right');
+
+        this.SolveButton = document.createElement('button');
+        this.SolveButton.classList.add('compact', 'wide-screen-only', 'todo');
+        this.SolveButton.textContent = 'Rozwiąż';
+        this.ButtonsCell.appendChild(this.SolveButton);
+
         let details_btn = document.createElement('button');
         details_btn.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'todo');
-        solve_cell.appendChild(details_btn);
+        this.ButtonsCell.appendChild(details_btn);
 
         this.Populate(assignment);
     }
@@ -44,7 +49,8 @@ export default class AssignedTestRow extends Component {
         this.NameCell.textContent = await (await assignment.GetTest()).GetName();
         this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
         this.AssignedCell.textContent = DateUtils.ToDayFormat(await assignment.GetAssignmentDate());
-        //this.AuthorCell.textContent = await (await (await assignment.GetTest()).GetAuthor()).GetName();
+        this.AssignedCell.title = DateUtils.ToDayHourFormat(await assignment.GetAssignmentDate());
+        this.AuthorCell.textContent = await (await (await assignment.GetTest()).GetAuthor()).GetName();
         
         let score = await assignment.GetScore();
         if(score === null){
@@ -54,7 +60,7 @@ export default class AssignedTestRow extends Component {
 
             let score_link = document.createElement('a');
             score_link.title = 'Zobacz szczegóły wyniku';
-            score_link.href = '#';
+            score_link.href = 'javascript:void(0)';
             score_link.textContent = score + '%';
             this.ScoreCell.appendChild(score_link);
         }
@@ -63,5 +69,16 @@ export default class AssignedTestRow extends Component {
         let attempt_limit = await assignment.GetAttemptLimit();
         this.AttemptsCell.textContent =
             attempts.toString() + ((attempt_limit > 0) ? ('/' + attempt_limit.toString()) : '');
+        
+        if(!(await assignment.IsActive())){
+            this.SolveButton.disabled = true;
+            this.ButtonsCell.classList.add('narrow-screen-only');
+
+            this.DeadlineCell.title = this.DeadlineCell.textContent;
+            this.DeadlineCell.textContent = DateUtils.ToDayFormat(await assignment.GetTimeLimit());
+
+            this.Element.insertBefore(this.ScoreCell, this.DeadlineCell);
+            this.Element.insertBefore(this.AssignedCell, this.DeadlineCell);
+        }
     }
 }

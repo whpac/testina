@@ -1,11 +1,14 @@
 import * as XHR from '../xhr';
 import Entity from './entity';
+import User from './user';
 import PageParams from '../1page/pageparams';
+
+import { UserDescriptor } from './user';
 
 export interface TestDescriptor {
     id: number,
     name: string,
-    author: {},
+    author: UserDescriptor,
     creation_date: string,
     time_limit: number,
     question_multiplier: number,
@@ -20,7 +23,7 @@ type TestCollection = {
 export default class Test extends Entity implements PageParams {
     protected id: number;
     protected name: string | undefined;
-    protected author_id: number | undefined;
+    protected author: User | undefined;
     protected creation_date: Date | undefined;
     protected time_limit: number | undefined;
     protected question_multiplier: number | undefined;
@@ -60,7 +63,7 @@ export default class Test extends Entity implements PageParams {
 
     protected Populate(descriptor: TestDescriptor){
         this.name = descriptor.name;
-        //this.author_id = descriptor.author.id;
+        this.author = new User(descriptor.author);
         this.creation_date = new Date(descriptor.creation_date);
         this.time_limit = descriptor.time_limit;
         this.question_multiplier = descriptor.question_multiplier;
@@ -80,10 +83,10 @@ export default class Test extends Entity implements PageParams {
         return this.name as string;
     }
 
-    /*async GetAuthor(): Promise<never>{
+    async GetAuthor(): Promise<User>{
         await this?._fetch_awaiter;
-        return this.author_id;
-    }*/
+        return this.author as User;
+    }
 
     async GetCreationDate(): Promise<Date>{
         await this?._fetch_awaiter;
