@@ -4,7 +4,8 @@ import * as XHR from '../xhr';
 
 export interface UserDescriptor {
     id: number,
-    name: string
+    first_name: string,
+    last_name: string
 }
 
 type UserCollection = {
@@ -13,9 +14,11 @@ type UserCollection = {
 
 export default class User extends Entity {
     protected id: number;
-    protected name: string | undefined;
+    protected first_name: string | undefined;
+    protected last_name: string | undefined;
 
     private _fetch_awaiter: Promise<void> | undefined;
+    protected static CurrentUser: (User | undefined) = undefined;
 
     constructor(user: number | UserDescriptor){
         super();
@@ -29,6 +32,15 @@ export default class User extends Entity {
         }
     }
 
+    static async GetCurrent(force: boolean = false){
+        if(this.CurrentUser === undefined || force){
+            let response = await XHR.Request('api/users/current?depth=2', 'GET');
+            let json = response.Response as UserDescriptor;
+            this.CurrentUser = new User(json);
+        }
+        return this.CurrentUser;
+    }
+
     protected async Fetch(){
         let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as UserDescriptor;
@@ -36,7 +48,8 @@ export default class User extends Entity {
     }
 
     protected Populate(descriptor: UserDescriptor){
-        this.name = descriptor.name;
+        this.first_name = descriptor.first_name;
+        this.last_name = descriptor.last_name;
     }
 
     GetApiUrl(){
@@ -49,6 +62,11 @@ export default class User extends Entity {
 
     async GetName(): Promise<string>{
         await this._fetch_awaiter;
-        return this.name as string;
+        return (this.first_name as string) + ' ' + (this.last_name as string);
+    }
+
+    async IsFemale(): Promise<boolean>{
+        await this._fetch_awaiter;
+        return this.first_name?.endsWith('a') ?? false;
     }
 }

@@ -45,6 +45,16 @@ class User extends Entity implements \UEngine\Modules\Auth\AccessControl\IUser {
         return $this->id;
     }
 
+    public /* string */ function GetFirstName(){
+        $this->FetchIfNeeded();
+        return $this->first_name;
+    }
+
+    public /* string */ function GetLastName(){
+        $this->FetchIfNeeded();
+        return $this->last_name;
+    }
+
     public /* string */ function GetFullName(){
         $this->FetchIfNeeded();
         return $this->first_name.' '.$this->last_name;

@@ -6,6 +6,7 @@ class Root extends Resource {
     protected function LazyLoad($data, $name){
         $this->AddSubResource('assignments', new AssignmentCollection());
         $this->AddSubResource('tests', new TestCollection());
+        $this->AddSubResource('users', new UserCollection());
         return true;
     }
 }
