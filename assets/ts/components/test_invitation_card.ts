@@ -7,13 +7,16 @@ import { HandleLinkClick } from '../script';
 import User from '../entities/user';
 
 export default class TestInvitationCard extends Card {
-    NameHeader: HTMLHeadingElement;
-    QuestionCount: HTMLSpanElement;
-    QuestionCountText: HTMLSpanElement;
-    TimeLimit: HTMLSpanElement;
-    TimeLimitText: HTMLSpanElement;
-    RemainingAttempts: HTMLSpanElement;
-    StartButton: HTMLButtonElement;
+    protected NameHeader: HTMLHeadingElement;
+    protected QuestionCount: HTMLSpanElement;
+    protected QuestionCountText: HTMLSpanElement;
+    protected TimeLimit: HTMLSpanElement;
+    protected TimeLimitText: HTMLSpanElement;
+    protected RemainingAttempts: HTMLSpanElement;
+    protected StartButton: HTMLButtonElement;
+    protected TestLoadingWrapper: HTMLDivElement;
+
+    OnTestLoaded: (() => void) | undefined;
 
     constructor(){
         super();
@@ -63,7 +66,21 @@ export default class TestInvitationCard extends Card {
         this.StartButton = document.createElement('button');
         this.StartButton.classList.add('big', 'with-border', 'start-test');
         this.StartButton.textContent = 'Rozpocznij';
+        this.StartButton.addEventListener('click', this.LoadTest.bind(this));
         buttons_wrapper.appendChild(this.StartButton);
+
+        this.TestLoadingWrapper = document.createElement('div');
+        this.TestLoadingWrapper.style.display = 'none';
+        this.AppendChild(this.TestLoadingWrapper);
+
+        let loading_text = document.createElement('div');
+        loading_text.classList.add('loading-test');
+        loading_text.textContent = 'Wczytywanie testu...';
+        this.TestLoadingWrapper.appendChild(loading_text);
+
+        let progress_bar = document.createElement('div');
+        progress_bar.classList.add('progress-indeterminate');
+        this.TestLoadingWrapper.appendChild(progress_bar);
     }
 
     async Populate(assignment: Assignment){
@@ -101,5 +118,10 @@ export default class TestInvitationCard extends Card {
         if(!(await assignment.AreRemainingAttempts()) || (await assignment.HasTimeLimitExceeded())){
             this.StartButton.remove();
         }
+    }
+
+    async LoadTest(){
+        this.TestLoadingWrapper.style.display = '';
+        this.OnTestLoaded?.();
     }
 }
