@@ -2,11 +2,13 @@ import Page from '../1page/page';
 import Assignment from '../entities/assignment';
 import PageParams from '../1page/pageparams';
 import TestInvitationCard from '../components/test_invitation_card';
+import QuestionCard from '../components/question_card';
 
 export default class SolveTestPage extends Page{
     PageElem: HTMLElement;
     HeadingTestName: Text;
     Invitation: TestInvitationCard;
+    QuestionCard: QuestionCard;
     Assignment: Assignment | undefined;
 
     constructor(){
@@ -27,6 +29,9 @@ export default class SolveTestPage extends Page{
 
         this.Invitation = new TestInvitationCard();
         this.PageElem.appendChild(this.Invitation.GetElement());
+
+        this.QuestionCard = new QuestionCard();
+        this.PageElem.appendChild(this.QuestionCard.GetElement());
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){
