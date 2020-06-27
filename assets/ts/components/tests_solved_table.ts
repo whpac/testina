@@ -1,9 +1,11 @@
 import Card from './card';
 import AssignedTestRow from './assigned_test_row';
 import Assignment from '../entities/assignment';
+import User from '../entities/user';
 
 export default class TestsSolvedTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
+    Subheading: HTMLParagraphElement;
 
     constructor(){
         super();
@@ -14,10 +16,9 @@ export default class TestsSolvedTable extends Card {
         heading.textContent = 'Już rozwiązane';
         this.AppendChild(heading);
 
-        let subheading = document.createElement('p');
-        subheading.classList.add('secondary');
-        subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązałeś/aś, oraz te, których termin ukończenia minął.';
-        this.AppendChild(subheading);
+        this.Subheading = document.createElement('p');
+        this.Subheading.classList.add('secondary');
+        this.AppendChild(this.Subheading);
 
         let table = document.createElement('table');
         table.classList.add('table', 'full-width');
@@ -99,6 +100,7 @@ export default class TestsSolvedTable extends Card {
     }
 
     async Populate(assignments: Assignment[]){
+        this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + (await (await User.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
         this.ContentWrapper.textContent = '';
         for(let i = assignments.length - 1; i >= 0; i--){
             if(await assignments[i].IsActive()) continue;

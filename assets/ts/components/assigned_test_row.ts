@@ -2,6 +2,7 @@ import Component from './component';
 import Assignment from '../entities/assignment';
 
 import * as DateUtils from '../dateutils';
+import { HandleLinkClick } from '../script';
 
 export default class AssignedTestRow extends Component {
     NameCell: HTMLTableCellElement;
@@ -11,7 +12,7 @@ export default class AssignedTestRow extends Component {
     ScoreCell: HTMLTableCellElement;
     AttemptsCell: HTMLTableCellElement;
     ButtonsCell: HTMLTableCellElement;
-    SolveButton: HTMLButtonElement;
+    SolveButton: HTMLAnchorElement;
 
     constructor(assignment: Assignment){
         super();
@@ -33,8 +34,8 @@ export default class AssignedTestRow extends Component {
         this.ButtonsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.ButtonsCell.classList.add('right');
 
-        this.SolveButton = document.createElement('button');
-        this.SolveButton.classList.add('compact', 'wide-screen-only', 'todo');
+        this.SolveButton = document.createElement('a');
+        this.SolveButton.classList.add('button', 'compact', 'wide-screen-only', 'todo');
         this.SolveButton.textContent = 'Rozwiąż';
         this.ButtonsCell.appendChild(this.SolveButton);
 
@@ -71,7 +72,7 @@ export default class AssignedTestRow extends Component {
             attempts.toString() + ((attempt_limit > 0) ? ('/' + attempt_limit.toString()) : '');
         
         if(!(await assignment.IsActive())){
-            this.SolveButton.disabled = true;
+            this.SolveButton.remove();
             this.ButtonsCell.classList.add('narrow-screen-only');
 
             this.DeadlineCell.title = this.DeadlineCell.textContent;
@@ -79,6 +80,9 @@ export default class AssignedTestRow extends Component {
 
             this.Element.insertBefore(this.ScoreCell, this.DeadlineCell);
             this.Element.insertBefore(this.AssignedCell, this.DeadlineCell);
+        }else{
+            this.SolveButton.href = 'testy/rozwiąż/' + assignment.GetId();
+            this.SolveButton.addEventListener('click', (e) => HandleLinkClick(e, 'testy/rozwiąż', assignment));
         }
     }
 }

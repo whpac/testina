@@ -3,7 +3,7 @@ import TestsToSolveTable from '../components/tests_to_solve_table';
 import Assignment from '../entities/assignment';
 import TestsSolvedTable from '../components/tests_solved_table';
 
-export default class AssignedTestsList extends Page{
+export default class AssignedTestsListPage extends Page{
     PageElem: HTMLElement;
     ToSolveTable: TestsToSolveTable;
     SolvedTable: TestsSolvedTable;

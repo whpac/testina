@@ -2,6 +2,7 @@ import Page from './page';
 import LoadingIndicator from './loadingindicator';
 import PageParams from './pageparams';
 import Test from '../entities/test';
+import Assignment from '../entities/assignment';
 
 let Pages: PageList = {};
 let CurrentPage: (Page | null) = null;
@@ -120,6 +121,7 @@ export function SetTitle(new_title: string){
 function UnserializeParams(params?: {type: string, id: number}): (PageParams | undefined){
     switch(params?.type){
         case 'test': return new Test(params.id);
+        case 'assignment': return new Assignment(params.id);
     }
     return undefined;
 }

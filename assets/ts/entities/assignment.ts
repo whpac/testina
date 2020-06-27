@@ -3,6 +3,7 @@ import Entity from './entity';
 import * as XHR from '../xhr';
 import Test from './test';
 import { TestDescriptor } from './test';
+import PageParams from '../1page/pageparams';
 
 interface AssignmentDescriptor {
     id: number,
@@ -18,7 +19,7 @@ type AssignmentCollection = {
     [assignment_id: number]: AssignmentDescriptor
 }
 
-export default class Assignment extends Entity {
+export default class Assignment extends Entity implements PageParams {
     protected id: number;
     protected attempt_limit: number | undefined;
     protected time_limit: Date | undefined;
@@ -109,7 +110,16 @@ export default class Assignment extends Entity {
     async AreRemainingAttempts(): Promise<boolean>{
         let attempt_count = await this.GetAttemptCount();
         let attempt_limit = await this.GetAttemptLimit();
-        return (attempt_count < attempt_limit) || (attempt_limit == 0);
+        return (attempt_count < attempt_limit) || await this.AreAttemptsUnlimited();
+    }
+
+    async AreAttemptsUnlimited(): Promise<boolean>{
+        return (await this.GetAttemptLimit()) == 0;
+    }
+
+    async GetRemainingAttemptsCount(): Promise<number>{
+        if(await this.AreAttemptsUnlimited()) return Number.POSITIVE_INFINITY;
+        return await this.GetAttemptLimit() - await this.GetAttemptCount();
     }
 
     async HasTimeLimitExceeded(): Promise<boolean>{
@@ -118,5 +128,12 @@ export default class Assignment extends Entity {
 
     async IsActive(): Promise<boolean>{
         return !(await this.HasTimeLimitExceeded()) && (await this.AreRemainingAttempts());
+    }
+
+    GetSimpleRepresentation(){
+        return {
+            type: 'assignment',
+            id: this.GetId()
+        };
     }
 }

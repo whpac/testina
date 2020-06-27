@@ -54,3 +54,23 @@ export function ToDayFormat(date: Date){
         });
     }
 }
+
+export function SecondsToTime(seconds: number){
+    let secs = seconds % 60;
+    seconds = (seconds - secs) / 60;
+
+    let mins = seconds % 60;
+    let hrs = (seconds - mins) / 60;
+
+    let s = secs.toString();
+    let m = mins.toString();
+    if(secs < 10) s = '0' + s;
+    if(mins < 10 && hrs != 0) m = '0' + m;
+
+    return (hrs > 0 ? hrs.toString() + ':' : '') + m + ':' + s;
+}
+
+export function DiffInSeconds(date: Date, ref_date?: Date){
+    ref_date = ref_date ?? new Date();
+    return (date.getTime() - ref_date.getTime()) / 1000;
+}
