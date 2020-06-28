@@ -3,7 +3,7 @@ import Question from './question';
 
 import * as XHR from '../xhr';
 
-interface AnswerDescriptor {
+export interface AnswerDescriptor {
     id: number,
     text: string,
     correct: boolean

@@ -78,10 +78,10 @@ export default class QuestionsTable extends Component {
     async LoadQuestions(test: Test){
         let questions: Question[] = [];
         try{
-            questions = await Question.GetForTest(test);
+            questions = await test.GetQuestions();
             this.ContentWrapperElem.innerText = '';
         }catch(e){
-            this.ClearContent('Nie udało się wczytać pytań');
+            this.ClearContent('Nie udało się wczytać pytań: ' + e.toString());
         }
         this.EditDialog.Test = test;
 

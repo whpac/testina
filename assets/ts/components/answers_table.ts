@@ -74,7 +74,7 @@ export default class AnswersTable extends Component {
         }
 
         try{
-            let answers = await Answer.GetForQuestion(question);
+            let answers = await question.GetAnswers();
             this.ContentWrapper.innerHTML = '';
             answers.forEach((answer) => this.AppendRow(answer));
         }catch(e){

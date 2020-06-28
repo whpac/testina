@@ -1,16 +1,17 @@
 import * as XHR from '../xhr';
 import Test from './test';
 import Entity from './entity';
-import { RemoveTestXHR } from '../remote_ifaces';
+import Answer, { AnswerDescriptor } from './answer';
 
-interface QuestionDescriptor {
+export interface QuestionDescriptor {
     id: number,
     text: string,
     type: number,
     points: number,
     points_counting: number,
     max_typos: number,
-    answers: {}
+    answer_count: number,
+    answers: AnswerDescriptor[]
 }
 
 type QuestionCollection = {
@@ -34,6 +35,9 @@ export default class Question extends Entity {
     protected max_typos: number | undefined;
     protected answer_count: number | undefined;
 
+    protected answer_descriptors: AnswerDescriptor[] | undefined;
+    protected answers: Answer[] | undefined;
+
     private _fetch_awaiter: Promise<void> | undefined;
 
     constructor(test: Test, question: number | QuestionDescriptor){
@@ -54,8 +58,8 @@ export default class Question extends Entity {
         let json = response.Response as QuestionCollection;
         let out_array: Question[] = [];
 
-        Object.keys(json).forEach((test_id) => {
-            out_array.push(new Question(test, json[parseInt(test_id)]));
+        Object.keys(json).forEach((question_id) => {
+            out_array.push(new Question(test, json[parseInt(question_id)]));
         });
 
         return out_array;
@@ -73,7 +77,11 @@ export default class Question extends Entity {
         this.points = descriptor.points;
         this.points_counting = descriptor.points_counting;
         this.max_typos = descriptor.max_typos;
-        this.answer_count = Object.keys(descriptor.answers).length;
+        this.answer_count = descriptor.answer_count;
+        this.answer_descriptors = [];
+        Object.keys(descriptor.answers).forEach((a_id) => {
+            this.answer_descriptors?.push(descriptor.answers[parseInt(a_id)]);
+        });
     }
 
     GetApiUrl(){
@@ -112,6 +120,23 @@ export default class Question extends Entity {
     async GetAnswerCount(): Promise<number>{
         await this?._fetch_awaiter;
         return this.answer_count as number;
+    }
+
+    async GetAnswers(): Promise<Answer[]>{
+        await this?._fetch_awaiter;
+
+        if(this.answers !== undefined) return this.answers;
+
+        let first_answer = (this.answer_descriptors ?? [null])[0];
+        if(first_answer === undefined || first_answer === null || Object.keys(first_answer).length == 0){
+            this.answers = await Answer.GetForQuestion(this);
+        }else{
+            this.answers = [];
+            this.answer_descriptors?.forEach((descriptor) => {
+                this.answers?.push(new Answer(this, descriptor));
+            });
+        }
+        return this.answers;
     }
 
     static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number){

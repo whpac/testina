@@ -4,6 +4,7 @@ import User from './user';
 import PageParams from '../1page/pageparams';
 
 import { UserDescriptor } from './user';
+import Question, { QuestionDescriptor } from './question';
 
 export interface TestDescriptor {
     id: number,
@@ -13,7 +14,7 @@ export interface TestDescriptor {
     time_limit: number,
     question_multiplier: number,
     question_count: number,
-    questions: {}
+    questions: QuestionDescriptor[]
 }
 
 type TestCollection = {
@@ -28,6 +29,9 @@ export default class Test extends Entity implements PageParams {
     protected time_limit: number | undefined;
     protected question_multiplier: number | undefined;
     protected question_count: number | undefined;
+    
+    protected question_descriptors: QuestionDescriptor[] | undefined;
+    protected questions: Question[] | undefined;
 
     private _fetch_awaiter: Promise<void> | undefined;
 
@@ -68,6 +72,10 @@ export default class Test extends Entity implements PageParams {
         this.time_limit = descriptor.time_limit;
         this.question_multiplier = descriptor.question_multiplier;
         this.question_count = descriptor.question_count;
+        this.question_descriptors = [];
+        Object.keys(descriptor.questions).forEach((q_id) => {
+            this.question_descriptors?.push(descriptor.questions[parseInt(q_id)]);
+        });
     }
 
     GetApiUrl(){
@@ -110,6 +118,23 @@ export default class Test extends Entity implements PageParams {
 
     async HasTimeLimit(): Promise<boolean>{
         return (await this.GetTimeLimit()) != 0;
+    }
+
+    async GetQuestions(): Promise<Question[]>{
+        await this?._fetch_awaiter;
+
+        if(this.questions !== undefined) return this.questions;
+
+        let first_question = (this.question_descriptors ?? [null])[0];
+        if(first_question === undefined || first_question === null || Object.keys(first_question).length == 0){
+            this.questions = await Question.GetForTest(this);
+        }else{
+            this.questions = [];
+            this.question_descriptors?.forEach((descriptor) => {
+                this.questions?.push(new Question(this, descriptor));
+            });
+        }
+        return this.questions;
     }
 
     static async Create(name: string, question_multiplier: number, time_limit: number){

@@ -10,6 +10,7 @@ class Question extends Resource{
         $this->AddSubResource('points', new ValueResource($question->GetPoints()));
         $this->AddSubResource('points_counting', new ValueResource($question->GetPointsCounting()));
         $this->AddSubResource('max_typos', new ValueResource($question->GetMaxNumberOfTypos()));
+        $this->AddSubResource('answer_count', new ValueResource(count($question->GetAnswers())));
         
         $this->AddSubResource('answers', new AnswerCollection($question));
         return true;

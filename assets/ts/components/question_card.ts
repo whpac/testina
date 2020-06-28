@@ -1,10 +1,13 @@
 import Card from './card'
+import Question from '../entities/question';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumber: Text;
     protected TotalQuestionNumber: Text;
     protected CurrentScore: Text;
     protected TimeLeftTimer: Text;
+    protected QuestionText: HTMLHeadingElement;
+    protected AnswerWrapper: HTMLDivElement;
     protected DoneButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected FinishButton: HTMLButtonElement;
@@ -41,24 +44,24 @@ export default class QuestionCard extends Card {
         q_timer.appendChild(document.createTextNode(' '));
         q_timer.appendChild(this.TimeLeftTimer = document.createTextNode('0:00'));
 
-        let q_text = document.createElement('h2');
-        q_text.classList.add('question-text');
-        q_text.textContent = 'Treść pytania';
-        this.AppendChild(q_text);
+        this.QuestionText = document.createElement('h2');
+        this.QuestionText.classList.add('question-text');
+        this.QuestionText.textContent = 'Treść pytania';
+        this.AppendChild(this.QuestionText);
 
-        let answers_wrapper = document.createElement('div');
-        answers_wrapper.classList.add('question-answer-buttons');
-        this.AppendChild(answers_wrapper);
+        this.AnswerWrapper = document.createElement('div');
+        this.AnswerWrapper.classList.add('question-answer-buttons');
+        this.AppendChild(this.AnswerWrapper);
 
         let ans1 = document.createElement('button');
         ans1.classList.add('answer-button');
         ans1.textContent = 'A';
-        answers_wrapper.appendChild(ans1);
+        this.AnswerWrapper.appendChild(ans1);
         
         let ans2 = document.createElement('button');
         ans2.classList.add('answer-button');
-        ans2.textContent = 'A';
-        answers_wrapper.appendChild(ans2);
+        ans2.textContent = 'B';
+        this.AnswerWrapper.appendChild(ans2);
 
         this.DoneButton = document.createElement('button');
         this.DoneButton.classList.add('big', 'with-border');
@@ -74,5 +77,16 @@ export default class QuestionCard extends Card {
         this.FinishButton.classList.add('big', 'with-border');
         this.FinishButton.textContent = 'Zakończ test';
         this.AddButton(this.FinishButton);
+    }
+
+    async Populate(question: Question){
+        this.QuestionText.textContent = await question.GetText();
+
+        this.AnswerWrapper.textContent = '';
+        
+
+        this.DoneButton.style.display = '';
+        this.NextButton.style.display = 'none';
+        this.FinishButton.style.display = 'none';
     }
 }
