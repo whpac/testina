@@ -26,7 +26,7 @@ class JsonFormatter extends Formatter {
 
                 // Append the key: value pair
                 $out .= '"'.$key.'":';
-                $out .= $this->FormatObject($resource, $depth - 1);
+                $out .= $this->FormatResource($resource, $depth - 1);
             }
             $out .= '}';
         }else{

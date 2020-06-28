@@ -13,6 +13,7 @@ class Assignment extends Resource{
         $this->AddSubResource('attempt_count', new ValueResource($assignment->CountUserAttempts($current_user)));
         $this->AddSubResource('score', new ValueResource($assignment->GetAverageScore($current_user)));
         $this->AddSubResource('test', new Test($assignment->GetTest()));
+        $this->AddSubResource('attempts', new AttemptCollection($assignment));
         
         //$this->AddSubResource('targets', new AnswerCollection($assignment));
         return true;
