@@ -6,7 +6,7 @@ use Api\Resources\Resource;
 abstract class Formatter{
     private $Context;
 
-    public abstract /* string */ function FormatObject(Resource $res, /* int */ $depth);
+    public abstract /* string */ function FormatResource(Resource $res, /* int */ $depth);
     public abstract /* string */ function GetContentType();
 
     public function SetContext(/* undefined yet */ $context){

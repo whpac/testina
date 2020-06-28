@@ -27,6 +27,7 @@ class QuestionCollection extends Resource {
         );
 
         header('Content-Location: '.$question->GetId());
+        return null;
     }
 
     public function AssertAccessible(/* undefined yet */ $context){

@@ -67,29 +67,33 @@ try{
     switch($method){
         case 'GET':
             // Serialize the resource
-            $serialized_resource = $formatter->FormatObject($current_resource, $depth);
+            $serialized_resource = $formatter->FormatResource($current_resource, $depth);
             echo($serialized_resource);
         break;
         case 'POST':
             // Create a resource
-            $current_resource->CreateSubResource(ParseRequestBody(), null);
-            // Response with 201 Created
-            SetResponseCode(201);
-            echo('201');
+            $result = $current_resource->CreateSubResource(ParseRequestBody(), null);
+
+            if(is_null($result)){
+                // Response with 201 Created
+                SetResponseCode(201);
+            }else{
+                // Display the result resource
+                $serialized_resource = $formatter->FormatResource($result, $depth);
+                echo($serialized_resource);
+            }
         break;
         case 'PUT':
             // Update a resource
             $current_resource->Update(ParseRequestBody(), null);
             // Response with 204 No Content
             SetResponseCode(204);
-            echo('204');
         break;
         case 'DELETE':
             // Delete a resource
             $current_resource->Delete(null);
             // Response with 204 No Content
             SetResponseCode(204);
-            echo('204');
         break;
     }
 

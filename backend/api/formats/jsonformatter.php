@@ -5,7 +5,7 @@ use \Api\Resources\Resource;
 
 class JsonFormatter extends Formatter {
 
-    public /* string */ function FormatObject(Resource $obj, /* int */ $depth = 3){
+    public /* string */ function FormatResource(Resource $obj, /* int */ $depth = 3){
         // Return empty string - not to have an empty field
         if($depth <= -1) return '""';
         

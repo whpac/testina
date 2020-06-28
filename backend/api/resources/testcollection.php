@@ -19,6 +19,7 @@ class TestCollection extends Resource {
         $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier);
 
         header('Content-Location: '.$test->GetId());
+        return null;
     }
 }
 ?>
