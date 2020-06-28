@@ -79,9 +79,12 @@ export default class Question extends Entity {
         this.max_typos = descriptor.max_typos;
         this.answer_count = descriptor.answer_count;
         this.answer_descriptors = [];
-        Object.keys(descriptor.answers).forEach((a_id) => {
-            this.answer_descriptors?.push(descriptor.answers[parseInt(a_id)]);
-        });
+
+        if(descriptor.answers !== undefined){
+            Object.keys(descriptor.answers).forEach((a_id) => {
+                this.answer_descriptors?.push(descriptor.answers[parseInt(a_id)]);
+            });
+        }
     }
 
     GetApiUrl(){

@@ -73,9 +73,12 @@ export default class Test extends Entity implements PageParams {
         this.question_multiplier = descriptor.question_multiplier;
         this.question_count = descriptor.question_count;
         this.question_descriptors = [];
-        Object.keys(descriptor.questions).forEach((q_id) => {
-            this.question_descriptors?.push(descriptor.questions[parseInt(q_id)]);
-        });
+
+        if(descriptor.questions !== undefined){
+            Object.keys(descriptor.questions).forEach((q_id) => {
+                this.question_descriptors?.push(descriptor.questions[parseInt(q_id)]);
+            });
+        }
     }
 
     GetApiUrl(){
