@@ -1,4 +1,4 @@
-export type TestDescriptor = {
+/*export type TestDescriptor = {
     attempt_id: number,
     test_name: string,
     time_limit: number,
@@ -40,4 +40,4 @@ export type ResultsDescriptor = {
         got: number,
         max: number
     }
-};
+};*/
