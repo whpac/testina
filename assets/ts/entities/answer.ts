@@ -9,7 +9,8 @@ export interface AnswerDescriptor {
     correct: boolean
 }
 
-type AnswerCollection = {
+/** @deprecated */
+export type AnswerCollection = {
     [answer_id: number]: AnswerDescriptor
 }
 

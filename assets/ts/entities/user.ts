@@ -8,6 +8,7 @@ export interface UserDescriptor {
     last_name: string
 }
 
+/** @deprecated */
 type UserCollection = {
     [user_id: number]: UserDescriptor
 }

@@ -6,6 +6,10 @@ type EventListenerCollection = {
     [event_name: string]: Set<EventListener>
 }
 
+export type Collection<T> = {
+    [id: number]: T
+}
+
 export default class Entity {
     private EventListeners: EventListenerCollection = {};
 

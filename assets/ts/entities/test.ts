@@ -4,7 +4,7 @@ import User from './user';
 import PageParams from '../1page/pageparams';
 
 import { UserDescriptor } from './user';
-import Question, { QuestionDescriptor } from './question';
+import Question, { QuestionDescriptor, QuestionCollection } from './question';
 
 export interface TestDescriptor {
     id: number,
@@ -14,9 +14,10 @@ export interface TestDescriptor {
     time_limit: number,
     question_multiplier: number,
     question_count: number,
-    questions: QuestionDescriptor[]
+    questions: QuestionCollection
 }
 
+/** @deprecated */
 type TestCollection = {
     [test_id: number]: TestDescriptor
 }

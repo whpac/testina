@@ -1,7 +1,7 @@
 import * as XHR from '../xhr';
 import Test from './test';
 import Entity from './entity';
-import Answer, { AnswerDescriptor } from './answer';
+import Answer, { AnswerDescriptor, AnswerCollection } from './answer';
 
 export interface QuestionDescriptor {
     id: number,
@@ -11,10 +11,11 @@ export interface QuestionDescriptor {
     points_counting: number,
     max_typos: number,
     answer_count: number,
-    answers: AnswerDescriptor[]
+    answers: AnswerCollection
 }
 
-type QuestionCollection = {
+/** @deprecated */
+export type QuestionCollection = {
     [question_id: number]: QuestionDescriptor
 }
 

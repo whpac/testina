@@ -15,6 +15,7 @@ interface AssignmentDescriptor {
     test: TestDescriptor
 }
 
+/** @deprecated */
 type AssignmentCollection = {
     [assignment_id: number]: AssignmentDescriptor
 }
