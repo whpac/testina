@@ -13,5 +13,12 @@ class AttemptCollection extends Resource {
 
         return true;
     }
+
+    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+        $assignment = $this->GetConstructorArgument();
+
+        return new AttemptWithTest([$assignment, $current_user]);
+    }
 }
 ?>

@@ -25,6 +25,10 @@ abstract class Resource {
         $this->SubResources = [];
     }
 
+    public /* bool */ function IsValueResource(){
+        return $this->IsValueResource;
+    }
+
     public /* Resource */ function GetSubResource(/* string */ $name, /* undefined yet */ $context = null){
         $this->LoadIfNeeded($name);
 

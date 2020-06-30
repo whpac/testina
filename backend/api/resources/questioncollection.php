@@ -6,7 +6,8 @@ use Api\Exceptions;
 class QuestionCollection extends Resource {
 
     protected function LazyLoad($test, $test_id){
-        $questions = $test->GetQuestions();
+        if(is_array($test)) $questions = $test;
+        else $questions = $test->GetQuestions();
 
         foreach($questions as $question){
             $this->AddSubResource($question->GetId(), new Question($question));
@@ -17,6 +18,8 @@ class QuestionCollection extends Resource {
 
     public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
         $test = $this->GetConstructorArgument();
+        if(is_array($test)) throw new Exceptions\MethodNotAllowed('POST');
+
         $question = \Entities\Question::Create(
             $test,
             $source->text,
@@ -33,8 +36,12 @@ class QuestionCollection extends Resource {
     public function AssertAccessible(/* undefined yet */ $context){
         $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
         $test = $this->GetConstructorArgument();
-        if($current_user->GetId() != $test->GetAuthor()->GetId()){
-            throw new Exceptions\ResourceInaccessible('questions');
+
+        // If the collection is created from Question[], assume it's accessible
+        if(!is_array($test)){
+            if($current_user->GetId() != $test->GetAuthor()->GetId()){
+                throw new Exceptions\ResourceInaccessible('questions');
+            }
         }
     }
 }

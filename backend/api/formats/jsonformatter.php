@@ -13,7 +13,7 @@ class JsonFormatter extends Formatter {
 
         // If the value is array, parse it as an object
         $value = $obj->GetValue();
-        if(is_array($value)){
+        if(!$obj->IsValueResource()){
             // Don't go deeper and return an empty object
             if($depth <= 0) return '{}';
             $out .= '{';
@@ -30,26 +30,46 @@ class JsonFormatter extends Formatter {
             }
             $out .= '}';
         }else{
-            // Print numbers and bools without quotes
-            if(is_bool($value)){
-                $out = $value ? 'true' : 'false';
-            }elseif(is_null($value)){
-                $out = 'null';
-            }elseif(is_numeric($value)){
-                $out = $value;
+            if(is_array($value)){
+                $out = '[';
+
+                $add_comma = false;
+                foreach($value as $item){
+                    if($add_comma) $out .= ',';
+                    $add_comma = true;
+
+                    $out .= $this->FormatScalar($item);
+                }
+
+                $out .= ']';
             }else{
-                $v = $value;
-                $v = str_replace("\\", "\\\\", $v);
-                $v = str_replace('"', '\"', $v);
-                $v = str_replace("\n", '\n', $v);
-                $v = str_replace("\r", '\r', $v);
-                $v = str_replace("\010", '\b', $v);
-                $v = str_replace("\f", '\f', $v);
-                $v = str_replace("\t", '\t', $v);
-                $out = '"'.$v.'"';
+                $out = $this->FormatScalar($value);
             }
         }
         return $out;
+    }
+
+    protected /* string */ function FormatScalar($value){
+        // Print numbers and bools without quotes
+        if(is_bool($value)){
+            return $value ? 'true' : 'false';
+        }elseif(is_null($value)){
+            return 'null';
+        }elseif(is_numeric($value)){
+            return $value;
+        }elseif(is_array($value)){
+            return '[]';
+        }else{
+            $v = $value;
+            $v = str_replace("\\", "\\\\", $v);
+            $v = str_replace('"', '\"', $v);
+            $v = str_replace("\n", '\n', $v);
+            $v = str_replace("\r", '\r', $v);
+            $v = str_replace("\010", '\b', $v);
+            $v = str_replace("\f", '\f', $v);
+            $v = str_replace("\t", '\t', $v);
+            return '"'.$v.'"';
+        }
     }
 
     public /* string */ function GetContentType(){

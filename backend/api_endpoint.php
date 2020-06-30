@@ -97,6 +97,9 @@ try{
         break;
     }
 
+}catch(Exceptions\BadRequest $e){
+    SetResponseCode(400);
+    echo('400');
 }catch(Exceptions\AuthorizationRequired $e){
     SetResponseCode(401);
     echo('401');
