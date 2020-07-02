@@ -14,7 +14,8 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "outDir": "assets/js"
+        "outDir": "assets/js",
+        "downlevelIteration": true
     },
     "include": [
         "assets/ts"
