@@ -33,7 +33,6 @@ export default class SolveTestPage extends Page{
         this.PageElem.appendChild(this.Invitation.GetElement());
 
         this.QuestionCard = new QuestionCard();
-        this.QuestionCard.GetElement().style.display = 'none';
         this.PageElem.appendChild(this.QuestionCard.GetElement());
     }
 
@@ -46,6 +45,9 @@ export default class SolveTestPage extends Page{
     async LoadInto(container: HTMLElement, params?: PageParams){
         if(params === undefined) throw 'Nie podano testu do rozwiązania';
         this.Assignment = params as Assignment;
+
+        this.Invitation.GetElement().style.display = '';
+        this.QuestionCard.GetElement().style.display = 'none';
 
         container.appendChild(this.PageElem);
         this.HeadingTestName.textContent = await (await this.Assignment.GetTest()).GetName();
