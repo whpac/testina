@@ -39,7 +39,7 @@ Properties::Set('session.tables.sessions', 'sessions');
 Properties::Set('session.tables.session_data', 'session_data');
 
 // Initializing MySQL and session
-$db = new UEngine\Modules\Database\MySQL('localhost', 'rr', 'rada', 'p');
+$db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
 UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
 
