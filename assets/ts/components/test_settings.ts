@@ -210,7 +210,7 @@ export default class TestSettings extends Card {
         try{
             await (this.Test as Test).UpdateSettings(
                 this.TestNameInput.value,
-                parseInt(this.QuestionMultiplierInput.value),
+                parseFloat(this.QuestionMultiplierInput.value),
                 this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
             );
 
