@@ -64,6 +64,10 @@ export default class Attempt extends Entity {
         return this.id;
     }
 
+    GetAssignment(): Assignment{
+        return this.assignment;
+    }
+
     async GetUser(): Promise<User>{
         await this?._fetch_awaiter;
         return this.user as User;
@@ -84,22 +88,25 @@ export default class Attempt extends Entity {
         return this.begin_time as Date;
     }
 
-    async GetAssignment(): Promise<Assignment>{
-        await this?._fetch_awaiter;
-        return this.assignment;
-    }
-
     async GetQuestions(): Promise<Question[]>{
         await this?._fetch_awaiter;
         if(this.questions !== undefined) return this.questions;
         if(this.question_descriptors === undefined || this.path === undefined) return [];
 
-        let test = await (await this.GetAssignment()).GetTest();
+        let test = await this.GetAssignment().GetTest();
         let questions: Question[] = [];
         for(const q_id of this.path) {
+            if(this.question_descriptors[q_id] === undefined) continue;
             questions.push(new Question(test, this.question_descriptors[q_id]));
         };
-        // todo
+        this.questions = questions;
+
         return questions;
+    }
+
+    static async Create(assignment: Assignment){
+        let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=8', 'POST');
+        let json = response.Response as AttemptDescriptor;
+        return new Attempt(assignment, json);
     }
 }

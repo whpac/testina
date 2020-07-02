@@ -3,6 +3,7 @@ import Assignment from '../entities/assignment';
 import PageParams from '../1page/pageparams';
 import TestInvitationCard from '../components/test_invitation_card';
 import QuestionCard from '../components/question_card';
+import Attempt from '../entities/attempt';
 
 export default class SolveTestPage extends Page{
     PageElem: HTMLElement;
@@ -28,10 +29,18 @@ export default class SolveTestPage extends Page{
         this.PageElem.appendChild(heading);
 
         this.Invitation = new TestInvitationCard();
+        this.Invitation.OnTestLoaded = this.OnTestLoaded.bind(this);
         this.PageElem.appendChild(this.Invitation.GetElement());
 
         this.QuestionCard = new QuestionCard();
+        this.QuestionCard.GetElement().style.display = 'none';
         this.PageElem.appendChild(this.QuestionCard.GetElement());
+    }
+
+    protected OnTestLoaded(attempt: Attempt){
+        this.Invitation.GetElement().style.display = 'none';
+        this.QuestionCard.GetElement().style.display = '';
+        this.QuestionCard.StartTest(attempt);
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){

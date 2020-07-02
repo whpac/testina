@@ -5,6 +5,7 @@ import * as DateUtils from '../dateutils';
 import { n } from '../textutils';
 import { HandleLinkClick } from '../script';
 import User from '../entities/user';
+import Attempt from '../entities/attempt';
 
 export default class TestInvitationCard extends Card {
     protected NameHeader: HTMLHeadingElement;
@@ -15,8 +16,9 @@ export default class TestInvitationCard extends Card {
     protected RemainingAttempts: HTMLSpanElement;
     protected StartButton: HTMLButtonElement;
     protected TestLoadingWrapper: HTMLDivElement;
+    protected Assignment: Assignment | undefined;
 
-    OnTestLoaded: (() => void) | undefined;
+    OnTestLoaded: ((attempt: Attempt) => void) | undefined;
 
     constructor(){
         super();
@@ -84,10 +86,12 @@ export default class TestInvitationCard extends Card {
     }
 
     async Populate(assignment: Assignment){
+        this.Assignment = assignment;
+
         let time_limit = '0:00';
         let has_time_limit = false;
         let test = await assignment.GetTest();
-        let question_count = await test.GetQuestionCount();
+        let question_count = Math.round(await test.GetQuestionCount() * await test.GetQuestionMultiplier());
 
         if(test.HasTimeLimit()){
             if(await test.GetTimeLimit() > DateUtils.DiffInSeconds(await assignment.GetTimeLimit())){
@@ -121,7 +125,13 @@ export default class TestInvitationCard extends Card {
     }
 
     async LoadTest(){
+        if(this.Assignment === undefined) throw 'TestInvitationCard.Assignment is not defined.';
+        let attempt_awaiter = Attempt.Create(this.Assignment);
         this.TestLoadingWrapper.style.display = '';
-        this.OnTestLoaded?.();
+
+        let attempt = await attempt_awaiter;
+        this.OnTestLoaded?.(attempt);
+        
+        this.TestLoadingWrapper.style.display = 'none';
     }
 }
