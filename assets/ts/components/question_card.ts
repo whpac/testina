@@ -26,6 +26,8 @@ export default class QuestionCard extends Card {
     protected Questions!: QuestionWithUserAnswer[];
     protected CurrentQuestion: QuestionWithUserAnswer | undefined;
     protected DisableAnswers: boolean = false;
+    protected PointsGot!: number;
+    protected PointsMax!: number;
 
     constructor(){
         super();
@@ -89,6 +91,8 @@ export default class QuestionCard extends Card {
 
     async StartTest(attempt: Attempt){
         PageManager.PreventFromNavigation('solving-test');
+        this.PointsGot = 0;
+        this.PointsMax = 0;
         this.CurrentQuestionNumber = 0;
         this.Questions = QuestionWithUserAnswer.FromArray(await attempt.GetQuestions());
         let test = await attempt.GetAssignment().GetTest();
@@ -119,19 +123,30 @@ export default class QuestionCard extends Card {
 
         this.CurrentQuestionNumberText.textContent = number.toString();
 
-        this.AnswerWrapper.textContent = '';
         let answers = await question.GetQuestion().GetAnswers();
         ShuffleArray(answers);
         this.CurrentQuestion.SetAnswers(answers);
-        for(let i = 0; i < answers.length; i++){
-            const answer = answers[i];
-            let answer_button = document.createElement('button');
-            answer_button.classList.add('answer-button');
-            answer_button.textContent = await answer.GetText();
-            answer_button.addEventListener('click', ((e: MouseEvent) => {
-                this.OnAnswerButtonClick(e, i);
-            }).bind(this));
-            this.AnswerWrapper.appendChild(answer_button);
+
+        // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
+        switch(await this.CurrentQuestion.GetQuestion().GetType()){
+            case Question.TYPE_SINGLE_CHOICE:
+            case Question.TYPE_MULTI_CHOICE:
+                this.AnswerWrapper.textContent = '';
+                for(let i = 0; i < answers.length; i++){
+                    const answer = answers[i];
+                    let answer_button = document.createElement('button');
+                    answer_button.classList.add('answer-button');
+                    answer_button.textContent = await answer.GetText();
+                    answer_button.dataset.index = i.toString();
+                    answer_button.addEventListener('click', ((e: MouseEvent) => {
+                        this.OnAnswerButtonClick(e, i);
+                    }).bind(this));
+                    this.AnswerWrapper.appendChild(answer_button);
+                }
+                break;
+            case Question.TYPE_OPEN_ANSWER:
+                console.error('NotImplemented: OpenAnswerQuestion');
+                break;
         }
 
         this.DoneButton.style.display = '';
@@ -164,9 +179,11 @@ export default class QuestionCard extends Card {
         }
     }
 
-    protected CheckQuestion(){
-        console.warn('TODO: QuestionCard.CheckQuestion()');
+    protected async CheckQuestion(){
         this.DisableAnswers = true;
+        this.CurrentQuestion?.MarkAsDone();
+
+        // Pokaż odpowiedni przycisk
         this.DoneButton.style.display = 'none';
         if(this.CurrentQuestionNumber + 1 < this.Questions.length){
             this.NextButton.style.display = '';
@@ -175,6 +192,24 @@ export default class QuestionCard extends Card {
             this.StopTimer();
             this.SaveResults();
         }
+
+        if(this.CurrentQuestion === undefined) return;
+
+        // Zaznacz odpowiedzi
+        let answers_buttons = document.querySelectorAll('.answer-button');
+        for(let button of answers_buttons){
+            let index = parseInt((button as HTMLElement).dataset.index ?? '0');
+            if(await this.CurrentQuestion.GetAnswers()[index].IsCorrect()){
+                button.classList.add('correct');
+            }else{
+                button.classList.add('wrong');
+            }
+        }
+    
+        // Zaktualizuj wynik
+        this.PointsGot += await this.CurrentQuestion.CountPoints();
+        this.PointsMax += await this.CurrentQuestion.GetQuestion().GetPoints();
+        this.UpdateScore();
     }
 
     protected GoToNextQuestion(){
@@ -230,17 +265,25 @@ export default class QuestionCard extends Card {
             }
         }
     }
+
+    protected UpdateScore(){
+        if(this.PointsMax == 0) this.CurrentScore.textContent = '0';
+        else this.CurrentScore.textContent = Math.round(100 * this.PointsGot / this.PointsMax).toString();
+    }
 }
 
 class QuestionWithUserAnswer {
     protected Question: Question;
     protected Answers: Answer[];
     protected IsAnswerSelected: boolean[];
+    protected IsDone: boolean;
+    protected Score: number | undefined;
 
     constructor(question: Question){
         this.Question = question;
         this.Answers = [];
         this.IsAnswerSelected = [];
+        this.IsDone = false;
     }
 
     static FromArray(questions: Question[]){
@@ -260,6 +303,10 @@ class QuestionWithUserAnswer {
         this.DeselectAllAnswers();
     }
 
+    public GetAnswers(){
+        return this.Answers;
+    }
+
     public DeselectAllAnswers(){
         for(let i = 0; i < this.Answers.length; i++){
             this.IsAnswerSelected[i] = false;
@@ -276,5 +323,53 @@ class QuestionWithUserAnswer {
 
     public ToggleAnswerSelection(index: number){
         this.IsAnswerSelected[index] = !this.IsAnswerSelected[index];
+    }
+
+    public MarkAsDone(){
+        this.IsDone = true;
+    }
+
+    public async CountPoints(){
+        if(!this.IsDone) return 0;
+        if(this.Score !== undefined) return this.Score;
+
+        switch(await this.Question.GetPointsCounting()){
+            case Question.COUNTING_BINARY:
+                let number_of_correct_choices = 0;
+                for(let i = 0; i < this.IsAnswerSelected.length; i++){
+                    if(this.IsAnswerSelected[i] == await this.Answers[i].IsCorrect()){
+                        number_of_correct_choices++;
+                    }
+                }
+
+                if(number_of_correct_choices == this.Answers.length){
+                    this.Score = await this.Question.GetPoints();
+                }else{
+                    this.Score = 0;
+                }
+                return this.Score;
+            break;
+            
+            case Question.COUNTING_LINEAR:
+                let number_of_wrong_choices = 0;
+                let number_of_correct_answers = 0;
+                for(let i = 0; i < this.IsAnswerSelected.length; i++){
+                    if(this.IsAnswerSelected[i] != await this.Answers[i].IsCorrect()){
+                        number_of_wrong_choices++;
+                    }
+                    if(await this.Answers[i].IsCorrect()){
+                        number_of_correct_answers++;
+                    }
+                }
+
+                let correct_factor = 1 - (number_of_wrong_choices / number_of_correct_answers);
+                if(correct_factor < 0) correct_factor = 0;
+                this.Score = correct_factor * (await this.Question.GetPoints());
+                return this.Score;
+            break;
+
+            default:
+                return 0;
+        }
     }
 }
