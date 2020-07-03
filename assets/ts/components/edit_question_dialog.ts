@@ -273,6 +273,9 @@ export default class EditQuestionDialog extends Dialog {
         let max_typos = parseInt(this.TyposAllowCountInput.value);
         if(this.TyposDisallowRadio.checked) max_typos = 0;
 
+        if(type == Question.TYPE_SINGLE_CHOICE) points_counting = Question.COUNTING_BINARY;
+        if(type == Question.TYPE_OPEN_ANSWER) points_counting = Question.COUNTING_OPEN_ANSWER;
+
         let saving_toast = Toasts.ShowPersistent('Zapisywanie pytania...');
         this.SaveButton.disabled = true;
         this.CancelButton.disabled = true;
