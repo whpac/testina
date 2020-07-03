@@ -26,6 +26,7 @@ export default class Question extends Entity {
 
     public static COUNTING_LINEAR = 0;
     public static COUNTING_BINARY = 1;
+    public static COUNTING_OPEN_ANSWER = 2;
 
     protected id: number;
     protected test: Test;
