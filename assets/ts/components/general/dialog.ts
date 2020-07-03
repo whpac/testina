@@ -1,13 +1,28 @@
 import * as Dialogs from '../../dialogs';
 import HelpLink from '../help_link';
 
+/**
+ * Klasa bazowa dla okienek dialogowych
+ * TODO: dziedziczyć z Component #24
+ */
 export default class Dialog{
-    DialogElement: HTMLElement;
-    HeaderElement: HTMLHeadingElement;
-    HeaderContentElement: HTMLSpanElement;
-    Content: Node[] = [];
-    Buttons: HTMLButtonElement[] = [];
-    IsRendered: boolean = false;
+    /** Element reprezentujący okno dialogowe */
+    protected DialogElement: HTMLElement;
+
+    /** Nagłówek okna dialogowego */
+    protected HeaderElement: HTMLHeadingElement;
+
+    /** Zawartość nagłówka */
+    protected HeaderContentElement: HTMLSpanElement;
+
+    /** Zawartość okna dialogowego */
+    protected Content: Node[] = [];
+
+    /** Przyciski okna dialogowego */
+    protected Buttons: HTMLButtonElement[] = [];
+
+    /** Czy okno zostało już wyrenderowane? */
+    protected IsRendered: boolean = false;
 
     constructor(){
         this.DialogElement = document.createElement('div');
@@ -22,49 +37,47 @@ export default class Dialog{
     }
 
     /**
-     * Sets dialog header to given text
-     * @param text Header text
+     * Wstawia zadany tekst do nagłówka okna dialogowego
+     * @param text Tekst
      */
     SetHeader(text: string){
         this.HeaderContentElement.innerText = text;
     }
 
     /**
-     * Adds button to dialog
-     * @param btn_text Button text
-     * @param callback Function called on click
-     * @param classes Button CSS classes
+     * Dodaje przycisk do okna dialogowego
+     * @param btn Przycisk
      */
-    AddButton(btn: HTMLButtonElement){ //btn_text: string, callback: () => void, classes: string[] = []){
-        //this.Buttons.push({Text: btn_text, Callback: callback, Classes: classes}); 
+    AddButton(btn: HTMLButtonElement){
         this.Buttons.push(btn);
     }
 
     /**
-     * Appends content
-     * @param elem Element to append
+     * Dodaje element do zawartości okna dialogowego
+     * @param elem Element
      */
     AddContent(elem: Node){
         this.Content.push(elem);
     }
 
     /**
-     * Adds CSS classes to the dialog
-     * @param classes Array of classes to add
+     * Dodaje klasy CSS do głównego elementu okna
+     * @param classes Tablica klas CSS
      */
     AddClasses(classes: string[]){
         this.DialogElement.classList.add(...classes);
     }
 
     /**
-     * Displays question mark button, leading to a help page
+     * Wyświetla przycisk prowadzący do strony pomocy
+     * @param target Docelowy fragment pomocy
      */
     DisplayHelpButton(target?: string){
         this.HeaderElement.appendChild(new HelpLink(target).GetElement());
     }
 
     /**
-     * Prepares dialog object to be displayed
+     * Przygotowuje okno do wyświetlenia
      */
     Render(){
         var content_wrapper = document.createElement('div');
@@ -78,15 +91,6 @@ export default class Dialog{
         var button_wrapper = document.createElement('div');
         button_wrapper.classList.add('buttons');
 
-        /*this.Buttons.forEach((button) => {
-            let btn = document.createElement('button');
-            btn.innerText = button.Text;
-            btn.addEventListener('click', button.Callback);
-            if(button.Classes.length > 0)
-                btn.classList.add(...button.Classes);
-
-            button_wrapper.appendChild(btn);
-        });*/
         this.Buttons.forEach((button) => {
             button_wrapper.appendChild(button);
         });
@@ -95,7 +99,7 @@ export default class Dialog{
     }
 
     /**
-     * Displays the dialog
+     * Wyświetla okno dialogowe
      */
     Show(){
         if(!this.IsRendered) this.Render();
@@ -103,7 +107,7 @@ export default class Dialog{
     }
 
     /**
-     * Hides the dialog
+     * Ukrywa okno dialogowe
      */
     Hide(){
         Dialogs.HideDialog(this.DialogElement);

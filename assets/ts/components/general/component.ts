@@ -74,7 +74,7 @@ export default class Component {
 /**
  * Reprezentuje możliwe stany komponentu
  */
-enum ComponentState{
+export enum ComponentState{
     NOT_LOADED,
     LOADING,
     LOADED,
