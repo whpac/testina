@@ -1,4 +1,4 @@
-import Card from './card';
+import Card from './general/card';
 import AssignedTestRow from './assigned_test_row';
 import Assignment from '../entities/assignment';
 

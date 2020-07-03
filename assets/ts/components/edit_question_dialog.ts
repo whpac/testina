@@ -1,4 +1,4 @@
-import Dialog from './dialog';
+import Dialog from './general/dialog';
 import Question from '../entities/question';
 import HelpLink from './help_link';
 import AnswersTable from './answers_table';

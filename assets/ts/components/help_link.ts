@@ -1,4 +1,4 @@
-import Component from './component'
+import Component from './general/component'
 
 export default class HelpLink extends Component {
 

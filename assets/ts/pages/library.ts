@@ -1,6 +1,6 @@
-import Page from '../1page/page';
+import Page from '../components/general/page';
 import TestsTable from '../components/tests_table';
-import Card from '../components/card';
+import Card from '../components/general/card';
 
 export default class LibraryPage extends Page {
     PageElem: HTMLElement;

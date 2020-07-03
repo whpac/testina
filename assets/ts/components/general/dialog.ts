@@ -1,11 +1,5 @@
-import * as Dialogs from '../dialogs';
-import HelpLink from './help_link';
-
-interface DialogButtonDescriptor{
-    Text: string,
-    Callback: () => void,
-    Classes: string[]
-}
+import * as Dialogs from '../../dialogs';
+import HelpLink from '../help_link';
 
 export default class Dialog{
     DialogElement: HTMLElement;

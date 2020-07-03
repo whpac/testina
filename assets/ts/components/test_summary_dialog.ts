@@ -1,4 +1,4 @@
-import Dialog from './dialog';
+import Dialog from './general/dialog';
 import Test from '../entities/test';
 import * as DateUtils from '../dateutils';
 

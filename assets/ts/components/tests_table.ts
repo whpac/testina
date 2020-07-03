@@ -1,6 +1,6 @@
 import * as DateUtils from '../dateutils';
 import * as Toasts from '../toasts';
-import Component from './component';
+import Component from './general/component';
 import Test from '../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
 import { HandleLinkClick } from '../script';

@@ -1,5 +1,5 @@
 import * as DialogBackdrop from './dialog_backdrop';
-import Dialog from './components/dialog';
+import Dialog from './components/general/dialog';
 
 type DialogButtonDescriptorWithHide = Array<[string, ('[hide]' | ( () => void )), string[]]>;
 

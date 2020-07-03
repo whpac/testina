@@ -1,4 +1,4 @@
-import Page from '../1page/page';
+import Page from '../components/general/page';
 import TestsToSolveTable from '../components/tests_to_solve_table';
 import Assignment from '../entities/assignment';
 import TestsSolvedTable from '../components/tests_solved_table';

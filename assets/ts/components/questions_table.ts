@@ -1,4 +1,4 @@
-import Component from './component';
+import Component from './general/component';
 import Test from '../entities/test';
 import Question from '../entities/question';
 import EditQuestionDialog from './edit_question_dialog';

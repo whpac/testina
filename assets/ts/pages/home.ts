@@ -1,4 +1,4 @@
-import Page from '../1page/page';
+import Page from '../components/general/page';
 
 export default class HomePage extends Page {
     PageElem: HTMLElement;

@@ -3,7 +3,7 @@ import * as PageManager from '../1page/pagemanager';
 import { DisplayPage } from '../script';
 
 import Test from '../entities/test';
-import Card from './card';
+import Card from './general/card';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;
