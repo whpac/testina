@@ -3,6 +3,7 @@ import Entity, { Collection } from './entity';
 import User, { UserDescriptor } from './user';
 import Question, { QuestionDescriptor } from './question';
 import Assignment from './assignment';
+import QuestionWithUserAnswers from './question_with_user_answers';
 
 export interface AttemptDescriptor {
     id: number,
@@ -108,5 +109,10 @@ export default class Attempt extends Entity {
         let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=8', 'POST');
         let json = response.Response as AttemptDescriptor;
         return new Attempt(assignment, json);
+    }
+
+    async SaveUserAnswers(answers: QuestionWithUserAnswers[]){
+        let data = {};
+        let response = await XHR.Request(this.GetApiUrl() + '/answers', 'POST', data);
     }
 }

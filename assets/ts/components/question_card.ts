@@ -1,11 +1,11 @@
 import Card from './card'
 import Question from '../entities/question';
 import Attempt from '../entities/attempt';
+import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import * as DateUtils from '../dateutils';
 import * as PageManager from '../1page/pagemanager';
 
 import { ShuffleArray } from '../functions';
-import Answer from '../entities/answer';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -23,11 +23,12 @@ export default class QuestionCard extends Card {
     protected TestStartDate!: Date;
     protected TimerRef: number | undefined;
     protected CurrentQuestionNumber!: number;
-    protected Questions!: QuestionWithUserAnswer[];
-    protected CurrentQuestion: QuestionWithUserAnswer | undefined;
+    protected Questions!: QuestionWithUserAnswers[];
+    protected CurrentQuestion: QuestionWithUserAnswers | undefined;
     protected DisableAnswers: boolean = false;
     protected PointsGot!: number;
     protected PointsMax!: number;
+    protected Attempt!: Attempt;
 
     constructor(){
         super();
@@ -91,10 +92,11 @@ export default class QuestionCard extends Card {
 
     async StartTest(attempt: Attempt){
         PageManager.PreventFromNavigation('solving-test');
+        this.Attempt = attempt;
         this.PointsGot = 0;
         this.PointsMax = 0;
         this.CurrentQuestionNumber = 0;
-        this.Questions = QuestionWithUserAnswer.FromArray(await attempt.GetQuestions());
+        this.Questions = QuestionWithUserAnswers.FromArray(await attempt.GetQuestions());
         let test = await attempt.GetAssignment().GetTest();
 
         if(await test.HasTimeLimit()){
@@ -111,7 +113,7 @@ export default class QuestionCard extends Card {
         this.DisplayQuestion(this.Questions[0], this.CurrentQuestionNumber + 1);
     }
 
-    async DisplayQuestion(question: QuestionWithUserAnswer, number: number){
+    async DisplayQuestion(question: QuestionWithUserAnswers, number: number){
         this.CurrentQuestion = question;
         let question_text = await question.GetQuestion().GetText();
         this.QuestionText.textContent = question_text;
@@ -243,7 +245,7 @@ export default class QuestionCard extends Card {
 
     protected SaveResults(){
         PageManager.UnpreventFromNavigation('solving-test');
-        console.error('NotImplemented: QuestionCard.SaveResults()');
+        this.Attempt.SaveUserAnswers(this.Questions);
     }
 
     protected OnTimerTick(){
@@ -269,107 +271,5 @@ export default class QuestionCard extends Card {
     protected UpdateScore(){
         if(this.PointsMax == 0) this.CurrentScore.textContent = '0';
         else this.CurrentScore.textContent = Math.round(100 * this.PointsGot / this.PointsMax).toString();
-    }
-}
-
-class QuestionWithUserAnswer {
-    protected Question: Question;
-    protected Answers: Answer[];
-    protected IsAnswerSelected: boolean[];
-    protected IsDone: boolean;
-    protected Score: number | undefined;
-
-    constructor(question: Question){
-        this.Question = question;
-        this.Answers = [];
-        this.IsAnswerSelected = [];
-        this.IsDone = false;
-    }
-
-    static FromArray(questions: Question[]){
-        let result: QuestionWithUserAnswer[] = [];
-        for(let question of questions){
-            result.push(new QuestionWithUserAnswer(question));
-        }
-        return result;
-    }
-
-    public GetQuestion(){
-        return this.Question;
-    }
-
-    public SetAnswers(answers: Answer[]){
-        this.Answers = answers;
-        this.DeselectAllAnswers();
-    }
-
-    public GetAnswers(){
-        return this.Answers;
-    }
-
-    public DeselectAllAnswers(){
-        for(let i = 0; i < this.Answers.length; i++){
-            this.IsAnswerSelected[i] = false;
-        }
-    }
-
-    public SetAnswerSelection(index: number, is_selected: boolean){
-        this.IsAnswerSelected[index] = is_selected;
-    }
-
-    public GetAnswerSelection(index: number){
-        return this.IsAnswerSelected[index] ?? false;
-    }
-
-    public ToggleAnswerSelection(index: number){
-        this.IsAnswerSelected[index] = !this.IsAnswerSelected[index];
-    }
-
-    public MarkAsDone(){
-        this.IsDone = true;
-    }
-
-    public async CountPoints(){
-        if(!this.IsDone) return 0;
-        if(this.Score !== undefined) return this.Score;
-
-        switch(await this.Question.GetPointsCounting()){
-            case Question.COUNTING_BINARY:
-                let number_of_correct_choices = 0;
-                for(let i = 0; i < this.IsAnswerSelected.length; i++){
-                    if(this.IsAnswerSelected[i] == await this.Answers[i].IsCorrect()){
-                        number_of_correct_choices++;
-                    }
-                }
-
-                if(number_of_correct_choices == this.Answers.length){
-                    this.Score = await this.Question.GetPoints();
-                }else{
-                    this.Score = 0;
-                }
-                return this.Score;
-            break;
-            
-            case Question.COUNTING_LINEAR:
-                let number_of_wrong_choices = 0;
-                let number_of_correct_answers = 0;
-                for(let i = 0; i < this.IsAnswerSelected.length; i++){
-                    if(this.IsAnswerSelected[i] != await this.Answers[i].IsCorrect()){
-                        number_of_wrong_choices++;
-                    }
-                    if(await this.Answers[i].IsCorrect()){
-                        number_of_correct_answers++;
-                    }
-                }
-
-                let correct_factor = 1 - (number_of_wrong_choices / number_of_correct_answers);
-                if(correct_factor < 0) correct_factor = 0;
-                this.Score = correct_factor * (await this.Question.GetPoints());
-                return this.Score;
-            break;
-
-            default:
-                return 0;
-        }
     }
 }
