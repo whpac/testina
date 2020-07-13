@@ -1,9 +1,9 @@
 # Ignore FontAwesome files
-assets/fonts
-assets/font-awesome*
+frontend/fonts
+frontend/font-awesome*
 
 # Ignore compiled TS
-assets/js/
+frontend/js/
 
 # Ignore node modules
 node_modules/

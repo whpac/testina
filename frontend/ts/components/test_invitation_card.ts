@@ -1,4 +1,4 @@
-import Card from './general/card';
+import Card from './basic/card';
 import Assignment from '../entities/assignment';
 import * as DateUtils from '../dateutils';
 

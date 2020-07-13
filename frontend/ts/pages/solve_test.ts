@@ -1,4 +1,4 @@
-import Page from '../components/general/page';
+import Page from '../components/basic/page';
 import Assignment from '../entities/assignment';
 import PageParams from '../1page/pageparams';
 import TestInvitationCard from '../components/test_invitation_card';

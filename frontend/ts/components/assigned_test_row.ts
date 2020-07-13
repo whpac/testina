@@ -1,4 +1,4 @@
-import Component from './general/component';
+import Component from './basic/component';
 import Assignment from '../entities/assignment';
 
 import * as DateUtils from '../dateutils';

@@ -1,10 +1,10 @@
-import Component from './general/component';
+import Component from './basic/component';
 import Test from '../entities/test';
 import Question from '../entities/question';
 import EditQuestionDialog from './edit_question_dialog';
 
 import { Truncate } from '../functions';
-import Toast from './general/toast';
+import Toast from './basic/toast';
 
 export default class QuestionsTable extends Component {
     ContentWrapperElem: HTMLTableSectionElement;

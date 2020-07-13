@@ -1,4 +1,4 @@
-import Card from './general/card'
+import Card from './basic/card'
 import Question from '../entities/question';
 import Attempt from '../entities/attempt';
 import QuestionWithUserAnswers from '../entities/question_with_user_answers';

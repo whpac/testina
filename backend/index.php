@@ -118,7 +118,7 @@ UrlHandler::AddHandler($handler);
 UrlHandler::AddHandler($api_handler);
 
 // Initializing a resource handler (stylesheets, scripts, fonts etc.)
-$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'json'], '../assets/');
+$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'json'], '../frontend/');
 UrlHandler::AddHandler($res_handler);
 
 // Initializing a navbar

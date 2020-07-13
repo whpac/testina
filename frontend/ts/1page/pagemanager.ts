@@ -1,4 +1,4 @@
-import Page from '../components/general/page';
+import Page from '../components/basic/page';
 import LoadingIndicator from './loadingindicator';
 import PageParams from './pageparams';
 import Test from '../entities/test';

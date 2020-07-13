@@ -1,5 +1,5 @@
-import Page from '../components/general/page';
-import Card from '../components/general/card';
+import Page from '../components/basic/page';
+import Card from '../components/basic/card';
 import QuestionsTable from '../components/questions_table';
 import TestSettings from '../components/test_settings';
 import Test from '../entities/test';

@@ -1,4 +1,4 @@
-import Component from './general/component';
+import Component from './basic/component';
 import Answer from '../entities/answer';
 import Question from '../entities/question';
 
