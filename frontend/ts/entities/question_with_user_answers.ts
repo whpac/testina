@@ -36,6 +36,14 @@ export default class QuestionWithUserAnswers {
         return this.Answers;
     }
 
+    public GetSelectedAnswers(){
+        let selected: Answer[] = [];
+        for(let i = 0; i < this.Answers.length; i++){
+            if(this.IsAnswerSelected[i]) selected.push(this.Answers[i]);
+        }
+        return selected;
+    }
+
     public DeselectAllAnswers(){
         for(let i = 0; i < this.Answers.length; i++){
             this.IsAnswerSelected[i] = false;
@@ -56,6 +64,10 @@ export default class QuestionWithUserAnswers {
 
     public MarkAsDone(){
         this.IsDone = true;
+    }
+
+    public GetIsDone(){
+        return this.IsDone;
     }
 
     public async CountPoints(){

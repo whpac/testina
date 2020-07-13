@@ -111,8 +111,43 @@ export default class Attempt extends Entity {
         return new Attempt(assignment, json);
     }
 
-    async SaveUserAnswers(answers: QuestionWithUserAnswers[]){
-        let data = {};
+    async SaveUserAnswers(questions: QuestionWithUserAnswers[]){
+        let data: SaveUserAnswersPayload = {
+            questions: []
+        };
+
+        for(let question of questions){
+            let answers: {id:number}[] = [];
+            let q = {
+                id: question.GetQuestion().GetId(),
+                done: question.GetIsDone(),
+                answers: answers
+            };
+
+            let selected_answers = question.GetSelectedAnswers();
+            for(let selected_answer of selected_answers){
+                q.answers.push({
+                    id: selected_answer.GetId()
+                });
+            }
+
+            data.questions.push(q);
+        }
+
         let response = await XHR.Request(this.GetApiUrl() + '/answers', 'POST', data);
+
+        if(response.Status != 201){
+            throw 'Nie udało się zapisać odpowiedzi.';
+        }
     }
+}
+
+type SaveUserAnswersPayload = {
+    questions: {
+        id: number,
+        done: boolean,
+        answers: {
+            id: number
+        }[]
+    }[]
 }

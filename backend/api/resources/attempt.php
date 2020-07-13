@@ -9,6 +9,7 @@ class Attempt extends Resource {
         $this->AddSubResource('score', new ValueResource($attempt->GetScore()));
         $this->AddSubResource('max_score', new ValueResource($attempt->GetMaxScore()));
         $this->AddSubResource('begin_time', new ValueResource($attempt->GetBeginTime()->format('Y-m-d H:i:s')));
+        $this->AddSubResource('answers', new AttemptAnswers($attempt));
 
         return true;
     }

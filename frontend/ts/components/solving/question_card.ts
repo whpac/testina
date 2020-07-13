@@ -6,6 +6,7 @@ import * as DateUtils from '../../dateutils';
 import * as PageManager from '../../1page/pagemanager';
 
 import { ShuffleArray } from '../../functions';
+import Toast from '../basic/toast';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -29,6 +30,8 @@ export default class QuestionCard extends Card {
     protected PointsGot!: number;
     protected PointsMax!: number;
     protected Attempt!: Attempt;
+
+    OnTestFinished: ((questions: QuestionWithUserAnswers[]) => void) | undefined;
 
     constructor(){
         super();
@@ -87,6 +90,7 @@ export default class QuestionCard extends Card {
         this.FinishButton = document.createElement('button');
         this.FinishButton.classList.add('big', 'with-border', 'todo');
         this.FinishButton.textContent = 'Zakończ test';
+        this.FinishButton.addEventListener('click', this.FinishTest.bind(this));
         this.AddButton(this.FinishButton);
     }
 
@@ -245,7 +249,13 @@ export default class QuestionCard extends Card {
 
     protected SaveResults(){
         PageManager.UnpreventFromNavigation('solving-test');
-        this.Attempt.SaveUserAnswers(this.Questions);
+        try{
+            this.Attempt.SaveUserAnswers(this.Questions);
+            new Toast('Twoje odpowiedzi zostały zapisane').Show(0);
+        }catch(e){
+            // #25
+            new Toast('Nie udało się zapisać odpowiedzi');
+        }
     }
 
     protected OnTimerTick(){
@@ -271,5 +281,9 @@ export default class QuestionCard extends Card {
     protected UpdateScore(){
         if(this.PointsMax == 0) this.CurrentScore.textContent = '0';
         else this.CurrentScore.textContent = Math.round(100 * this.PointsGot / this.PointsMax).toString();
+    }
+
+    protected FinishTest(){
+        this.OnTestFinished?.(this.Questions);
     }
 }
