@@ -19,13 +19,14 @@ export default class Toast{
 
     /**
      * Pokazuje plakietkę. Jeśli podano czas, po jego upłynięciu plakietka się schowa
-     * @param time Czas, po którym plakietka ma się schować automatycznie
+     * @param time Czas w milisekundach, po którym plakietka ma się schować automatycznie. Jeśli mniejszy lub równy 0, przyjmuje wartość domyślną 5000 ms.
      */
     Show(time?: number){
         window.requestAnimationFrame(() => {
             this.ToastElement.classList.remove('hidden');
 
             if(time === undefined) return;
+            if(time <= 0) time = 5000;
             setTimeout(() => {
                 this.Hide();
             }, time);

@@ -1,9 +1,9 @@
 import * as DateUtils from '../dateutils';
-import * as Toasts from '../toasts';
 import Component from './general/component';
 import Test from '../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
 import { HandleLinkClick } from '../script';
+import Toast from './general/toast';
 
 export default class TestsTable extends Component {
     protected IsLoaded: boolean;
@@ -132,7 +132,7 @@ export default class TestsTable extends Component {
             let test = await Test.Create('[Bez nazwy]', 1, 0);
             this.AppendRow(test);
         }catch(e){
-            Toasts.Show('Nie udało się utworzyć nowego testu.');
+            new Toast('Nie udało się utworzyć nowego testu.').Show();
         }
     }
 }

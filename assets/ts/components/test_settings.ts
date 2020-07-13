@@ -1,9 +1,9 @@
-import * as Toasts from '../toasts';
 import * as PageManager from '../1page/pagemanager';
 import { DisplayPage } from '../script';
 
 import Test from '../entities/test';
 import Card from './general/card';
+import Toast from './general/toast';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;
@@ -186,14 +186,15 @@ export default class TestSettings extends Card {
 
         let test_name = await (this.Test as Test).GetName();
 
-        let removing_toast = Toasts.ShowPersistent('Usuwanie testu „' + test_name + '”...');
+        let removing_toast = new Toast('Usuwanie testu „' + test_name + '”...');
+        removing_toast.Show();
         try{
             await (this.Test as Test).Remove();
-            Toasts.Show('Test „' + test_name + '” został usunięty.');
+            new Toast('Test „' + test_name + '” został usunięty.').Show(0);
             DisplayPage('testy/biblioteka');
 
         }catch(e){
-            Toasts.Show('Nie udało się usunąć testu „' + test_name + '”.');
+            new Toast('Nie udało się usunąć testu „' + test_name + '”.').Show(0);
         }finally{
             removing_toast.Hide();
         }
@@ -205,7 +206,8 @@ export default class TestSettings extends Card {
     protected async SaveTestSettings(){
         if(!this.Validate()) return;
 
-        let saving_toast = Toasts.ShowPersistent('Zapisywanie zmian...');
+        let saving_toast = new Toast('Zapisywanie zmian...');
+        saving_toast.Show();
 
         try{
             await (this.Test as Test).UpdateSettings(
@@ -214,11 +216,11 @@ export default class TestSettings extends Card {
                 this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
             );
 
-            Toasts.Show('Zmiany w ustawieniach testu zostały zapisane.');
+            new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
             PageManager.UnpreventFromNavigation('test-settings');
             
         }catch(e){
-            Toasts.Show('Nie udało się zapisać zmian w ustawieniach testu.');
+            new Toast('Nie udało się zapisać zmian w ustawieniach testu.').Show(0);
         }finally{
             saving_toast.Hide();
         }

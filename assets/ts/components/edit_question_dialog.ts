@@ -5,7 +5,7 @@ import AnswersTable from './answers_table';
 import Test from '../entities/test';
 
 import * as PageManager from '../1page/pagemanager';
-import * as Toasts from '../toasts';
+import Toast from './general/toast';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;
@@ -276,7 +276,8 @@ export default class EditQuestionDialog extends Dialog {
         if(type == Question.TYPE_SINGLE_CHOICE) points_counting = Question.COUNTING_BINARY;
         if(type == Question.TYPE_OPEN_ANSWER) points_counting = Question.COUNTING_OPEN_ANSWER;
 
-        let saving_toast = Toasts.ShowPersistent('Zapisywanie pytania...');
+        let saving_toast = new Toast('Zapisywanie pytania...');
+        saving_toast.Show();
         this.SaveButton.disabled = true;
         this.CancelButton.disabled = true;
 
@@ -316,14 +317,14 @@ export default class EditQuestionDialog extends Dialog {
                 await answers_table_awaiter;
             }
 
-            Toasts.Show('Pytanie zostało zapisane.');
+            new Toast('Pytanie zostało zapisane.').Show(0);
             this.Hide();
             this.AnswersTable.ClearContent();
             PageManager.UnpreventFromNavigation('question-editor');
             this.PromiseResolve?.(this.Question);
 
         }catch(e){
-            Toasts.Show('Nie udało się zapisać pytania.');
+            new Toast('Nie udało się zapisać pytania.').Show(0);
         }finally{
             saving_toast.Hide();
             this.SaveButton.disabled = false;

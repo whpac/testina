@@ -3,8 +3,8 @@ import Test from '../entities/test';
 import Question from '../entities/question';
 import EditQuestionDialog from './edit_question_dialog';
 
-import * as Toasts from '../toasts';
 import { Truncate } from '../functions';
+import Toast from './general/toast';
 
 export default class QuestionsTable extends Component {
     ContentWrapperElem: HTMLTableSectionElement;
@@ -146,12 +146,13 @@ export default class QuestionsTable extends Component {
         let result = window.confirm('Usunięcia pytania nie da się cofnąć.\nCzy usunąć pytanie „' + question_text + '” mimo to?');
         if(!result) return;
 
-        let removing_toast = Toasts.ShowPersistent('Usuwanie pytania „' + question_text + '”...');
+        let removing_toast = new Toast('Usuwanie pytania „' + question_text + '”...');
+        removing_toast.Show();
         try{
             await question.Remove();
-            Toasts.Show('Pytanie „' + question_text + '” zostało usunięte.');
+            new Toast('Pytanie „' + question_text + '” zostało usunięte.').Show(0);
         }catch(e){
-            Toasts.Show('Nie udało się usunąć pytania.');
+            new Toast('Nie udało się usunąć pytania.').Show(0);
         }finally{
             removing_toast.Hide();
         }
