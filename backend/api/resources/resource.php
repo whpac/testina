@@ -29,7 +29,7 @@ abstract class Resource {
         return $this->IsValueResource;
     }
 
-    public /* Resource */ function GetSubResource(/* string */ $name, /* undefined yet */ $context = null){
+    public /* Resource */ function GetSubResource(/* string */ $name, /* undefined yet */ $context){
         $this->LoadIfNeeded($name);
 
         if(!isset($this->SubResources[$name])){
@@ -42,7 +42,7 @@ abstract class Resource {
         return $res;
     }
 
-    public function GetAllSubResources(/* undefined yet */ $context = null){
+    public function GetAllSubResources(/* undefined yet */ $context){
         $this->LoadIfNeeded('');
         $res = [];
 
@@ -64,7 +64,7 @@ abstract class Resource {
             return $this->Value;
         }else{
             // This resource is a collection and thus should return all of its subresources
-            return $this->GetAllSubResources();
+            return $this->GetAllSubResources(null);
         }
     }
 
@@ -89,19 +89,19 @@ abstract class Resource {
         return $this->CreationArg;
     }
 
-    public function AssertAccessible(/* undefined yet */ $context = null){
+    public function AssertAccessible(/* undefined yet */ $context){
         // If inaccessible, throw an Exceptions\ResourceInaccessible exception
     }
 
-    public function CreateSubResource(/* object */ $source, /* undefined yet */ $context = null){
+    public function CreateSubResource(/* object */ $source, /* undefined yet */ $context){
         throw new Exceptions\MethodNotAllowed('POST');
     }
 
-    public function Update(/* object */ $source, /* undefined yet */ $context = null){
+    public function Update(/* object */ $source, /* undefined yet */ $context){
         throw new Exceptions\MethodNotAllowed('PUT');
     }
 
-    public function Delete(/* undefined yet */ $context = null){
+    public function Delete(/* undefined yet */ $context){
         throw new Exceptions\MethodNotAllowed('DELETE');
     }
 }
