@@ -235,7 +235,7 @@ export default class QuestionCard extends Card {
         clearInterval(this.TimerRef);
     }
 
-    protected OnTimeIsUp(){
+    protected async OnTimeIsUp(){
         this.QuestionText.textContent = 'Czas na rozwiązanie testu upłynął.';
         this.QuestionText.classList.remove('long');
 
@@ -245,6 +245,13 @@ export default class QuestionCard extends Card {
         this.FinishButton.style.display = '';
         this.NextButton.style.display = 'none';
         this.DoneButton.style.display = 'none';
+
+        let points_max = 0;
+        for(let question of this.Questions){
+            points_max += await question.GetQuestion().GetPoints();
+        }
+        this.PointsMax = points_max;
+        this.UpdateScore();
     }
 
     protected SaveResults(){
