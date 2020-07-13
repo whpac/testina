@@ -27,6 +27,11 @@ class AttemptAnswers extends Resource {
             }
         }
 
+        if($errors > 0){
+            $attempt->Remove();
+            throw new \Exception('Wystąpił błąd podczas zapisywania odpowiedzi do bazy danych.');
+        }
+
         // Count score
         $user_answers = $attempt->GetUserAnswers();
         $answered_questions = $user_answers->GetAnsweredQuestions();
@@ -41,11 +46,6 @@ class AttemptAnswers extends Resource {
                 $score_got += $question->CountPoints($answer_set);
                 $score_max += $question->GetPoints();
             }
-        }
-
-        if($errors > 0){
-            $attempt->Remove();
-            throw new \Exception('Wystąpił błąd podczas zapisywania odpowiedzi do bazy danych.');
         }
 
         // Update attempt to reflect the score
