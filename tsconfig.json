@@ -14,10 +14,10 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "outDir": "assets/js",
+        "outDir": "frontend/js",
         "downlevelIteration": true
     },
     "include": [
-        "assets/ts"
+        "frontend/ts"
     ]
 }
