@@ -1,11 +1,11 @@
-import Dialog from './basic/dialog';
-import Question from '../entities/question';
-import HelpLink from './help_link';
+import Dialog from '../basic/dialog';
+import Question from '../../entities/question';
+import HelpLink from '../help_link';
 import AnswersTable from './answers_table';
-import Test from '../entities/test';
+import Test from '../../entities/test';
 
-import * as PageManager from '../1page/pagemanager';
-import Toast from './basic/toast';
+import * as PageManager from '../../1page/pagemanager';
+import Toast from '../basic/toast';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;

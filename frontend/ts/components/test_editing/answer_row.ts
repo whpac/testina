@@ -1,8 +1,8 @@
-import Component from './basic/component';
-import Answer from '../entities/answer';
-import Question from '../entities/question';
+import Component from '../basic/component';
+import Answer from '../../entities/answer';
+import Question from '../../entities/question';
 
-import * as PageManager from '../1page/pagemanager';
+import * as PageManager from '../../1page/pagemanager';
 
 export default class AnswerRow extends Component {
     protected RowNumberCell: HTMLTableCellElement;

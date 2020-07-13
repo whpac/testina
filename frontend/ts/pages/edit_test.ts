@@ -1,7 +1,7 @@
 import Page from '../components/basic/page';
 import Card from '../components/basic/card';
-import QuestionsTable from '../components/questions_table';
-import TestSettings from '../components/test_settings';
+import QuestionsTable from '../components/test_editing/questions_table';
+import TestSettings from '../components/test_editing/test_settings';
 import Test from '../entities/test';
 import PageParams from '../1page/pageparams';
 

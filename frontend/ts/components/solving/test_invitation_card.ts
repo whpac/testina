@@ -1,11 +1,11 @@
-import Card from './basic/card';
-import Assignment from '../entities/assignment';
-import * as DateUtils from '../dateutils';
+import Card from '../basic/card';
+import Assignment from '../../entities/assignment';
+import * as DateUtils from '../../dateutils';
 
-import { n } from '../textutils';
-import { HandleLinkClick } from '../script';
-import User from '../entities/user';
-import Attempt from '../entities/attempt';
+import { n } from '../../textutils';
+import { HandleLinkClick } from '../../script';
+import User from '../../entities/user';
+import Attempt from '../../entities/attempt';
 
 export default class TestInvitationCard extends Card {
     protected NameHeader: HTMLHeadingElement;

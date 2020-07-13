@@ -1,9 +1,9 @@
-import * as DateUtils from '../dateutils';
-import Component from './basic/component';
-import Test from '../entities/test';
+import * as DateUtils from '../../dateutils';
+import Component from '../basic/component';
+import Test from '../../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
-import { HandleLinkClick } from '../script';
-import Toast from './basic/toast';
+import { HandleLinkClick } from '../../script';
+import Toast from '../basic/toast';
 
 export default class TestsTable extends Component {
     protected IsLoaded: boolean;

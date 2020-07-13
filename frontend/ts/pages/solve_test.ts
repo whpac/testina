@@ -1,8 +1,8 @@
 import Page from '../components/basic/page';
 import Assignment from '../entities/assignment';
 import PageParams from '../1page/pageparams';
-import TestInvitationCard from '../components/test_invitation_card';
-import QuestionCard from '../components/question_card';
+import TestInvitationCard from '../components/solving/test_invitation_card';
+import QuestionCard from '../components/solving/question_card';
 import Attempt from '../entities/attempt';
 
 export default class SolveTestPage extends Page{

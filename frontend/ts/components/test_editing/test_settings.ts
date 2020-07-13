@@ -1,9 +1,9 @@
-import * as PageManager from '../1page/pagemanager';
-import { DisplayPage } from '../script';
+import * as PageManager from '../../1page/pagemanager';
+import { DisplayPage } from '../../script';
 
-import Test from '../entities/test';
-import Card from './basic/card';
-import Toast from './basic/toast';
+import Test from '../../entities/test';
+import Card from '../basic/card';
+import Toast from '../basic/toast';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;

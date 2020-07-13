@@ -1,11 +1,9 @@
-import Card from './basic/card';
+import Card from '../basic/card';
 import AssignedTestRow from './assigned_test_row';
-import Assignment from '../entities/assignment';
-import User from '../entities/user';
+import Assignment from '../../entities/assignment';
 
-export default class TestsSolvedTable extends Card {
+export default class TestsToSolveTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
-    Subheading: HTMLParagraphElement;
 
     constructor(){
         super();
@@ -13,12 +11,8 @@ export default class TestsSolvedTable extends Card {
         this.GetElement().classList.add('semi-wide');
 
         let heading = document.createElement('h2');
-        heading.textContent = 'Już rozwiązane';
+        heading.textContent = 'Do rozwiązania';
         this.AppendChild(heading);
-
-        this.Subheading = document.createElement('p');
-        this.Subheading.classList.add('secondary');
-        this.AppendChild(this.Subheading);
 
         let table = document.createElement('table');
         table.classList.add('table', 'full-width');
@@ -55,33 +49,31 @@ export default class TestsSolvedTable extends Card {
         th_name.textContent = 'Nazwa';
         thead_tr.appendChild(th_name);
 
-        let th_score = document.createElement('th');
-        th_score.classList.add('wide-screen-only');
-        th_score.textContent = 'Wynik';
-        thead_tr.appendChild(th_score);
+        let th_deadline = document.createElement('th');
+        th_deadline.textContent = 'Termin';
+        thead_tr.appendChild(th_deadline);
 
         let th_assigned = document.createElement('th');
         th_assigned.classList.add('wide-screen-only');
         th_assigned.textContent = 'Przypisano';
         thead_tr.appendChild(th_assigned);
 
-        let th_deadline = document.createElement('th');
-        th_deadline.textContent = 'Termin';
-        thead_tr.appendChild(th_deadline);
-
         let th_author = document.createElement('th');
         th_author.classList.add('wide-screen-only');
         th_author.textContent = 'Autor';
         thead_tr.appendChild(th_author);
+
+        let th_score = document.createElement('th');
+        th_score.classList.add('wide-screen-only');
+        th_score.textContent = 'Wynik';
+        thead_tr.appendChild(th_score);
 
         let th_attempts = document.createElement('th');
         th_attempts.classList.add('wide-screen-only');
         th_attempts.textContent = 'Prób';
         thead_tr.appendChild(th_attempts);
 
-        let th_buttons = document.createElement('th');
-        th_buttons.classList.add('narrow-screen-only');
-        thead_tr.appendChild(th_buttons);
+        thead_tr.appendChild(document.createElement('th'));
 
         this.ContentWrapper = table.createTBody();
         this.ContentWrapper.classList.add('content-tbody');
@@ -100,10 +92,9 @@ export default class TestsSolvedTable extends Card {
     }
 
     async Populate(assignments: Assignment[]){
-        this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + (await (await User.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
         this.ContentWrapper.textContent = '';
         for(let i = assignments.length - 1; i >= 0; i--){
-            if(await assignments[i].IsActive()) continue;
+            if(!(await assignments[i].IsActive())) continue;
             this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
         }
     }

@@ -1,7 +1,7 @@
-import Component from './basic/component';
-import Answer from '../entities/answer';
+import Component from '../basic/component';
+import Answer from '../../entities/answer';
 import AnswerRow from './answer_row';
-import Question from '../entities/question';
+import Question from '../../entities/question';
 
 export default class AnswersTable extends Component {
     ContentWrapper: HTMLTableSectionElement;

@@ -1,8 +1,8 @@
-import Component from './basic/component';
-import Assignment from '../entities/assignment';
+import Component from '../basic/component';
+import Assignment from '../../entities/assignment';
 
-import * as DateUtils from '../dateutils';
-import { HandleLinkClick } from '../script';
+import * as DateUtils from '../../dateutils';
+import { HandleLinkClick } from '../../script';
 
 export default class AssignedTestRow extends Component {
     NameCell: HTMLTableCellElement;

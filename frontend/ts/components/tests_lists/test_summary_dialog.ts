@@ -1,8 +1,8 @@
-import Dialog from './basic/dialog';
-import Test from '../entities/test';
-import * as DateUtils from '../dateutils';
+import Dialog from '../basic/dialog';
+import Test from '../../entities/test';
+import * as DateUtils from '../../dateutils';
 
-import { DisplayPage } from '../script';
+import { DisplayPage } from '../../script';
 
 export default class TestSummaryDialog extends Dialog {
     protected QuestionCountElement: HTMLTableDataCellElement;

@@ -1,7 +1,7 @@
 import Page from '../components/basic/page';
-import TestsToSolveTable from '../components/tests_to_solve_table';
+import TestsToSolveTable from '../components/tests_lists/tests_to_solve_table';
 import Assignment from '../entities/assignment';
-import TestsSolvedTable from '../components/tests_solved_table';
+import TestsSolvedTable from '../components/tests_lists/tests_solved_table';
 
 export default class AssignedTestsListPage extends Page{
     PageElem: HTMLElement;

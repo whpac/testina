@@ -1,5 +1,5 @@
 import Page from '../components/basic/page';
-import TestsTable from '../components/tests_table';
+import TestsTable from '../components/tests_lists/tests_table';
 import Card from '../components/basic/card';
 
 export default class LibraryPage extends Page {
