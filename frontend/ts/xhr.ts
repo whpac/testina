@@ -1,7 +1,7 @@
 type XHRResult = {
     Status: number,
     StatusText: string,
-    Response: {},
+    Response: any,
     ContentLocation: string
 };
 
