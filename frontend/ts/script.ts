@@ -36,6 +36,12 @@ nav_items.forEach((element) => {
 
 DisplayPage('home');
 
+/**
+ * Przechwytuje kliknięcie linku, wyświetlając odpowiednią stronę
+ * @param e Dane zdarzenia, które zostanie anulowane
+ * @param page_id Adres strony, do której należy przejść
+ * @param params Parametry do przekazania nowej stronie
+ */
 export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
     if(e.button != 0) return;
 
@@ -43,6 +49,11 @@ export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PagePar
     DisplayPage(page_id, params);
 }
 
+/**
+ * Wyświetla nową stronę
+ * @param page Adres strony, do której należy przejść
+ * @param params Parametry do przekazania nowej stronie
+ */
 export function DisplayPage(page: string, params?: PageParams){
     PageManager.GoToPage(page, params);
 }
