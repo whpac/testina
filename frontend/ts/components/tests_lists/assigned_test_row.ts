@@ -35,7 +35,7 @@ export default class AssignedTestRow extends Component {
         this.ButtonsCell.classList.add('right');
 
         this.SolveButton = document.createElement('a');
-        this.SolveButton.classList.add('button', 'compact', 'wide-screen-only', 'todo');
+        this.SolveButton.classList.add('button', 'compact', 'wide-screen-only');
         this.SolveButton.textContent = 'Rozwiąż';
         this.ButtonsCell.appendChild(this.SolveButton);
 

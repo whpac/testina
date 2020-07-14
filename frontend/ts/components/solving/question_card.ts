@@ -88,7 +88,7 @@ export default class QuestionCard extends Card {
         this.AddButton(this.NextButton);
 
         this.FinishButton = document.createElement('button');
-        this.FinishButton.classList.add('big', 'with-border', 'todo');
+        this.FinishButton.classList.add('big', 'with-border');
         this.FinishButton.textContent = 'Zakończ test';
         this.FinishButton.addEventListener('click', this.FinishTest.bind(this));
         this.AddButton(this.FinishButton);

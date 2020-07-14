@@ -4,12 +4,15 @@ import PageParams from '../1page/pageparams';
 import TestInvitationCard from '../components/solving/test_invitation_card';
 import QuestionCard from '../components/solving/question_card';
 import Attempt from '../entities/attempt';
+import QuestionWithUserAnswers from '../entities/question_with_user_answers';
+import TestSummary from '../components/solving/test_summary';
 
 export default class SolveTestPage extends Page{
     PageElem: HTMLElement;
     HeadingTestName: Text;
     Invitation: TestInvitationCard;
     QuestionCard: QuestionCard;
+    TestSummary: TestSummary;
     Assignment: Assignment | undefined;
 
     constructor(){
@@ -34,12 +37,27 @@ export default class SolveTestPage extends Page{
 
         this.QuestionCard = new QuestionCard();
         this.PageElem.appendChild(this.QuestionCard.GetElement());
+
+        this.TestSummary = new TestSummary();
+        this.PageElem.appendChild(this.TestSummary.GetElement());
     }
 
     protected OnTestLoaded(attempt: Attempt){
         this.Invitation.GetElement().style.display = 'none';
         this.QuestionCard.GetElement().style.display = '';
+        this.QuestionCard.OnTestFinished = this.OnTestFinished.bind(this);
         this.QuestionCard.StartTest(attempt);
+    }
+
+    protected OnTestFinished(questions: QuestionWithUserAnswers[]){
+        if(this.Assignment === undefined){
+            alert('Nie udało się wyświetlić strony z podsumowaniem.\nPomimo tego, wyniki zostały zapisane.');
+            throw 'SolveTest.Assignment === undefined';
+        }
+        
+        this.QuestionCard.GetElement().style.display = 'none';
+        this.TestSummary.GetElement().style.display = '';
+        this.TestSummary.Populate(questions, this.Assignment);
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){
@@ -48,6 +66,7 @@ export default class SolveTestPage extends Page{
 
         this.Invitation.GetElement().style.display = '';
         this.QuestionCard.GetElement().style.display = 'none';
+        this.TestSummary.GetElement().style.display = 'none';
 
         container.appendChild(this.PageElem);
         this.HeadingTestName.textContent = await (await this.Assignment.GetTest()).GetName();
