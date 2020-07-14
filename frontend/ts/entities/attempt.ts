@@ -66,6 +66,19 @@ export default class Attempt extends Entity {
         this.Populate(json);
     }
 
+    /** Pobiera wszystkie podejścia dla przypisania */
+    static async GetForAssignment(assignment: Assignment){
+        let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=2', 'GET');
+        let json = response.Response as Collection<AttemptDescriptor>;
+        let out_array: Attempt[] = [];
+
+        Object.keys(json).forEach((attempt_id) => {
+            out_array.push(new Attempt(assignment, json[parseInt(attempt_id)]));
+        });
+
+        return out_array;
+    }
+
     /**
      * Ustawia właściwości podejścia zgodnie z deskryptorem
      * @param descriptor Deskryptor z właściwościami do ustawienia
