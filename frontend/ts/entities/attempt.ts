@@ -125,6 +125,16 @@ export default class Attempt extends Entity {
         return this.max_score as number;
     }
 
+    /** Zwraca wynik procentowy uzyskany w podejściu */
+    async GetPercentageScore(): Promise<number>{
+        await this?._fetch_awaiter;
+
+        if(this.score === undefined || this.max_score === undefined) return 0;
+        if(this.max_score == 0) return 0;
+
+        return Math.round(100 * this.score / this.max_score);
+    }
+
     /** Zwraca czas rozpoczęcia podejścia */
     async GetBeginTime(): Promise<Date>{
         await this?._fetch_awaiter;
