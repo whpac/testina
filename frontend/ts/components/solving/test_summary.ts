@@ -48,7 +48,7 @@ export default class TestSummary extends Card {
         back_button_wrapper.appendChild(back_button);
 
         let result_table = document.createElement('table');
-        result_table.classList.add('table', 'full-width', 'todo');
+        result_table.classList.add('table', 'full-width');
         this.AppendChild(result_table);
 
         let heading_row = result_table.createTHead().insertRow(-1);
@@ -65,6 +65,8 @@ export default class TestSummary extends Card {
     async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment){
         this.AverageScoreLink.href = 'testy/wynik/' + assignment.GetId().toString();
         this.AverageScoreLink.addEventListener('click', (e) => HandleLinkClick(e, 'testy/wynik', assignment));
+
+        this.DisplayParticularScores(questions);
         
         assignment.Reload();    // Żeby odświeżyć średni wynik
         let score = await assignment.GetScore();
@@ -76,9 +78,36 @@ export default class TestSummary extends Card {
         let total_got = 0;
         let total_max = 0;
 
+        let question_data = [];
+
         for(let question of questions){
-            total_got += await question.CountPoints();
-            total_max += await question.GetQuestion().GetPoints();
+            let q_got = await question.CountPoints();
+            let q_max = await question.GetQuestion().GetPoints();
+
+            total_got += q_got;
+            total_max += q_max;
+
+            let q_id = question.GetQuestion().GetId();
+            if(question_data[q_id] === undefined){
+                question_data[q_id] = {
+                    text: await question.GetQuestion().GetText(),
+                    got: 0,
+                    max: 0
+                }
+            }
+
+            question_data[q_id].got += q_got;
+            question_data[q_id].max += q_max;
+        }
+
+        for(let question of question_data){
+            if(question === undefined) continue;
+            let row = this.ResultsTBody.insertRow(-1);
+            row.insertCell(-1).textContent = question.text;
+
+            let score_cell = row.insertCell(-1);
+            score_cell.classList.add('center');
+            score_cell.textContent = (Math.round(question.got * 100) / 100).toLocaleString() + '/' + question.max.toLocaleString();
         }
 
         this.PercentageScoreNode.textContent = Math.round(100 * total_got / total_max).toString();
