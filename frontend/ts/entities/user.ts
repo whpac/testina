@@ -2,25 +2,31 @@ import Entity from './entity';
 
 import * as XHR from '../xhr';
 
+/** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {
     id: number,
     first_name: string,
     last_name: string
 }
 
-/** @deprecated */
-type UserCollection = {
-    [user_id: number]: UserDescriptor
-}
-
+/** Klasa reprezentująca użytkownika */
 export default class User extends Entity {
+    /** Unikatowy identyfikator użytkownika */
     protected id: number;
+    /** Imię użytkownika */
     protected first_name: string | undefined;
+    /** Nazwisko użytkownika */
     protected last_name: string | undefined;
 
+    /** Reprezentuje stan pobierania danych z serwera */
     private _fetch_awaiter: Promise<void> | undefined;
+    /** Przechowuje aktualnie zalogowanego użytkownika */
     protected static CurrentUser: (User | undefined) = undefined;
 
+    /**
+     * Klasa reprezentująca użytkownika
+     * @param user Identyfikator użytkownika lub deskryptor
+     */
     constructor(user: number | UserDescriptor){
         super();
 
@@ -33,6 +39,10 @@ export default class User extends Entity {
         }
     }
 
+    /**
+     * Zwraca aktualnie zalogowanego użytkownika
+     * @param force Czy wymusić załadowanie nowych danych
+     */
     static async GetCurrent(force: boolean = false){
         if(this.CurrentUser === undefined || force){
             let response = await XHR.Request('api/users/current?depth=2', 'GET');
@@ -42,30 +52,39 @@ export default class User extends Entity {
         return this.CurrentUser;
     }
 
+    /** Pobiera dane z serwera */
     protected async Fetch(){
         let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as UserDescriptor;
         this.Populate(json);
     }
 
+    /**
+     * Ustawia właściwości zgodnie z deskryptorem
+     * @param descriptor Deskryptor użytkownika
+     */
     protected Populate(descriptor: UserDescriptor){
         this.first_name = descriptor.first_name;
         this.last_name = descriptor.last_name;
     }
 
+    /** Zwraca adres użytkownika w API */
     GetApiUrl(){
         return 'api/users/' + this.id;
     }
 
+    /** Zwraca identyfikator użytkownika */
     GetId(): number{
         return this.id;
     }
 
+    /** Zwraca imię i nazwisko użytkownika */
     async GetName(): Promise<string>{
         await this._fetch_awaiter;
         return (this.first_name as string) + ' ' + (this.last_name as string);
     }
 
+    /** Czy użytkownik jest kobietą? (Na podstawie ostatniej litery imienia) */
     async IsFemale(): Promise<boolean>{
         await this._fetch_awaiter;
         return this.first_name?.endsWith('a') ?? false;

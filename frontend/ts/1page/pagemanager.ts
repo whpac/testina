@@ -4,18 +4,30 @@ import PageParams from './pageparams';
 import Test from '../entities/test';
 import Assignment from '../entities/assignment';
 
+/** Lista zarejestrowanych stron */
 let Pages: PageList = {};
+/** Aktualnie wyświetlana strona */
 let CurrentPage: (Page | null) = null;
+/** Adres aktualnie wyświetlanej strony */
 let CurrentPageId: (string | null) = null;
+/** Element, w którym wyświetlane są strony */
 let ContentRoot: HTMLElement;
+/** Wskaźnik ładowania */
 let LoadingWrapper: (LoadingIndicator | null) = null;
 
+/** Zbiór powodów, które uniemożliwiają nawigację */
 let PreventFromNavigationReasons = new Set<string>();
 
+/** Typ opisujący zbiór stron */
 type PageList = {
     [url: string]: Page;
 }
 
+/**
+ * Inicjalizuje menedżera stron
+ * @param root Element HTML, do którego będą ładowane strony
+ * @param loading_indicator Wskaźnik ładowania strony
+ */
 export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicator){
     ContentRoot = root;
     LoadingWrapper = loading_indicator ?? null;
@@ -23,19 +35,29 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
 
     window.addEventListener('beforeunload', (event) => {
         if(IsPreventedFromNavigation()){
-            // Cancel the event as stated by the standard.
+            // Anuluj zdarzenie standardową metodą
             event.preventDefault();
-            // Chrome requires returnValue to be set.
+            // Następne dwie są dla starszych przeglądarek
             event.returnValue = '';
             return '';
         }
     });
 }
 
+/**
+ * Dodaje stronę do rejestru
+ * @param page_id Adres strony
+ * @param page Strona
+ */
 export function AddPage(page_id: string, page: Page){
     Pages[page_id] = page;
 }
 
+/**
+ * Przechodzi do strony o danym adresie
+ * @param page_id Adres strony, do której należy przejść
+ * @param params Parametry
+ */
 export function GoToPage(page_id: string, params?: PageParams){
     if(IsPreventedFromNavigation()){
         let confirm_result = window.confirm('Na tej stronie są niezapisane zmiany.\nCzy chcesz ją opuścić?');
@@ -50,43 +72,43 @@ export function GoToPage(page_id: string, params?: PageParams){
 }
 
 /**
- * When called, there will be a prompt before navigating to another page
- * @param reason identifier representing the prevention (not displayed to user)
+ * Powoduje, że przed opuszczeniem strony, użytkownik zobaczy okienko z potwierdzeniem wyjścia
+ * @param reason Identyfikator powodu blokady (niewyświetlany użytkownikowi)
  */
 export function PreventFromNavigation(reason: string){
     PreventFromNavigationReasons.add(reason);
 }
 
 /**
- * Cancels the prevention with specified identifier
- * @param reason identifier of prevention to cancel
+ * Znosi blokadę opuszczenia strony
+ * @param reason Identyfikator powodu blokady do zniesienia
  */
 export function UnpreventFromNavigation(reason: string){
     PreventFromNavigationReasons.delete(reason);
 }
 
 /**
- * Checks if there is any active navigation prevention
+ * Sprawdza, czy istnieje powód, by blokować nawigację
  */
 export function IsPreventedFromNavigation(){
     return PreventFromNavigationReasons.size != 0;
 }
 
 /**
- * Checks if the given reason prevents from navigating
- * @param reason reason to check
+ * Sprawdza, czy podany powód blokuje nawigację
+ * @param reason Identyfikator powodu do sprawdzenia
  */
 export function IsPreventedFromNavigationBy(reason: string){
     return PreventFromNavigationReasons.has(reason);
 }
 
 /**
- * Navigates to page
- * @param page_id identifier of page to navigate to
- * @param params parameters passed to the new page
+ * Wyświetla stronę o podanym adresie
+ * @param page_id Adres strony do wyświetlenia
+ * @param params Parametr, przekazywany do nowej strony
  */
 async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
-        if(Pages[page_id] === undefined) return Promise.reject(page_id + ' doesn\'t exist.');
+        if(Pages[page_id] === undefined) return Promise.reject(page_id + ' nie istnieje.');
         if(CurrentPageId == page_id) return;
 
         LoadingWrapper?.Display()
@@ -99,6 +121,10 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
         window.requestAnimationFrame(() => LoadingWrapper?.Hide());
 }
 
+/**
+ * Obsługuje zdarzenie przejścia do poprzedniej strony
+ * @param e Dane zdarzenia onpopstate
+ */
 function PopStateHandler(e: PopStateEvent){
     let state = e.state;
     if(state === null || state === undefined) return;
@@ -109,15 +135,29 @@ function PopStateHandler(e: PopStateEvent){
     if(page_id != null) DisplayPage(page_id, UnserializeParams(params));
 }
 
+/**
+ * Zmienia aktualny adres wyświetlany na pasku adresu
+ * @param new_url Nowy adres URL (względny)
+ * @param page_id Adres strony skojarzony z adresem URL
+ * @param params Parametr strony, do zapisania w historii przeglądarki
+ */
 function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams){
     history.pushState({page_id: page_id, params: params?.GetSimpleRepresentation()}, '', new_url);
 }
 
+/**
+ * Ustawia tekst widoczny na pasku tytułu w przeglądarce
+ * @param new_title Nowy tytuł
+ */
 export function SetTitle(new_title: string){
     if(new_title == '') document.title = 'Lorem Ipsum';
     else document.title = new_title + ' – Lorem Ipsum';
 }
 
+/**
+ * Tworzy obiekt z prostej reprezentacji
+ * @param params Prosta reprezentacja obiektu
+ */
 function UnserializeParams(params?: {type: string, id: number}): (PageParams | undefined){
     switch(params?.type){
         case 'test': return new Test(params.id);

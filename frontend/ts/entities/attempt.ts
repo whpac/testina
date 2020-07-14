@@ -5,6 +5,7 @@ import Question, { QuestionDescriptor } from './question';
 import Assignment from './assignment';
 import QuestionWithUserAnswers from './question_with_user_answers';
 
+/** Deskryptor podejścia w odpowiedzi z API */
 export interface AttemptDescriptor {
     id: number,
     user: UserDescriptor | undefined,
@@ -15,20 +16,36 @@ export interface AttemptDescriptor {
     path: number[] | undefined
 }
 
+/** Klasa reprezentująca podejście */
 export default class Attempt extends Entity {
+    /** Unikatowy identyfikator podejścia */
     protected id: number;
+    /** Przypisanie, do którego należy to podejście */
     protected assignment: Assignment;
+    /** Użytkownik, który wykonał podejście */
     protected user: User | undefined;
+    /** Wynik punktowy w podejściu */
     protected score: number | undefined;
+    /** Maksymalny wynik punktowy w podejściu */
     protected max_score: number | undefined;
+    /** Czas rozpoczęcia podejścia */
     protected begin_time: Date | undefined;
+    /** Ścieżka pytań (lista identyfikatorów) */
     protected path: number[] | undefined;
 
+    /** Deskryptory pytań w podejściu */
     protected question_descriptors: Collection<QuestionDescriptor> | undefined;
+    /** Pytania w podejściu */
     protected questions: Question[] | undefined;
 
+    /** Reprezentuje status operacji pobierania danych z serwera */
     private _fetch_awaiter: Promise<void> | undefined;
 
+    /**
+     * Klasa reprezentująca podejście
+     * @param assignment Przypisanie, którego częścią jest podejście
+     * @param attempt Identyfikator podejścia lub deskryptor
+     */
     constructor(assignment: Assignment, attempt: number | AttemptDescriptor){
         super();
 
@@ -42,12 +59,17 @@ export default class Attempt extends Entity {
         }
     }
 
+    /** Pobiera podejście */
     protected async Fetch(){
         let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as AttemptDescriptor;
         this.Populate(json);
     }
 
+    /**
+     * Ustawia właściwości podejścia zgodnie z deskryptorem
+     * @param descriptor Deskryptor z właściwościami do ustawienia
+     */
     protected Populate(descriptor: AttemptDescriptor){
         this.user = descriptor.user === undefined ? undefined : new User(descriptor.user);
         this.score = descriptor.score;
@@ -57,38 +79,46 @@ export default class Attempt extends Entity {
         this.question_descriptors = descriptor.questions;
     }
 
+    /** Zwraca adres podejścia w API */
     GetApiUrl(){
         return this.assignment.GetApiUrl() + '/attempts/' + this.id;
     }
 
+    /** Zwraca unikatowy identyfikator podejścia */
     GetId(): number{
         return this.id;
     }
 
+    /** Zwraca przypisanie, do którego należy podejście */
     GetAssignment(): Assignment{
         return this.assignment;
     }
 
+    /** Zwraca użytkownika, który wykonał podejście */
     async GetUser(): Promise<User>{
         await this?._fetch_awaiter;
         return this.user as User;
     }
 
+    /** Zwraca zdobytą liczbę punktów */
     async GetScore(): Promise<number>{
         await this?._fetch_awaiter;
         return this.score as number;
     }
 
+    /** Zwraca maksymalną liczbę punktów, które można było zdobyć */
     async GetMaxScore(): Promise<number>{
         await this?._fetch_awaiter;
         return this.max_score as number;
     }
 
+    /** Zwraca czas rozpoczęcia podejścia */
     async GetBeginTime(): Promise<Date>{
         await this?._fetch_awaiter;
         return this.begin_time as Date;
     }
 
+    /** Zwraca pytania według ścieżki */
     async GetQuestions(): Promise<Question[]>{
         await this?._fetch_awaiter;
         if(this.questions !== undefined) return this.questions;
@@ -105,12 +135,20 @@ export default class Attempt extends Entity {
         return questions;
     }
 
+    /**
+     * Tworzy nowe podejście
+     * @param assignment Przypisanie, do którego należy utworzyć podejście
+     */
     static async Create(assignment: Assignment){
         let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=8', 'POST');
         let json = response.Response as AttemptDescriptor;
         return new Attempt(assignment, json);
     }
 
+    /**
+     * Zapisuje odpowiedzi użytkownika
+     * @param questions Pytania z odpowiedziami
+     */
     async SaveUserAnswers(questions: QuestionWithUserAnswers[]){
         let data: SaveUserAnswersPayload = {
             questions: []
@@ -142,6 +180,7 @@ export default class Attempt extends Entity {
     }
 }
 
+/** Typ reprezentujący treść żądania zapisania odpowiedzi użytkownika */
 type SaveUserAnswersPayload = {
     questions: {
         id: number,

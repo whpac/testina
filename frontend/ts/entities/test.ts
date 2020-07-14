@@ -6,6 +6,7 @@ import PageParams from '../1page/pageparams';
 import { UserDescriptor } from './user';
 import Question, { QuestionDescriptor, QuestionCollection } from './question';
 
+/** Deskryptor testu w odpowiedzi z API */
 export interface TestDescriptor {
     id: number,
     name: string,
@@ -17,25 +18,40 @@ export interface TestDescriptor {
     questions: QuestionCollection
 }
 
-/** @deprecated */
+/** @deprecated - użyć Collection<TestDescriptor> */
 type TestCollection = {
     [test_id: number]: TestDescriptor
 }
 
+/** Klasa reprezentująca test */
 export default class Test extends Entity implements PageParams {
+    /** Unikatowy identyfikator testu */
     protected id: number;
+    /** Nazwa testu */
     protected name: string | undefined;
+    /** Autor testu */
     protected author: User | undefined;
+    /** Data utworzenia testu */
     protected creation_date: Date | undefined;
+    /** Limit czasu na rozwiązanie testu */
     protected time_limit: number | undefined;
+    /** Mnożnik pytań */
     protected question_multiplier: number | undefined;
+    /** Ilość pytań (bez uwzględniania mnożnika) */
     protected question_count: number | undefined;
     
+    /** Deskryptory pytań */
     protected question_descriptors: QuestionDescriptor[] | undefined;
+    /** Pytania */
     protected questions: Question[] | undefined;
 
+    /** Reprezentuje status operacji pobierania danych */
     private _fetch_awaiter: Promise<void> | undefined;
 
+    /**
+     * Klasa reprezentująca test
+     * @param test Identyfikator testu lub deskryptor
+     */
     constructor(test: number | TestDescriptor){
         super();
 
@@ -48,6 +64,7 @@ export default class Test extends Entity implements PageParams {
         }
     }
 
+    /** Zwraca wszystkie testy utworzone przez użytkownika */
     static async GetAll(){
         let response = await XHR.Request('api/tests?depth=3', 'GET');
         let json = response.Response as TestCollection;
@@ -60,12 +77,17 @@ export default class Test extends Entity implements PageParams {
         return out_array;
     }
 
+    /** Pobiera test z serwera */
     protected async Fetch(){
         let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
         let json = response.Response as TestDescriptor;
         this.Populate(json);
     }
 
+    /**
+     * Wypełnia właściwości według danych w deskryptorze
+     * @param descriptor Deskryptor testu
+     */
     protected Populate(descriptor: TestDescriptor){
         this.name = descriptor.name;
         this.author = new User(descriptor.author);
@@ -82,48 +104,58 @@ export default class Test extends Entity implements PageParams {
         }
     }
 
+    /** Adres testu w API */
     GetApiUrl(){
         return 'api/tests/' + this.id;
     }
 
+    /** Zwraca identyfikator testu */
     GetId(): number{
         return this.id;
     }
 
+    /** Zwraca nazwę testu */
     async GetName(): Promise<string>{
         await this?._fetch_awaiter;
         return this.name as string;
     }
 
+    /** Zwraca autora testu */
     async GetAuthor(): Promise<User>{
         await this?._fetch_awaiter;
         return this.author as User;
     }
 
+    /** Zwraca datę utworzenia */
     async GetCreationDate(): Promise<Date>{
         await this?._fetch_awaiter;
         return this.creation_date as Date;
     }
 
+    /** Zwraca limit czasu na rozwiązanie */
     async GetTimeLimit(): Promise<number>{
         await this?._fetch_awaiter;
         return this.time_limit as number;
     }
 
+    /** Zwraca mnożnik pytań */
     async GetQuestionMultiplier(): Promise<number>{
         await this?._fetch_awaiter;
         return this.question_multiplier as number;
     }
 
+    /** Zwraca ilość pytań (bez uwzględniania mnożnika) */
     async GetQuestionCount(): Promise<number>{
         await this?._fetch_awaiter;
         return this.question_count as number;
     }
 
+    /** Czy test ma limit czasu na rozwiązanie */
     async HasTimeLimit(): Promise<boolean>{
         return (await this.GetTimeLimit()) != 0;
     }
 
+    /** Zwraca pytania */
     async GetQuestions(): Promise<Question[]>{
         await this?._fetch_awaiter;
 
@@ -141,6 +173,12 @@ export default class Test extends Entity implements PageParams {
         return this.questions;
     }
 
+    /**
+     * Tworzy nowy test
+     * @param name Nazwa testu
+     * @param question_multiplier Mnożnik pytań
+     * @param time_limit Limit czasu na rozwiązanie
+     */
     static async Create(name: string, question_multiplier: number, time_limit: number){
         let request_data = {
             name: name,
@@ -154,6 +192,7 @@ export default class Test extends Entity implements PageParams {
         return new Test(parseInt(result.ContentLocation));
     }
 
+    /** Usuwa test */
     async Remove(){
         let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
         if(result.Status == 204){
@@ -161,6 +200,12 @@ export default class Test extends Entity implements PageParams {
         }else throw result;
     }
 
+    /**
+     * Aktualizuje ustawienia testu
+     * @param name Nowa nazwa testu
+     * @param question_multiplier Nowa wartość mnożnika pytań
+     * @param time_limit Nowy limit czasu na rozwiązanie
+     */
     async UpdateSettings(name: string, question_multiplier: number, time_limit: number){
         let request_data = {
             name: name,
@@ -176,6 +221,7 @@ export default class Test extends Entity implements PageParams {
         }else throw result;
     }
 
+    /** Zwraca prostą reprezentację obiektu */
     GetSimpleRepresentation(){
         return {
             type: 'test',
@@ -183,12 +229,14 @@ export default class Test extends Entity implements PageParams {
         };
     }
 
+    /** Zapewnia spójność danych po dodaniu pytania */
     OnQuestionAdded(){
         if(this.question_count === undefined) this.question_count = 0;
         this.question_count++;
         this.FireEvent('change');
     }
 
+    /** Zapewnia spójność danych po usunięciu pytania */
     OnQuestionRemoved(){
         if(this.question_count === undefined || this.question_count < 1) return;
         this.question_count--;
