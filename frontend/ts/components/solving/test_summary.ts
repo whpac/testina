@@ -2,6 +2,7 @@ import Card from '../basic/card';
 import { HandleLinkClick } from '../../script';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
 import Assignment from '../../entities/assignment';
+import ScoreDetailsDialog from '../tests_lists/score_details_dialog';
 
 export default class TestSummary extends Card {
     PercentageScoreNode: Text;
@@ -30,7 +31,6 @@ export default class TestSummary extends Card {
         this.AppendChild(this.AverageScoreSubtitle);
 
         this.AverageScoreLink = document.createElement('a');
-        this.AverageScoreLink.classList.add('todo');
         this.AverageScoreLink.appendChild(this.AverageScoreNode = document.createTextNode('0'));
         this.AverageScoreLink.appendChild(document.createTextNode('%'));
         this.AverageScoreSubtitle.appendChild(this.AverageScoreLink);
@@ -63,8 +63,8 @@ export default class TestSummary extends Card {
     }
 
     async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment){
-        this.AverageScoreLink.href = 'testy/wynik/' + assignment.GetId().toString();
-        this.AverageScoreLink.addEventListener('click', (e) => HandleLinkClick(e, 'testy/wynik', assignment));
+        this.AverageScoreLink.href = 'javascript:void(0)';
+        this.AverageScoreLink.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment));
 
         this.DisplayParticularScores(questions);
         
@@ -72,6 +72,12 @@ export default class TestSummary extends Card {
         let score = await assignment.GetScore();
         this.AverageScoreNode.textContent = score?.toString() ?? '0';
         this.AverageScoreSubtitle.style.display = '';
+    }
+
+    DisplayScoreDetailsDialog(assignment: Assignment){
+        let dialog = new ScoreDetailsDialog();
+        dialog.Populate(assignment);
+        dialog.Show();
     }
 
     async DisplayParticularScores(questions: QuestionWithUserAnswers[]){

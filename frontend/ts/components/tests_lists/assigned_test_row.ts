@@ -3,6 +3,7 @@ import Assignment from '../../entities/assignment';
 
 import * as DateUtils from '../../dateutils';
 import { HandleLinkClick } from '../../script';
+import ScoreDetailsDialog from './score_details_dialog';
 
 export default class AssignedTestRow extends Component {
     NameCell: HTMLTableCellElement;
@@ -27,7 +28,7 @@ export default class AssignedTestRow extends Component {
         this.AuthorCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.AuthorCell.classList.add('wide-screen-only', 'center');
         this.ScoreCell = (this.Element as HTMLTableRowElement).insertCell(-1);
-        this.ScoreCell.classList.add('wide-screen-only', 'center', 'todo');
+        this.ScoreCell.classList.add('wide-screen-only', 'center');
         this.AttemptsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.AttemptsCell.classList.add('wide-screen-only', 'center');
 
@@ -62,6 +63,7 @@ export default class AssignedTestRow extends Component {
             let score_link = document.createElement('a');
             score_link.title = 'Zobacz szczegóły wyniku';
             score_link.href = 'javascript:void(0)';
+            score_link.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment));
             score_link.textContent = score + '%';
             this.ScoreCell.appendChild(score_link);
         }
@@ -84,5 +86,11 @@ export default class AssignedTestRow extends Component {
             this.SolveButton.href = 'testy/rozwiąż/' + assignment.GetId();
             this.SolveButton.addEventListener('click', (e) => HandleLinkClick(e, 'testy/rozwiąż', assignment));
         }
+    }
+
+    DisplayScoreDetailsDialog(assignment: Assignment){
+        let dialog = new ScoreDetailsDialog();
+        dialog.Populate(assignment);
+        dialog.Show();
     }
 }
