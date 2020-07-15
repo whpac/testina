@@ -1,11 +1,20 @@
 <?php
 namespace Api\Resources;
 
+use Api\Exceptions;
+
 class AttemptWithTest extends Resource {
 
-    protected function LazyLoad($data, $name){
-        $assignment = $data[0];
-        $current_user = $data[1];
+    protected function LazyLoad($assignment, $name){
+        $current_user = $this->GetContext()->GetUser();
+
+        if(!$assignment->AreRemainingAttempts($current_user)){
+            throw new Exceptions\BadRequest('Wykorzystał'.($current_user->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');
+        }
+
+        if($assignment->HasTimeLimitExceeded()){
+            throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
+        }
 
         $test = $assignment->GetTest();
         $questions = $test->GetQuestions();

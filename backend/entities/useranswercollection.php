@@ -20,6 +20,10 @@ class UserAnswerCollection {
         return $this->user_answers;
     }
 
+    public /* number */ function Count(){
+        return count($user_answers);
+    }
+
     public /* void */ function GroupByQuestionIndex(){
         $this->answers_by_index = [];
 

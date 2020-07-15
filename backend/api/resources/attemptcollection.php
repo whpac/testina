@@ -15,10 +15,11 @@ class AttemptCollection extends Resource {
     }
 
     public function CreateSubResource(/* mixed */ $source){
-        $current_user = $this->GetContext()->GetUser();
         $assignment = $this->GetConstructorArgument();
 
-        return new AttemptWithTest([$assignment, $current_user]);
+        $new_attempt = new AttemptWithTest($assignment);
+        $new_attempt->SetContext($this->GetContext());
+        return $new_attempt;
     }
 }
 ?>

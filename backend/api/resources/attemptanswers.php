@@ -12,6 +12,33 @@ class AttemptAnswers extends Resource {
 
     public function CreateSubResource(/* object */ $source){
         $attempt = $this->GetConstructorArgument();
+
+        // Sprawdź, czy użytkownik nie wysłał wcześniej odpowiedzi
+        if($attempt->GetUserAnswers()->Count() > 0){
+            throw new Exceptions\BadRequest('W każdym podejściu można wysłać tylko jeden zestaw odpowiedzi.');
+        }
+
+        /**
+         * Sprawdź, czy rozwiązanie nie wpłynęło po czasie
+         * Pierwszeństwo ma termin określony w przypisaniu
+         * Użytkownik ma dodatkowy 60-sekundowy bufor na nadesłanie rozwiązań
+         */
+        $assignment = $attempt->GetAssignment();
+        if($assignment->GetTimeLimit() < (new \DateTime('-60 seconds'))){
+            throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
+        }
+
+        $test = $assignment->GetTest();
+        if($test->HasTimeLimit()){
+            $time_limit = $test->GetTimeLimit();
+            $interval = new DateInterval('PT'.$time_limit.'S');
+            $time_limit = $assignment->GetTimeLimit()->add($interval);
+
+            if($time_limit < new \DateTime('-60 seconds')){
+                throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
+            }
+        }
+
         $errors = 0;
         foreach($source->questions as $question_index => $question){
             if($question->done){
