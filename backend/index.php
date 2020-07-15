@@ -76,9 +76,6 @@ UrlHandler::RegisterErrorDocument(404, __DIR__.'/pages/404.php');
 $handler = new RegistryHandler(['root_path' => 'pages/']);
 $handler->SetOption('default_mode', RegistryHandler::MATCH_STARTS_WITH);
 
-$api_handler = new RegistryHandler(['root_path' => 'api_old/']);
-$api_handler->SetOption('default_mode', RegistryHandler::MATCH_STARTS_WITH);
-
 $url = [];
 $url['home'] = 'main.php';
 $url['informacje'] = 'about.php';
@@ -95,30 +92,16 @@ $url['testy/wynik'] = 'tests/result.php';
 
 $url['_dev'] = '_dev.php';
 
-$api = [];
-$api['get_test'] = 'get_test.php';
-$api['remove_question'] = 'remove_question.php';
-$api['remove_test'] = 'remove_test.php';
-$api['save_question'] = 'save_question.php';
-$api['save_test'] = 'save_test.php';
-$api['save_test_results'] = 'save_test_results.php';
-$api['_list_tests'] = '_list_tests.php';
-
 Properties::Set('pages.handlers.main_page', 'home');
-if(AuthManager::IsAuthorized()){
-    foreach($url as $u => $p) $handler->AddPage($u, $p);
-    foreach($api as $u => $p) $api_handler->AddPage('api/'.$u, $p);
-}else{
+if(!AuthManager::IsAuthorized()){
     Properties::Set('pages.handlers.main_page', 'login');
     PageManager::SetRenderer(new \Layout\LoginRenderer());
     foreach($url as $u => $p) $handler->AddPage($u, 'login.php');
+    UrlHandler::AddHandler($handler);
 }
 
-UrlHandler::AddHandler($handler);
-UrlHandler::AddHandler($api_handler);
-
 // Initializing a resource handler (stylesheets, scripts, fonts etc.)
-$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'json'], '../frontend/');
+$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2'], '../frontend/');
 UrlHandler::AddHandler($res_handler);
 
 // Initializing a navbar
@@ -132,7 +115,6 @@ NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out'
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Pomoc', ['href' => 'pomoc', 'icon' => 'fa-question-circle']);
 
-NavbarStorage::AddItem('Strona testowa', ['href' => '_dev', 'icon' => 'fa-code']);
 NavbarStorage::AddItem('Do zrobienia', ['href' => 'https://github.com/whpac/testina/issues', 'icon' => 'fa-code']);
 
 // The handled site is being included and buffered here
