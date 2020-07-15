@@ -16,14 +16,14 @@ class Question extends Resource{
         return true;
     }
 
-    public function Update(/* mixed */ $data, /* undefined yet */ $context){
+    public function Update(/* mixed */ $data){
         $question = $this->GetConstructorArgument();
         $res = $question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
 
-    public function Delete(/* undefined yet */ $context){
+    public function Delete(){
         $question = $this->GetConstructorArgument();
         $res = $question->Remove();
 

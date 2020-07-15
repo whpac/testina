@@ -13,7 +13,7 @@ class AnswerCollection extends Resource {
         return true;
     }
 
-    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+    public function CreateSubResource(/* mixed */ $source){
         $question = $this->GetConstructorArgument();
         $res = \Entities\Answer::Create($question, $source->text, ['correct' => $source->correct]);
 

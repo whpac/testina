@@ -16,14 +16,14 @@ class Test extends Resource{
         return true;
     }
 
-    public function Update(/* mixed */ $data, /* undefined yet */ $context){
+    public function Update(/* mixed */ $data){
         $test = $this->GetConstructorArgument();
         $res = $test->Update($data->name, $data->question_multiplier, $data->time_limit);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
 
-    public function Delete(/* undefined yet */ $context){
+    public function Delete(){
         $test = $this->GetConstructorArgument();
         $test->Remove();
     }

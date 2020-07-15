@@ -11,14 +11,14 @@ class Answer extends Resource{
         return true;
     }
 
-    public function Update(/* mixed */ $data, /* undefined yet */ $context){
+    public function Update(/* mixed */ $data){
         $answer = $this->GetConstructorArgument();
         $res = $answer->Update($data->text, ['correct' => $data->correct]);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować odpowiedzi');
     }
 
-    public function Delete(/* undefined yet */ $context){
+    public function Delete(){
         $answer = $this->GetConstructorArgument();
         $res = $answer->Remove();
 

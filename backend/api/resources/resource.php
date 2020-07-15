@@ -1,6 +1,7 @@
 <?php
 namespace Api\Resources;
 
+use Api\Context;
 use Api\Exceptions;
 
 abstract class Resource {
@@ -10,9 +11,18 @@ abstract class Resource {
 
     private $CreationArg = null;
     private $IsLoaded = false;
+    private $Context;
 
     public function __construct(/* mixed */ $args = null){
         $this->CreationArg = $args;
+    }
+
+    public function SetContext(?Context $context){
+        $this->Context = $context;
+    }
+
+    protected function GetContext(){
+        return $this->Context;
     }
 
     protected /* void */ function AddSubResource(/* string */ $name, Resource $resource){
@@ -29,7 +39,7 @@ abstract class Resource {
         return $this->IsValueResource;
     }
 
-    public /* Resource */ function GetSubResource(/* string */ $name, /* undefined yet */ $context){
+    public /* Resource */ function GetSubResource(/* string */ $name){
         $this->LoadIfNeeded($name);
 
         if(!isset($this->SubResources[$name])){
@@ -37,18 +47,20 @@ abstract class Resource {
         }
 
         $res = $this->SubResources[$name];
-        $res->AssertAccessible($context);
+        $res->SetContext($this->Context);
+        $res->AssertAccessible();
 
         return $res;
     }
 
-    public function GetAllSubResources(/* undefined yet */ $context){
+    public function GetAllSubResources(){
         $this->LoadIfNeeded('');
         $res = [];
 
         foreach($this->SubResources as $key => $value){
             try{
-                $value->AssertAccessible($context);
+                $value->SetContext($this->Context);
+                $value->AssertAccessible();
                 $res[$key] = $value;
             }catch(Exceptions\ResourceInaccessible $e){
 
@@ -61,10 +73,11 @@ abstract class Resource {
     public /* mixed */ function GetValue(){
         if($this->IsValueResource){
             $this->LoadIfNeeded('');
+            $this->AssertAccessible();
             return $this->Value;
         }else{
             // This resource is a collection and thus should return all of its subresources
-            return $this->GetAllSubResources(null);
+            return $this->GetAllSubResources();
         }
     }
 
@@ -89,19 +102,19 @@ abstract class Resource {
         return $this->CreationArg;
     }
 
-    public function AssertAccessible(/* undefined yet */ $context){
+    public function AssertAccessible(){
         // If inaccessible, throw an Exceptions\ResourceInaccessible exception
     }
 
-    public function CreateSubResource(/* object */ $source, /* undefined yet */ $context){
+    public function CreateSubResource(/* object */ $source){
         throw new Exceptions\MethodNotAllowed('POST');
     }
 
-    public function Update(/* object */ $source, /* undefined yet */ $context){
+    public function Update(/* object */ $source){
         throw new Exceptions\MethodNotAllowed('PUT');
     }
 
-    public function Delete(/* undefined yet */ $context){
+    public function Delete(){
         throw new Exceptions\MethodNotAllowed('DELETE');
     }
 }

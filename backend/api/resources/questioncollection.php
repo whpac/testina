@@ -16,7 +16,7 @@ class QuestionCollection extends Resource {
         return true;
     }
 
-    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
+    public function CreateSubResource(/* mixed */ $source){
         $test = $this->GetConstructorArgument();
         if(is_array($test)) throw new Exceptions\MethodNotAllowed('POST');
 
@@ -33,8 +33,8 @@ class QuestionCollection extends Resource {
         return null;
     }
 
-    public function AssertAccessible(/* undefined yet */ $context){
-        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+    public function AssertAccessible(){
+        $current_user = $this->GetContext()->GetUser();
         $test = $this->GetConstructorArgument();
 
         // If the collection is created from Question[], assume it's accessible

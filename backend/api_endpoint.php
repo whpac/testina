@@ -1,4 +1,5 @@
 <?php
+use Api\Context;
 use Api\Exceptions;
 use Api\Formats;
 use Api\Resources;
@@ -58,11 +59,16 @@ try{
     $target = ReadTarget();
     $depth = ReadDepth(3, 20);
 
+    // Prepare the authentication context
+    $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+    $context = new Context($current_user);
+
     // Get formatter based on the HTTP headers
     $formatter = GetFormatter();
+    $formatter->SetContext($context);
 
     // Read the requested resource
-    $current_resource = GetResource($target);
+    $current_resource = GetResource($target, $context);
 
     switch($method){
         case 'GET':
@@ -72,7 +78,7 @@ try{
         break;
         case 'POST':
             // Create a resource
-            $result = $current_resource->CreateSubResource(ParseRequestBody(), null);
+            $result = $current_resource->CreateSubResource(ParseRequestBody());
 
             if(is_null($result)){
                 // Response with 201 Created
@@ -85,13 +91,13 @@ try{
         break;
         case 'PUT':
             // Update a resource
-            $current_resource->Update(ParseRequestBody(), null);
+            $current_resource->Update(ParseRequestBody());
             // Response with 204 No Content
             SetResponseCode(204);
         break;
         case 'DELETE':
             // Delete a resource
-            $current_resource->Delete(null);
+            $current_resource->Delete();
             // Response with 204 No Content
             SetResponseCode(204);
         break;
@@ -175,9 +181,10 @@ function GetFormatter(){
     throw new Exceptions\NotAcceptable($_SERVER['HTTP_ACCEPT']);
 }
 
-function GetResource(/* string */ $target, /* undefined yet */ $context = null){
+function GetResource(/* string */ $target, Context $context){
     // Start from root resource
     $current_resource = new Resources\Root();
+    $current_resource->SetContext($context);
 
     // Split names by '/'
     $target_chain = explode('/', $target);

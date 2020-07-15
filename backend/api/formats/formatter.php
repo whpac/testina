@@ -1,6 +1,7 @@
 <?php
 namespace Api\Formats;
 
+use Api\Context;
 use Api\Resources\Resource;
 
 abstract class Formatter{
@@ -9,7 +10,7 @@ abstract class Formatter{
     public abstract /* string */ function FormatResource(Resource $res, /* int */ $depth);
     public abstract /* string */ function GetContentType();
 
-    public function SetContext(/* undefined yet */ $context){
+    public function SetContext(Context $context){
         $this->Context = $context;
     }
 

@@ -10,7 +10,7 @@ class AttemptAnswers extends Resource {
         return true;
     }
 
-    public function CreateSubResource(/* object */ $source, /* undefined yet */ $context = null){
+    public function CreateSubResource(/* object */ $source){
         $attempt = $this->GetConstructorArgument();
         $errors = 0;
         foreach($source->questions as $question_index => $question){

@@ -4,7 +4,7 @@ namespace Api\Resources;
 class TestCollection extends Resource {
 
     protected function LazyLoad($data, $test_id){
-        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+        $current_user = $this->GetContext()->GetUser();
         $tests = \Entities\Test::GetTestsCreatedByUser($current_user);
 
         foreach($tests as $test){
@@ -14,8 +14,8 @@ class TestCollection extends Resource {
         return true;
     }
 
-    public function CreateSubResource(/* mixed */ $source, /* undefined yet */ $context){
-        $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+    public function CreateSubResource(/* mixed */ $source){
+        $current_user = $this->GetContext()->GetUser();
         $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier);
 
         header('Content-Location: '.$test->GetId());
