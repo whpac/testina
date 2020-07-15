@@ -4,6 +4,7 @@ import Assignment from '../../entities/assignment';
 import * as DateUtils from '../../dateutils';
 import { HandleLinkClick } from '../../script';
 import ScoreDetailsDialog from './score_details_dialog';
+import AssignmentDetailsDialog from './assignment_details_dialog';
 
 export default class AssignedTestRow extends Component {
     NameCell: HTMLTableCellElement;
@@ -14,6 +15,7 @@ export default class AssignedTestRow extends Component {
     AttemptsCell: HTMLTableCellElement;
     ButtonsCell: HTMLTableCellElement;
     SolveButton: HTMLAnchorElement;
+    DetailsButton: HTMLButtonElement;
 
     constructor(assignment: Assignment){
         super();
@@ -40,14 +42,14 @@ export default class AssignedTestRow extends Component {
         this.SolveButton.textContent = 'Rozwiąż';
         this.ButtonsCell.appendChild(this.SolveButton);
 
-        let details_btn = document.createElement('button');
-        details_btn.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'todo', 'only-child');
-        this.ButtonsCell.appendChild(details_btn);
+        this.DetailsButton = document.createElement('button');
+        this.DetailsButton.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'only-child');
+        this.ButtonsCell.appendChild(this.DetailsButton);
 
         this.Populate(assignment);
     }
 
-    async Populate(assignment: Assignment){
+    public async Populate(assignment: Assignment){
         this.NameCell.textContent = await (await assignment.GetTest()).GetName();
         this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
         this.AssignedCell.textContent = DateUtils.ToDayFormat(await assignment.GetAssignmentDate());
@@ -67,6 +69,8 @@ export default class AssignedTestRow extends Component {
             score_link.textContent = score + '%';
             this.ScoreCell.appendChild(score_link);
         }
+
+        this.DetailsButton.addEventListener('click', () => this.DisplayAssignmentDetailsDialog(assignment));
 
         let attempts = await assignment.GetAttemptCount();
         let attempt_limit = await assignment.GetAttemptLimit();
@@ -88,8 +92,14 @@ export default class AssignedTestRow extends Component {
         }
     }
 
-    DisplayScoreDetailsDialog(assignment: Assignment){
+    protected DisplayScoreDetailsDialog(assignment: Assignment){
         let dialog = new ScoreDetailsDialog();
+        dialog.Populate(assignment);
+        dialog.Show();
+    }
+
+    protected DisplayAssignmentDetailsDialog(assignment: Assignment){
+        let dialog = new AssignmentDetailsDialog();
         dialog.Populate(assignment);
         dialog.Show();
     }
