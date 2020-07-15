@@ -1,3 +1,4 @@
+/** @deprecated */
 export function GetElement(element_id: string, error_msg?: string): HTMLElement{
     let elem = document.getElementById(element_id);
 
@@ -15,6 +16,7 @@ export function GetElement(element_id: string, error_msg?: string): HTMLElement{
  * Formats number of seconds to [hh:]mm:ss
  * @param time_int - number of seconds
  * @return the formatted string
+ * @deprecated
  */
 export function FormatTime(time_int: number){
     time_int = Math.round(time_int);
@@ -39,8 +41,8 @@ export function FormatTime(time_int: number){
 }
 
 /**
- * Shuffles the given array
- * @param {array} array - array to shuffle, passed by reference
+ * Tasuje tablicę
+ * @param array Tablica do przetasowania, przekazywana jako referencja
  */
 export function ShuffleArray<T>(array: Array<T>) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -52,9 +54,9 @@ export function ShuffleArray<T>(array: Array<T>) {
 }
 
 /**
- * Rounds number to specified count of decimals
- * @param num - number to round
- * @param decimals - count of decimals, defaults to 0
+ * Zaokrągla liczbę do wskazanej ilości miejsc po przecinku
+ * @param num Liczba do zaokrąglenia
+ * @param decimals Ilość miejsc po przecinku (domyślnie 0)
  * @return
  */
 export function Round(num: number, decimals: number = 0){
@@ -62,9 +64,9 @@ export function Round(num: number, decimals: number = 0){
 }
 
 /**
- * Truncates text at specified length - at the end of word
- * @param str - string to truncate
- * @param length - minimum number of characters to preserve
+ * Ucina nadmiarową część tekstu na końcu słowa
+ * @param str Tekst do skrócenia
+ * @param length Minimalna liczba znaków do pozostawienia
  */
 export function Truncate(str: string, length: number){
     if(str.length <= length) return str;

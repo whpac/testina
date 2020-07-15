@@ -6,10 +6,10 @@ type XHRResult = {
 };
 
 /**
- * Performs a request to the server and returns a response parsed as a JSON
- * @param url URL to make a request to
- * @param method Request method (default is GET)
- * @param request_data Object containing the request data, will be serialized as a JSON
+ * Wykonuje zapytanie pod podany adres URL i zwraca odpowiedź sformatowaną jako JSON
+ * @param url URL, do którego należy wysłać zapytanie
+ * @param method Metoda zapytania (domyślnie GET)
+ * @param request_data Dane przesyłane razem z zapytaniem, zostaną zserializowane jako JSON
  */
 export function Request(url: string, method?: string, request_data?: any){
     return new Promise<XHRResult>((resolve, reject) => {

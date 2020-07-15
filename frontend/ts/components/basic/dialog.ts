@@ -1,4 +1,3 @@
-import * as Dialogs from '../../dialogs';
 import HelpLink from '../help_link';
 
 /**
@@ -103,13 +102,56 @@ export default class Dialog{
      */
     Show(){
         if(!this.IsRendered) this.Render();
-        Dialogs.ShowDialog(this.DialogElement);
+        
+        this.DialogElement.classList.add('shown');
+
+        DialogBackdrop.Display();
+        DialogBackdrop.AppendElement(this.DialogElement);
     }
 
     /**
      * Ukrywa okno dialogowe
      */
     Hide(){
-        Dialogs.HideDialog(this.DialogElement);
+        DialogBackdrop.Hide();
+        DialogBackdrop.RemoveElement(this.DialogElement);
+        
+        this.DialogElement.classList.remove('shown');
+    }
+}
+
+class DialogBackdrop {
+    /** Element wykorzystywany jako tło pod oknami dialogowymi */
+    protected static BackdropElement: HTMLElement;
+
+    /** Wyświetla tło */
+    static Display(){
+        if(this.BackdropElement === undefined){
+            this.BackdropElement = document.createElement('div');
+            this.BackdropElement.classList.add('dialog-backdrop');
+            document.body.appendChild(this.BackdropElement);
+        }
+        this.BackdropElement.classList.add('shown');
+    }
+
+    /** Ukrywa tło */
+    static Hide(){
+        this.BackdropElement.classList.remove('shown');
+    }
+
+    /**
+     * Dodaje wskazany element na środek tła
+     * @param element Element HTML do pokazania
+     */
+    static AppendElement(element: HTMLElement){
+        this.BackdropElement.appendChild(element);
+    }
+
+    /**
+     * Usuwa dany element z tła
+     * @param element Element HTML do usunięcia z tła
+     */
+    static RemoveElement(element: HTMLElement){
+        this.BackdropElement.removeChild(element);
     }
 }

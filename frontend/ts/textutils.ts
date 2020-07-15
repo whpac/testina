@@ -1,9 +1,9 @@
 /**
- * Adjusts suffix to the count
- * @param n number
- * @param f1 singular form
- * @param f2 double form
- * @param f5 plural form
+ * Dopasowuje końcówkę fleksyjną do liczby
+ * @param n Liczba
+ * @param f1 Końcówka formy liczby pojedynczej
+ * @param f2 Końcówka formy liczby mnogiej
+ * @param f5 Końcówka formy dopełniacza liczby mnogiej
  */
 export function n(n: number, f1: string, f2: string, f5: string){
     if(n == 1) return f1;

@@ -1,6 +1,6 @@
 /**
- * Parses date into HH:MM (if it's in last 24h) or DD-MM-YYYY, HH:MM
- * @param date - date to convert
+ * Zwraca datę w formacie HH:MM (jeśli w ciągu ostatnich 24h) albo DD-MM-YYYY, HH:MM
+ * @param date Data do sformatowania
  */
 export function ToMediumFormat(date: Date){
     let diff = new Date().getTime() - date.getTime();
@@ -22,8 +22,8 @@ export function ToMediumFormat(date: Date){
 }
 
 /**
- * Parses date into or DD-MM, HH:MM
- * @param date - date to convert
+ * Formatuje datę jako DD-MM, HH:MM
+ * @param date Data do sformatowania
  */
 export function ToDayHourFormat(date: Date){
     return date.toLocaleString(undefined, {
@@ -35,8 +35,8 @@ export function ToDayHourFormat(date: Date){
 }
 
 /**
- * Parses date into DD-MM (if it's in this year) or DD-MM-YYYY
- * @param date - date to convert
+ * Formatuje datę jako DD-MM (jeśli w bieżącym roku) lub DD-MM-YYYY
+ * @param date Data do sformatowania
  */
 export function ToDayFormat(date: Date){
     let same_year = new Date().getFullYear() == date.getFullYear();
@@ -55,6 +55,10 @@ export function ToDayFormat(date: Date){
     }
 }
 
+/**
+ * Przelicza interwał czasowy na ciąg [HH:]MM:SS
+ * @param seconds Ilość sekund
+ */
 export function SecondsToTime(seconds: number){
     let secs = seconds % 60;
     seconds = (seconds - secs) / 60;
@@ -70,6 +74,11 @@ export function SecondsToTime(seconds: number){
     return (hrs > 0 ? hrs.toString() + ':' : '') + m + ':' + s;
 }
 
+/**
+ * Zwraca różnicę między datami w sekundach
+ * @param date Data
+ * @param ref_date Data referencyjna (domyślnie teraz)
+ */
 export function DiffInSeconds(date: Date, ref_date?: Date){
     ref_date = ref_date ?? new Date();
     return (date.getTime() - ref_date.getTime()) / 1000;
