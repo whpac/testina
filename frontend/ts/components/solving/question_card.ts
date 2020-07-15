@@ -21,6 +21,7 @@ export default class QuestionCard extends Card {
     protected FinishButton: HTMLButtonElement;
 
     protected TimeLimit: number | undefined;
+    protected AssignmentTimeLimit!: Date;
     protected TestStartDate!: Date;
     protected TimerRef: number | undefined;
     protected CurrentQuestionNumber!: number;
@@ -101,7 +102,11 @@ export default class QuestionCard extends Card {
         this.PointsMax = 0;
         this.CurrentQuestionNumber = 0;
         this.Questions = QuestionWithUserAnswers.FromArray(await attempt.GetQuestions());
-        let test = await attempt.GetAssignment().GetTest();
+
+        let assignment = attempt.GetAssignment();
+        this.AssignmentTimeLimit = await assignment.GetTimeLimit();
+
+        let test = await assignment.GetTest();
 
         if(await test.HasTimeLimit()){
             this.TimeLimit = await test.GetTimeLimit();
@@ -266,10 +271,11 @@ export default class QuestionCard extends Card {
     }
 
     protected OnTimerTick(){
-        if(this.TimeLimit === undefined){
+        let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentTimeLimit)
+        if(this.TimeLimit === undefined && assignment_time_limit_diff > 3600){
             this.TimeLeftTimer.textContent = '—';
         }else{
-            let remaining_time = this.TimeLimit;
+            let remaining_time = this.TimeLimit ?? assignment_time_limit_diff;
             remaining_time -= (Date.now() - this.TestStartDate.getTime()) / 1000;
             remaining_time = Math.round(remaining_time);
 
