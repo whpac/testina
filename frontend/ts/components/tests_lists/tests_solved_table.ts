@@ -68,7 +68,7 @@ export default class TestsSolvedTable extends Card {
 
         let th_attempts = document.createElement('th');
         th_attempts.classList.add('wide-screen-only');
-        th_attempts.textContent = 'Prób';
+        th_attempts.textContent = 'Podejść';
         thead_tr.appendChild(th_attempts);
 
         let th_buttons = document.createElement('th');

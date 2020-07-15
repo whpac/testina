@@ -74,7 +74,7 @@ export default class TestsToSolveTable extends Card {
 
         let th_attempts = document.createElement('th');
         th_attempts.classList.add('wide-screen-only');
-        th_attempts.textContent = 'Prób';
+        th_attempts.textContent = 'Podejść';
         thead_tr.appendChild(th_attempts);
 
         thead_tr.appendChild(document.createElement('th'));
