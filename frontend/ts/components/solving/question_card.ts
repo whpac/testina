@@ -110,6 +110,8 @@ export default class QuestionCard extends Card {
 
         if(await test.HasTimeLimit()){
             this.TimeLimit = await test.GetTimeLimit();
+            let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentTimeLimit);
+            if(this.TimeLimit > assignment_time_limit_diff) this.TimeLimit = undefined;
         }else{
             this.TimeLimit = undefined;
         }

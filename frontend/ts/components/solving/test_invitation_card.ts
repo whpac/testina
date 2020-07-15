@@ -93,7 +93,7 @@ export default class TestInvitationCard extends Card {
         let test = await assignment.GetTest();
         let question_count = Math.round(await test.GetQuestionCount() * await test.GetQuestionMultiplier());
 
-        if(test.HasTimeLimit()){
+        if(await test.HasTimeLimit()){
             if(await test.GetTimeLimit() > DateUtils.DiffInSeconds(await assignment.GetTimeLimit())){
                 time_limit = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
             }else{
