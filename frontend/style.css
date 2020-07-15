@@ -253,7 +253,8 @@ table.table td:empty, table.table th:empty {padding-top:0; padding-bottom:0;}
 table.table td.right {text-align:right;}
 table.table th {font-weight:500;}
 table.table tr:first-child:not(.not-header) th {border-bottom:1px solid var(--table-main-border-color);}
-table.table td button:only-child {margin-left:-10px; margin-right:-10px;}
+table.table td button:only-child,
+table.table td button.only-child {margin-left:-10px; margin-right:-10px;}
 table.table td input[type=text]:only-child {width:calc(100% + 10px); box-sizing:border-box; margin:0 -5px;}
 table.table col.shrink {width:min-content;}
 .content-tbody:not(:empty) + .nocontent-tbody {display:none}

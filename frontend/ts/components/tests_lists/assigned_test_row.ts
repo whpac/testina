@@ -41,7 +41,7 @@ export default class AssignedTestRow extends Component {
         this.ButtonsCell.appendChild(this.SolveButton);
 
         let details_btn = document.createElement('button');
-        details_btn.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'todo');
+        details_btn.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'todo', 'only-child');
         this.ButtonsCell.appendChild(details_btn);
 
         this.Populate(assignment);

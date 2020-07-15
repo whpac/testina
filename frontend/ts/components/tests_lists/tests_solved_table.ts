@@ -24,32 +24,24 @@ export default class TestsSolvedTable extends Card {
         table.classList.add('table', 'full-width');
         this.AppendChild(table);
 
-        /*let colgroup = document.createElement('colgroup');
-        let col_shrink = document.createElement('col');
-        col_shrink.classList.add('shrink');
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        table.appendChild(colgroup);*/
-
         let colgroup = document.createElement('colgroup');
         let col_shrink = document.createElement('col');
-        col_shrink.classList.add('shrink');
+        col_shrink.classList.add('shrink', 'narrow-screen-only');
+
+        let col_widescreen = document.createElement('col');
+        col_widescreen.classList.add('wide-screen-only');
+
         colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
         colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         table.appendChild(colgroup);
 
         let thead = table.createTHead();
-        let thead_tr = table.insertRow(-1);
+        let thead_tr = thead.insertRow(-1);
 
         let th_name = document.createElement('th');
         th_name.textContent = 'Nazwa';

@@ -33,17 +33,21 @@ export default class TestsToSolveTable extends Card {
         let colgroup = document.createElement('colgroup');
         let col_shrink = document.createElement('col');
         col_shrink.classList.add('shrink');
+
+        let col_widescreen = document.createElement('col');
+        col_widescreen.classList.add('wide-screen-only');
+
         colgroup.appendChild(document.createElement('col'));
         colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         table.appendChild(colgroup);
 
         let thead = table.createTHead();
-        let thead_tr = table.insertRow(-1);
+        let thead_tr = thead.insertRow(-1);
 
         let th_name = document.createElement('th');
         th_name.textContent = 'Nazwa';
