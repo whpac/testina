@@ -488,7 +488,7 @@ button.answer-button.wrong.selected::after {
     .toast {left:15px; width:calc(100vw - 30px);}
     .dialog-backdrop.shown ~ .toast {left:15px;}
 
-    main > h1:first-child {display:none;}
+    main > .page > h1:first-child {display:none;}
 
     .card, .card.semi-wide, .card.wide, .card.auto-width {margin-left:0; margin-right:0; width:auto;}
     .card.login-form {width:fit-content;}

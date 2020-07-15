@@ -3,14 +3,12 @@ import TestsTable from '../components/tests_lists/tests_table';
 import Card from '../components/basic/card';
 
 export default class LibraryPage extends Page {
-    PageElem: HTMLElement;
     TestsListTable: TestsTable;
 
     constructor(){
         super();
 
-        this.PageElem = document.createElement('div');
-        this.PageElem.innerHTML = '<h1>Biblioteka testów</h1>';
+        this.Element.innerHTML = '<h1>Biblioteka testów</h1>';
 
         let card = new Card('semi-wide');
 
@@ -29,7 +27,7 @@ export default class LibraryPage extends Page {
         description.textContent = 'Tutaj wyświetlane są wszystkie stworzone przez Ciebie testy.';
         card.AppendChild(description);
 
-        this.PageElem.appendChild(card.GetElement());
+        this.Element.appendChild(card.GetElement());
 
         this.TestsListTable = new TestsTable();
         card.AppendChild(this.TestsListTable.GetElement());
@@ -38,11 +36,11 @@ export default class LibraryPage extends Page {
     async LoadInto(container: HTMLElement){
         /* await */ this.TestsListTable.LoadTests();
 
-        container.appendChild(this.PageElem);
+        container.appendChild(this.Element);
     }
 
     UnloadFrom(container: HTMLElement){
-        container.removeChild(this.PageElem);
+        container.removeChild(this.Element);
     }
 
     CreateTest(){

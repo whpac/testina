@@ -4,28 +4,25 @@ import Assignment from '../entities/assignment';
 import TestsSolvedTable from '../components/tests_lists/tests_solved_table';
 
 export default class AssignedTestsListPage extends Page{
-    PageElem: HTMLElement;
     ToSolveTable: TestsToSolveTable;
     SolvedTable: TestsSolvedTable;
 
     constructor(){
         super();
 
-        this.PageElem = document.createElement('div');
-
         let heading = document.createElement('h1');
         heading.textContent = 'Testy';
-        this.PageElem.appendChild(heading);
+        this.Element.appendChild(heading);
 
         this.ToSolveTable = new TestsToSolveTable();
-        this.PageElem.appendChild(this.ToSolveTable.GetElement());
+        this.Element.appendChild(this.ToSolveTable.GetElement());
 
         this.SolvedTable = new TestsSolvedTable();
-        this.PageElem.appendChild(this.SolvedTable.GetElement());
+        this.Element.appendChild(this.SolvedTable.GetElement());
     }
 
     async LoadInto(container: HTMLElement){
-        container.appendChild(this.PageElem);
+        container.appendChild(this.Element);
         
         // Wrapped in a function in order to run asynchronously
         (async () => {
@@ -36,7 +33,7 @@ export default class AssignedTestsListPage extends Page{
     }
 
     UnloadFrom(container: HTMLElement){
-        container.removeChild(this.PageElem);
+        container.removeChild(this.Element);
     }
 
     GetUrlPath(){

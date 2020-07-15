@@ -8,7 +8,6 @@ import PageParams from '../1page/pageparams';
 import * as PageManager from '../1page/pagemanager';
 
 export default class EditTestPage extends Page {
-    PageElem: HTMLElement;
     QuestionsTable: QuestionsTable;
     TestNameHeading: Text
     TestSettingsCard: TestSettings;
@@ -17,12 +16,10 @@ export default class EditTestPage extends Page {
     constructor(){
         super();
 
-        this.PageElem = document.createElement('div');
-        
         let page_heading = document.createElement('h1');
         page_heading.innerHTML = '<span class="secondary">Edycja: </span>';
         page_heading.appendChild(this.TestNameHeading = document.createTextNode(''));
-        this.PageElem.appendChild(page_heading);
+        this.Element.appendChild(page_heading);
 
         let question_list_card = new Card();
         question_list_card.GetContentElement().innerHTML = '<h2>Pytania</h2>';
@@ -30,10 +27,10 @@ export default class EditTestPage extends Page {
         this.QuestionsTable = new QuestionsTable();
         question_list_card.AppendChild(this.QuestionsTable.GetElement());
 
-        this.PageElem.appendChild(question_list_card.GetElement());
+        this.Element.appendChild(question_list_card.GetElement());
 
         this.TestSettingsCard = new TestSettings();
-        this.PageElem.appendChild(this.TestSettingsCard.GetElement());
+        this.Element.appendChild(this.TestSettingsCard.GetElement());
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){
@@ -42,7 +39,7 @@ export default class EditTestPage extends Page {
 
         this.QuestionsTable.LoadQuestions(this.Test);
         this.TestSettingsCard.Populate(this.Test);
-        container.appendChild(this.PageElem);
+        container.appendChild(this.Element);
         
         this.TestNameHeading.textContent = await this.Test.GetName();
         this.Test.AddEventListener('change', (async () => {
@@ -53,7 +50,7 @@ export default class EditTestPage extends Page {
     }
 
     UnloadFrom(container: HTMLElement){
-        container.removeChild(this.PageElem);
+        container.removeChild(this.Element);
     }
 
     GetUrlPath(){

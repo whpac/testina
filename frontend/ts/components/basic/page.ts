@@ -5,6 +5,12 @@ import Component from './component';
  */
 export default abstract class Page extends Component {
 
+    constructor(){
+        super();
+
+        this.Element.classList.add('page');
+    }
+
     /** Ładuje stronę do wskazanego elementu */
     abstract LoadInto(container: HTMLElement, params?: any): Promise<void>;
     /** Usuwa stronę ze wskazanego elementu */
