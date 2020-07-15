@@ -119,7 +119,7 @@ class Attempt extends Entity {
         return $result->num_rows;
     }
 
-    public /* UserAnswer[] */ function GetUserAnswers(){
+    public /* UserAnswerCollection */ function GetUserAnswers(){
         return UserAnswer::GetUserAnswersForAttempt($this);
     }
 
