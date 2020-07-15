@@ -105,7 +105,6 @@ export default class Dialog{
         
         this.DialogElement.classList.add('shown');
 
-        DialogBackdrop.Display();
         DialogBackdrop.AppendElement(this.DialogElement);
     }
 
@@ -113,7 +112,6 @@ export default class Dialog{
      * Ukrywa okno dialogowe
      */
     Hide(){
-        DialogBackdrop.Hide();
         DialogBackdrop.RemoveElement(this.DialogElement);
         
         this.DialogElement.classList.remove('shown');
@@ -123,9 +121,11 @@ export default class Dialog{
 class DialogBackdrop {
     /** Element wykorzystywany jako tło pod oknami dialogowymi */
     protected static BackdropElement: HTMLElement;
+    /** Stos wyświetlanych okien dialogowych */
+    protected static DialogElements: HTMLElement[];
 
     /** Wyświetla tło */
-    static Display(){
+    protected static Display(){
         if(this.BackdropElement === undefined){
             this.BackdropElement = document.createElement('div');
             this.BackdropElement.classList.add('dialog-backdrop');
@@ -135,7 +135,7 @@ class DialogBackdrop {
     }
 
     /** Ukrywa tło */
-    static Hide(){
+    protected static Hide(){
         this.BackdropElement.classList.remove('shown');
     }
 
@@ -144,6 +144,16 @@ class DialogBackdrop {
      * @param element Element HTML do pokazania
      */
     static AppendElement(element: HTMLElement){
+        if(this.DialogElements === undefined) this.DialogElements = [];
+
+        if(this.DialogElements.length == 0){
+            this.Display();
+        }else{
+            let current_dialog = this.DialogElements[this.DialogElements.length - 1];
+            this.BackdropElement.removeChild(current_dialog);
+        }
+
+        this.DialogElements.push(element);
         this.BackdropElement.appendChild(element);
     }
 
@@ -152,6 +162,14 @@ class DialogBackdrop {
      * @param element Element HTML do usunięcia z tła
      */
     static RemoveElement(element: HTMLElement){
+        this.DialogElements.pop();
         this.BackdropElement.removeChild(element);
+        
+        if(this.DialogElements.length == 0){
+            this.Hide();
+        }else{
+            let current_dialog = this.DialogElements[this.DialogElements.length - 1];
+            this.BackdropElement.appendChild(current_dialog);
+        }
     }
 }
