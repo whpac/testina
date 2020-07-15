@@ -110,10 +110,10 @@ export default class QuestionCard extends Card {
 
         if(await test.HasTimeLimit()){
             this.TimeLimit = await test.GetTimeLimit();
-            this.StartTimer();
         }else{
             this.TimeLimit = undefined;
         }
+        this.StartTimer();
         this.TestStartDate = new Date();
         this.OnTimerTick(); // Displays the time
 
@@ -275,8 +275,12 @@ export default class QuestionCard extends Card {
         if(this.TimeLimit === undefined && assignment_time_limit_diff > 3600){
             this.TimeLeftTimer.textContent = '—';
         }else{
-            let remaining_time = this.TimeLimit ?? assignment_time_limit_diff;
-            remaining_time -= (Date.now() - this.TestStartDate.getTime()) / 1000;
+            let remaining_time = this.TimeLimit;
+            if(remaining_time === undefined){
+                remaining_time = assignment_time_limit_diff;
+            }else{
+                remaining_time -= (Date.now() - this.TestStartDate.getTime()) / 1000;
+            }
             remaining_time = Math.round(remaining_time);
 
             if(remaining_time < 0){
