@@ -24,7 +24,7 @@ class StandardRenderer extends Renderers\HTMLRenderer{
         else
             echo('<a class="nav-toggle nav-icon"><i class="icon fa fa-fw fa-bars"></i></a>');
         
-        echo('<h1>'.$title.'</h1>');
+        echo('<h1 id="mobile-header-title">'.$title.'</h1>');
         echo('</aside>');
         echo('<main id="content-container">');
     }

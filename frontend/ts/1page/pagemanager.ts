@@ -14,6 +14,8 @@ let CurrentPageId: (string | null) = null;
 let ContentRoot: HTMLElement;
 /** Wskaźnik ładowania */
 let LoadingWrapper: (LoadingIndicator | null) = null;
+/** Treść mobilnego nagłówka */
+let MobileHeader: HTMLElement | null;
 
 /** Zbiór powodów, które uniemożliwiają nawigację */
 let PreventFromNavigationReasons = new Set<string>();
@@ -32,6 +34,8 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
     ContentRoot = root;
     LoadingWrapper = loading_indicator ?? null;
     window.onpopstate = PopStateHandler;
+
+    MobileHeader = document.getElementById('mobile-header-title');
 
     window.addEventListener('beforeunload', (event) => {
         if(IsPreventedFromNavigation()){
@@ -150,8 +154,13 @@ function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams){
  * @param new_title Nowy tytuł
  */
 export function SetTitle(new_title: string){
-    if(new_title == '') document.title = 'Lorem Ipsum';
-    else document.title = new_title + ' – Lorem Ipsum';
+    if(new_title == ''){
+        document.title = 'Lorem Ipsum';
+        if(MobileHeader !== null) MobileHeader.textContent = document.title;
+    }else{
+        document.title = new_title + ' – Lorem Ipsum';
+        if(MobileHeader !== null) MobileHeader.textContent = new_title;
+    }
 }
 
 /**
