@@ -40,6 +40,9 @@ export default class EditQuestionDialog extends Dialog {
 
         this.AddClasses(['rich']);
 
+        let question_data_section = document.createElement('section');
+        this.AddContent(question_data_section);
+
         let question_data = document.createElement('div');
         question_data.classList.add('grid-form');
 
@@ -97,7 +100,7 @@ export default class EditQuestionDialog extends Dialog {
         this.PointsInput.addEventListener('change', this.StateChanged.bind(this));
         question_data.appendChild(this.PointsInput);
 
-        this.AddContent(question_data);
+        question_data_section.appendChild(question_data);
 
         // Pola dotyczące sposobu liczenia punktów (tylko pyt. wielokrotnej odpowiedzi)
         this.CountingFieldset = document.createElement('div');
@@ -133,7 +136,7 @@ export default class EditQuestionDialog extends Dialog {
         counting_linear_label.textContent = 'Po ułamku za każdą poprawną odpowiedź';
         this.CountingFieldset.appendChild(counting_linear_label);
 
-        this.AddContent(this.CountingFieldset);
+        question_data_section.appendChild(this.CountingFieldset);
 
         // Pola dotyczące obsługi literówek (tylko pyt. otwarte)
         this.TyposFieldset = document.createElement('div');
@@ -175,14 +178,17 @@ export default class EditQuestionDialog extends Dialog {
         this.TyposAllowCountInput.addEventListener('change', this.StateChanged.bind(this));
         this.TyposFieldset.appendChild(this.TyposAllowCountInput);
 
-        this.AddContent(this.TyposFieldset);
+        question_data_section.appendChild(this.TyposFieldset);
 
         let hr = document.createElement('hr');
-        hr.classList.add('spaced');
+        hr.classList.add('spaced', 'wide-screen-only');
         this.AddContent(hr);
 
+        let answers_section = document.createElement('section');
+        this.AddContent(answers_section);
+
         this.AnswersTable = new AnswersTable();
-        this.AddContent(this.AnswersTable.GetElement());
+        answers_section.appendChild(this.AnswersTable.GetElement());
 
         this.ErrorWrapper = document.createElement('p');
         this.ErrorWrapper.classList.add('dialog-error');
