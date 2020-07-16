@@ -17,6 +17,8 @@ export default class UsersTable extends Component {
         this.SearchField.addEventListener('keyup', this.OnSearchKeyUp.bind(this));
         this.AppendChild(this.SearchField);
 
+        this.AppendChild(document.createTextNode('Osoby | Grupy'));
+
         let table_wrapper = document.createElement('div');
         table_wrapper.classList.add('overflow-container-y');
         this.AppendChild(table_wrapper);
@@ -45,6 +47,11 @@ export default class UsersTable extends Component {
         let tr_head = users_table.createTHead().insertRow(-1);
         tr_head.appendChild(document.createElement('th'));
         tr_head.appendChild(document.createElement('th'));
+
+        let selected_users_count_text = document.createElement('p');
+        selected_users_count_text.classList.add('small-margin');
+        selected_users_count_text.textContent = 'Wybrano 0 osób.';
+        this.AppendChild(selected_users_count_text);
     }
 
     async Populate(){

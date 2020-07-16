@@ -33,7 +33,7 @@ export default class Component {
      * Dodaje element potomny do komponentu
      * @param child Element HTML do dodania
      */
-    AppendChild(child: HTMLElement){
+    AppendChild(child: Node){
         this.Element.appendChild(child);
     }
 

@@ -23,6 +23,10 @@ export default class AssignTestDialog extends Dialog {
         this.UsersTable = new UsersTable();
         section_targets.appendChild(this.UsersTable.GetElement());
 
+        let btn_next = document.createElement('button');
+        btn_next.textContent = 'Dalej';
+        this.AddButton(btn_next);
+
         let btn_cancel = document.createElement('button');
         btn_cancel.textContent = 'Anuluj';
         btn_cancel.classList.add('secondary');

@@ -117,6 +117,7 @@ em {font-weight:500; font-style:normal;}
 hr {border:none; border-top:1px solid var(--nav-separator-color); margin:0.5em 0;}
 hr.spaced {margin:1em 0;}
 p {text-align:justify;}
+p.small-margin {margin-top:0.4em; margin-bottom:0.4em;}
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
 .overflow-container-y {max-height:50vh; overflow-y:auto;}
