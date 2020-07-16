@@ -1,0 +1,11 @@
+.toast {
+    position:fixed; bottom:15px; left:20vw; width:calc(60vw - var(--nav-panel-width));
+    background:var(--toast-background-color); color:var(--toast-text-color);
+    padding:10px 20px; box-sizing:border-box; border-radius:3px;
+    box-shadow:var(--toast-box-shadow); opacity:1;
+    transition:opacity 0.5s, bottom 0.5s; z-index:1000;
+
+    &.hidden {opacity:0; bottom:-100px;}
+}
+
+.dialog-backdrop.shown ~ .toast {left:calc(20vw + var(--nav-panel-width) / 2);}

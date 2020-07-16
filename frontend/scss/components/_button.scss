@@ -1,0 +1,29 @@
+a.button, button {
+    display:inline-block; background:transparent; border-radius:2px; border:none;
+    padding:5px 12px; font-weight:500; text-transform:uppercase; line-height:1.2em;
+    color:var(--button-colored-text-color); text-decoration:none; font-size:0.9em;
+    font-family:inherit; cursor:pointer; transition: background 0.2s;
+
+    &:not(:disabled):hover {background:var(--button-hover-background);}
+    &:not(:disabled):active {background:var(--button-active-background);}
+    &:not(:disabled):focus {outline:none;}
+    &:disabled {opacity:0.5; cursor:default;}
+
+    &:not(:disabled):focus:not(:active):not(.answer-button) {
+        background:var(--button-focus-background);
+
+        &.error {background:var(--button-error-focus-background);}
+    }
+
+    &.secondary {color:var(--button-text-color);}
+
+    &.big {padding:8px 20px; font-size:1.05em;}
+    &.compact {padding:3px 10px; margin:-1px 0;}
+
+    &.with-border {
+        border-radius:calc(0.5em + 6px); border:1px solid var(--button-border-color);
+
+        &.big {border-radius:calc(0.6em + 9px);}
+        &.compact{border-radius:calc(0.6em + 4px);}
+    }
+}

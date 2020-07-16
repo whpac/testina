@@ -1,0 +1,16 @@
+.progress-indeterminate {
+    height:5px; margin:5px 15px; background:var(--progress-bar-background-color); position:relative;
+
+    &::after {
+        content:' '; display:block; background:var(--progress-bar-foreground-color); top:0; bottom:0;
+        position:absolute; animation-name:progress-indeterminate; animation-duration:2s;
+        animation-iteration-count:infinite; animation-direction:alternate;
+        animation-timing-function:ease-in-out;
+    }
+}
+
+@keyframes progress-indeterminate{
+    0% {left:0; width:15%;}
+    50% {width:33%;}
+    100% {left:85%; width:15%;}
+}

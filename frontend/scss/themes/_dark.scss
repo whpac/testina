@@ -1,0 +1,49 @@
+/*
+ * Definiuje zmienne CSS właściwe dla ciemnej skórki
+ * Posługuję się zmiennymi CSS, a nie SASS, bo dzięki nim
+ * do przeglądarki musi trafić tylko jeden arkusz stylów
+ */
+html{
+    --background-empty-color:#121212;
+    --text-primary-color:rgba(255,255,255,0.87);
+    --text-secondary-color:rgba(255,255,255,0.60);
+    --text-emphazised-color:#fff;
+    --error-color:#f44336;
+    --success-color:#4caf50;
+    --header-font-weight:300;
+    --surface-background-color:linear-gradient(-60deg, #292929, #222);
+    --surface-border-color:transparent;
+    --surface-border-width:0;
+    --surface-border-radius:5px;
+    --surface-box-shadow:0 0 3px rgba(85,85,85,0.65);
+    --elevated-surface-background-color:linear-gradient(-30deg, #3a3a3a, #2f2f2f);
+    --elevated-surface-box-shadow:0 0 12px rgba(255,255,255,0.1);
+    --dialog-backdrop-background-color:rgba(0,0,0,0.75);
+    --dialog-separator-color:rgba(255,255,255,0.28);
+    --link-color:#42a5f5;
+    --link-hover-color:#90caf9;
+    --nav-hover-background-color:rgba(0,0,0,0.2);
+    --nav-separator-color:rgba(255,255,255,0.12);
+    --mobile-header-background:#333;
+    --mobile-header-text-color:#fff;
+    --mobile-header-border:1px solid #222;
+    --mobile-nav-backdrop:rgba(0,0,0,0.75);
+    --table-border-color:#666;
+    --table-main-border-color:#64b5f6;
+    --button-hover-background:rgba(255,255,255,0.09);
+    --button-active-background:rgba(255,255,255,0.13);
+    --button-focus-background:rgba(100,181,246,0.2);
+    --button-error-focus-background:rgba(244,67,54,0.2);
+    --button-text-color:rgba(255,255,255,0.75);
+    --button-colored-text-color:#64b5f6;
+    --button-border-color:#666;
+    --input-background-color:#282828;
+    --input-border-color:#777;
+    --input-hover-border-color:#555;
+    --input-active-border-color:#1e88e5;
+    --progress-bar-background-color:#555;
+    --progress-bar-foreground-color:#64b5f6;
+    --toast-background-color:#484848;
+    --toast-text-color:#fff;
+    --toast-box-shadow:none;
+}

@@ -1,0 +1,57 @@
+nav.main-nav {
+    background:var(--elevated-surface-background-color); border:var(--surface-border-width) solid transparent;
+    border-left-color:var(--surface-border-color); position:fixed; top:0; right:0;
+    width:var(--nav-panel-width); height:100vh; box-shadow:var(--elevated-surface-box-shadow);
+    display:grid; transition:margin 0.5s, border-color 0.5s, width 0.5s, height 0.5s;
+    grid-template-rows:1fr auto; grid-template-areas:'links' 'copyright'; z-index:10;
+
+    > ul {list-style:none; padding:0; margin:0; grid-area:links; overflow-y:auto; overflow-x:hidden;}
+    li.link {
+
+        > a {
+            padding:8px 12px;display:block; text-decoration:none; color:var(--text-primary-color);
+            transition: background-color 0.15s;
+
+            &:hover, &:focus {background:var(--nav-hover-background-color); outline:none;}
+
+            > * {vertical-align:middle;}
+        }
+        .icon {margin-right:0.4ch; margin-left:-3px;}
+    }
+    li.separator {border-top:1px solid var(--nav-separator-color); margin:2px 8px 3px 8px;}
+    li.header {font-weight:700; padding:8px 12px 4px 12px; color:var(--text-emphazised-color);}
+    li.nav-toggle {display:none;}
+    > .copyright {
+        grid-area:copyright; color:var(--text-secondary-color); text-align:center;
+        display:block; margin:2px 4px; font-size:0.85rem;
+
+        a {
+            color:var(--text-secondary-color); text-decoration:none;
+
+            &:hover {color:var(--text-primary-color);}
+        }
+    }
+}
+
+div.nav-backdrop {
+    position:fixed; top:0; left:0; bottom:0; width:0; z-index:9;
+    background:rgba(0,0,0,0); transition:background-color 0.3s, width 0s linear 0.3s;
+}
+
+aside.mobile-header{
+    display:none; grid-area:main; position:fixed; background:var(--mobile-header-background);
+    z-index:20; top:0; left:0; right:0; height:24px; padding:16px; border-bottom:var(--mobile-header-border);
+    color:var(--mobile-header-text-color); box-shadow:var(--mobile-header-box-shadow); white-space:nowrap;
+
+    .nav-icon {
+        display:inline-block; vertical-align:middle; color:var(--mobile-header-text-color);
+        line-height:24px; font-size:18px; width:24px; margin:-4px; padding:4px; border-radius:50%;
+        text-align:center; transition:background-color 0.3s; cursor:pointer;
+
+        &:active {background:rgba(255,255,255,0.3);}
+    }
+    h1 {
+        display:inline-block;vertical-align:middle; margin:0 0 0 20px; line-height:24px; font-size:20px;
+        font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100vw - 84px);
+    }
+}
