@@ -32,6 +32,19 @@ class User extends Entity implements \UEngine\Modules\Auth\AccessControl\IUser {
         return ($id == 0);
     }
 
+    public static function GetAll(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USERS)
+                ->Select()
+                ->Run();
+
+        $users = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $users[] = new User($result->fetch_assoc());
+        }
+        return $users;
+    }
+
     protected /* void */ function PopulateDefaults(){
         $this->id = 0;
         $this->first_name = 'Anonimowy';
