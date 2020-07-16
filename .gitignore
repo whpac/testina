@@ -1,6 +1,8 @@
-# Ignore FontAwesome files
+# Ignore FontAwesome font files
 frontend/fonts
-frontend/font-awesome*
+
+#Ignore compiled SCSS files
+frontend/css
 
 # Ignore compiled TS
 frontend/js/
