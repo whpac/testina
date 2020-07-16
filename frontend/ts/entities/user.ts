@@ -1,4 +1,4 @@
-import Entity from './entity';
+import Entity, { Collection } from './entity';
 
 import * as XHR from '../xhr';
 
@@ -66,6 +66,19 @@ export default class User extends Entity {
     protected Populate(descriptor: UserDescriptor){
         this.first_name = descriptor.first_name;
         this.last_name = descriptor.last_name;
+    }
+
+    static async GetAll(){
+        let response = await XHR.Request('api/users?depth=3', 'GET');
+        let json = response.Response as Collection<UserDescriptor>;
+
+        let user_ids = Object.keys(json);
+        let users: User[] = [];
+        for(let user_id of user_ids){
+            if(user_id == 'current') continue;
+            users.push(new User(json[parseInt(user_id)]));
+        }
+        return users;
     }
 
     /** Zwraca adres użytkownika w API */

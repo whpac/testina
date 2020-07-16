@@ -119,6 +119,7 @@ hr.spaced {margin:1em 0;}
 p {text-align:justify;}
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
+.overflow-container-y {max-height:50vh; overflow-y:auto;}
 
 body > main {grid-area:main; padding:15px; overflow-x:hidden;}
 body > main.login {grid-column:1 / 3}
@@ -283,9 +284,10 @@ table.table col.shrink {width:min-content;}
 .dialog > .content > *:last-child {margin-bottom:0;}
 .dialog > .buttons {margin-top:15px; margin-bottom:-8px; grid-row:3; display:flex; flex-direction:row-reverse;}
 .dialog > .buttons > button {margin-left:5px;}
-/*.dialog hr {border-top-color:var(--dialog-separator-color);}*/
+.dialog .search-field {width:100%; margin-bottom:0.5rem; box-sizing:border-box;}
 
 .dialog.rich {width:65vw;}
+.dialog.rich .search-field {width:60%; margin-left:20%; margin-right:20%;}
 
 p.dialog-error {font-size:0.9em; color:var(--error-color);}
 p.dialog-error:empty {display:none;}
@@ -413,6 +415,8 @@ button.answer-button.wrong.selected::after {
     nav.main-nav.shown + div.nav-backdrop {
         width:100vw; background:var(--mobile-nav-backdrop); transition:background-color 0.3s, width 0s linear 0s;
     }
+
+    .dialog.rich .search-field {width:100%; margin-left:0; margin-right:0;}
 }
 
 @media only screen and (min-width:577px) and (max-width:850px){

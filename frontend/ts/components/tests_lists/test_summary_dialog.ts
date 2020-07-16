@@ -3,6 +3,7 @@ import Test from '../../entities/test';
 import * as DateUtils from '../../dateutils';
 
 import { DisplayPage } from '../../script';
+import AssignTestDialog from './assigning/assign_test_dialog';
 
 export default class TestSummaryDialog extends Dialog {
     protected QuestionCountElement: HTMLTableDataCellElement;
@@ -47,12 +48,13 @@ export default class TestSummaryDialog extends Dialog {
         let assign_btn = document.createElement('button');
         assign_btn.classList.add('secondary');
         assign_btn.textContent = 'Przypisz';
-        assign_btn.disabled = true;
         assign_btn.addEventListener('click', (() => {
             this.Hide();
             
             if(this.CurrentTest === undefined) return;
-            /*AssignTest(this.CurrentTest);*/
+            let assign_dialog = new AssignTestDialog();
+            assign_dialog.Populate(this.CurrentTest);
+            assign_dialog.Show();
         }).bind(this));
         this.AddButton(assign_btn);
     }

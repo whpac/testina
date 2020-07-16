@@ -4,11 +4,13 @@ import Test from '../../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
 import { HandleLinkClick } from '../../script';
 import Toast from '../basic/toast';
+import AssignTestDialog from './assigning/assign_test_dialog';
 
 export default class TestsTable extends Component {
     protected IsLoaded: boolean;
     protected TestRowsContainer: HTMLTableSectionElement;
     protected SummaryDialog: TestSummaryDialog;
+    protected AssignDialog: AssignTestDialog;
 
     /**
      * Prepare the table to be displayed
@@ -42,6 +44,7 @@ export default class TestsTable extends Component {
         this.Element.appendChild(this.TestRowsContainer);
 
         this.SummaryDialog = new TestSummaryDialog();
+        this.AssignDialog = new AssignTestDialog();
     }
 
     ClearContent(message?: string){
@@ -96,6 +99,10 @@ export default class TestsTable extends Component {
         let btn_assign = document.createElement('button');
         btn_assign.classList.add('compact', 'todo');
         btn_assign.textContent = 'Przypisz';
+        btn_assign.addEventListener('click', () => {
+            this.AssignDialog.Populate(test);
+            this.AssignDialog.Show();
+        });
         td_assign.appendChild(btn_assign);
 
         let td_edit = tr.insertCell(-1);
