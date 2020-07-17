@@ -9,7 +9,7 @@ export default interface PageParams {
 }
 
 /** Reprezentacja obiektu przechowująca jego typ i identyfikator */
-type SimpleObjectRepresentation = {
+export type SimpleObjectRepresentation = {
     type: string,
     id: number
 }

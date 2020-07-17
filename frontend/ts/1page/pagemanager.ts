@@ -1,6 +1,6 @@
 import Page from '../components/basic/page';
 import LoadingIndicator from './loadingindicator';
-import PageParams from './pageparams';
+import PageParams, { SimpleObjectRepresentation } from './pageparams';
 import Test from '../entities/test';
 import Assignment from '../entities/assignment';
 import NavigationPrevention from './navigationprevention';
@@ -53,6 +53,19 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
  */
 export function AddPage(page_id: string, page: Page){
     Pages[page_id] = page;
+}
+
+/**
+ * Przechwytuje kliknięcie linku, wyświetlając odpowiednią stronę
+ * @param e Dane zdarzenia, które zostanie anulowane
+ * @param page_id Adres strony, do której należy przejść
+ * @param params Parametry do przekazania nowej stronie
+ */
+export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
+    if(e.button != 0) return;
+
+    e.preventDefault();
+    GoToPage(page_id, params);
 }
 
 /**
@@ -134,23 +147,10 @@ export function SetTitle(new_title: string){
  * Tworzy obiekt z prostej reprezentacji
  * @param params Prosta reprezentacja obiektu
  */
-function UnserializeParams(params?: {type: string, id: number}): (PageParams | undefined){
+function UnserializeParams(params?: SimpleObjectRepresentation): (PageParams | undefined){
     switch(params?.type){
         case 'test': return new Test(params.id);
         case 'assignment': return new Assignment(params.id);
     }
     return undefined;
-}
-
-/**
- * Przechwytuje kliknięcie linku, wyświetlając odpowiednią stronę
- * @param e Dane zdarzenia, które zostanie anulowane
- * @param page_id Adres strony, do której należy przejść
- * @param params Parametry do przekazania nowej stronie
- */
-export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
-    if(e.button != 0) return;
-
-    e.preventDefault();
-    GoToPage(page_id, params);
 }
