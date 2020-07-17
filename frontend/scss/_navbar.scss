@@ -31,6 +31,64 @@ nav.main-nav {
             &:hover {color:var(--text-primary-color);}
         }
     }
+
+    @include media-small-medium{
+        grid-area:unset; overflow-y:auto; overflow-x:hidden;
+
+        > ul {margin-bottom:64px; overflow:unset;}
+        li.link > a {padding-top:12px; padding-bottom:12px;}
+        li.link .icon {width:32px; margin-right:9px; font-size:1.2em}
+        li.header {padding-left:50px;}
+    
+        &.shown + div.nav-backdrop {
+            width:100vw; background:var(--mobile-nav-backdrop); transition:background-color 0.3s, width 0s linear 0s;
+        }
+    }
+
+    @include media-medium{
+        width:250px; right:-200px; transition:right 0.3s;
+
+        &.shown {
+            right:0;
+
+            li.separator {width:234px;}
+        }
+        li.nav-toggle {display:block}
+        li.separator {width:34px; transition:width 0.3s;}
+    
+        li.link.vulnerable {
+            opacity:0; overflow-y:hidden; font-size:0; transition:opacity 0.15s, font-size 0.15s ease 0.15s;
+            a {
+                padding-top:0; padding-bottom:0; transition:padding 0.15s ease 0.15s;
+            }
+        }
+        &.shown li.link.vulnerable {
+            opacity:1; font-size:1rem; transition:opacity 0.15s ease 0.15s, font-size 0.15s;
+            a {
+                padding-top:12px; padding-bottom:12px; transition:padding 0.15s;
+            }
+        }
+    }
+
+    @include media-small{
+        width:calc(100vw - 56px); left:calc(46px - 100vw); border-right:var(--surface-border-color);
+        transition:left 0.3s; right:unset;
+
+        &.shown {left:0;}
+
+        > ul {margin-top:70px;}
+        li.separator {margin:5px 16px;}
+        > .copyright {margin-bottom:5px;}
+    }
+
+    @include media-xlarge{
+        margin:20px 20px 40px 20px; border-color:var(--surface-border-color);
+        height:calc(100vh - 60px); width:calc(var(--nav-panel-width) - 40px);
+        border-radius:var(--surface-border-radius);
+        grid-template-rows:1fr 0;
+
+        > .copyright {position:relative; top:13px;}
+    }
 }
 
 div.nav-backdrop {
@@ -53,5 +111,9 @@ aside.mobile-header{
     h1 {
         display:inline-block;vertical-align:middle; margin:0 0 0 20px; line-height:24px; font-size:20px;
         font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100vw - 84px);
+    }
+
+    @include media-small{
+        display:block;
     }
 }

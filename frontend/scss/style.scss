@@ -1,5 +1,6 @@
 .todo {outline:2px solid orange !important;}
 
+@import 'media';
 @import 'themes/light';
 
 @media (prefers-color-scheme: dark) {
@@ -57,134 +58,21 @@ a:hover {color:var(--link-hover-color);}
 @import 'components/question_card';
 @import 'components/test_invitation';
 
-@media only screen and (min-width:851px){
+@include media-large-xlarge{
     .narrow-screen-only {display:none !important;}
 }
 
-@media only screen and (max-width:850px){
+@include media-small-medium{
     .wide-screen-only {display:none !important;}
-
-    nav.main-nav {grid-area:unset; overflow-y:auto; overflow-x:hidden;}
-    nav.main-nav > ul {margin-bottom:64px; overflow:unset;}
-    nav.main-nav li.link > a {padding-top:12px; padding-bottom:12px;}
-    nav.main-nav li.link .icon {width:32px; margin-right:9px; font-size:1.2em}
-    nav.main-nav li.header {padding-left:50px;}
-
-    nav.main-nav.shown + div.nav-backdrop {
-        width:100vw; background:var(--mobile-nav-backdrop); transition:background-color 0.3s, width 0s linear 0s;
-    }
-
-    .dialog.rich .search-field {width:100%; margin-left:0; margin-right:0;}
 }
 
-@media only screen and (min-width:577px) and (max-width:850px){
+@include media-medium{
     body {--nav-panel-width:50px;}
     body > main {padding:15px 10px;}
-
-    nav.main-nav {width:250px; right:-200px; transition:right 0.3s;}
-    nav.main-nav.shown {right:0;}
-    nav.main-nav li.nav-toggle {display:block}
-    nav.main-nav li.separator {width:34px; transition:width 0.3s;}
-    nav.main-nav.shown li.separator {width:234px;}
-
-    nav.main-nav li.link.vulnerable {
-        opacity:0; overflow-y:hidden; font-size:0; transition:opacity 0.15s, font-size 0.15s ease 0.15s;
-    }
-    nav.main-nav li.link.vulnerable a {
-        padding-top:0; padding-bottom:0; transition:padding 0.15s ease 0.15s;
-    }
-    nav.main-nav.shown li.link.vulnerable {
-        opacity:1; font-size:1rem; transition:opacity 0.15s ease 0.15s, font-size 0.15s;
-    }
-    nav.main-nav.shown li.link.vulnerable a {
-        padding-top:12px; padding-bottom:12px; transition:padding 0.15s;
-    }
-
-    .dialog.rich {width:90vw;}
-    .toast {left:10vw; width:calc(80vw - var(--nav-panel-width));}
-    .dialog-backdrop.shown ~ .toast {left:10vw;}
 }
 
-@media only screen and (max-width:576px){
+@include media-small{
     body {--nav-panel-width:0;}
     body > main {padding:70px 5px 15px 5px;}
-    aside.mobile-header {display:block;}
-    nav.main-nav {
-        width:calc(100vw - 56px); left:calc(46px - 100vw); border-right:var(--surface-border-color);
-        transition:left 0.3s; right:unset;
-    }
-    nav.main-nav > ul {margin-top:70px;}
-    nav.main-nav.shown {left:0;}
-    nav.main-nav li.separator {margin:5px 16px;}
-    nav.main-nav > .copyright {margin-bottom:5px;}
-
-    .dialog.rich {
-        width:100vw; height:100vh; box-sizing:border-box; border-radius:0; border:none;
-        background:var(--background-empty-color); padding:57px 0 38px 0; max-height:unset;
-    }
-    .dialog.rich > .content {padding:10px; margin-right:0;}
-    .dialog.rich > h2:first-of-type {
-        background-color:var(--mobile-header-background); height:24px; padding:16px;
-        font-size:20px; line-height:24px; font-weight:500; white-space:nowrap;
-        overflow:hidden; text-overflow:ellipsis; width:calc(100vw - 32px);
-        border-bottom:var(--mobile-header-border); color:var(--mobile-header-text-color);
-        box-shadow:var(--mobile-header-box-shadow); position:fixed; top:0; left:0;
-    }
-    .dialog.rich > h2:first-of-type .get-help {
-        color:var(--mobile-header-text-color); font-size:1em;
-    }
-    .dialog.rich section {
-        padding:15px; margin:0 0 20px 0; background:var(--surface-background-color);
-        border:var(--surface-border-width) solid var(--surface-border-color);
-        border-radius:var(--surface-border-radius); box-shadow:var(--surface-box-shadow);
-    }
-    .dialog.rich section *:first-child {margin-top:0;}
-    .dialog.rich section *:last-child {margin-bottom:0;}
-    .dialog.rich > .buttons {
-        display:grid; margin:0; padding:5px; gap:5px; grid-auto-flow:column;
-        grid-auto-columns:1fr; direction:rtl; position:fixed; bottom:0; left:0;
-        width:100vw; box-shadow:0 -1px 6px 3px var(--background-empty-color);
-        background:var(--background-empty-color);
-    }
-    .dialog.rich > .buttons > button {margin:0; direction:ltr;}
-    .toast {left:15px; width:calc(100vw - 30px);}
-    .dialog-backdrop.shown ~ .toast {left:15px;}
-
     main > .page > h1:first-child {display:none;}
-
-    .card, .card.semi-wide, .card.wide, .card.auto-width {margin-left:0; margin-right:0; width:auto;}
-    .card.login-form {width:fit-content;}
-    .card .header-button {padding:7px 10px; border-radius:calc(0.5em + 9px);}
-    .card .header-button > span {display:none;}
-    table.card.auto-width {width:100%;}
-
-    .question-answer-buttons {grid-template-columns:1fr;}
-    .question-answer-buttons button {grid-column:1/span 1;}
-    .question-answer-buttons button:nth-child(2n+1):last-child {grid-column:1/span 1;}
-
-    table.table td, table.table th {padding-top:8px; padding-bottom:8px;}
-
-    .test-summary {
-        grid-template-rows:auto auto auto auto auto auto; grid-template-columns:1fr; row-gap:8px;
-        grid-template-areas:'count' 'count-text' 'time' 'time-text' 'attempts' 'buttons';
-    }
-}
-
-@media only screen and (min-width:1280px){
-    nav.main-nav {
-        margin:20px 20px 40px 20px; border-color:var(--surface-border-color);
-        height:calc(100vh - 60px); width:calc(var(--nav-panel-width) - 40px);
-        border-radius:var(--surface-border-radius);
-        grid-template-rows:1fr 0;
-    }
-    nav.main-nav > .copyright {position:relative; top:13px;}
-
-    .toast {left:25vw; width:calc(50vw - var(--nav-panel-width));}
-    .dialog-backdrop.shown ~ .toast {left:calc(25vw + var(--nav-panel-width) / 2);}
-
-    .card {margin-left:15vw; margin-right:15vw;}
-    .card.semi-wide {margin-left:7vw; margin-right:7vw;}
-    .card.wide {margin-left:0; margin-right:0;}
-
-    .dialog.rich {width:50vw;}
 }

@@ -8,6 +8,10 @@ table.table {
 
         &:empty {padding-top:0; padding-bottom:0;}
         &.right {text-align:right;}
+
+        @include media-small {
+            padding-top:8px; padding-bottom:8px;
+        }
     }
     th {font-weight:500;}
     tr:first-child:not(.not-header) th {border-bottom:1px solid var(--table-main-border-color);}
@@ -16,5 +20,9 @@ table.table {
     col.shrink {width:min-content;}
 }
 table.full-width {width:100%;}
+
+@include media-small {
+    table.card.auto-width {width:100%;}
+}
 
 .content-tbody:not(:empty) + .nocontent-tbody {display:none}

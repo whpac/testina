@@ -17,6 +17,11 @@
         .exit-test {grid-area:btn-cancel; text-align:center;}
         .start-test {grid-area:btn-start; text-align:center;}
     }
+
+    @include media-small {
+        grid-template-rows:auto auto auto auto auto auto; grid-template-columns:1fr; row-gap:8px;
+        grid-template-areas:'count' 'count-text' 'time' 'time-text' 'attempts' 'buttons';
+    }
 }
 
 .loading-test {text-align:center; margin-top:20px; font-size:0.9em; color:var(--text-secondary-color);}

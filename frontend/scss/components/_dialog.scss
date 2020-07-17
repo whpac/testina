@@ -16,8 +16,8 @@
     > .content {
         grid-row:2; overflow-y:auto; margin-right:-15px; padding-right:15px;
 
-        > *:first-child {margin-top:0;}
-        > *:last-child {margin-bottom:0;}
+        > *:first-child, > section:first-child > *:first-child {margin-top:0;}
+        > *:last-child, > section:last-child > *:last-child {margin-bottom:0;}
     }
     > .buttons {
         margin-top:15px; margin-bottom:-8px; grid-row:3; display:flex; flex-direction:row-reverse;
@@ -31,7 +31,54 @@
 .dialog.rich {
     width:65vw;
 
-    .search-field {width:60%; margin-left:20%; margin-right:20%;}
+    .search-field {
+        width:60%; margin-left:20%; margin-right:20%;
+
+        @include media-small-medium{
+            width:100%; margin-left:0; margin-right:0;
+        }
+    }
+
+    @include media-medium{
+        width:90vw;
+    }
+
+    @include media-small{
+        width:100vw; height:100vh; box-sizing:border-box; border-radius:0; border:none;
+        background:var(--background-empty-color); padding:57px 0 38px 0; max-height:unset;
+
+        > .content {padding:10px; margin-right:0;}
+        > h2:first-of-type {
+            background-color:var(--mobile-header-background); height:24px; padding:16px;
+            font-size:20px; line-height:24px; font-weight:500; white-space:nowrap;
+            overflow:hidden; text-overflow:ellipsis; width:calc(100vw - 32px);
+            border-bottom:var(--mobile-header-border); color:var(--mobile-header-text-color);
+            box-shadow:var(--mobile-header-box-shadow); position:fixed; top:0; left:0;
+
+            .get-help {
+                color:var(--mobile-header-text-color); font-size:1em;
+            }
+        }
+        section {
+            padding:15px; margin:0 0 20px 0; background:var(--surface-background-color);
+            border:var(--surface-border-width) solid var(--surface-border-color);
+            border-radius:var(--surface-border-radius); box-shadow:var(--surface-box-shadow);
+
+            *:first-child {margin-top:0;}
+            *:last-child {margin-bottom:0;}
+        }
+        > .buttons {
+            display:grid; margin:0; padding:5px; gap:5px; grid-auto-flow:column;
+            grid-auto-columns:1fr; direction:rtl; position:fixed; bottom:0; left:0;
+            width:100vw; box-shadow:0 -1px 6px 3px var(--background-empty-color);
+            background:var(--background-empty-color);
+
+            > button {margin:0; direction:ltr;}
+        }
+    }
+    @include media-xlarge{
+        width:50vw;
+    }
 }
 
 p.dialog-error {
