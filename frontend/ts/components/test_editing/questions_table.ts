@@ -3,7 +3,7 @@ import Test from '../../entities/test';
 import Question from '../../entities/question';
 import EditQuestionDialog from './edit_question_dialog';
 
-import { Truncate } from '../../functions';
+import { Truncate } from '../../utils/textutils';
 import Toast from '../basic/toast';
 
 export default class QuestionsTable extends Component {

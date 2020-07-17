@@ -1,4 +1,4 @@
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 import Entity from './entity';
 import User from './user';
 import PageParams from '../1page/pageparams';

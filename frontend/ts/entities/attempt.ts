@@ -1,4 +1,4 @@
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 import Entity, { Collection } from './entity';
 import User, { UserDescriptor } from './user';
 import Question, { QuestionDescriptor } from './question';

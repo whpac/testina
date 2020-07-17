@@ -1,7 +1,7 @@
 import Dialog from '../basic/dialog';
 import Assignment from '../../entities/assignment';
 import ScoreDetailsDialog from './score_details_dialog';
-import * as DateUtils from '../../dateutils';
+import * as DateUtils from '../../utils/dateutils';
 import * as PageManager from '../../1page/pagemanager';
 
 export default class AssignmentDetailsDialog extends Dialog {

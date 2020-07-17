@@ -1,4 +1,4 @@
-import * as DateUtils from '../../dateutils';
+import * as DateUtils from '../../utils/dateutils';
 import Component from '../basic/component';
 import Test from '../../entities/test';
 import TestSummaryDialog from './test_summary_dialog';

@@ -1,4 +1,4 @@
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 import Test from './test';
 import Entity from './entity';
 import Answer, { AnswerDescriptor, AnswerCollection } from './answer';

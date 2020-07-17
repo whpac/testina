@@ -1,8 +1,8 @@
 import Card from '../basic/card';
 import Assignment from '../../entities/assignment';
-import * as DateUtils from '../../dateutils';
+import * as DateUtils from '../../utils/dateutils';
 
-import { n } from '../../textutils';
+import { n } from '../../utils/textutils';
 import { HandleLinkClick } from '../../script';
 import User from '../../entities/user';
 import Attempt from '../../entities/attempt';

@@ -2,10 +2,10 @@ import Card from '../basic/card'
 import Question from '../../entities/question';
 import Attempt from '../../entities/attempt';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
-import * as DateUtils from '../../dateutils';
+import * as DateUtils from '../../utils/dateutils';
 import * as PageManager from '../../1page/pagemanager';
 
-import { ShuffleArray } from '../../functions';
+import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
 
 export default class QuestionCard extends Card {

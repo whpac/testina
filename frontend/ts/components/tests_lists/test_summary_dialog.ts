@@ -1,6 +1,6 @@
 import Dialog from '../basic/dialog';
 import Test from '../../entities/test';
-import * as DateUtils from '../../dateutils';
+import * as DateUtils from '../../utils/dateutils';
 
 import { DisplayPage } from '../../script';
 import AssignTestDialog from './assigning/assign_test_dialog';

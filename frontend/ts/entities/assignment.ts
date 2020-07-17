@@ -1,6 +1,6 @@
 import Entity from './entity';
 
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 import Test from './test';
 import { TestDescriptor } from './test';
 import PageParams from '../1page/pageparams';

@@ -1,6 +1,6 @@
 import Entity, { Collection } from './entity';
 
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 
 /** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {

@@ -15,3 +15,18 @@ export function n(n: number, f1: string, f2: string, f5: string){
 
     return f5;
 }
+
+/**
+ * Ucina nadmiarową część tekstu na końcu słowa
+ * @param str Tekst do skrócenia
+ * @param length Minimalna liczba znaków do pozostawienia
+ */
+export function Truncate(str: string, length: number){
+    if(str.length <= length) return str;
+
+    let sp_pos = str.indexOf(' ', length);
+    if(sp_pos == -1) return str;
+
+    str = str.substr(0, sp_pos);
+    return str + '…';
+}

@@ -1,7 +1,7 @@
 import Entity from './entity';
 import Question from './question';
 
-import * as XHR from '../xhr';
+import * as XHR from '../utils/xhr';
 
 /** Deskryptor odpowiedzi w odpowiedzi z API */
 export interface AnswerDescriptor {

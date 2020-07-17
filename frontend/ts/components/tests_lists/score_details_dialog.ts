@@ -1,7 +1,7 @@
 import Dialog from '../basic/dialog';
 import Assignment from '../../entities/assignment';
 import Attempt from '../../entities/attempt';
-import { ToDayHourFormat } from '../../dateutils';
+import { ToDayHourFormat } from '../../utils/dateutils';
 
 export default class ScoreDetailsDialog extends Dialog{
     TBody: HTMLTableSectionElement;
