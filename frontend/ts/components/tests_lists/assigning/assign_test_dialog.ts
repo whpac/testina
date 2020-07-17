@@ -1,10 +1,10 @@
 import Dialog from '../../basic/dialog';
 import Test from '../../../entities/test';
-import TargetsTable from './targets_table';
+import TargetsWrapper from './targets_wrapper';
 
 export default class AssignTestDialog extends Dialog {
     Test: Test | undefined;
-    TargetsTable: TargetsTable;
+    TargetsWrapper: TargetsWrapper;
 
     constructor(){
         super();
@@ -19,8 +19,8 @@ export default class AssignTestDialog extends Dialog {
         targets_description.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
         section_targets.appendChild(targets_description);
         
-        this.TargetsTable = new TargetsTable();
-        section_targets.appendChild(this.TargetsTable.GetElement());
+        this.TargetsWrapper = new TargetsWrapper();
+        section_targets.appendChild(this.TargetsWrapper.GetElement());
 
         let btn_next = document.createElement('button');
         btn_next.textContent = 'Dalej';
@@ -35,7 +35,7 @@ export default class AssignTestDialog extends Dialog {
 
     async Populate(test: Test){
         this.Test = test;
-        this.TargetsTable.Populate();
+        this.TargetsWrapper.Populate();
 
         this.SetHeader('Przypisz: ' + await test.GetName());
     }

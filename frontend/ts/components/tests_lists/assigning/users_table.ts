@@ -1,10 +1,8 @@
 import Component from '../../basic/component';
 import User from '../../../entities/user';
-import Tab from '../../basic/tabs/tab';
-import TabContainer from '../../basic/tabs/tab_container';
 
-export default class TargetsTable extends Component {
-    protected SearchField: HTMLInputElement;
+export default class UsersTable extends Component {
+    protected Element: HTMLTableElement;
     protected UsersTBody: HTMLTableSectionElement;
     protected SearchEmptyTBody: HTMLTableSectionElement;
     protected AreUsersPopulated: boolean = false;
@@ -12,33 +10,11 @@ export default class TargetsTable extends Component {
     constructor(){
         super();
 
-        let search_tabs = document.createElement('div');
-        search_tabs.classList.add('search-and-tabs');
-        this.AppendChild(search_tabs);
+        this.Element = document.createElement('table');
+        this.Element.classList.add('table', 'full-width');
 
-        this.SearchField = document.createElement('input');
-        this.SearchField.classList.add('search-field');
-        this.SearchField.type = 'text';
-        this.SearchField.placeholder = 'Wyszukaj...';
-        this.SearchField.addEventListener('keyup', this.OnSearchKeyUp.bind(this));
-        search_tabs.appendChild(this.SearchField);
-
-        let tab_container = new TabContainer();
-        search_tabs.appendChild(tab_container.GetElement());
-
-        tab_container.AddTab(new Tab('Osoby'));
-        tab_container.AddTab(new Tab('Grupy'));
-
-        let table_wrapper = document.createElement('div');
-        table_wrapper.classList.add('overflow-container-y');
-        this.AppendChild(table_wrapper);
-
-        let users_table = document.createElement('table');
-        users_table.classList.add('table', 'full-width');
-        table_wrapper.appendChild(users_table);
-
-        this.UsersTBody = users_table.createTBody();
-        this.SearchEmptyTBody = users_table.createTBody();
+        this.UsersTBody = this.Element.createTBody();
+        this.SearchEmptyTBody = this.Element.createTBody();
 
         this.SearchEmptyTBody.style.display = 'none';
         let search_empty_tr = this.SearchEmptyTBody.insertRow(-1);
@@ -51,17 +27,12 @@ export default class TargetsTable extends Component {
         let col_shrink = document.createElement('col');
         col_shrink.classList.add('shrink');
         colgroup.appendChild(col_shrink);
-        users_table.appendChild(colgroup);
+        this.Element.appendChild(colgroup);
         colgroup.appendChild(document.createElement('col'));
 
-        let tr_head = users_table.createTHead().insertRow(-1);
+        let tr_head = this.Element.createTHead().insertRow(-1);
         tr_head.appendChild(document.createElement('th'));
         tr_head.appendChild(document.createElement('th'));
-
-        let selected_users_count_text = document.createElement('p');
-        selected_users_count_text.classList.add('small-margin');
-        selected_users_count_text.textContent = 'Wybrano 0 osób.';
-        this.AppendChild(selected_users_count_text);
     }
 
     async Populate(){
@@ -83,8 +54,8 @@ export default class TargetsTable extends Component {
         }
     }
 
-    protected OnSearchKeyUp(){
-        let search_query = this.SearchField.value.toLowerCase();
+    Filter(search_query: string){
+        search_query = search_query.toLowerCase();
         let rows = this.UsersTBody.rows;
         let found = 0;
         for(let i = 0; i < rows.length; i++){
