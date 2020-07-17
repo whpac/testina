@@ -3,6 +3,7 @@ use \UEngine\Modules\Pages\PageManager;
 use \UEngine\Modules\Auth\AuthHandler;
 
 PageManager::SetTitle('Logowanie');
+PageManager::SetRenderer(new \Layout\LoginRenderer());
 
 $error_msg = '';
 if(!is_null(AuthHandler::$last_result)){

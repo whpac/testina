@@ -2,5 +2,14 @@ Options FollowSymLinks
 RewriteEngine On
 RewriteBase "/p/"
 
+# Przekierowanie zapytań API do api_endpoint.php
 RewriteRule "^api/(.*)$" "backend/api_endpoint.php?target=$1" [END,QSA]
+
+# Przekierowanie zapytań o zasoby do resource_handler.php
+# Jako zasoby są traktowane pliki o określonych rozszerzeniach,
+# a także pliki w folderze /js/, bez kropki w nazwie (domyślnie ładuje się je bez rozszerzenia)
+RewriteRule "^([^?]*\.(css|js|eot|svg|ttf|woff|woff2))$" "backend/resource_handler.php?file=$1" [END,QSA]
+RewriteRule "^(js/[^?.]*)$" "backend/resource_handler.php?file=$1.js" [END,QSA]
+
+# Przekierowanie zapytań o stronę do index.php
 RewriteRule "^([^?]*)?$" "backend/index.php?_path=$1" [END,QSA]

@@ -2,14 +2,6 @@
 // Measure page render time
 $time_start = microtime(true);
 
-/*declare(ticks = 1);
-
-function onTick(){
-    echo('X');
-}
-
-register_tick_function('onTick');*/
-
 use \UEngine\Modules\Auth\AuthHandler;
 use \UEngine\Modules\Auth\AccessControl\AuthManager;
 use \UEngine\Modules\Core\Properties;
@@ -70,40 +62,6 @@ PageManager::AddScript('js/script', true);
 PageManager::AddHeadTag('<base href="/p/" />');
 PageManager::SetRenderer(new \Layout\StandardRenderer());
 
-UrlHandler::RegisterErrorDocument(404, __DIR__.'/pages/404.php');
-
-// Initializing an URL handler
-$handler = new RegistryHandler(['root_path' => 'pages/']);
-$handler->SetOption('default_mode', RegistryHandler::MATCH_STARTS_WITH);
-
-$url = [];
-$url['home'] = 'main.php';
-$url['informacje'] = 'about.php';
-$url['konto'] = 'account.php';
-$url['login'] = 'main.php';
-$url['pomoc'] = 'help.php';
-$url['testy/biblioteka'] = 'tests/library.php';
-$url['testy/edytuj'] = 'tests/edit.php';
-$url['testy/lista'] = 'tests/list.php';
-$url['testy/rozwiąż'] = 'tests/solve.php';
-$url['testy/szczegóły'] = 'tests/details.php';
-$url['testy/utwórz'] = 'tests/edit.php';
-$url['testy/wynik'] = 'tests/result.php';
-
-$url['_dev'] = '_dev.php';
-
-Properties::Set('pages.handlers.main_page', 'home');
-if(!AuthManager::IsAuthorized()){
-    Properties::Set('pages.handlers.main_page', 'login');
-    PageManager::SetRenderer(new \Layout\LoginRenderer());
-    foreach($url as $u => $p) $handler->AddPage($u, 'login.php');
-    UrlHandler::AddHandler($handler);
-}
-
-// Initializing a resource handler (stylesheets, scripts, fonts etc.)
-$res_handler = new Handling\ResourceHandler(['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2'], '../frontend/');
-UrlHandler::AddHandler($res_handler);
-
 // Initializing a navbar
 NavbarStorage::AddItem(new Navbar\NavbarHeader(AuthManager::GetCurrentUser()->GetFullName()));
 NavbarStorage::AddItem('Strona główna', ['href' => 'home', 'icon' => 'fa-home']);
@@ -115,11 +73,13 @@ NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out'
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Pomoc', ['href' => 'pomoc', 'icon' => 'fa-question-circle']);
 
-NavbarStorage::AddItem('Do zrobienia', ['href' => 'https://github.com/whpac/testina/issues', 'icon' => 'fa-code']);
-
 // The handled site is being included and buffered here
 PageManager::BeginFetchingContent();
-UrlHandler::Handle();
+
+if(!AuthManager::IsAuthorized()){
+    include('pages/login.php');
+}
+
 PageManager::EndFetchingContent();
 
 // End masuring time
