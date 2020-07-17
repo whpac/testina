@@ -26,3 +26,5 @@ table.full-width {width:100%;}
 }
 
 .content-tbody:not(:empty) + .nocontent-tbody {display:none}
+
+.overflow-container-y > table.table {margin-top:0;}
