@@ -1,1 +1,1 @@
-sass frontend/scss:frontend/css --style compressed --no-source-map
+@sass frontend/scss:frontend/css --style compressed --no-source-map
