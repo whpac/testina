@@ -4,8 +4,8 @@ import HelpLink from '../help_link';
 import AnswersTable from './answers_table';
 import Test from '../../entities/test';
 
-import * as PageManager from '../../1page/pagemanager';
 import Toast from '../basic/toast';
+import NavigationPrevention from '../../1page/navigationprevention';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;
@@ -249,13 +249,13 @@ export default class EditQuestionDialog extends Dialog {
     }
 
     protected CancelChanges(){
-        if(PageManager.IsPreventedFromNavigationBy('question-editor')){
+        if(NavigationPrevention.IsPreventedBy('question-editor')){
             let confirm_result = window.confirm('Zmiany w tym pytaniu nie zostały zapisane.\nCzy chcesz wyjść mimo to?');
             if(!confirm_result) return;
         }
         this.Hide();
         this.AnswersTable.ClearContent();
-        PageManager.UnpreventFromNavigation('question-editor');
+        NavigationPrevention.Unprevent('question-editor');
         this.PromiseReject?.();
     }
 
@@ -326,7 +326,7 @@ export default class EditQuestionDialog extends Dialog {
             new Toast('Pytanie zostało zapisane.').Show(0);
             this.Hide();
             this.AnswersTable.ClearContent();
-            PageManager.UnpreventFromNavigation('question-editor');
+            NavigationPrevention.Unprevent('question-editor');
             this.PromiseResolve?.(this.Question);
 
         }catch(e){
@@ -382,7 +382,7 @@ export default class EditQuestionDialog extends Dialog {
     protected StateChanged(){
         if(this.IgnoreChanges) return;
         this.IsChanged = true;
-        PageManager.PreventFromNavigation('question-editor');
+        NavigationPrevention.Prevent('question-editor');
     }
 
     protected UpdateTyposCountEnableState(){

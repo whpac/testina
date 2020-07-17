@@ -3,6 +3,7 @@ import * as PageManager from '../../1page/pagemanager';
 import Test from '../../entities/test';
 import Card from '../basic/card';
 import Toast from '../basic/toast';
+import NavigationPrevention from '../../1page/navigationprevention';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;
@@ -165,7 +166,7 @@ export default class TestSettings extends Card {
      */
     protected StateChanged(){
         if(this.IgnoreChange) return;
-        PageManager.PreventFromNavigation('test-settings');
+        NavigationPrevention.Prevent('test-settings');
     }
 
     /**
@@ -216,7 +217,7 @@ export default class TestSettings extends Card {
             );
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
-            PageManager.UnpreventFromNavigation('test-settings');
+            NavigationPrevention.Unprevent('test-settings');
             
         }catch(e){
             new Toast('Nie udało się zapisać zmian w ustawieniach testu.').Show(0);

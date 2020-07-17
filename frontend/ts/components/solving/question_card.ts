@@ -3,10 +3,10 @@ import Question from '../../entities/question';
 import Attempt from '../../entities/attempt';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
 import * as DateUtils from '../../utils/dateutils';
-import * as PageManager from '../../1page/pagemanager';
 
 import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
+import NavigationPrevention from '../../1page/navigationprevention';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -96,7 +96,7 @@ export default class QuestionCard extends Card {
     }
 
     async StartTest(attempt: Attempt){
-        PageManager.PreventFromNavigation('solving-test');
+        NavigationPrevention.Prevent('solving-test');
         this.Attempt = attempt;
         this.PointsGot = 0;
         this.PointsMax = 0;
@@ -262,7 +262,7 @@ export default class QuestionCard extends Card {
     }
 
     protected SaveResults(){
-        PageManager.UnpreventFromNavigation('solving-test');
+        NavigationPrevention.Unprevent('solving-test');
         try{
             this.Attempt.SaveUserAnswers(this.Questions);
             new Toast('Twoje odpowiedzi zostały zapisane').Show(0);

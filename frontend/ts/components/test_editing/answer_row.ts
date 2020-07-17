@@ -2,7 +2,7 @@ import Component from '../basic/component';
 import Answer from '../../entities/answer';
 import Question from '../../entities/question';
 
-import * as PageManager from '../../1page/pagemanager';
+import NavigationPrevention from '../../1page/navigationprevention';
 
 export default class AnswerRow extends Component {
     protected RowNumberCell: HTMLTableCellElement;
@@ -75,7 +75,7 @@ export default class AnswerRow extends Component {
 
     protected StateChanged(){
         if(this.IgnoreChanges) return;
-        PageManager.PreventFromNavigation('question-editor');
+        NavigationPrevention.Prevent('question-editor');
         this.IsChanged = true;
     }
 

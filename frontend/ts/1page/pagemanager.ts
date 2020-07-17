@@ -3,6 +3,7 @@ import LoadingIndicator from './loadingindicator';
 import PageParams from './pageparams';
 import Test from '../entities/test';
 import Assignment from '../entities/assignment';
+import NavigationPrevention from './navigationprevention';
 
 /** Lista zarejestrowanych stron */
 let Pages: PageList = {};
@@ -16,9 +17,6 @@ let ContentRoot: HTMLElement;
 let LoadingWrapper: (LoadingIndicator | null) = null;
 /** Treść mobilnego nagłówka */
 let MobileHeader: HTMLElement | null;
-
-/** Zbiór powodów, które uniemożliwiają nawigację */
-let PreventFromNavigationReasons = new Set<string>();
 
 /** Typ opisujący zbiór stron */
 type PageList = {
@@ -38,7 +36,7 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
     MobileHeader = document.getElementById('mobile-header-title');
 
     window.addEventListener('beforeunload', (event) => {
-        if(IsPreventedFromNavigation()){
+        if(NavigationPrevention.IsPrevented()){
             // Anuluj zdarzenie standardową metodą
             event.preventDefault();
             // Następne dwie są dla starszych przeglądarek
@@ -63,47 +61,16 @@ export function AddPage(page_id: string, page: Page){
  * @param params Parametry
  */
 export function GoToPage(page_id: string, params?: PageParams){
-    if(IsPreventedFromNavigation()){
+    if(NavigationPrevention.IsPrevented()){
         let confirm_result = window.confirm('Na tej stronie są niezapisane zmiany.\nCzy chcesz ją opuścić?');
         if(!confirm_result) return;
     }
-    PreventFromNavigationReasons.clear();
+    NavigationPrevention.ClearReasons();
 
     DisplayPage(page_id, params).then(async () => {
         SetTitle(await CurrentPage?.GetTitle() ?? '');
         AlterCurrentUrl(CurrentPage?.GetUrlPath() ?? '', page_id, params);
     }).catch((r) => {alert('Nie udało się załadować strony: ' + r)});
-}
-
-/**
- * Powoduje, że przed opuszczeniem strony, użytkownik zobaczy okienko z potwierdzeniem wyjścia
- * @param reason Identyfikator powodu blokady (niewyświetlany użytkownikowi)
- */
-export function PreventFromNavigation(reason: string){
-    PreventFromNavigationReasons.add(reason);
-}
-
-/**
- * Znosi blokadę opuszczenia strony
- * @param reason Identyfikator powodu blokady do zniesienia
- */
-export function UnpreventFromNavigation(reason: string){
-    PreventFromNavigationReasons.delete(reason);
-}
-
-/**
- * Sprawdza, czy istnieje powód, by blokować nawigację
- */
-export function IsPreventedFromNavigation(){
-    return PreventFromNavigationReasons.size != 0;
-}
-
-/**
- * Sprawdza, czy podany powód blokuje nawigację
- * @param reason Identyfikator powodu do sprawdzenia
- */
-export function IsPreventedFromNavigationBy(reason: string){
-    return PreventFromNavigationReasons.has(reason);
 }
 
 /**
