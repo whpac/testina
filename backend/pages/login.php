@@ -14,7 +14,7 @@ $target = PageManager::GetRequestPathRaw();
 if($target == '') $target = 'home';
 ?>
 <form method="post" action="<?php echo($target); ?>">
-    <div class="card login-form grid-form">
+    <div class="card login-form">
         <h2>Zaloguj się</h2>
         <input type="hidden" name="_handle_auth" value="login" />
         <label for="login">Login:</label>
