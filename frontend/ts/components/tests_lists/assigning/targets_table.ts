@@ -1,7 +1,9 @@
 import Component from '../../basic/component';
 import User from '../../../entities/user';
+import Tab from '../../basic/tabs/tab';
+import TabContainer from '../../basic/tabs/tab_container';
 
-export default class UsersTable extends Component {
+export default class TargetsTable extends Component {
     protected SearchField: HTMLInputElement;
     protected UsersTBody: HTMLTableSectionElement;
     protected SearchEmptyTBody: HTMLTableSectionElement;
@@ -10,14 +12,22 @@ export default class UsersTable extends Component {
     constructor(){
         super();
 
+        let search_tabs = document.createElement('div');
+        search_tabs.classList.add('search-and-tabs');
+        this.AppendChild(search_tabs);
+
         this.SearchField = document.createElement('input');
         this.SearchField.classList.add('search-field');
         this.SearchField.type = 'text';
         this.SearchField.placeholder = 'Wyszukaj...';
         this.SearchField.addEventListener('keyup', this.OnSearchKeyUp.bind(this));
-        this.AppendChild(this.SearchField);
+        search_tabs.appendChild(this.SearchField);
 
-        this.AppendChild(document.createTextNode('Osoby | Grupy'));
+        let tab_container = new TabContainer();
+        search_tabs.appendChild(tab_container.GetElement());
+
+        tab_container.AddTab(new Tab('Osoby'));
+        tab_container.AddTab(new Tab('Grupy'));
 
         let table_wrapper = document.createElement('div');
         table_wrapper.classList.add('overflow-container-y');
