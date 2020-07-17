@@ -3,7 +3,7 @@ import Assignment from '../../entities/assignment';
 import * as DateUtils from '../../utils/dateutils';
 
 import { n } from '../../utils/textutils';
-import { HandleLinkClick } from '../../script';
+import { HandleLinkClick } from '../../1page/pagemanager';
 import User from '../../entities/user';
 import Attempt from '../../entities/attempt';
 

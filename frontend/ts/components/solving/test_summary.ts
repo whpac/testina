@@ -1,5 +1,5 @@
 import Card from '../basic/card';
-import { HandleLinkClick } from '../../script';
+import { HandleLinkClick } from '../../1page/pagemanager';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
 import Assignment from '../../entities/assignment';
 import ScoreDetailsDialog from '../tests_lists/score_details_dialog';

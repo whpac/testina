@@ -2,7 +2,7 @@ import * as DateUtils from '../../utils/dateutils';
 import Component from '../basic/component';
 import Test from '../../entities/test';
 import TestSummaryDialog from './test_summary_dialog';
-import { HandleLinkClick } from '../../script';
+import { HandleLinkClick } from '../../1page/pagemanager';
 import Toast from '../basic/toast';
 import AssignTestDialog from './assigning/assign_test_dialog';
 

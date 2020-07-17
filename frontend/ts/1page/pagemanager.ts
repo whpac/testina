@@ -174,3 +174,16 @@ function UnserializeParams(params?: {type: string, id: number}): (PageParams | u
     }
     return undefined;
 }
+
+/**
+ * Przechwytuje kliknięcie linku, wyświetlając odpowiednią stronę
+ * @param e Dane zdarzenia, które zostanie anulowane
+ * @param page_id Adres strony, do której należy przejść
+ * @param params Parametry do przekazania nowej stronie
+ */
+export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
+    if(e.button != 0) return;
+
+    e.preventDefault();
+    GoToPage(page_id, params);
+}

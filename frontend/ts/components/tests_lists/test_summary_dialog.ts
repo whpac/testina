@@ -2,7 +2,7 @@ import Dialog from '../basic/dialog';
 import Test from '../../entities/test';
 import * as DateUtils from '../../utils/dateutils';
 
-import { DisplayPage } from '../../script';
+import { GoToPage } from '../../1page/pagemanager';
 import AssignTestDialog from './assigning/assign_test_dialog';
 
 export default class TestSummaryDialog extends Dialog {
@@ -41,7 +41,7 @@ export default class TestSummaryDialog extends Dialog {
         edit_btn.textContent = 'Edytuj';
         edit_btn.addEventListener('click', (() => {
             this.Hide();
-            DisplayPage('testy/edytuj', this.CurrentTest);
+            GoToPage('testy/edytuj', this.CurrentTest);
         }).bind(this));
         this.AddButton(edit_btn);
 

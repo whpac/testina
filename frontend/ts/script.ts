@@ -5,7 +5,6 @@ import LoadingIndicator from './1page/loadingindicator';
 import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
-import PageParams from './1page/pageparams';
 import AssignedTestsListPage from './pages/assigned_tests_list';
 import SolveTestPage from './pages/solve_test';
 
@@ -24,36 +23,14 @@ PageManager.AddPage('testy/rozwiąż', new SolveTestPage());
 // Attach necessary event handlers
 EventHandlers.AttachHandlersIfDOMLoaded();
 
-document.getElementById('btn-home')?.addEventListener('click', (e) => HandleLinkClick(e, 'home'));
-document.getElementById('btn-second')?.addEventListener('click', (e) => HandleLinkClick(e, 'testy/biblioteka'));
+document.getElementById('btn-home')?.addEventListener('click', (e) => PageManager.HandleLinkClick(e, 'home'));
+document.getElementById('btn-second')?.addEventListener('click', (e) => PageManager.HandleLinkClick(e, 'testy/biblioteka'));
 
 // Attach handlers to navbar
 let nav_items = document.querySelectorAll('.event-navigation-link');
 nav_items.forEach((element) => {
     let anchor = <HTMLAnchorElement>element;
-    anchor.addEventListener('click', (e) => HandleLinkClick(e, anchor.dataset.href ?? ''));
+    anchor.addEventListener('click', (e) => PageManager.HandleLinkClick(e, anchor.dataset.href ?? ''));
 });
 
-DisplayPage('home');
-
-/**
- * Przechwytuje kliknięcie linku, wyświetlając odpowiednią stronę
- * @param e Dane zdarzenia, które zostanie anulowane
- * @param page_id Adres strony, do której należy przejść
- * @param params Parametry do przekazania nowej stronie
- */
-export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PageParams){
-    if(e.button != 0) return;
-
-    e.preventDefault();
-    DisplayPage(page_id, params);
-}
-
-/**
- * Wyświetla nową stronę
- * @param page Adres strony, do której należy przejść
- * @param params Parametry do przekazania nowej stronie
- */
-export function DisplayPage(page: string, params?: PageParams){
-    PageManager.GoToPage(page, params);
-}
+PageManager.GoToPage('home');

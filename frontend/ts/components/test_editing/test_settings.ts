@@ -1,5 +1,4 @@
 import * as PageManager from '../../1page/pagemanager';
-import { DisplayPage } from '../../script';
 
 import Test from '../../entities/test';
 import Card from '../basic/card';
@@ -191,7 +190,7 @@ export default class TestSettings extends Card {
         try{
             await (this.Test as Test).Remove();
             new Toast('Test „' + test_name + '” został usunięty.').Show(0);
-            DisplayPage('testy/biblioteka');
+            PageManager.GoToPage('testy/biblioteka');
 
         }catch(e){
             new Toast('Nie udało się usunąć testu „' + test_name + '”.').Show(0);
