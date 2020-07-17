@@ -1006,7 +1006,7 @@ class Mime {
         $name = strtolower($name);
         if(strpos($name, '.') === false) return $default;
         $ext = substr($name, strrpos($name, '.') + 1);
-        return getMimeTypeByExtension($ext, $default);
+        return self::GetTypeByExtension($ext, $default);
     }
 
     /**
