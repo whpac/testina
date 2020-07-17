@@ -1,8 +1,11 @@
 import Component from '../component';
 import Tab from './tab';
 
+/** Klasa reprezentująca grupę kart */
 export default class TabContainer extends Component {
+    /** Nazwa grupy. W każdej z nich aktywna może być tylko jedna karta */
     protected GroupName: string;
+    /** Ilość kart */
     protected TabCount: number = 0;
 
     constructor(){
