@@ -1,11 +1,11 @@
 import Component from '../../basic/component';
-import User from '../../../entities/user';
+import Group from '../../../entities/group';
 
 export default class GroupsTable extends Component {
     protected Element: HTMLTableElement;
     protected GroupsTBody: HTMLTableSectionElement;
     protected SearchEmptyTBody: HTMLTableSectionElement;
-    protected AreUsersPopulated: boolean = false;
+    protected AreGroupsPopulated: boolean = false;
 
     constructor(){
         super();
@@ -36,10 +36,39 @@ export default class GroupsTable extends Component {
     }
 
     async Populate(){
-        
+        if(this.AreGroupsPopulated) return;
+        this.GroupsTBody.textContent = '';
+
+        let groups = await Group.GetAll();
+        for(let group of groups){
+            let tr = this.GroupsTBody.insertRow(-1);
+
+            let checkbox_cell = tr.insertCell(-1);
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox_cell.appendChild(checkbox);
+
+            let group_name = await group.GetName();
+            tr.dataset.groupName = group_name;
+            tr.insertCell(-1).textContent = group_name;
+        }
     }
 
     Filter(search_query: string){
-        
+        search_query = search_query.toLowerCase();
+        let rows = this.GroupsTBody.rows;
+        let found = 0;
+        for(let i = 0; i < rows.length; i++){
+            let group_name = rows[i].dataset.groupName ?? '';
+            group_name = group_name.toLowerCase();
+            if(group_name.includes(search_query)){
+                rows[i].style.display = '';
+                found++;
+            }else{
+                rows[i].style.display = 'none';
+            }
+        }
+
+        this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
     }
 }

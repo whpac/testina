@@ -48,7 +48,7 @@ export default class TargetsWrapper extends Component {
 
         let selected_users_count_text = document.createElement('p');
         selected_users_count_text.classList.add('small-margin');
-        selected_users_count_text.textContent = 'Wybrano 0 osób.';
+        selected_users_count_text.textContent = 'Wybrano 0 osób i 0 grup.';
         this.AppendChild(selected_users_count_text);
     }
 
@@ -56,7 +56,11 @@ export default class TargetsWrapper extends Component {
         this.SearchField.value = '';
         this.SwitchTargetType('user');
         
-        await this.UsersTable.Populate();
+        let users_awaiter = this.UsersTable.Populate();
+        let groups_awaiter = this.GroupsTable.Populate();
+        await users_awaiter;
+        await groups_awaiter;
+
         this.FilterTable();
     }
 
