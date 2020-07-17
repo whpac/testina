@@ -57,6 +57,7 @@ a:hover {color:var(--link-hover-color);}
 @import 'components/progress_bar';
 @import 'components/question_card';
 @import 'components/test_invitation';
+@import 'components/tabs';
 
 @include media-large-xlarge{
     .narrow-screen-only {display:none !important;}

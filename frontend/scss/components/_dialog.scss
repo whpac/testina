@@ -24,21 +24,11 @@
 
         > button {margin-left:5px;}
     }
-
-    .search-field {width:100%; margin-bottom:0.5rem; box-sizing:border-box;}
 }
 
 .dialog.rich {
     width:65vw;
-
-    .search-field {
-        width:60%; margin-left:20%; margin-right:20%;
-
-        @include media-small-medium{
-            width:100%; margin-left:0; margin-right:0;
-        }
-    }
-
+    
     @include media-medium{
         width:90vw;
     }
