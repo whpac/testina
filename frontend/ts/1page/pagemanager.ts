@@ -23,6 +23,12 @@ type PageList = {
     [url: string]: Page;
 }
 
+/** Typ opisujący deskryptor stanu, zapisywany w historii przeglądarki */
+type StateDescriptor = {
+    page_id: string;
+    params: SimpleObjectRepresentation | undefined;
+}
+
 /**
  * Inicjalizuje menedżera stron
  * @param root Element HTML, do którego będą ładowane strony
@@ -110,11 +116,11 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
  * @param e Dane zdarzenia onpopstate
  */
 function PopStateHandler(e: PopStateEvent){
-    let state = e.state;
+    let state = e.state as (StateDescriptor | null | undefined);
     if(state === null || state === undefined) return;
 
-    let page_id = state.page_id as (string | null);
-    let params = state.params as ({type: string, id: number} | undefined);
+    let page_id = state.page_id;
+    let params = state.params;
 
     if(page_id != null) DisplayPage(page_id, UnserializeParams(params));
 }
