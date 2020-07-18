@@ -7,6 +7,7 @@ import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
 import AssignedTestsListPage from './pages/assigned_tests_list';
 import SolveTestPage from './pages/solve_test';
+import AboutPage from './pages/about';
 
 // Initialize the page manager
 let root = document.getElementById('content-container');
@@ -15,6 +16,7 @@ let loading_wrapper = new LoadingIndicator('loading-wrapper');
 
 PageManager.Initialize(root, loading_wrapper);
 PageManager.AddPage('home', new HomePage());
+PageManager.AddPage('informacje', new AboutPage());
 PageManager.AddPage('testy/biblioteka', new LibraryPage());
 PageManager.AddPage('testy/edytuj', new EditTestPage());
 PageManager.AddPage('testy/lista', new AssignedTestsListPage());

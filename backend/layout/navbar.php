@@ -19,7 +19,7 @@ class Navbar{
         }
 
         echo('</ul>');
-        echo('<span class="copyright" role="menuitem"><a href="informacje">Informacje o stronie</a></span>');
+        echo('<span class="copyright" role="menuitem"><a class="event-navigation-link" href="informacje" data-href="informacje">Informacje o stronie</a></span>');
     }
 
     protected static /* void */ function PrintItem(NavbarItem $item){
