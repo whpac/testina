@@ -35,12 +35,12 @@ export default class Card extends Component {
         return this.ContentWrapper;
     }
 
-    /**
-     * Dodaje element do zawarości
-     * @param child Element HTML
-     */
-    AppendChild(child: HTMLElement){
-        this.ContentWrapper.appendChild(child);
+    AppendChild(child: Node | Component<string>){
+        if(child instanceof Node){
+            this.ContentWrapper.appendChild(child);
+        }else if(child instanceof Component){
+            this.ContentWrapper.appendChild(child.Render());
+        }
     }
 
     /**
