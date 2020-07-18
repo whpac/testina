@@ -88,7 +88,7 @@ export default class TestsSolvedTable extends Card {
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell();
+        tr.insertCell().classList.add('narrow-screen-only');
     }
 
     async Populate(assignments: Assignment[]){
