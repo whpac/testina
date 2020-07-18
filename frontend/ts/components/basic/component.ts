@@ -1,17 +1,27 @@
-type StateChangeEventListener = (component: Component) => void;
+/** Typ reprezentujący nazwy zdarzeń obsługiwane przez komponent */
+type ComponentEvents = 'statechanged';
+
+/** Typ funkcji obsługi zdarzeń */
+type EventListener = (component: Component<string>) => void;
+
+/** Zbiór procedur obsługi zdarzeń */
+type EventListenerCollection = {
+    [event_name: string]: Set<EventListener>
+}
 
 /**
  * Klasa bazowa dla wszystkich komponentów UI
+ * @param EventName Nazwy zdarzeń obsługiwanych przez komponent ponad standardowe
  */
-export default class Component {
+export default class Component<EventName extends string = ''> {
     /** Element HTML reprezentujący komponent */
     protected Element: HTMLElement;
 
+    /** Zbiór procedur obsługi zdarzeń */
+    private EventListeners: EventListenerCollection = {};
+
     /** Aktualny stan komponentu */
     private State: ComponentState;
-
-    /** Procedury obsługi zdarzenia zmiany stanu */
-    private StateChangeListeners: Set<StateChangeEventListener>;
 
     /**
      * Tworzy komponent i ustawia jego stan na NOT_LOADED
@@ -19,7 +29,6 @@ export default class Component {
     constructor(){
         this.Element = document.createElement('div');
         this.State = ComponentState.NOT_LOADED;
-        this.StateChangeListeners = new Set();
     }
 
     /**
@@ -43,7 +52,7 @@ export default class Component {
      */
     protected SetState(new_state: ComponentState){
         this.State = new_state;
-        this.FireStateChangeEvent();
+        this.FireEvent('statechanged');
     }
 
     /**
@@ -54,20 +63,33 @@ export default class Component {
     }
 
     /**
-     * Wywołuje procedury obsługi zdarzenia zmiany stanu
+     * Dodaje procedurę obsługi zdarzenia
+     * @param event Zdarzenie do obsłużenia
+     * @param listener Procedura obsługi
      */
-    private FireStateChangeEvent(){
-        for(let listener of this.StateChangeListeners){
-            listener(this);
+    public AddEventListener(event: EventName | ComponentEvents, listener: EventListener){
+        if(this.EventListeners[event] === undefined){
+            this.EventListeners[event] = new Set<EventListener>();
         }
+
+        this.EventListeners[event].add(listener);
     }
 
     /**
-     * Dodaje procedurę obsługi zdarzenia zmiany stanu komponentu
-     * @param listener Procedura obsługi zdarzenia zmiany stanu
+     * Usuwa procedurę obsługi zdarzenia
+     * @param event Obsługiwane zdarzenie
+     * @param listener Procedura do usunięcia
      */
-    AddOnStateChanged(listener: StateChangeEventListener){
-        this.StateChangeListeners.add(listener);
+    public RemoveEventListener(event: EventName, listener: EventListener){
+        this.EventListeners[event]?.delete(listener);
+    }
+
+    /**
+     * Wywołuje zdarzenie
+     * @param event Zdarzenie do wywołania
+     */
+    protected FireEvent(event: EventName | ComponentEvents){
+        this.EventListeners[event]?.forEach((listener) => listener(this));
     }
 }
 
