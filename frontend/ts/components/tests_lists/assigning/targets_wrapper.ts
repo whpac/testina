@@ -4,13 +4,17 @@ import TabContainer from '../../basic/tabs/tab_container';
 import UsersTable from './users_table';
 import GroupsTable from './groups_table';
 
+import { n } from '../../../utils/textutils';
+
 type TargetType = 'user' | 'group';
 
 export default class TargetsWrapper extends Component {
     protected SearchField: HTMLInputElement;
+    protected UsersTab: Tab;
     protected UsersTable: UsersTable;
     protected GroupsTable: GroupsTable;
     protected CurrentlyDisplayedTargetType!: TargetType;
+    protected SelectedEntitiesCountText: HTMLElement;
 
     constructor(){
         super();
@@ -29,9 +33,9 @@ export default class TargetsWrapper extends Component {
         let tab_container = new TabContainer();
         search_tabs.appendChild(tab_container.GetElement());
 
-        let users_tab = new Tab('Osoby');
-        users_tab.AddOnSelectListener((() => this.SwitchTargetType('user')).bind(this));
-        tab_container.AddTab(users_tab);
+        this.UsersTab = new Tab('Osoby');
+        this.UsersTab.AddOnSelectListener((() => this.SwitchTargetType('user')).bind(this));
+        tab_container.AddTab(this.UsersTab);
 
         let groups_tab = new Tab('Grupy');
         groups_tab.AddOnSelectListener((() => this.SwitchTargetType('group')).bind(this));
@@ -42,18 +46,21 @@ export default class TargetsWrapper extends Component {
         this.AppendChild(table_wrapper);
 
         this.UsersTable = new UsersTable();
+        this.UsersTable.AddEventListener('selectionchanged', this.OnSelectionChanged.bind(this));
         table_wrapper.appendChild(this.UsersTable.GetElement());
         this.GroupsTable = new GroupsTable();
+        this.GroupsTable.AddEventListener('selectionchanged', this.OnSelectionChanged.bind(this));
         table_wrapper.appendChild(this.GroupsTable.GetElement());
 
-        let selected_users_count_text = document.createElement('p');
-        selected_users_count_text.classList.add('small-margin');
-        selected_users_count_text.textContent = 'Wybrano 0 osób i 0 grup.';
-        this.AppendChild(selected_users_count_text);
+        this.SelectedEntitiesCountText = document.createElement('p');
+        this.SelectedEntitiesCountText.classList.add('small-margin');
+        this.PrintNumberOfSelectedEntities(0, 0);
+        this.AppendChild(this.SelectedEntitiesCountText);
     }
 
     async Populate(){
         this.SearchField.value = '';
+        this.UsersTab.Select();
         this.SwitchTargetType('user');
         
         let users_awaiter = this.UsersTable.Populate();
@@ -90,6 +97,27 @@ export default class TargetsWrapper extends Component {
             case 'group':
                 this.GroupsTable.Filter(search_query);
                 break;
+        }
+    }
+
+    protected OnSelectionChanged(){
+        this.PrintNumberOfSelectedEntities(
+            this.UsersTable.GetSelectedCount(),
+            this.GroupsTable.GetSelectedCount());
+    }
+
+    protected PrintNumberOfSelectedEntities(users: number, groups: number){
+        if(users > 0 || groups > 0){
+            let text = 'Wybrano';
+
+            if(users > 0) text += ' ' + users + ' os' + n(users, 'obę', 'oby', 'ób');
+            if(users > 0 && groups > 0) text += ' i';
+            if(groups > 0) text += ' ' + groups + ' grup' + n(groups, 'ę', 'y', '');
+
+            text += '.'
+            this.SelectedEntitiesCountText.textContent = text;
+        }else{
+            this.SelectedEntitiesCountText.textContent = '';
         }
     }
 }

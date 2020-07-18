@@ -1,11 +1,12 @@
 import Component from '../../basic/component';
 import Group from '../../../entities/group';
 
-export default class GroupsTable extends Component {
+export default class GroupsTable extends Component<'selectionchanged'> {
     protected Element: HTMLTableElement;
     protected GroupsTBody: HTMLTableSectionElement;
     protected SearchEmptyTBody: HTMLTableSectionElement;
     protected AreGroupsPopulated: boolean = false;
+    protected SelectedCount: number = 0;
 
     constructor(){
         super();
@@ -46,6 +47,7 @@ export default class GroupsTable extends Component {
             let checkbox_cell = tr.insertCell(-1);
             let checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
+            checkbox.addEventListener('change', (() => this.OnRowSelectionChanged(checkbox.checked, tr)).bind(this));
             checkbox_cell.appendChild(checkbox);
 
             let group_name = await group.GetName();
@@ -70,5 +72,15 @@ export default class GroupsTable extends Component {
         }
 
         this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
+    }
+
+    protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
+        if(is_checked) this.SelectedCount++; else this.SelectedCount--;
+        row.dataset.isSelected = is_checked ? 'true' : 'false';
+        this.FireEvent('selectionchanged');
+    }
+
+    public GetSelectedCount(){
+        return this.SelectedCount;
     }
 }
