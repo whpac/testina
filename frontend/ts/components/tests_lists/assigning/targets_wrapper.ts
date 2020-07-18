@@ -54,7 +54,6 @@ export default class TargetsWrapper extends Component {
 
         this.SelectedEntitiesCountText = document.createElement('p');
         this.SelectedEntitiesCountText.classList.add('small-margin');
-        this.PrintNumberOfSelectedEntities(0, 0);
         this.AppendChild(this.SelectedEntitiesCountText);
     }
 
@@ -62,7 +61,8 @@ export default class TargetsWrapper extends Component {
         this.SearchField.value = '';
         this.UsersTab.Select();
         this.SwitchTargetType('user');
-        
+        this.PrintNumberOfSelectedEntities(0, 0);
+
         let users_awaiter = this.UsersTable.Populate();
         let groups_awaiter = this.GroupsTable.Populate();
         await users_awaiter;
