@@ -54,6 +54,18 @@ export default class GroupsTable extends Component<'selectionchanged'> {
             tr.dataset.groupName = group_name;
             tr.insertCell(-1).textContent = group_name;
         }
+        this.AreGroupsPopulated = true;
+    }
+
+    DeselectAll(){
+        this.SelectedCount = 0;
+
+        let rows = this.GroupsTBody.rows;
+        for(let i = 0; i < rows.length; i++){
+            let first_cell = rows[i].children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined) checkbox.checked = false;
+        }
     }
 
     Filter(search_query: string){

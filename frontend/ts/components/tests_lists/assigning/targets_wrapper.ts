@@ -68,6 +68,9 @@ export default class TargetsWrapper extends Component {
         await users_awaiter;
         await groups_awaiter;
 
+        this.UsersTable.DeselectAll();
+        this.GroupsTable.DeselectAll();
+
         this.FilterTable();
     }
 

@@ -54,6 +54,18 @@ export default class UsersTable extends Component<'selectionchanged'> {
             tr.dataset.userName = user_name;
             tr.insertCell(-1).textContent = user_name;
         }
+        this.AreUsersPopulated = true;
+    }
+
+    DeselectAll(){
+        this.SelectedCount = 0;
+
+        let rows = this.UsersTBody.rows;
+        for(let i = 0; i < rows.length; i++){
+            let first_cell = rows[i].children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined) checkbox.checked = false;
+        }
     }
 
     Filter(search_query: string){
