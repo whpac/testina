@@ -1,6 +1,7 @@
-input[type=text], input[type=password], input[type=number], textarea, select, .input {
+input[type=text], input[type=password], input[type=number], input[type=datetime-local], textarea, select, .input {
     background:var(--input-background-color); border:1px solid var(--input-border-color);
     transition:border-color 0.3s; padding:2px 5px; font-size:0.9em; color:var(--text-primary-color);
+    border-radius:2px;
 
     &:hover {border-color:var(--input-hover-border-color);}
     &:focus {
@@ -27,3 +28,23 @@ input.discreet, textarea.discreet {
 }
 
 input.deleted {opacity:0.5; text-decoration:line-through;}
+
+.input {
+    input[type=text], input[type=password], input[type=number], input[type=datetime-local], textarea, select {
+        border: none; padding:0;
+    }
+
+    .separator {
+        margin:0 5px; border-left:1px solid var(--input-separator-color); display:inline-block;
+        vertical-align:top; padding:0.5rem 0;
+
+        &.spaced {
+            margin:-2px 10px; border-color:var(--input-border-color); transition:border-color 0.3s;
+            padding:calc(0.5rem + 3px) 0;
+        }
+    }
+
+    &:hover .separator.spaced {border-color:var(--input-hover-border-color);}
+}
+
+select.hide-arrow {-webkit-appearance:none; -moz-appearance:none; appearance:none;}
