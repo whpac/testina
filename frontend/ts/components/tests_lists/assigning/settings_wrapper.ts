@@ -1,9 +1,12 @@
 import Component from '../../basic/component';
 import NavigationPrevention from '../../../1page/navigationprevention';
 import DateTimeInput from '../../basic/compat/datetimeinput';
+import HelpLink from '../../help_link';
 
 export default class SettingsWrapper extends Component {
     protected DeadlineInput: DateTimeInput;
+    protected ShortDeadlineWarning: HTMLParagraphElement;
+    protected DeadlineInPastError: HTMLParagraphElement;
     protected AttemptLimitFieldset: HTMLElement;
     protected AttemptsUnlimitedRadio: HTMLInputElement;
     protected AttemptsLimitedRadio: HTMLInputElement;
@@ -20,28 +23,35 @@ export default class SettingsWrapper extends Component {
         description.textContent = 'Ustaw termin na rozwiązanie testu oraz limit podejść';
         this.AppendChild(description);
 
-        let form = document.createElement('div');
-        form.classList.add('grid-form');
-        this.AppendChild(form);
-
         let deadline_label = document.createElement('label');
         deadline_label.textContent = 'Termin: ';
         deadline_label.htmlFor = 'deadline-input';
-        form.appendChild(deadline_label);
+        this.AppendChild(deadline_label);
 
         this.DeadlineInput = new DateTimeInput();
-        this.DeadlineInput.AddEventListener('change', this.StateChanged.bind(this));
+        this.DeadlineInput.AddEventListener('change', this.DeadlineChanged.bind(this));
         let deadline_input = this.DeadlineInput.GetElement();
         deadline_input.classList.add('narrow');
         deadline_input.id = deadline_label.htmlFor;
-        form.appendChild(deadline_input);
+        this.AppendChild(deadline_input);
+
+        this.ShortDeadlineWarning = document.createElement('p');
+        this.ShortDeadlineWarning.classList.add('warning-message', 'specific');
+        this.ShortDeadlineWarning.textContent = 'Termin na rozwiązanie testu może być za krótki.';
+        this.ShortDeadlineWarning.appendChild(new HelpLink().GetElement());
+        this.AppendChild(this.ShortDeadlineWarning);
+
+        this.DeadlineInPastError = document.createElement('p');
+        this.DeadlineInPastError.classList.add('error-message', 'specific');
+        this.DeadlineInPastError.textContent = 'Podany termin już upłynął.';
+        this.AppendChild(this.DeadlineInPastError);
 
         // Pola dotyczące limitu liczby podejść
         this.AttemptLimitFieldset = document.createElement('div');
         this.AttemptLimitFieldset.classList.add('fieldset');
         this.AttemptLimitFieldset.appendChild(document.createTextNode('Maksymalna liczba podejść:'));
         this.AttemptLimitFieldset.appendChild(document.createElement('br'));
-        form.appendChild(this.AttemptLimitFieldset);
+        this.AppendChild(this.AttemptLimitFieldset);
 
         // Bez limitu - pole i etykieta
         this.AttemptsUnlimitedRadio = document.createElement('input');
@@ -80,6 +90,7 @@ export default class SettingsWrapper extends Component {
 
     Clear(){
         this.DeadlineInput.SetValue(new Date());
+        this.DeadlineChanged();
         this.AttemptsLimitedRadio.checked = true;
         this.AttemptsLimitedCountInput.value = '1';
     }
@@ -87,6 +98,17 @@ export default class SettingsWrapper extends Component {
     protected UpdateAttemptCountEnableState(){
         this.AttemptsLimitedCountInput.disabled = !this.AttemptsLimitedRadio.checked;
         this.StateChanged();
+    }
+
+    protected DeadlineChanged(){
+        this.StateChanged();
+        let deadline = new Date(this.DeadlineInput.GetValue());
+
+        let time_difference = deadline.getTime() - new Date().getTime();
+        let is_too_short = time_difference < 86400000; // Termin wypadający mniej niż dobę naprzód jest określany jako potencjalnie za krótki
+        
+        this.ShortDeadlineWarning.style.display = (is_too_short && time_difference > 0) ? '' : 'none';
+        this.DeadlineInPastError.style.display = (time_difference <= 0) ? '' : 'none';
     }
 
     protected StateChanged(){
