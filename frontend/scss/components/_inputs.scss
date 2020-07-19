@@ -1,4 +1,4 @@
-input[type=text], input[type=password], input[type=number], textarea {
+input[type=text], input[type=password], input[type=number], textarea, select {
     background:var(--input-background-color); border:1px solid var(--input-border-color);
     transition:border-color 0.3s; padding:2px 5px; font-size:0.9em; color:var(--text-primary-color);
 
