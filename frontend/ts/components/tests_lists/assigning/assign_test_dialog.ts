@@ -8,6 +8,9 @@ export default class AssignTestDialog extends Dialog {
     Test: Test | undefined;
     TargetsWrapper: TargetsWrapper;
     SettingsWrapper: SettingsWrapper;
+    PrevButton: HTMLButtonElement;
+    NextButton: HTMLButtonElement;
+    SaveButton: HTMLButtonElement;
 
     constructor(){
         super();
@@ -20,9 +23,20 @@ export default class AssignTestDialog extends Dialog {
         this.SettingsWrapper = new SettingsWrapper();
         this.AddContent(this.SettingsWrapper.GetElement());
 
-        let btn_next = document.createElement('button');
-        btn_next.textContent = 'Dalej';
-        this.AddButton(btn_next);
+        this.SaveButton = document.createElement('button');
+        this.SaveButton.textContent = 'Zapisz';
+        this.AddButton(this.SaveButton);
+
+        this.NextButton = document.createElement('button');
+        this.NextButton.textContent = 'Dalej';
+        this.NextButton.addEventListener('click', this.OnNextButtonClick.bind(this));
+        this.AddButton(this.NextButton);
+
+        this.PrevButton = document.createElement('button');
+        this.PrevButton.textContent = 'Wróć';
+        this.PrevButton.classList.add('secondary');
+        this.PrevButton.addEventListener('click', this.OnPrevButtonClick.bind(this));
+        this.AddButton(this.PrevButton);
 
         let btn_cancel = document.createElement('button');
         btn_cancel.textContent = 'Anuluj';
@@ -36,7 +50,32 @@ export default class AssignTestDialog extends Dialog {
         this.TargetsWrapper.Populate();
         this.SettingsWrapper.Clear();
 
+        this.PrevButton.style.display = 'none';
+        this.NextButton.style.display = '';
+        this.SaveButton.style.display = 'none';
+
+        this.TargetsWrapper.GetElement().style.display = '';
+        this.SettingsWrapper.GetElement().style.display = 'none';
+
         this.SetHeader('Przypisz: ' + await test.GetName());
+    }
+
+    protected OnNextButtonClick(){
+        this.PrevButton.style.display = '';
+        this.NextButton.style.display = 'none';
+        this.SaveButton.style.display = '';
+
+        this.TargetsWrapper.GetElement().style.display = 'none';
+        this.SettingsWrapper.GetElement().style.display = '';
+    }
+
+    protected OnPrevButtonClick(){
+        this.PrevButton.style.display = 'none';
+        this.NextButton.style.display = '';
+        this.SaveButton.style.display = 'none';
+
+        this.TargetsWrapper.GetElement().style.display = '';
+        this.SettingsWrapper.GetElement().style.display = 'none';
     }
 
     protected CancelChanges(){
