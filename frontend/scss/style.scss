@@ -32,16 +32,14 @@ hr.spaced {margin:1em 0;}
 p {text-align:justify;}
 p.small-margin {margin-top:0.4em; margin-bottom:0.4em;}
 
-.warning {color:var(--warning-color) !important}
-.warning-message {
-    font-size:0.9em; color:var(--warning-color);
-    &:empty {display:none;}
-}
+.warning, .warning-message {color:var(--warning-color) !important}
+.error, .error-message {color:var(--error-color) !important;}
 
-.error {color:var(--error-color) !important;}
-.error-message {
-    font-size:0.9em; color:var(--error-color);
+.error-message, .warning-message {
+    font-size:0.9em; margin:0.8em 0;
+
     &:empty {display:none;}
+    &.specific {margin-top:0.4em;}
 }
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
