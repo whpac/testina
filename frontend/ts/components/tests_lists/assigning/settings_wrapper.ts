@@ -24,7 +24,7 @@ export default class SettingsWrapper extends Component {
         this.AppendChild(form);
 
         let deadline_label = document.createElement('label');
-        deadline_label.textContent = 'Termin na rozwiązanie: ';
+        deadline_label.textContent = 'Termin: ';
         deadline_label.htmlFor = 'deadline-input';
         form.appendChild(deadline_label);
 
