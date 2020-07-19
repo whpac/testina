@@ -5,6 +5,7 @@ import UsersTable from './users_table';
 import GroupsTable from './groups_table';
 
 import { n } from '../../../utils/textutils';
+import NavigationPrevention from '../../../1page/navigationprevention';
 
 type TargetType = 'user' | 'group';
 
@@ -114,6 +115,7 @@ export default class TargetsWrapper extends Component {
         this.PrintNumberOfSelectedEntities(
             this.UsersTable.GetSelectedCount(),
             this.GroupsTable.GetSelectedCount());
+        NavigationPrevention.Prevent('assign-test-dialog');
     }
 
     protected PrintNumberOfSelectedEntities(users: number, groups: number){
