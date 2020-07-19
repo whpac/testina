@@ -1,7 +1,9 @@
 import Component from '../../basic/component';
 import NavigationPrevention from '../../../1page/navigationprevention';
+import DateTimeInput from '../../basic/compat/datetimeinput';
 
 export default class SettingsWrapper extends Component {
+    protected DeadlineInput: DateTimeInput;
     protected AttemptLimitFieldset: HTMLElement;
     protected AttemptsUnlimitedRadio: HTMLInputElement;
     protected AttemptsLimitedRadio: HTMLInputElement;
@@ -9,6 +11,8 @@ export default class SettingsWrapper extends Component {
 
     constructor(){
         super();
+
+        this.Element = document.createElement('section');
 
         let description = document.createElement('p');
         description.classList.add('secondary');
@@ -23,11 +27,12 @@ export default class SettingsWrapper extends Component {
         deadline_label.textContent = 'Termin na rozwiązanie: ';
         deadline_label.htmlFor = 'deadline-input';
         form.appendChild(deadline_label);
-        
-        let deadline_input = document.createElement('input');
-        deadline_input.type = 'datetime-local';
-        deadline_input.id = deadline_label.htmlFor;
+
+        this.DeadlineInput = new DateTimeInput();
+        this.DeadlineInput.AddEventListener('change', this.StateChanged.bind(this));
+        let deadline_input = this.DeadlineInput.GetElement();
         deadline_input.classList.add('narrow');
+        deadline_input.id = deadline_label.htmlFor;
         form.appendChild(deadline_input);
 
         // Pola dotyczące limitu liczby podejść
@@ -73,6 +78,7 @@ export default class SettingsWrapper extends Component {
     }
 
     Clear(){
+        this.DeadlineInput.SetValue(new Date());
         this.AttemptsLimitedRadio.checked = true;
         this.AttemptsLimitedCountInput.value = '1';
     }
