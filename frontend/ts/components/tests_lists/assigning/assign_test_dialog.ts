@@ -8,7 +8,6 @@ export default class AssignTestDialog extends Dialog {
     protected Test: Test | undefined;
     protected TargetsWrapper: TargetsWrapper;
     protected SettingsWrapper: SettingsWrapper;
-    protected ErrorWrapper: HTMLParagraphElement;
     protected PrevButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected SaveButton: HTMLButtonElement;
@@ -19,18 +18,16 @@ export default class AssignTestDialog extends Dialog {
         this.DialogElement.classList.add('rich');
 
         this.TargetsWrapper = new TargetsWrapper();
+        this.TargetsWrapper.AddEventListener('validationchanged', this.OnValidationChanged.bind(this));
         this.AddContent(this.TargetsWrapper.GetElement());
 
         this.SettingsWrapper = new SettingsWrapper();
         this.SettingsWrapper.AddEventListener('validationchanged', this.OnValidationChanged.bind(this));
         this.AddContent(this.SettingsWrapper.GetElement());
 
-        this.ErrorWrapper = document.createElement('p');
-        this.ErrorWrapper.classList.add('error-message');
-        this.AddContent(this.ErrorWrapper);
-
         this.SaveButton = document.createElement('button');
         this.SaveButton.textContent = 'Zapisz';
+        this.SaveButton.addEventListener('click', this.OnSaveButtonClick.bind(this));
         this.AddButton(this.SaveButton);
 
         this.NextButton = document.createElement('button');
@@ -55,7 +52,6 @@ export default class AssignTestDialog extends Dialog {
         this.Test = test;
         this.TargetsWrapper.Populate();
         this.SettingsWrapper.Clear();
-        this.ErrorWrapper.textContent = '';
 
         this.PrevButton.style.display = 'none';
         this.NextButton.style.display = '';
@@ -68,11 +64,7 @@ export default class AssignTestDialog extends Dialog {
     }
 
     protected OnNextButtonClick(){
-        if(!this.TargetsWrapper.IsAnythingSelected()){
-            this.ErrorWrapper.textContent = 'Nie zaznaczono żadnej osoby ani grupy.';
-            return;
-        }
-        this.ErrorWrapper.textContent = '';
+        if(!this.TargetsWrapper.IsValid) return;
 
         this.PrevButton.style.display = '';
         this.NextButton.style.display = 'none';
@@ -100,7 +92,15 @@ export default class AssignTestDialog extends Dialog {
         this.Hide();
     }
 
+    protected OnSaveButtonClick(){
+        if(!this.SettingsWrapper.IsValid) return;
+
+        NavigationPrevention.Unprevent('assign-test-dialog');
+        alert('TODO');
+    }
+
     protected OnValidationChanged(){
+        this.NextButton.disabled = !this.TargetsWrapper.IsValid;
         this.SaveButton.disabled = !this.SettingsWrapper.IsValid;
     }
 }

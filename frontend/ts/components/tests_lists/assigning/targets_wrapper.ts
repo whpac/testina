@@ -9,13 +9,16 @@ import NavigationPrevention from '../../../1page/navigationprevention';
 
 type TargetType = 'user' | 'group';
 
-export default class TargetsWrapper extends Component {
+export default class TargetsWrapper extends Component<'validationchanged'> {
     protected SearchField: HTMLInputElement;
     protected UsersTab: Tab;
     protected UsersTable: UsersTable;
     protected GroupsTable: GroupsTable;
     protected CurrentlyDisplayedTargetType!: TargetType;
     protected SelectedEntitiesCountText: HTMLElement;
+    protected NothingSelectedError: HTMLParagraphElement;
+
+    public IsValid: boolean = true;
 
     constructor(){
         super();
@@ -64,6 +67,11 @@ export default class TargetsWrapper extends Component {
         this.SelectedEntitiesCountText = document.createElement('p');
         this.SelectedEntitiesCountText.classList.add('small-margin');
         this.AppendChild(this.SelectedEntitiesCountText);
+
+        this.NothingSelectedError = document.createElement('p');
+        this.NothingSelectedError.classList.add('error-message', 'specific');
+        this.NothingSelectedError.textContent = 'Nie wybrano żadnej osoby ani grupy.';
+        this.AppendChild(this.NothingSelectedError);
     }
 
     async Populate(){
@@ -79,12 +87,20 @@ export default class TargetsWrapper extends Component {
 
         this.UsersTable.DeselectAll();
         this.GroupsTable.DeselectAll();
+        this.Validate();
 
         this.FilterTable();
     }
 
-    IsAnythingSelected(){
-        return this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
+    Validate(){
+        let old_validity = this.IsValid;
+        this.IsValid = true;
+
+        let is_anything_selected = this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
+        this.NothingSelectedError.style.display = is_anything_selected ? 'none' : '';
+        if(!is_anything_selected) this.IsValid = false;
+
+        if(this.IsValid != old_validity) this.FireEvent('validationchanged');
     }
 
     protected SwitchTargetType(new_target: TargetType){
@@ -120,6 +136,7 @@ export default class TargetsWrapper extends Component {
         this.PrintNumberOfSelectedEntities(
             this.UsersTable.GetSelectedCount(),
             this.GroupsTable.GetSelectedCount());
+        this.Validate();
         NavigationPrevention.Prevent('assign-test-dialog');
     }
 
