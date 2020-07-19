@@ -21,6 +21,9 @@
     
     .fieldset, h2, .error-message, .warning-message {grid-column:1 / span 2;}
     .description {grid-column:1 / span 2; margin:-5px 0 5px 10px; font-size:0.9em;}
+
+    .fieldset {margin-top:0;}
 }
 
+.fieldset {margin-top:0.4em;}
 .fieldset p {margin:0 0;}
