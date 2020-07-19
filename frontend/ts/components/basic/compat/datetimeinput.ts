@@ -1,7 +1,7 @@
 import Component from '../component';
 
 /** Klasa, która zapewnia zastępczą implementację dla pola input type=datetime-local */
-export default class DateTimeInput extends Component {
+export default class DateTimeInput extends Component<'change'> {
     /** Prawdziwy element input */
     protected RealInput: HTMLInputElement;
 
@@ -25,6 +25,7 @@ export default class DateTimeInput extends Component {
 
         this.RealInput = document.createElement('input');
         this.RealInput.type = 'datetime-local';
+        this.RealInput.addEventListener('change', this.OnChange.bind(this));
         this.Element = this.RealInput;
 
         if(this.RealInput.type === 'text'){
@@ -42,6 +43,12 @@ export default class DateTimeInput extends Component {
             this.DaySelect.classList.add('hide-arrow');
             this.HourSelect.classList.add('hide-arrow');
             this.MinuteSelect.classList.add('hide-arrow');
+
+            this.YearSelect.addEventListener('change', this.OnChange.bind(this));
+            this.MonthSelect.addEventListener('change', this.OnChange.bind(this));
+            this.DaySelect.addEventListener('change', this.OnChange.bind(this));
+            this.HourSelect.addEventListener('change', this.OnChange.bind(this));
+            this.MinuteSelect.addEventListener('change', this.OnChange.bind(this));
 
             let separator = document.createElement('span');
             separator.classList.add('separator');
@@ -137,6 +144,10 @@ export default class DateTimeInput extends Component {
             output += minute;
             return output;
         }
+    }
+
+    protected OnChange(){
+        this.FireEvent('change');
     }
 
     /**
