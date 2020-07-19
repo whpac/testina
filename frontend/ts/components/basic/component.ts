@@ -33,7 +33,6 @@ export default class Component<EventName extends string = ''> {
 
     /**
      * Zwraca element HTML reprezentujący komponent
-     * @deprecated
      */
     GetElement(){
         return this.Element;
@@ -43,19 +42,14 @@ export default class Component<EventName extends string = ''> {
      * Dodaje element potomny do komponentu
      * @param child Element HTML lub komponent do dodania
      */
-    AppendChild(child: Node | Component<string>){
+    AppendChild(child: Node | Component<string> | string){
         if(child instanceof Node){
             this.Element.appendChild(child);
         }else if(child instanceof Component){
-            this.Element.appendChild(child.Render());
+            this.Element.appendChild(child.GetElement());
+        }else if(typeof child === 'string'){
+            this.Element.appendChild(document.createTextNode(child));
         }
-    }
-
-    /**
-     * Zwraca reprezentację komponentu jako element HTML
-     */
-    Render(){
-        return this.Element;
     }
 
     /**

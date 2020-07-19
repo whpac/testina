@@ -29,17 +29,18 @@ export default class Card extends Component {
 
     /**
      * Zwraca element z zawartością karty
-     * @deprecated
      */
     GetContentElement(){
         return this.ContentWrapper;
     }
 
-    AppendChild(child: Node | Component<string>){
+    AppendChild(child: Node | Component<string> | string){
         if(child instanceof Node){
             this.ContentWrapper.appendChild(child);
         }else if(child instanceof Component){
-            this.ContentWrapper.appendChild(child.Render());
+            this.ContentWrapper.appendChild(child.GetElement());
+        }else if(typeof child === 'string'){
+            this.ContentWrapper.appendChild(document.createTextNode(child));
         }
     }
 
