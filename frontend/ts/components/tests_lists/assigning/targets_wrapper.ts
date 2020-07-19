@@ -19,6 +19,13 @@ export default class TargetsWrapper extends Component {
     constructor(){
         super();
 
+        this.Element = document.createElement('section');
+
+        let targets_description = document.createElement('p');
+        targets_description.classList.add('secondary');
+        targets_description.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+        this.AppendChild(targets_description);
+
         let search_tabs = document.createElement('div');
         search_tabs.classList.add('search-and-tabs');
         this.AppendChild(search_tabs);

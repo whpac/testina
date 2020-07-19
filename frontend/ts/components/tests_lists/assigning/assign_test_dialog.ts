@@ -11,16 +11,8 @@ export default class AssignTestDialog extends Dialog {
 
         this.DialogElement.classList.add('rich');
 
-        let section_targets = document.createElement('section');
-        this.AddContent(section_targets);
-
-        let targets_description = document.createElement('p');
-        targets_description.classList.add('secondary');
-        targets_description.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
-        section_targets.appendChild(targets_description);
-        
         this.TargetsWrapper = new TargetsWrapper();
-        section_targets.appendChild(this.TargetsWrapper.GetElement());
+        this.AddContent(this.TargetsWrapper.GetElement());
 
         let btn_next = document.createElement('button');
         btn_next.textContent = 'Dalej';
