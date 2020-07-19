@@ -15,7 +15,7 @@
     textarea {align-self:start;}
 
     label {grid-column:1;}
-    input, textarea {grid-column:2;}
+    input, textarea, .input {grid-column:2;}
     input.narrow {justify-self:start;}
     button, select {grid-column:2; justify-self:start;}
     
