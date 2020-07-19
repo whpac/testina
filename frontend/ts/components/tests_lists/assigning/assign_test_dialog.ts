@@ -22,6 +22,7 @@ export default class AssignTestDialog extends Dialog {
         this.AddContent(this.TargetsWrapper.GetElement());
 
         this.SettingsWrapper = new SettingsWrapper();
+        this.SettingsWrapper.AddEventListener('validationchanged', this.OnValidationChanged.bind(this));
         this.AddContent(this.SettingsWrapper.GetElement());
 
         this.ErrorWrapper = document.createElement('p');
@@ -97,5 +98,9 @@ export default class AssignTestDialog extends Dialog {
         }
         NavigationPrevention.Unprevent('assign-test-dialog');
         this.Hide();
+    }
+
+    protected OnValidationChanged(){
+        this.SaveButton.disabled = !this.SettingsWrapper.IsValid;
     }
 }

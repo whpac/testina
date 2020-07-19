@@ -3,7 +3,7 @@ import NavigationPrevention from '../../../1page/navigationprevention';
 import DateTimeInput from '../../basic/compat/datetimeinput';
 import HelpLink from '../../help_link';
 
-export default class SettingsWrapper extends Component {
+export default class SettingsWrapper extends Component<'validationchanged'> {
     protected DeadlineInput: DateTimeInput;
     protected ShortDeadlineWarning: HTMLParagraphElement;
     protected DeadlineInPastError: HTMLParagraphElement;
@@ -11,6 +11,9 @@ export default class SettingsWrapper extends Component {
     protected AttemptsUnlimitedRadio: HTMLInputElement;
     protected AttemptsLimitedRadio: HTMLInputElement;
     protected AttemptsLimitedCountInput: HTMLInputElement;
+    protected WrongAttemptLimitError: HTMLParagraphElement;
+
+    public IsValid: boolean = true;
 
     constructor(){
         super();
@@ -29,7 +32,7 @@ export default class SettingsWrapper extends Component {
         this.AppendChild(deadline_label);
 
         this.DeadlineInput = new DateTimeInput();
-        this.DeadlineInput.AddEventListener('change', this.DeadlineChanged.bind(this));
+        this.DeadlineInput.AddEventListener('change', this.StateChanged.bind(this));
         let deadline_input = this.DeadlineInput.GetElement();
         deadline_input.classList.add('narrow');
         deadline_input.id = deadline_label.htmlFor;
@@ -86,13 +89,18 @@ export default class SettingsWrapper extends Component {
         this.AttemptsLimitedCountInput.min = '1';
         this.AttemptsLimitedCountInput.addEventListener('change', this.StateChanged.bind(this));
         this.AttemptLimitFieldset.appendChild(this.AttemptsLimitedCountInput);
+
+        this.WrongAttemptLimitError = document.createElement('p');
+        this.WrongAttemptLimitError.classList.add('error-message', 'specific');
+        this.WrongAttemptLimitError.textContent = 'Limit ilości podejść musi być liczbą całkowitą większą od zera.';
+        this.AppendChild(this.WrongAttemptLimitError);
     }
 
     Clear(){
         this.DeadlineInput.SetValue(new Date());
-        this.DeadlineChanged();
         this.AttemptsLimitedRadio.checked = true;
         this.AttemptsLimitedCountInput.value = '1';
+        this.Validate();
     }
 
     protected UpdateAttemptCountEnableState(){
@@ -100,8 +108,15 @@ export default class SettingsWrapper extends Component {
         this.StateChanged();
     }
 
-    protected DeadlineChanged(){
-        this.StateChanged();
+    protected StateChanged(){
+        this.Validate();
+        NavigationPrevention.Prevent('assign-test-dialog');
+    }
+
+    protected Validate(){
+        let old_validity = this.IsValid;
+        this.IsValid = true;
+
         let deadline = new Date(this.DeadlineInput.GetValue());
 
         let time_difference = deadline.getTime() - new Date().getTime();
@@ -109,9 +124,18 @@ export default class SettingsWrapper extends Component {
         
         this.ShortDeadlineWarning.style.display = (is_too_short && time_difference > 0) ? '' : 'none';
         this.DeadlineInPastError.style.display = (time_difference <= 0) ? '' : 'none';
-    }
+        if(time_difference <= 0) this.IsValid = false;
 
-    protected StateChanged(){
-        NavigationPrevention.Prevent('assign-test-dialog');
+        if(this.AttemptsLimitedRadio.checked){
+            let max_attempts = parseInt(this.AttemptsLimitedCountInput.value);
+            let is_wrong_attempt_limit = (max_attempts <= 0 || isNaN(max_attempts));
+            
+            this.WrongAttemptLimitError.style.display = is_wrong_attempt_limit ? '' : 'none';
+            if(is_wrong_attempt_limit) this.IsValid = false;
+        }else{
+            this.WrongAttemptLimitError.style.display = 'none';
+        }
+
+        if(old_validity != this.IsValid) this.FireEvent('validationchanged');
     }
 }
