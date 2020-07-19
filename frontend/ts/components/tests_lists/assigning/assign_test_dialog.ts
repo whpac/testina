@@ -5,12 +5,13 @@ import SettingsWrapper from './settings_wrapper';
 import NavigationPrevention from '../../../1page/navigationprevention';
 
 export default class AssignTestDialog extends Dialog {
-    Test: Test | undefined;
-    TargetsWrapper: TargetsWrapper;
-    SettingsWrapper: SettingsWrapper;
-    PrevButton: HTMLButtonElement;
-    NextButton: HTMLButtonElement;
-    SaveButton: HTMLButtonElement;
+    protected Test: Test | undefined;
+    protected TargetsWrapper: TargetsWrapper;
+    protected SettingsWrapper: SettingsWrapper;
+    protected ErrorWrapper: HTMLParagraphElement;
+    protected PrevButton: HTMLButtonElement;
+    protected NextButton: HTMLButtonElement;
+    protected SaveButton: HTMLButtonElement;
 
     constructor(){
         super();
@@ -22,6 +23,10 @@ export default class AssignTestDialog extends Dialog {
 
         this.SettingsWrapper = new SettingsWrapper();
         this.AddContent(this.SettingsWrapper.GetElement());
+
+        this.ErrorWrapper = document.createElement('p');
+        this.ErrorWrapper.classList.add('error-message');
+        this.AddContent(this.ErrorWrapper);
 
         this.SaveButton = document.createElement('button');
         this.SaveButton.textContent = 'Zapisz';
@@ -49,6 +54,7 @@ export default class AssignTestDialog extends Dialog {
         this.Test = test;
         this.TargetsWrapper.Populate();
         this.SettingsWrapper.Clear();
+        this.ErrorWrapper.textContent = '';
 
         this.PrevButton.style.display = 'none';
         this.NextButton.style.display = '';
@@ -61,6 +67,12 @@ export default class AssignTestDialog extends Dialog {
     }
 
     protected OnNextButtonClick(){
+        if(!this.TargetsWrapper.IsAnythingSelected()){
+            this.ErrorWrapper.textContent = 'Nie zaznaczono żadnej osoby ani grupy.';
+            return;
+        }
+        this.ErrorWrapper.textContent = '';
+
         this.PrevButton.style.display = '';
         this.NextButton.style.display = 'none';
         this.SaveButton.style.display = '';

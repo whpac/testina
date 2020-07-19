@@ -83,6 +83,10 @@ export default class TargetsWrapper extends Component {
         this.FilterTable();
     }
 
+    IsAnythingSelected(){
+        return this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
+    }
+
     protected SwitchTargetType(new_target: TargetType){
         this.UsersTable.GetElement().style.display = 'none';
         this.GroupsTable.GetElement().style.display = 'none';
