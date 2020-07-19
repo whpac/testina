@@ -21,6 +21,7 @@ export default class TargetsWrapper extends Component {
         super();
 
         this.Element = document.createElement('section');
+        this.Element.classList.add('no-margin');
 
         let targets_description = document.createElement('p');
         targets_description.classList.add('secondary');

@@ -13,6 +13,7 @@ export default class SettingsWrapper extends Component {
         super();
 
         this.Element = document.createElement('section');
+        this.Element.classList.add('no-margin');
 
         let description = document.createElement('p');
         description.classList.add('secondary');
