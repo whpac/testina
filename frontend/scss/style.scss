@@ -25,13 +25,24 @@ aside.loading-wrapper {position:fixed; top:30vh; left:10vw; background:lime;}
 .empty-placeholder p {margin:0.5em 0;}
 .emoji {color:#000 !important} /* So emoji is not semitransparent */
 .secondary {color:var(--text-secondary-color);}
-.error {color:var(--error-color) !important;}
 .small {font-size:0.85em;}
 em {font-weight:500; font-style:normal;}
 hr {border:none; border-top:1px solid var(--nav-separator-color); margin:0.5em 0;}
 hr.spaced {margin:1em 0;}
 p {text-align:justify;}
 p.small-margin {margin-top:0.4em; margin-bottom:0.4em;}
+
+.warning {color:var(--warning-color) !important}
+.warning-message {
+    font-size:0.9em; color:var(--warning-color);
+    &:empty {display:none;}
+}
+
+.error {color:var(--error-color) !important;}
+.error-message {
+    font-size:0.9em; color:var(--error-color);
+    &:empty {display:none;}
+}
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
 .overflow-container-y {max-height:50vh; overflow-y:auto;}

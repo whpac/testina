@@ -118,7 +118,7 @@ export default class TestSettings extends Card {
         this.AppendChild(time_limit_fieldset);
 
         this.ErrorWrapper = document.createElement('p');
-        this.ErrorWrapper.classList.add('dialog-error');
+        this.ErrorWrapper.classList.add('error-message');
         this.AppendChild(this.ErrorWrapper);
 
         // Przyłączenie obsługi zdarzeń

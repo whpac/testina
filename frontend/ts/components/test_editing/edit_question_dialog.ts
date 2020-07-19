@@ -191,7 +191,7 @@ export default class EditQuestionDialog extends Dialog {
         answers_section.appendChild(this.AnswersTable.GetElement());
 
         this.ErrorWrapper = document.createElement('p');
-        this.ErrorWrapper.classList.add('dialog-error');
+        this.ErrorWrapper.classList.add('error-message');
         this.AddContent(this.ErrorWrapper);
 
         this.SetHeader('Edytuj pytanie');

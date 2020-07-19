@@ -19,7 +19,7 @@
     .narrow {justify-self:start;}
     button, select {grid-column:2; justify-self:start;}
     
-    .fieldset, h2, .dialog-error {grid-column:1 / span 2;}
+    .fieldset, h2, .error-message, .warning-message {grid-column:1 / span 2;}
     .description {grid-column:1 / span 2; margin:-5px 0 5px 10px; font-size:0.9em;}
 }
 
