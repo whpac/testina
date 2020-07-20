@@ -18,18 +18,6 @@ export default class TestsToSolveTable extends Card {
         table.classList.add('table', 'full-width');
         this.AppendChild(table);
 
-        /*let colgroup = document.createElement('colgroup');
-        let col_shrink = document.createElement('col');
-        col_shrink.classList.add('shrink');
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        colgroup.appendChild(col_shrink.cloneNode(false));
-        table.appendChild(colgroup);*/
-
         let colgroup = document.createElement('colgroup');
         let col_shrink = document.createElement('col');
         col_shrink.classList.add('shrink');
@@ -86,6 +74,17 @@ export default class TestsToSolveTable extends Card {
         nocontent_tbody.classList.add('nocontent-tbody');
         let tr = nocontent_tbody.insertRow();
 
+        let cell = tr.insertCell();
+        cell.textContent = 'Nie ma żadnych testów do rozwiązania.';
+        cell.classList.add('secondary');
+        tr.insertCell();
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell();
+
+        tr = this.ContentWrapper.insertRow();
         tr.insertCell().textContent = 'Wczytywanie...';
         tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
