@@ -1,4 +1,30 @@
 /**
+ * Zwraca datę w formacie YYYY-MM-DD HH:MM:SS
+ * @param date 
+ */
+export function ToLongFormat(date: Date){
+    let month = '0' + (date.getMonth() + 1).toString();
+    month = month.substr(month.length - 2, 2);
+    let day = '0' + date.getDate().toString();
+    day = day.substr(day.length - 2, 2);
+    let hour = '0' + date.getHours().toString();
+    hour = hour.substr(hour.length - 2, 2);
+    let minute = '0' + date.getMinutes().toString();
+    minute = minute.substr(minute.length - 2, 2);
+    let second = '0' + date.getSeconds().toString();
+    second = second.substr(second.length - 2, 2);
+
+    let output = '';
+    output += date.getFullYear().toString() + '-';
+    output += month + '-';
+    output += day + ' ';
+    output += hour + ':';
+    output += minute + ':';
+    output += second;
+    return output;
+}
+
+/**
  * Zwraca datę w formacie HH:MM (jeśli w ciągu ostatnich 24h) albo DD-MM-YYYY, HH:MM
  * @param date Data do sformatowania
  */
