@@ -4,6 +4,7 @@ import TargetsWrapper from './targets_wrapper';
 import SettingsWrapper from './settings_wrapper';
 import NavigationPrevention from '../../../1page/navigationprevention';
 import Assignment from '../../../entities/assignment';
+import Toast from '../../basic/toast';
 
 export default class AssignTestDialog extends Dialog {
     protected Test: Test | undefined;
@@ -93,8 +94,9 @@ export default class AssignTestDialog extends Dialog {
         this.Hide();
     }
 
-    protected OnSaveButtonClick(){
+    protected async OnSaveButtonClick(){
         if(!this.SettingsWrapper.IsValid) return;
+        if(this.Test === undefined) return;
 
         NavigationPrevention.Unprevent('assign-test-dialog');
 
@@ -102,7 +104,17 @@ export default class AssignTestDialog extends Dialog {
         let attempt_limit = this.SettingsWrapper.GetAttemptLimit();
         let deadline = this.SettingsWrapper.GetDeadline();
 
-        Assignment.Create(targets, attempt_limit, deadline);
+        try{
+            let assigning_toast = new Toast('Przypisywanie testu „' + await this.Test.GetName() + '”...');
+            assigning_toast.Show();
+            let assignment = await Assignment.Create(this.Test, attempt_limit, deadline);
+            await assignment.AddTargets(targets);
+            assigning_toast.Hide();
+            this.Hide();
+            new Toast('Test „' + await this.Test.GetName() + '” został przypisany.').Show(0);
+        }catch(e){
+            new Toast('Nie udało się przypisać testu').Show(0);
+        }
     }
 
     protected OnValidationChanged(){

@@ -14,6 +14,7 @@ class Assignment extends Resource{
         $this->AddSubResource('score', new ValueResource($assignment->GetAverageScore($current_user)));
         $this->AddSubResource('test', new Test($assignment->GetTest()));
         $this->AddSubResource('attempts', new AttemptCollection($assignment));
+        $this->AddSubResource('assigned_by', new User($assignment->GetAssigningUser()));
         return true;
     }
 }

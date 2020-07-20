@@ -4,6 +4,10 @@ import * as XHR from '../utils/xhr';
 import Test from './test';
 import { TestDescriptor } from './test';
 import PageParams from '../1page/pageparams';
+import Group from './group';
+import User, { UserDescriptor } from './user';
+
+import * as DateUtils from '../utils/dateutils';
 
 /** Deskryptor przypisania w odpowiedzi z API */
 interface AssignmentDescriptor {
@@ -13,13 +17,16 @@ interface AssignmentDescriptor {
     assignment_date: string,
     attempt_count: number,
     score: number | null,
-    test: TestDescriptor
+    test: TestDescriptor,
+    assigned_by: UserDescriptor
 }
 
 /** @deprecated */
 type AssignmentCollection = {
     [assignment_id: number]: AssignmentDescriptor
 }
+
+type AssignmentTarget = User | Group;
 
 /** Klasa reprezentująca przypisanie */
 export default class Assignment extends Entity implements PageParams {
@@ -37,6 +44,8 @@ export default class Assignment extends Entity implements PageParams {
     protected score: number | null | undefined;
     /** Test, który przypisano */
     protected test: Test | undefined;
+    /** Użytkownik, który przypisał test */
+    protected assigned_by: User | undefined;
 
     /** Reprezentuje status pobierania danych z serwera */
     private _fetch_awaiter: Promise<void> | undefined;
@@ -58,8 +67,8 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     /** Zwraca wszystkie przypisania dla bieżącego użytkownika */
-    static async GetAll(){
-        let response = await XHR.Request('api/assignments?depth=4', 'GET');
+    static async GetAssignedToCurrentUser(){
+        let response = await XHR.Request('api/assigned_to_me?depth=4', 'GET');
         let json = response.Response as AssignmentCollection;
         let out_array: Assignment[] = [];
 
@@ -93,6 +102,7 @@ export default class Assignment extends Entity implements PageParams {
         this.attempt_count = descriptor.attempt_count;
         this.score = descriptor.score;
         this.test = new Test(descriptor.test);
+        this.assigned_by = new User(descriptor.assigned_by);
     }
 
     /** Zwraca adres przypisania w API */
@@ -141,6 +151,11 @@ export default class Assignment extends Entity implements PageParams {
         return this.test as Test;
     }
 
+    async GetAssigningUser(): Promise<User>{
+        await this?._fetch_awaiter;
+        return this.assigned_by as User;
+    }
+
     /** Czy pozostały jeszcze podejścia */
     async AreRemainingAttempts(): Promise<boolean>{
         let attempt_count = await this.GetAttemptCount();
@@ -174,5 +189,25 @@ export default class Assignment extends Entity implements PageParams {
             type: 'assignment',
             id: this.GetId()
         };
+    }
+
+    static async Create(test: Test, attempt_limit: number, deadline: Date){
+        if(attempt_limit == Number.POSITIVE_INFINITY) attempt_limit = 0;
+
+        let payload = {
+            test_id: test.GetId(),
+            attempt_limit: attempt_limit,
+            time_limit: DateUtils.ToLongFormat(deadline)
+        }
+
+        let result = await XHR.Request('api/assignments', 'POST', payload);
+
+        if(result.Status != 201) throw result;
+        
+        return new Assignment(parseInt(result.ContentLocation));
+    }
+
+    async AddTargets(targets: AssignmentTarget[]){
+        
     }
 }
