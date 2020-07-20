@@ -24,6 +24,10 @@ class AssignmentCollection extends Resource {
     public function CreateSubResource(/* mixed */ $source){
         $current_user = $this->GetContext()->GetUser();
         $test = new \Entities\Test($source->test_id);
+
+        if($test->GetAuthor()->GetId() != $current_user->GetId())
+            throw new Exceptions\MethodNotAllowed('POST');
+
         $attempt_limit = $source->attempt_limit;
         $deadline = new \DateTime($source->time_limit);
 
