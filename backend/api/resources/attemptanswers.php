@@ -31,7 +31,7 @@ class AttemptAnswers extends Resource {
         $test = $assignment->GetTest();
         if($test->HasTimeLimit()){
             $time_limit = $test->GetTimeLimit();
-            $interval = new DateInterval('PT'.$time_limit.'S');
+            $interval = new \DateInterval('PT'.$time_limit.'S');
             $time_limit = $assignment->GetTimeLimit()->add($interval);
 
             if($time_limit < new \DateTime('-60 seconds')){
