@@ -3,6 +3,7 @@ import Test from '../../../entities/test';
 import TargetsWrapper from './targets_wrapper';
 import SettingsWrapper from './settings_wrapper';
 import NavigationPrevention from '../../../1page/navigationprevention';
+import Assignment from '../../../entities/assignment';
 
 export default class AssignTestDialog extends Dialog {
     protected Test: Test | undefined;
@@ -96,7 +97,12 @@ export default class AssignTestDialog extends Dialog {
         if(!this.SettingsWrapper.IsValid) return;
 
         NavigationPrevention.Unprevent('assign-test-dialog');
-        alert('TODO');
+
+        let targets = this.TargetsWrapper.GetSelectedTargets();
+        let attempt_limit = this.SettingsWrapper.GetAttemptLimit();
+        let deadline = this.SettingsWrapper.GetDeadline();
+
+        Assignment.Create(targets, attempt_limit, deadline);
     }
 
     protected OnValidationChanged(){

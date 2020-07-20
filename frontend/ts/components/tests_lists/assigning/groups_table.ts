@@ -7,6 +7,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
     protected SearchEmptyTBody: HTMLTableSectionElement;
     protected AreGroupsPopulated: boolean = false;
     protected SelectedCount: number = 0;
+    protected Rows: Row[] = [];
 
     constructor(){
         super();
@@ -53,6 +54,8 @@ export default class GroupsTable extends Component<'selectionchanged'> {
             let group_name = await group.GetName();
             tr.dataset.groupName = group_name;
             tr.insertCell(-1).textContent = group_name;
+
+            this.Rows.push(new Row(tr, group));
         }
         this.AreGroupsPopulated = true;
     }
@@ -86,6 +89,16 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
     }
 
+    GetSelected(){
+        let groups: Group[] = [];
+        for(let row of this.Rows){
+            let first_cell = row.Tr.children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined && checkbox.checked) groups.push(row.Group);
+        }
+        return groups;
+    }
+
     protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
         if(is_checked) this.SelectedCount++; else this.SelectedCount--;
         row.dataset.isSelected = is_checked ? 'true' : 'false';
@@ -94,5 +107,15 @@ export default class GroupsTable extends Component<'selectionchanged'> {
 
     public GetSelectedCount(){
         return this.SelectedCount;
+    }
+}
+
+class Row {
+    Tr: HTMLTableRowElement;
+    Group: Group;
+
+    constructor(row: HTMLTableRowElement, group: Group){
+        this.Tr = row;
+        this.Group = group;
     }
 }

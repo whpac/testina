@@ -7,6 +7,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
     protected SearchEmptyTBody: HTMLTableSectionElement;
     protected AreUsersPopulated: boolean = false;
     protected SelectedCount: number = 0;
+    protected Rows: Row[] = [];
 
     constructor(){
         super();
@@ -53,6 +54,8 @@ export default class UsersTable extends Component<'selectionchanged'> {
             let user_name = await user.GetName();
             tr.dataset.userName = user_name;
             tr.insertCell(-1).textContent = user_name;
+
+            this.Rows.push(new Row(tr, user));
         }
         this.AreUsersPopulated = true;
     }
@@ -86,6 +89,16 @@ export default class UsersTable extends Component<'selectionchanged'> {
         this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
     }
 
+    GetSelected(){
+        let users: User[] = [];
+        for(let row of this.Rows){
+            let first_cell = row.Tr.children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined && checkbox.checked) users.push(row.User);
+        }
+        return users;
+    }
+
     protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
         if(is_checked) this.SelectedCount++; else this.SelectedCount--;
         row.dataset.isSelected = is_checked ? 'true' : 'false';
@@ -94,5 +107,15 @@ export default class UsersTable extends Component<'selectionchanged'> {
 
     public GetSelectedCount(){
         return this.SelectedCount;
+    }
+}
+
+class Row {
+    Tr: HTMLTableRowElement;
+    User: User;
+
+    constructor(row: HTMLTableRowElement, user: User){
+        this.Tr = row;
+        this.User = user;
     }
 }

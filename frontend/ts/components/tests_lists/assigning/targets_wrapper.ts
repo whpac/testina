@@ -6,6 +6,8 @@ import GroupsTable from './groups_table';
 
 import { n } from '../../../utils/textutils';
 import NavigationPrevention from '../../../1page/navigationprevention';
+import User from '../../../entities/user';
+import Group from '../../../entities/group';
 
 type TargetType = 'user' | 'group';
 
@@ -92,7 +94,14 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.FilterTable();
     }
 
-    Validate(){
+    GetSelectedTargets(){
+        let targets: (User | Group)[] = [];
+        targets = this.UsersTable.GetSelected();
+        targets = targets.concat(this.GroupsTable.GetSelected());
+        return targets;
+    }
+
+    protected Validate(){
         let old_validity = this.IsValid;
         this.IsValid = true;
 

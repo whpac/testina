@@ -103,6 +103,16 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         this.Validate();
     }
 
+    GetAttemptLimit(){
+        let limit = Number.POSITIVE_INFINITY;
+        if(this.AttemptsLimitedRadio.checked) limit = parseInt(this.AttemptsLimitedCountInput.value);
+        return limit;
+    }
+
+    GetDeadline(){
+        return new Date(this.DeadlineInput.GetValue());
+    }
+
     protected UpdateAttemptCountEnableState(){
         this.AttemptsLimitedCountInput.disabled = !this.AttemptsLimitedRadio.checked;
         this.StateChanged();
