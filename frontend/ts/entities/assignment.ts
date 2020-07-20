@@ -208,6 +208,25 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     async AddTargets(targets: AssignmentTarget[]){
-        
+        let payload_targets: {type: number, id: number}[] = [];
+
+        for(let target of targets){
+            let type = 0;
+            if(target instanceof User) type = 0;
+            if(target instanceof Group) type = 1;
+
+            payload_targets.push({
+                type: type,
+                id: target.GetId()
+            });
+        }
+
+        let payload = {
+            targets: payload_targets
+        }
+
+        let result = await XHR.Request(this.GetApiUrl(), 'PUT', payload);
+
+        if(result.Status != 204) throw result;
     }
 }

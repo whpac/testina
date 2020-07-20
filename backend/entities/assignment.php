@@ -156,6 +156,18 @@ class Assignment extends Entity {
         return Attempt::CountAttemptsByUserAndAssignment($user, $this);
     }
 
+    public /* void */ function AddTarget($target_type, $target_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENT_TARGETS)
+                ->Insert()
+                ->Value('assignment_id', $this->GetId())
+                ->Value('target_type', $target_type)
+                ->Value('target_id', $target_id)
+                ->Run();
+        
+        if(!$result) throw new \Exception('Nie udało się przypisać testu użytkownikowi lub grupie.');
+    }
+
     public static /* Assignment */ function Create(User $assigning_user, Test $test, int $attempt_limit, \DateTime $time_limit){
         $db = DatabaseManager::GetProvider();
 

@@ -1,6 +1,8 @@
 <?php
 namespace Api\Resources;
 
+use Api\Exceptions;
+
 class Assignment extends Resource{
 
     protected function LazyLoad($assignment, $name){
@@ -16,6 +18,21 @@ class Assignment extends Resource{
         $this->AddSubResource('attempts', new AttemptCollection($assignment));
         $this->AddSubResource('assigned_by', new User($assignment->GetAssigningUser()));
         return true;
+    }
+
+    public function Update(/* object */ $source){
+        $assignment = $this->GetConstructorArgument();
+        $current_user = $this->GetContext()->GetUser();
+        if($assignment->GetAssigningUser()->GetId() != $current_user->GetId())
+            throw new Exceptions\MethodNotAllowed('PUT');
+
+        if(is_array($source->targets)){
+            foreach($source->targets as $target){
+                $target_type = $target->type;
+                $target_id = $target->id;
+                $assignment->AddTarget($target_type, $target_id);
+            }
+        }
     }
 }
 ?>
