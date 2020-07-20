@@ -10,6 +10,7 @@ export default class TestSummary extends Card {
     AverageScoreLink: HTMLAnchorElement;
     AverageScoreNode: Text;
     ResultsTBody: HTMLTableSectionElement;
+    Assignment: Assignment | undefined;
 
     constructor(){
         super();
@@ -31,6 +32,8 @@ export default class TestSummary extends Card {
         this.AppendChild(this.AverageScoreSubtitle);
 
         this.AverageScoreLink = document.createElement('a');
+        this.AverageScoreLink.href = 'javascript:void(0)';
+        this.AverageScoreLink.addEventListener('click', this.DisplayScoreDetailsDialog.bind(this));
         this.AverageScoreLink.appendChild(this.AverageScoreNode = document.createTextNode('0'));
         this.AverageScoreLink.appendChild(document.createTextNode('%'));
         this.AverageScoreSubtitle.appendChild(this.AverageScoreLink);
@@ -63,8 +66,7 @@ export default class TestSummary extends Card {
     }
 
     async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment){
-        this.AverageScoreLink.href = 'javascript:void(0)';
-        this.AverageScoreLink.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment));
+        this.Assignment = assignment;
 
         this.DisplayParticularScores(questions);
         
@@ -74,9 +76,11 @@ export default class TestSummary extends Card {
         this.AverageScoreSubtitle.style.display = '';
     }
 
-    DisplayScoreDetailsDialog(assignment: Assignment){
+    DisplayScoreDetailsDialog(){
+        if(this.Assignment === undefined) return;
+        
         let dialog = new ScoreDetailsDialog();
-        dialog.Populate(assignment);
+        dialog.Populate(this.Assignment);
         dialog.Show();
     }
 
