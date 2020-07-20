@@ -26,7 +26,7 @@ export default class AssignedTestsListPage extends Page{
         
         // Wrapped in a function in order to run asynchronously
         (async () => {
-            let assignments = await Assignment.GetAll();
+            let assignments = await Assignment.GetAssignedToCurrentUser();
             this.ToSolveTable.Populate(assignments);
             this.SolvedTable.Populate(assignments);
         })();
