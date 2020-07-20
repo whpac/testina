@@ -106,6 +106,7 @@ export default class TestSummary extends Card {
             question_data[q_id].max += q_max;
         }
 
+        this.ResultsTBody.textContent = '';
         for(let question of question_data){
             if(question === undefined) continue;
             let row = this.ResultsTBody.insertRow(-1);

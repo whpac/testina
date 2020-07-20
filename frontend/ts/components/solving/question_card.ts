@@ -97,6 +97,12 @@ export default class QuestionCard extends Card {
 
     async StartTest(attempt: Attempt){
         NavigationPrevention.Prevent('solving-test');
+
+        this.TimeLeftTimer = document.createTextNode('0:00');
+        this.CurrentScore = document.createTextNode('0');
+        this.TotalQuestionNumber = document.createTextNode('0');
+        this.CurrentQuestionNumberText = document.createTextNode('0');
+
         this.Attempt = attempt;
         this.PointsGot = 0;
         this.PointsMax = 0;
