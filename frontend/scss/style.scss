@@ -71,12 +71,29 @@ a:hover {color:var(--link-hover-color);}
 @import 'components/test_invitation';
 @import 'components/tabs';
 
-@include media-large-xlarge{
-    .narrow-screen-only {display:none !important;}
-}
-
-@include media-small-medium{
+@include media-small {
     .wide-screen-only {display:none !important;}
+    .medium-screen-only {display:none !important;}
+    .large-screen-only {display:none !important;}
+    .xlarge-screen-only {display:none !important;}
+}
+@include media-medium {
+    .wide-screen-only {display:none !important;}
+    .small-screen-only {display:none !important;}
+    .large-screen-only {display:none !important;}
+    .xlarge-screen-only {display:none !important;}
+}
+@include media-large {
+    .narrow-screen-only {display:none !important;}
+    .small-screen-only {display:none !important;}
+    .medium-screen-only {display:none !important;}
+    .xlarge-screen-only {display:none !important;}
+}
+@include media-xlarge {
+    .narrow-screen-only {display:none !important;}
+    .small-screen-only {display:none !important;}
+    .medium-screen-only {display:none !important;}
+    .large-screen-only {display:none !important;}
 }
 
 @include media-medium{
