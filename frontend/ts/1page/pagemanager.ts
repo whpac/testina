@@ -99,7 +99,7 @@ export function GoToPage(page_id: string, params?: PageParams){
  * @param params Parametr, przekazywany do nowej strony
  */
 async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
-        let bare_page_id = GetPageId(page_id);
+        let bare_page_id = GetPageId(page_id, params !== undefined);
         if(bare_page_id === undefined) return Promise.reject(page_id + ' nie istnieje.');
         if(CurrentPageId == page_id) return;
 
@@ -121,9 +121,10 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
 /**
  * Zwraca adres strony bez argumentów
  * @param page_id_with_args Adres strony z opcjonalnymi argumentami
+ * @param object_argument_passed Czy przekazano obiekt z argumentem
  */
-function GetPageId(page_id_with_args: string){
-    if(Pages[page_id_with_args] !== undefined && !Pages[page_id_with_args].accepts_argument)
+function GetPageId(page_id_with_args: string, object_argument_passed: boolean){
+    if(Pages[page_id_with_args] !== undefined && (!Pages[page_id_with_args].accepts_argument || object_argument_passed))
         return page_id_with_args;
 
     let shorter_name = page_id_with_args.substr(0, page_id_with_args.lastIndexOf('/'));
