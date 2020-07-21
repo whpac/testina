@@ -24,19 +24,19 @@ export default class TestsTable extends Component {
         this.Element.innerHTML = 
             '<colgroup>' +
                 '<col />' +
-                '<col />' +
-                '<col />' +
-                '<col class="shrink" />' +
-                '<col class="shrink" />' +
+                '<col class="wide-screen-only" />' +
+                '<col class="wide-screen-only" />' +
+                '<col class="shrink xlarge-screen-only" />' +
+                '<col class="shrink wide-screen-only" />' +
                 '<col class="shrink" />' +
             '</colgroup>' +
             '<tr>' +
                 '<th>Nazwa testu</th>' +
                 '<th class="center wide-screen-only">Ilość pytań</th>' +
                 '<th class="center wide-screen-only">Utworzono</th>' +
+                '<th class="xlarge-screen-only"></th>' +
                 '<th class="wide-screen-only"></th>' +
-                '<th class="wide-screen-only"></th>' +
-                '<th class="narrow-screen-only"></th>' +
+                '<th></th>' +
             '</tr>';
         
         this.TestRowsContainer = document.createElement('tbody');
@@ -54,9 +54,9 @@ export default class TestsTable extends Component {
                 '<td>' + message + '</td>' +
                 '<td class="wide-screen-only"></td>' +
                 '<td class="wide-screen-only"></td>' +
+                '<td class="xlarge-screen-only"></td>' +
                 '<td class="wide-screen-only"></td>' +
-                '<td class="wide-screen-only"></td>' +
-                '<td class="narrow-screen-only"></td>' +
+                '<td></td>' +
             '</tr>';
     }
 
@@ -95,9 +95,9 @@ export default class TestsTable extends Component {
         td_date.textContent = DateUtils.ToMediumFormat(await test.GetCreationDate());
 
         let td_assign = tr.insertCell(-1);
-        td_assign.classList.add('wide-screen-only');
+        td_assign.classList.add('xlarge-screen-only');
         let btn_assign = document.createElement('button');
-        btn_assign.classList.add('compact', 'todo');
+        btn_assign.classList.add('compact');
         btn_assign.textContent = 'Przypisz';
         btn_assign.addEventListener('click', () => {
             this.AssignDialog.Populate(test);
@@ -116,9 +116,9 @@ export default class TestsTable extends Component {
         td_edit.appendChild(link_edit);
 
         let td_details = tr.insertCell(-1);
-        td_details.classList.add('narrow-screen-only');
-        
+
         let btn_details = document.createElement('button');
+        btn_details.classList.add('compact-on-wide-screen');
         btn_details.innerHTML = '<i class="fa fa-ellipsis-h"></i>';
         btn_details.addEventListener('click', () => {
             this.SummaryDialog.Prepare(test);
@@ -139,7 +139,7 @@ export default class TestsTable extends Component {
             let test = await Test.Create('[Bez nazwy]', 1, 0);
             this.AppendRow(test);
         }catch(e){
-            new Toast('Nie udało się utworzyć nowego testu.').Show();
+            new Toast('Nie udało się utworzyć nowego testu.').Show(0);
         }
     }
 }
