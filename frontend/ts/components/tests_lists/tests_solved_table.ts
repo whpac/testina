@@ -83,7 +83,7 @@ export default class TestsSolvedTable extends Card {
         let tr = nocontent_tbody.insertRow();
 
         let cell = tr.insertCell();
-        async () => cell.textContent = 'Nie rozwiązał' + (await (await User.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś jeszcze żadnego testu.';
+        (async () => cell.textContent = 'Nie rozwiązał' + (await (await User.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś jeszcze żadnego testu.')();
         cell.classList.add('secondary');
         tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
