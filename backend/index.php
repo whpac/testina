@@ -67,6 +67,7 @@ NavbarStorage::AddItem(new Navbar\NavbarHeader(AuthManager::GetCurrentUser()->Ge
 NavbarStorage::AddItem('Strona główna', ['href' => 'home', 'icon' => 'fa-home']);
 NavbarStorage::AddItem('Testy', ['href' => 'testy/lista', 'icon' => 'fa-pencil-square-o']);
 NavbarStorage::AddItem('Biblioteka testów', ['href' => 'testy/biblioteka', 'icon' => 'fa-files-o']);
+NavbarStorage::AddItem('Ankiety', ['href' => 'ankiety', 'icon' => 'fa-bar-chart']);
 NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Konto', ['href' => 'konto', 'icon' => 'fa-user-o']);
 NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out', 'css' => 'vulnerable']);
