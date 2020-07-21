@@ -44,4 +44,4 @@ nav_items.forEach((element) => {
 let initial_page = 'home';
 let body_url = document.body.dataset.url;
 if(body_url !== undefined && body_url != '') initial_page = body_url;
-PageManager.GoToPage(initial_page);
+PageManager.GoToPage(initial_page, undefined, true);

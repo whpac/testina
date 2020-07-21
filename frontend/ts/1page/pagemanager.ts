@@ -80,7 +80,7 @@ export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PagePar
  * @param page_id Adres strony, do której należy przejść
  * @param params Parametry
  */
-export function GoToPage(page_id: string, params?: PageParams){
+export function GoToPage(page_id: string, params?: PageParams, is_first_page: boolean = false){
     if(NavigationPrevention.IsPrevented()){
         let confirm_result = window.confirm('Na tej stronie są niezapisane zmiany.\nCzy chcesz ją opuścić?');
         if(!confirm_result) return;
@@ -89,7 +89,7 @@ export function GoToPage(page_id: string, params?: PageParams){
 
     DisplayPage(page_id, params).then(async () => {
         SetTitle(await CurrentPage?.GetTitle() ?? '');
-        AlterCurrentUrl(CurrentPage?.GetUrlPath() ?? '', page_id, params);
+        AlterCurrentUrl(CurrentPage?.GetUrlPath() ?? '', page_id, params, is_first_page);
     }).catch((r) => {alert('Nie udało się załadować strony: ' + r)});
 }
 
@@ -154,8 +154,12 @@ function PopStateHandler(e: PopStateEvent){
  * @param page_id Adres strony skojarzony z adresem URL
  * @param params Parametr strony, do zapisania w historii przeglądarki
  */
-function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams){
-    history.pushState({page_id: page_id, params: params?.GetSimpleRepresentation()}, '', new_url);
+function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams, replace: boolean = false){
+    if(replace){
+        history.replaceState({page_id: page_id, params: params?.GetSimpleRepresentation()}, '', new_url);
+    }else{
+        history.pushState({page_id: page_id, params: params?.GetSimpleRepresentation()}, '', new_url);
+    }
 }
 
 /**
