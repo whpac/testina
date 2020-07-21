@@ -20,7 +20,7 @@ let MobileHeader: HTMLElement | null;
 
 /** Typ opisujący zbiór stron */
 type PageList = {
-    [url: string]: Page;
+    [url: string]: {page: Page, accepts_argument: boolean};
 }
 
 /** Typ opisujący deskryptor stanu, zapisywany w historii przeglądarki */
@@ -56,9 +56,10 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
  * Dodaje stronę do rejestru
  * @param page_id Adres strony
  * @param page Strona
+ * @param accepts_argument Czy strona przyjmuje argument
  */
-export function AddPage(page_id: string, page: Page){
-    Pages[page_id] = page;
+export function AddPage(page_id: string, page: Page, accepts_argument: boolean){
+    Pages[page_id] = {page: page, accepts_argument: accepts_argument};
 }
 
 /**
@@ -98,17 +99,38 @@ export function GoToPage(page_id: string, params?: PageParams){
  * @param params Parametr, przekazywany do nowej strony
  */
 async function DisplayPage(page_id: string, params?: PageParams): Promise<void>{
-        if(Pages[page_id] === undefined) return Promise.reject(page_id + ' nie istnieje.');
+        let bare_page_id = GetPageId(page_id);
+        if(bare_page_id === undefined) return Promise.reject(page_id + ' nie istnieje.');
         if(CurrentPageId == page_id) return;
 
         LoadingWrapper?.Display()
         CurrentPage?.UnloadFrom(ContentRoot);
 
-        CurrentPage = Pages[page_id];
+        CurrentPage = Pages[bare_page_id].page;
         CurrentPageId = page_id;
 
-        await CurrentPage.LoadInto(ContentRoot, params);
+        let params_or_id: (PageParams | number | undefined) = params;
+        if(bare_page_id != page_id && params === undefined){
+            params_or_id = parseInt(page_id.substr(bare_page_id.length + 1));
+        }
+
+        await CurrentPage.LoadInto(ContentRoot, params_or_id);
         window.requestAnimationFrame(() => LoadingWrapper?.Hide());
+}
+
+/**
+ * Zwraca adres strony bez argumentów
+ * @param page_id_with_args Adres strony z opcjonalnymi argumentami
+ */
+function GetPageId(page_id_with_args: string){
+    if(Pages[page_id_with_args] !== undefined && !Pages[page_id_with_args].accepts_argument)
+        return page_id_with_args;
+
+    let shorter_name = page_id_with_args.substr(0, page_id_with_args.lastIndexOf('/'));
+    if(Pages[shorter_name] !== undefined && Pages[shorter_name].accepts_argument)
+        return shorter_name;
+
+    return undefined;
 }
 
 /**
