@@ -1,4 +1,5 @@
 import * as EventHandlers from './eventhandlers';
+import * as UI from './ui';
 
 import * as PageManager from './1page/pagemanager';
 import LoadingIndicator from './1page/loadingindicator';
@@ -32,7 +33,10 @@ document.getElementById('btn-second')?.addEventListener('click', (e) => PageMana
 let nav_items = document.querySelectorAll('.event-navigation-link');
 nav_items.forEach((element) => {
     let anchor = <HTMLAnchorElement>element;
-    anchor.addEventListener('click', (e) => PageManager.HandleLinkClick(e, anchor.dataset.href ?? ''));
+    anchor.addEventListener('click', (e) => {
+        PageManager.HandleLinkClick(e, anchor.dataset.href ?? '');
+        UI.HideNavigation();
+    });
 });
 
 PageManager.GoToPage('home');
