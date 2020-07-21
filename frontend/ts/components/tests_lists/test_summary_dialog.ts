@@ -82,10 +82,10 @@ export default class TestSummaryDialog extends Dialog {
             let link = document.createElement('a');
             link.title = 'Kliknij, aby zobaczyć wyniki oraz szczegóły przypisań';
             link.textContent = assignment_count.toString() + ' raz' + n(assignment_count, '', 'y', 'y');
-            link.href = 'testy/wyniki/' + test.GetId();
+            link.href = 'testy/przypisane/' + test.GetId();
             link.addEventListener('click', (e) => {
                 this.Hide();
-                HandleLinkClick(e, 'testy/wyniki', test);
+                HandleLinkClick(e, 'testy/przypisane', test);
             });
 
             this.AssignmentCountElement.textContent = '';
