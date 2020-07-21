@@ -9,6 +9,7 @@ import EditTestPage from './pages/edit_test';
 import AssignedTestsListPage from './pages/assigned_tests_list';
 import SolveTestPage from './pages/solve_test';
 import AboutPage from './pages/about';
+import AssignmentsPage from './pages/assignments';
 
 // Initialize the page manager
 let root = document.getElementById('content-container');
@@ -16,12 +17,13 @@ if(root === null) throw 'Błąd ładowania';
 let loading_wrapper = new LoadingIndicator('loading-wrapper');
 
 PageManager.Initialize(root, loading_wrapper);
-PageManager.AddPage('home', new HomePage());
-PageManager.AddPage('informacje', new AboutPage());
-PageManager.AddPage('testy/biblioteka', new LibraryPage());
-PageManager.AddPage('testy/edytuj', new EditTestPage());
-PageManager.AddPage('testy/lista', new AssignedTestsListPage());
-PageManager.AddPage('testy/rozwiąż', new SolveTestPage());
+PageManager.AddPage('home', new HomePage(), false);
+PageManager.AddPage('informacje', new AboutPage(), false);
+PageManager.AddPage('testy/biblioteka', new LibraryPage(), false);
+PageManager.AddPage('testy/edytuj', new EditTestPage(), true);
+PageManager.AddPage('testy/lista', new AssignedTestsListPage(), false);
+PageManager.AddPage('testy/rozwiąż', new SolveTestPage(), true);
+PageManager.AddPage('testy/przypisane', new AssignmentsPage(), true);
 
 // Attach necessary event handlers
 EventHandlers.AttachHandlersIfDOMLoaded();
@@ -39,4 +41,7 @@ nav_items.forEach((element) => {
     });
 });
 
-PageManager.GoToPage('home');
+let initial_page = 'home';
+let body_url = document.body.dataset.url;
+if(body_url !== undefined && body_url != '') initial_page = body_url;
+PageManager.GoToPage(initial_page);

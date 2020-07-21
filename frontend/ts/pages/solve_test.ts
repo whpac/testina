@@ -59,7 +59,8 @@ export default class SolveTestPage extends Page{
 
     async LoadInto(container: HTMLElement, params?: PageParams){
         if(params === undefined) throw 'Nie podano testu do rozwiązania';
-        this.Assignment = params as Assignment;
+        if(typeof params === 'number') this.Assignment = new Assignment(params);
+        else this.Assignment = params as Assignment;
 
         this.Invitation.GetElement().style.display = '';
         this.QuestionCard.GetElement().style.display = 'none';

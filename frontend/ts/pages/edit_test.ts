@@ -34,8 +34,8 @@ export default class EditTestPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){
-        this.Test = params as Test;
-        if(this.Test === undefined) throw '';
+        if(typeof params === 'number') this.Test = new Test(params);
+        else this.Test = params as Test;
 
         this.QuestionsTable.LoadQuestions(this.Test);
         this.TestSettingsCard.Populate(this.Test);
