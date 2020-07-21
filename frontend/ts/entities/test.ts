@@ -15,7 +15,8 @@ export interface TestDescriptor {
     time_limit: number,
     question_multiplier: number,
     question_count: number,
-    questions: QuestionCollection
+    questions: QuestionCollection,
+    assignment_count: number | undefined
 }
 
 /** @deprecated - użyć Collection<TestDescriptor> */
@@ -39,6 +40,8 @@ export default class Test extends Entity implements PageParams {
     protected question_multiplier: number | undefined;
     /** Ilość pytań (bez uwzględniania mnożnika) */
     protected question_count: number | undefined;
+    /** Ile razy test został przypisany */
+    protected assignment_count: number | undefined;
     
     /** Deskryptory pytań */
     protected question_descriptors: QuestionDescriptor[] | undefined;
@@ -96,6 +99,7 @@ export default class Test extends Entity implements PageParams {
         this.question_multiplier = descriptor.question_multiplier;
         this.question_count = descriptor.question_count;
         this.question_descriptors = [];
+        this.assignment_count = descriptor.assignment_count;
 
         if(descriptor.questions !== undefined){
             Object.keys(descriptor.questions).forEach((q_id) => {
@@ -153,6 +157,12 @@ export default class Test extends Entity implements PageParams {
     /** Czy test ma limit czasu na rozwiązanie */
     async HasTimeLimit(): Promise<boolean>{
         return (await this.GetTimeLimit()) != 0;
+    }
+
+    /** Ile razy test został przypisany */
+    async GetAssignmentCount(): Promise<number | undefined>{
+        await this?._fetch_awaiter;
+        return this.assignment_count;
     }
 
     /** Zwraca pytania */

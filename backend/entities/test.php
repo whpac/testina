@@ -73,6 +73,10 @@ class Test extends Entity{
         return round($this->GetQuestionMultiplier() * count($this->GetQuestions()));
     }
 
+    public /* int */ function GetAssignmentCount(){
+        return Assignment::CountForTest($this);
+    }
+
     public /* bool */ function IsMadeByUser(User $user){
         return $this->GetAuthor()->GetId() == $user->GetId();
     }

@@ -11,6 +11,9 @@ class Test extends Resource{
         $this->AddSubResource('time_limit', new ValueResource($test->GetTimeLimit()));
         $this->AddSubResource('question_multiplier', new ValueResource($test->GetQuestionMultiplier()));
         $this->AddSubResource('question_count', new ValueResource(count($test->GetQuestions())));
+
+        if($test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId())
+            $this->AddSubResource('assignment_count', new ValueResource($test->GetAssignmentCount()));
         
         $this->AddSubResource('questions', new QuestionCollection($test));
         return true;

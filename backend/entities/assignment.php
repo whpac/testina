@@ -148,6 +148,17 @@ class Assignment extends Entity {
         return false;
     }
 
+    public static /* int */ function CountForTest(Test $test){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Select(['id'])
+                ->Where('test_id', '=', $test->GetId())
+                ->Run();
+
+        if($result === false) throw new \Exception('Nie udało się policzyć, ile razy test został przypisany.');
+        return $result->num_rows;
+    }
+
     public /* Attempt[] */ function GetUserAttempts(User $user){
         return Attempt::GetAttemptsByUserAndAssignment($user, $this);
     }
