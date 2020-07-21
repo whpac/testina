@@ -2,12 +2,15 @@ import Dialog from '../basic/dialog';
 import Test from '../../entities/test';
 import * as DateUtils from '../../utils/dateutils';
 
-import { GoToPage } from '../../1page/pagemanager';
+import { GoToPage, HandleLinkClick } from '../../1page/pagemanager';
 import AssignTestDialog from './assigning/assign_test_dialog';
+import { n } from '../../utils/textutils';
 
 export default class TestSummaryDialog extends Dialog {
     protected QuestionCountElement: HTMLTableDataCellElement;
     protected QuestionCreationDateElement: HTMLTableDataCellElement;
+    protected AssignmentCountRow: HTMLTableRowElement;
+    protected AssignmentCountElement: HTMLTableDataCellElement;
     protected CurrentTest: (Test | undefined);
 
     constructor(){
@@ -28,6 +31,10 @@ export default class TestSummaryDialog extends Dialog {
         row[2] = content_table.insertRow(-1);
         row[2].insertCell(-1).textContent = 'Utworzono:';
         this.QuestionCreationDateElement = row[2].insertCell(-1);
+
+        this.AssignmentCountRow = content_table.insertRow(-1);
+        this.AssignmentCountRow.insertCell(-1).textContent = 'Przypisano:';
+        this.AssignmentCountElement = this.AssignmentCountRow.insertCell(-1);
     
         this.AddContent(content_table);
 
@@ -60,11 +67,30 @@ export default class TestSummaryDialog extends Dialog {
     }
 
     async Prepare(test: Test){
+        this.CurrentTest = test;
+        this.SetHeader(await test.GetName());
+
         this.QuestionCountElement.textContent = 
             (await test.GetQuestionCount()).toString() + 
             ' (×' +  (await test.GetQuestionMultiplier()).toString() + ')';
         this.QuestionCreationDateElement.textContent = DateUtils.ToMediumFormat(await test.GetCreationDate());
-        this.SetHeader(await test.GetName());
-        this.CurrentTest = test;
+
+        let assignment_count = await test.GetAssignmentCount();
+        if(assignment_count === undefined){
+            this.AssignmentCountRow.style.display = 'none';
+        }else{
+            let link = document.createElement('a');
+            link.title = 'Kliknij, aby zobaczyć wyniki oraz szczegóły przypisań';
+            link.textContent = assignment_count.toString() + ' raz' + n(assignment_count, '', 'y', 'y');
+            link.href = 'testy/wyniki/' + test.GetId();
+            link.addEventListener('click', (e) => {
+                this.Hide();
+                HandleLinkClick(e, 'testy/wyniki', test);
+            });
+
+            this.AssignmentCountElement.textContent = '';
+            this.AssignmentCountElement.appendChild(link);
+            this.AssignmentCountRow.style.display = '';
+        }
     }
 }
