@@ -1,10 +1,11 @@
 import * as XHR from '../utils/xhr';
-import Entity from './entity';
+import Entity, { Collection } from './entity';
 import User from './user';
 import PageParams from '../1page/pageparams';
 
 import { UserDescriptor } from './user';
 import Question, { QuestionDescriptor, QuestionCollection } from './question';
+import Assignment, { AssignmentDescriptor } from './assignment';
 
 /** Deskryptor testu w odpowiedzi z API */
 export interface TestDescriptor {
@@ -16,7 +17,8 @@ export interface TestDescriptor {
     question_multiplier: number,
     question_count: number,
     questions: QuestionCollection,
-    assignment_count: number | undefined
+    assignment_count: number | undefined,
+    assignments: Collection<AssignmentDescriptor>
 }
 
 /** @deprecated - użyć Collection<TestDescriptor> */
@@ -47,6 +49,11 @@ export default class Test extends Entity implements PageParams {
     protected question_descriptors: QuestionDescriptor[] | undefined;
     /** Pytania */
     protected questions: Question[] | undefined;
+
+    /** Deskryptory przypisań tego testu */
+    protected assignment_descriptors: AssignmentDescriptor[] | undefined;
+    /** Przypisania */
+    protected assignments: Assignment[] | undefined;
 
     /** Reprezentuje status operacji pobierania danych */
     private _fetch_awaiter: Promise<void> | undefined;
@@ -82,7 +89,7 @@ export default class Test extends Entity implements PageParams {
 
     /** Pobiera test z serwera */
     protected async Fetch(){
-        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
+        let response = await XHR.Request(this.GetApiUrl() + '?depth=3', 'GET');
         let json = response.Response as TestDescriptor;
         this.Populate(json);
     }
@@ -100,10 +107,17 @@ export default class Test extends Entity implements PageParams {
         this.question_count = descriptor.question_count;
         this.question_descriptors = [];
         this.assignment_count = descriptor.assignment_count;
+        this.assignment_descriptors = [];
 
         if(descriptor.questions !== undefined){
             Object.keys(descriptor.questions).forEach((q_id) => {
                 this.question_descriptors?.push(descriptor.questions[parseInt(q_id)]);
+            });
+        }
+
+        if(descriptor.assignments !== undefined){
+            Object.keys(descriptor.assignments).forEach((a_id) => {
+                this.assignment_descriptors?.push(descriptor.assignments[parseInt(a_id)]);
             });
         }
     }
@@ -181,6 +195,24 @@ export default class Test extends Entity implements PageParams {
             });
         }
         return this.questions;
+    }
+
+    /** Zwraca przypisania dla tego testu */
+    async GetAssignments(): Promise<Assignment[]>{
+        await this?._fetch_awaiter;
+
+        if(this.assignments !== undefined) return this.assignments;
+
+        let first_assignment = (this.assignment_descriptors ?? [null])[0];
+        if(first_assignment === undefined || first_assignment === null || Object.keys(first_assignment).length == 0){
+            this.assignments = [];
+        }else{
+            this.assignments = [];
+            this.assignment_descriptors?.forEach((descriptor) => {
+                this.assignments?.push(new Assignment(descriptor));
+            });
+        }
+        return this.assignments;
     }
 
     /**

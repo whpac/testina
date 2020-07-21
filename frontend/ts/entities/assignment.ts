@@ -10,7 +10,7 @@ import User, { UserDescriptor } from './user';
 import * as DateUtils from '../utils/dateutils';
 
 /** Deskryptor przypisania w odpowiedzi z API */
-interface AssignmentDescriptor {
+export interface AssignmentDescriptor {
     id: number,
     attempt_limit: number,
     time_limit: string,
@@ -101,8 +101,8 @@ export default class Assignment extends Entity implements PageParams {
         this.assignment_date = new Date(descriptor.assignment_date);
         this.attempt_count = descriptor.attempt_count;
         this.score = descriptor.score;
-        this.test = new Test(descriptor.test);
-        this.assigned_by = new User(descriptor.assigned_by);
+        this.test = ((descriptor.test as TestDescriptor).id !== undefined) ? new Test(descriptor.test as TestDescriptor) : undefined;
+        this.assigned_by = ((descriptor.assigned_by as UserDescriptor).id !== undefined) ? new User(descriptor.assigned_by as UserDescriptor) : undefined;
     }
 
     /** Zwraca adres przypisania w API */

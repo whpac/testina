@@ -148,6 +148,22 @@ class Assignment extends Entity {
         return false;
     }
 
+    public static /* Assignment[] */ function GetForTest(Test $test){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Select()
+                ->Where('test_id', '=', $test->GetId())
+                ->Run();
+
+        if($result === false) throw new \Exception('Nie udało się odczytać przypisań dla testu.');
+
+        $assignments = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $assignments[] = new Assignment($result->fetch_assoc());
+        }
+        return $assignments;
+    }
+
     public static /* int */ function CountForTest(Test $test){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENTS)

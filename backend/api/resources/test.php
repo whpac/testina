@@ -3,7 +3,9 @@ namespace Api\Resources;
 
 class Test extends Resource{
 
-    protected function LazyLoad($test, $name){
+    protected function LazyLoad($data, $name){
+        $test = $this->GetConstructorArgument();
+
         $this->AddSubResource('id', new ValueResource($test->GetId()));
         $this->AddSubResource('name', new ValueResource($test->GetName()));
         $this->AddSubResource('author', new User($test->GetAuthor()));
@@ -12,8 +14,10 @@ class Test extends Resource{
         $this->AddSubResource('question_multiplier', new ValueResource($test->GetQuestionMultiplier()));
         $this->AddSubResource('question_count', new ValueResource(count($test->GetQuestions())));
 
-        if($test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId())
+        if($test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId()){
             $this->AddSubResource('assignment_count', new ValueResource($test->GetAssignmentCount()));
+            $this->AddSubResource('assignments', new TestAssignmentCollection($test));
+        }
         
         $this->AddSubResource('questions', new QuestionCollection($test));
         return true;

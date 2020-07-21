@@ -77,6 +77,10 @@ class Test extends Entity{
         return Assignment::CountForTest($this);
     }
 
+    public /* Assignment[] */ function GetAssignments(){
+        return Assignment::GetForTest($this);
+    }
+
     public /* bool */ function IsMadeByUser(User $user){
         return $this->GetAuthor()->GetId() == $user->GetId();
     }
