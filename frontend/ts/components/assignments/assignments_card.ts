@@ -1,4 +1,5 @@
 import Card from '../basic/card';
+import Test from '../../entities/test';
 
 export default class AssignmentsCard extends Card {
 
@@ -13,5 +14,9 @@ export default class AssignmentsCard extends Card {
         description.classList.add('secondary');
         description.textContent = 'Każdy wiersz tabeli odpowiada jednemu przypisaniu. Naciśnij przysisk „Szczegóły”, aby zobaczyć indywidualne wyniki uczniów. Możesz także dopisać test dodatkowym osobom.';
         this.AppendChild(description);
+    }
+
+    async Populate(test: Test){
+        console.log(await test.GetAssignments());
     }
 }

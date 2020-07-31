@@ -76,7 +76,7 @@ export default class Test extends Entity implements PageParams {
 
     /** Zwraca wszystkie testy utworzone przez użytkownika */
     static async GetAll(){
-        let response = await XHR.Request('api/tests?depth=3', 'GET');
+        let response = await XHR.Request('api/tests?depth=4', 'GET');
         let json = response.Response as TestCollection;
         let out_array: Test[] = [];
 

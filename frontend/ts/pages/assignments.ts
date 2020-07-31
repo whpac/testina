@@ -5,6 +5,7 @@ import AssignmentsCard from '../components/assignments/assignments_card';
 export default class AssignmentsPage extends Page {
     protected Test: Test | undefined;
     protected TestNameHeading: Text;
+    protected AssignmentsCard: AssignmentsCard;
 
     constructor(){
         super();
@@ -18,14 +19,16 @@ export default class AssignmentsPage extends Page {
         span_secondary.textContent = ' – przypisania';
         page_heading.appendChild(span_secondary);
 
-        let assignments_card = new AssignmentsCard();
-        this.AppendChild(assignments_card);
+        this.AssignmentsCard = new AssignmentsCard();
+        this.AppendChild(this.AssignmentsCard);
     }
 
     async LoadInto(container: HTMLElement, params?: any){
         if(typeof params === 'number') this.Test = new Test(params);
         else this.Test = params as Test;
         this.TestNameHeading.textContent = await this.Test.GetName();
+
+        this.AssignmentsCard.Populate(this.Test);
 
         container.appendChild(this.Element);
     }
