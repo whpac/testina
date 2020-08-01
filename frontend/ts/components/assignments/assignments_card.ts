@@ -14,7 +14,7 @@ export default class AssignmentsCard extends Card {
 
         let description = document.createElement('p');
         description.classList.add('secondary');
-        description.textContent = 'Każdy wiersz tabeli odpowiada jednemu przypisaniu. Naciśnij przysisk „Szczegóły”, aby zobaczyć indywidualne wyniki uczniów. Możesz także dopisać test dodatkowym osobom.';
+        description.textContent = 'Każdy wiersz tabeli odpowiada jednemu przypisaniu. Naciśnij przysisk „Wyniki”, aby zobaczyć indywidualne wyniki uczniów. Możesz także dopisać test dodatkowym osobom.';
         this.AppendChild(description);
 
         this.Table = new AssignmentsTable();
