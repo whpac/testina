@@ -83,6 +83,11 @@ export default class Assignment extends Entity implements PageParams {
         return this._Attempts;
     }
 
+    /** Zwraca cele przypisania */
+    public async GetTargets(){
+        return [];
+    }
+
     /** Czy pozostały jeszcze podejścia */
     AreRemainingAttempts(){
         return (this.AttemptCount < this.AttemptLimit) || this.AreAttemptsUnlimited();
