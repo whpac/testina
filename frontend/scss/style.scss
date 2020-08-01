@@ -32,18 +32,21 @@ hr.spaced {margin:1em 0;}
 p {text-align:justify;}
 p.small-margin {margin-top:0.4em; margin-bottom:0.4em;}
 
-.warning, .warning-message {color:var(--warning-color) !important}
+.success, .success-message {color:var(--success-color) !important;}
+.warning, .warning-message {color:var(--warning-color) !important;}
 .error, .error-message {color:var(--error-color) !important;}
 
-.error-message, .warning-message {
+.error-message, .warning-message, .success-message {
     font-size:0.9em; margin:0.8em 0;
 
     &:empty {display:none;}
     &.specific {margin-top:0.4em;}
+    &::before {margin-right:0.6ch; font-family:FontAwesome;}
 }
 
-.warning-message::before {font-family:FontAwesome; content:'\f071'; margin-right:0.6ch;}
-.error-message::before {font-family:FontAwesome; content:'\f057'; margin-right:0.6ch;}
+.success-message::before {content:'\f00c';}
+.warning-message::before {content:'\f071';}
+.error-message::before {content:'\f057';}
 
 .overflow-container-x {max-width:100%; overflow-x:auto;}
 .overflow-container-y {max-height:50vh; overflow-y:auto;}
