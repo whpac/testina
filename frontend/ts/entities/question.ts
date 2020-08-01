@@ -1,24 +1,9 @@
 import * as XHR from '../utils/xhr';
 import Test from './test';
 import Entity from './entity';
-import Answer, { AnswerDescriptor, AnswerCollection } from './answer';
-
-/** Deskryptor pytania w odpowiedzi z API */
-export interface QuestionDescriptor {
-    id: number,
-    text: string,
-    type: number,
-    points: number,
-    points_counting: number,
-    max_typos: number,
-    answer_count: number,
-    answers: AnswerCollection
-}
-
-/** @deprecated */
-export type QuestionCollection = {
-    [question_id: number]: QuestionDescriptor
-}
+import Answer from './answer';
+import QuestionLoader from './loaders/questionloader';
+import AnswerLoader from './loaders/answerloader';
 
 /** Klasa reprezentująca pytanie */
 export default class Question extends Entity {
@@ -37,153 +22,104 @@ export default class Question extends Entity {
     public static COUNTING_OPEN_ANSWER = 2;
 
     /** Unikatowy identyfikator pytania */
-    protected id: number;
+    public readonly Id: number;
     /** Test, do którego pytanie należy */
-    protected test: Test;
+    public readonly Test: Test;
     /** Treść pytania */
-    protected text: string | undefined;
+    protected _Text: string;
     /** Typ pytania */
-    protected type: number | undefined;
+    protected _Type: number;
     /** Ilość punktów do zdobycia */
-    protected points: number | undefined;
+    protected _Points: number;
     /** Sposób liczenia punktów */
-    protected points_counting: number | undefined;
+    protected _PointsCounting: number;
     /** Maksymalna dozwolona liczba literówek */
-    protected max_typos: number | undefined;
+    protected _MaxTypos: number;
     /** Ilość odpowiedzi */
-    protected answer_count: number | undefined;
+    public readonly AnswerCount: number | undefined;
 
-    /** Deskryptory odpowiedzi */
-    protected answer_descriptors: AnswerDescriptor[] | undefined;
-    /** Odpowiedzi do pytania */
-    protected answers: Answer[] | undefined;
+    /** Treść pytania */
+    public get Text(){
+        return this._Text;
+    }
+    public set Text(new_value: string){
+        this._Text = new_value;
+        this.FireEvent('change');
+    }
 
-    /** Reprezentuje trwającą operację pobierania danych */
-    private _fetch_awaiter: Promise<void> | undefined;
+    /** Typ pytania */
+    public get Type(){
+        return this._Type;
+    }
+    public set Type(new_value: number){
+        this._Type = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Ilość punktów do zdobycia */
+    public get Points(){
+        return this._Points;
+    }
+    public set Points(new_value: number){
+        this._Points = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Sposób liczenia punktów */
+    public get PointsCounting(){
+        return this._PointsCounting;
+    }
+    public set PointsCounting(new_value: number){
+        this._PointsCounting = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Maksymalna dozwolona liczba literówek */
+    public get MaxTypos(){
+        return this._MaxTypos;
+    }
+    public set MaxTypos(new_value: number){
+        this._MaxTypos = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Obiekt odpowiedzialny za wczytywanie odpowiedzi dla tego pytania */
+    protected AnswerLoader: AnswerLoader;
 
     /**
      * Klasa reprezentująca pytanie
-     * @param test Test, do którego to pytanie należy
-     * @param question Identyfikator pytania lub deskryptor
+     * @param id Identyfikator pytania
+     * @param test Test, do którego należy pytanie
+     * @param text Treść pytania
+     * @param type Rodzaj pytania
+     * @param points Ilość punktów do zdobycia
+     * @param points_counting Sposób liczenia punktów
+     * @param max_typos Maksymalna dopuszczalna ilość literówek
+     * @param answer_loader Obiekt wczytujący odpowiedzi
      */
-    constructor(test: Test, question: number | QuestionDescriptor){
+    constructor(id: number, test: Test, text: string, type: number, points: number,
+        points_counting: number, max_typos: number, answer_loader: AnswerLoader){
         super();
 
-        this.test = test;
-        if(typeof question === 'number'){
-            this.id = question;
-            this._fetch_awaiter = this.Fetch();
-        }else{
-            this.id = question.id;
-            this.Populate(question);
-        }
+        this.Id = id;
+        this.Test = test;
+        this._Text = text;
+        this._Type = type;
+        this._Points = points;
+        this._PointsCounting = points_counting;
+        this._MaxTypos = max_typos;
+        this.AnswerCount = answer_loader.AnswerCount;
+
+        this.AnswerLoader = answer_loader;
     }
 
-    /**
-     * Zwraca wszystkie pytania w danym teście
-     * @param test Test, dla którego zostaną pobrane pytania
-     */
-    static async GetForTest(test: Test){
-        let response = await XHR.Request(test.GetApiUrl() + '/questions?depth=3', 'GET');
-        let json = response.Response as QuestionCollection;
-        let out_array: Question[] = [];
-
-        Object.keys(json).forEach((question_id) => {
-            out_array.push(new Question(test, json[parseInt(question_id)]));
-        });
-
-        return out_array;
-    }
-
-    /** Wczytuje to pytanie z serwera */
-    protected async Fetch(){
-        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
-        let json = response.Response as QuestionDescriptor;
-        this.Populate(json);
-    }
-
-    /**
-     * Wypełnia właściwości obiektu na podstawie deskryptora
-     * @param descriptor Deskryptor pytania, z którego należy odczytać właściwości
-     */
-    protected Populate(descriptor: QuestionDescriptor){
-        this.text = descriptor.text;
-        this.type = descriptor.type;
-        this.points = descriptor.points;
-        this.points_counting = descriptor.points_counting;
-        this.max_typos = descriptor.max_typos;
-        this.answer_count = descriptor.answer_count;
-        this.answer_descriptors = [];
-
-        if(descriptor.answers !== undefined){
-            Object.keys(descriptor.answers).forEach((a_id) => {
-                this.answer_descriptors?.push(descriptor.answers[parseInt(a_id)]);
-            });
-        }
-    }
-
-    /** Zwraca adres tego pytania w API */
-    GetApiUrl(){
-        return this.test.GetApiUrl() + '/questions/' + this.id;
-    }
-
-    /** Zwraca identyfikator pytania */
-    GetId(): number{
-        return this.id;
-    }
-
-    /** Zwraca treść pytania */
-    async GetText(): Promise<string>{
-        await this?._fetch_awaiter;
-        return this.text as string;
-    }
-
-    /** Zwraca typ pytania */
-    async GetType(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.type as number;
-    }
-
-    /** Zwraca maksymalną ilość punktów do zdobycia */
-    async GetPoints(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.points as number;
-    }
-
-    /** Zwraca sposób liczenia punktów */
-    async GetPointsCounting(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.points_counting as number;
-    }
-
-    /** Zwraca maksymalną dopuszczalną ilość literówek */
-    async GetMaxTypos(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.max_typos as number;
-    }
-
-    /** Zwraca ilość odpowiedzi */
-    async GetAnswerCount(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.answer_count as number;
-    }
-
+    protected _Answers: Answer[] | undefined;
     /** Zwraca odpowiedzi do tego pytania */
-    async GetAnswers(): Promise<Answer[]>{
-        await this?._fetch_awaiter;
-
-        if(this.answers !== undefined) return this.answers;
-
-        let first_answer = (this.answer_descriptors ?? [null])[0];
-        if(first_answer === undefined || first_answer === null || Object.keys(first_answer).length == 0){
-            this.answers = await Answer.GetForQuestion(this);
-        }else{
-            this.answers = [];
-            this.answer_descriptors?.forEach((descriptor) => {
-                this.answers?.push(new Answer(this, descriptor));
-            });
+    public async GetAnswers(){
+        if(this._Answers === undefined){
+            this._Answers = await this.AnswerLoader.GetAllForCurrentQuestion();
         }
-        return this.answers;
+        return this._Answers;
     }
 
     /**
@@ -203,13 +139,13 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.Request(test.GetApiUrl() + '/questions', 'POST', request_data);
+        let result = await XHR.Request('api/tests/' + test.Id.toString() + '/questions', 'POST', request_data);
         
         if(result.Status != 201) throw result;
 
         test.OnQuestionAdded();
         
-        return new Question(test, parseInt(result.ContentLocation));
+        return QuestionLoader.LoadById(test, parseInt(result.ContentLocation));
     }
 
     /**
@@ -228,23 +164,23 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
+        let result = await XHR.Request('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204){
-            this.text = text;
-            this.type = type;
-            this.points = points;
-            this.points_counting = points_counting;
-            this.max_typos = max_typos;
-            this.FireEvent('change');
+            this.Text = text;
+            this.Type = type;
+            this.Points = points;
+            this.PointsCounting = points_counting;
+            this.MaxTypos = max_typos;
+            //this.FireEvent('change');
         } else throw result;
     }
 
     /** Usuwa pytanie */
     async Remove(){
-        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
+        let result = await XHR.Request('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
-            this.test.OnQuestionRemoved();
+            this.Test.OnQuestionRemoved();
         }else throw result;
     }
 }

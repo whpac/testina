@@ -5,6 +5,7 @@ import TestSummaryDialog from './test_summary_dialog';
 import { HandleLinkClick } from '../../1page/pagemanager';
 import Toast from '../basic/toast';
 import AssignTestDialog from './assigning/assign_test_dialog';
+import TestLoader from '../../entities/loaders/testloader';
 
 export default class TestsTable extends Component {
     protected IsLoaded: boolean;
@@ -66,7 +67,7 @@ export default class TestsTable extends Component {
 
         let tests: Test[] = [];
         try{
-            tests = await Test.GetAll();
+            tests = await TestLoader.GetCreatedByCurrentUser();
             this.TestRowsContainer.innerText = '';
         }catch(e){
             this.ClearContent('Nie udało się załadować listy testów.');
@@ -82,17 +83,17 @@ export default class TestsTable extends Component {
         test.AddEventListener('remove', () => tr.remove());
 
         let td_name = tr.insertCell(-1);
-        td_name.textContent = (await test.GetName()).toString();
+        td_name.textContent = test.Name.toString();
 
         let td_qcount = tr.insertCell(-1);
         td_qcount.classList.add('center', 'wide-screen-only');
         td_qcount.textContent =
-            (await test.GetQuestionCount()).toString() + 
-            ' (×' + (await test.GetQuestionMultiplier()).toString() + ')';
+            (test.QuestionCount ?? 0).toString() + 
+            ' (×' + test.QuestionMultiplier.toString() + ')';
 
         let td_date = tr.insertCell(-1);
         td_date.classList.add('center', 'wide-screen-only');
-        td_date.textContent = DateUtils.ToMediumFormat(await test.GetCreationDate());
+        td_date.textContent = DateUtils.ToMediumFormat(test.CreationDate);
 
         let td_assign = tr.insertCell(-1);
         td_assign.classList.add('xlarge-screen-only');
@@ -111,7 +112,7 @@ export default class TestsTable extends Component {
         let link_edit = document.createElement('a');
         link_edit.classList.add('button', 'compact');
         link_edit.innerText = 'Edytuj';
-        link_edit.href = 'testy/edytuj/' + test.GetId();
+        link_edit.href = 'testy/edytuj/' + test.Id;
         link_edit.addEventListener('click', (e) => HandleLinkClick(e, 'testy/edytuj', test));
         td_edit.appendChild(link_edit);
 
@@ -127,10 +128,10 @@ export default class TestsTable extends Component {
         td_details.appendChild(btn_details);
 
         test.AddEventListener('change', async () => {
-            td_name.textContent = (await test.GetName()).toString();
+            td_name.textContent = test.Name.toString();
             td_qcount.textContent =
-                (await test.GetQuestionCount()).toString() + 
-                ' (×' + (await test.GetQuestionMultiplier()).toString() + ')';
+                (test.QuestionCount ?? 0).toString() + 
+                ' (×' + test.QuestionMultiplier.toString() + ')';
         });
     }
 

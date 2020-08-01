@@ -1,7 +1,7 @@
 import Page from '../components/basic/page';
 import TestsToSolveTable from '../components/tests_lists/tests_to_solve_table';
-import Assignment from '../entities/assignment';
 import TestsSolvedTable from '../components/tests_lists/tests_solved_table';
+import AssignmentLoader from '../entities/loaders/assignmentloader';
 
 export default class AssignedTestsListPage extends Page{
     ToSolveTable: TestsToSolveTable;
@@ -26,7 +26,7 @@ export default class AssignedTestsListPage extends Page{
         
         // Wrapped in a function in order to run asynchronously
         (async () => {
-            let assignments = await Assignment.GetAssignedToCurrentUser();
+            let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
             this.ToSolveTable.Populate(assignments);
             this.SolvedTable.Populate(assignments);
         })();

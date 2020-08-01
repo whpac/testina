@@ -62,7 +62,7 @@ export default class AssignTestDialog extends Dialog {
         this.TargetsWrapper.GetElement().style.display = '';
         this.SettingsWrapper.GetElement().style.display = 'none';
 
-        this.SetHeader('Przypisz: ' + await test.GetName());
+        this.SetHeader('Przypisz: ' + test.Name);
     }
 
     protected OnNextButtonClick(){
@@ -104,13 +104,13 @@ export default class AssignTestDialog extends Dialog {
         let attempt_limit = this.SettingsWrapper.GetAttemptLimit();
         let deadline = this.SettingsWrapper.GetDeadline();
 
-        let assigning_toast = new Toast('Przypisywanie testu „' + await this.Test.GetName() + '”...');
+        let assigning_toast = new Toast('Przypisywanie testu „' + this.Test.Name + '”...');
         try{
             assigning_toast.Show();
             let assignment = await Assignment.Create(this.Test, attempt_limit, deadline);
             await assignment.AddTargets(targets);
             this.Hide();
-            new Toast('Test „' + await this.Test.GetName() + '” został przypisany.').Show(0);
+            new Toast('Test „' + this.Test.Name + '” został przypisany.').Show(0);
         }catch(e){
             new Toast('Nie udało się przypisać testu').Show(0);
         }finally{

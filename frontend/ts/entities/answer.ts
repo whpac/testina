@@ -1,104 +1,50 @@
+import * as XHR from '../utils/xhr';
 import Entity from './entity';
 import Question from './question';
-
-import * as XHR from '../utils/xhr';
-
-/** Deskryptor odpowiedzi w odpowiedzi z API */
-export interface AnswerDescriptor {
-    id: number,
-    text: string,
-    correct: boolean
-}
-
-/** @deprecated */
-export type AnswerCollection = {
-    [answer_id: number]: AnswerDescriptor
-}
 
 /** Klasa reprezentująca odpowiedź */
 export default class Answer extends Entity {
     /** Unikatowy identyfikator odpowiedzi */
-    protected id: number;
+    public readonly Id: number;
     /** Pytanie, do którego odpowiedź należy */
-    protected question: Question;
+    public readonly Question: Question;
     /** Treść odpowiedzi */
-    protected text: string | undefined;
+    protected _Text: string;
     /** Czy odpowiedź jest poprawna */
-    protected correct: boolean | undefined;
+    protected _Correct: boolean;
 
-    /** Reprezentuje status operacji pobierania danych z serwera */
-    private _fetch_awaiter: Promise<void> | undefined;
+    /** Treść odpowiedzi */
+    public get Text(){
+        return this._Text;
+    }
+    public set Text(new_value: string){
+        this._Text = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Czy odpowiedź jest poprawna */
+    public get Correct(){
+        return this._Correct;
+    }
+    public set Correct(new_value: boolean){
+        this._Correct = new_value;
+        this.FireEvent('change');
+    }
 
     /**
      * Klasa reprezentująca odpowiedź
-     * @param question Pytanie, do którego odpowiedź należy
-     * @param answer Identyfikator odpowiedzi lub deskryptor
+     * @param id Identyfikator odpowiedzi
+     * @param question Pytanie, do którego należy odpowiedź
+     * @param text Treść odpowiedzi
+     * @param correct Czy odpowiedź jest prawidłowa
      */
-    constructor(question: Question, answer: number | AnswerDescriptor){
+    constructor(id: number, question: Question, text: string, correct: boolean){
         super();
 
-        this.question = question;
-        if(typeof answer === 'number'){
-            this.id = answer;
-            this._fetch_awaiter = this.Fetch();
-        }else{
-            this.id = answer.id;
-            this.Populate(answer);
-        }
-    }
-
-    /**
-     * Zwraca wszystkie odpowiedzi przypisane do pytania
-     * @param question Pytanie, do którego odpowiedzi należy zwrócić
-     */
-    static async GetForQuestion(question: Question){
-        let response = await XHR.Request(question.GetApiUrl() + '/answers?depth=3', 'GET');
-        let json = response.Response as AnswerCollection;
-        let out_array: Answer[] = [];
-
-        Object.keys(json).forEach((question_id) => {
-            out_array.push(new Answer(question, json[parseInt(question_id)]));
-        });
-
-        return out_array;
-    }
-
-    /** Pobiera dane z serwera */
-    protected async Fetch(){
-        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
-        let json = response.Response as AnswerDescriptor;
-        this.Populate(json);
-    }
-
-    /**
-     * Ustawia właściwości zgodnie z danymi w deskryptorze
-     * @param descriptor Deskryptor odpowiedzi
-     */
-    protected Populate(descriptor: AnswerDescriptor){
-        this.text = descriptor.text;
-        this.correct = descriptor.correct;
-    }
-
-    /** Zwraca adres odpowiedzi w API */
-    GetApiUrl(){
-        return this.question.GetApiUrl() + '/answers/' + this.id;
-    }
-
-    /** Zwraca identyfikator odpowiedzi */
-    GetId(): number{
-        return this.id;
-    }
-
-    /** Zwraca treść odpowiedz */
-    async GetText(): Promise<string>{
-        await this._fetch_awaiter;
-        return this.text as string;
-    }
-
-    /** Czy odpowiedź jest poprawna */
-    async IsCorrect(): Promise<boolean>{
-        await this._fetch_awaiter;
-        return this.correct as boolean;
+        this.Id = id;
+        this.Question = question;
+        this._Text = text;
+        this._Correct = correct;
     }
 
     /**
@@ -112,7 +58,7 @@ export default class Answer extends Entity {
             text: text,
             correct: correct
         };
-        let result = await XHR.Request(question.GetApiUrl() + '/answers', 'POST', request_data);
+        let result = await XHR.Request('api/tests/' + question.Test.Id.toString() + '/questions/' + question.Id.toString() + '/answers', 'POST', request_data);
         
         if(result.Status != 201) throw result;
     }
@@ -127,17 +73,17 @@ export default class Answer extends Entity {
             text: text,
             correct: correct
         };
-        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
+        let result = await XHR.Request('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204){
-            this.text = text;
-            this.correct = correct;
-            this.FireEvent('change');
+            this.Text = text;
+            this.Correct = correct;
+            //this.FireEvent('change');
         } else throw result;
     }
 
     /** Usuwa odpowiedź */
     async Remove(){
-        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
+        let result = await XHR.Request('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
         } else throw result;

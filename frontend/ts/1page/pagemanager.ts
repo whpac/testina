@@ -1,9 +1,9 @@
 import Page from '../components/basic/page';
 import LoadingIndicator from './loadingindicator';
 import PageParams, { SimpleObjectRepresentation } from './pageparams';
-import Test from '../entities/test';
-import Assignment from '../entities/assignment';
 import NavigationPrevention from './navigationprevention';
+import TestLoader from '../entities/loaders/testloader';
+import AssignmentLoader from '../entities/loaders/assignmentloader';
 
 /** Lista zarejestrowanych stron */
 let Pages: PageList = {};
@@ -138,14 +138,14 @@ function GetPageId(page_id_with_args: string, object_argument_passed: boolean){
  * Obsługuje zdarzenie przejścia do poprzedniej strony
  * @param e Dane zdarzenia onpopstate
  */
-function PopStateHandler(e: PopStateEvent){
+async function PopStateHandler(e: PopStateEvent){
     let state = e.state as (StateDescriptor | null | undefined);
     if(state === null || state === undefined) return;
 
     let page_id = state.page_id;
     let params = state.params;
 
-    if(page_id != null) DisplayPage(page_id, UnserializeParams(params));
+    if(page_id != null) DisplayPage(page_id, await UnserializeParams(params));
 }
 
 /**
@@ -180,10 +180,10 @@ export function SetTitle(new_title: string){
  * Tworzy obiekt z prostej reprezentacji
  * @param params Prosta reprezentacja obiektu
  */
-function UnserializeParams(params?: SimpleObjectRepresentation): (PageParams | undefined){
+async function UnserializeParams(params?: SimpleObjectRepresentation): Promise<(PageParams | undefined)>{
     switch(params?.type){
-        case 'test': return new Test(params.id);
-        case 'assignment': return new Assignment(params.id);
+        case 'test': return await TestLoader.LoadById(params.id);
+        case 'assignment': return await AssignmentLoader.LoadById(params.id);
     }
     return undefined;
 }

@@ -50,13 +50,13 @@ export default class AssignedTestRow extends Component {
     }
 
     public async Populate(assignment: Assignment){
-        this.NameCell.textContent = await (await assignment.GetTest()).GetName();
-        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
-        this.AssignedCell.textContent = DateUtils.ToDayFormat(await assignment.GetAssignmentDate());
-        this.AssignedCell.title = DateUtils.ToDayHourFormat(await assignment.GetAssignmentDate());
-        this.AuthorCell.textContent = await (await (await assignment.GetTest()).GetAuthor()).GetName();
+        this.NameCell.textContent = assignment.Test.Name;
+        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.TimeLimit);
+        this.AssignedCell.textContent = DateUtils.ToDayFormat(assignment.AssignmentDate);
+        this.AssignedCell.title = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
+        this.AuthorCell.textContent = assignment.Test.Author.GetFullName();
         
-        let score = await assignment.GetScore();
+        let score = assignment.Score;
         if(score === null){
             this.ScoreCell.textContent = '—';
         }else{
@@ -72,22 +72,22 @@ export default class AssignedTestRow extends Component {
 
         this.DetailsButton.addEventListener('click', () => this.DisplayAssignmentDetailsDialog(assignment));
 
-        let attempts = await assignment.GetAttemptCount();
-        let attempt_limit = await assignment.GetAttemptLimit();
+        let attempts = assignment.AttemptCount;
+        let attempt_limit = assignment.AttemptLimit;
         this.AttemptsCell.textContent =
             attempts.toString() + ((attempt_limit > 0) ? ('/' + attempt_limit.toString()) : '');
         
-        if(!(await assignment.IsActive())){
+        if(!assignment.IsActive()){
             this.SolveButton.remove();
             this.ButtonsCell.classList.add('narrow-screen-only');
 
             this.DeadlineCell.title = this.DeadlineCell.textContent;
-            this.DeadlineCell.textContent = DateUtils.ToDayFormat(await assignment.GetTimeLimit());
+            this.DeadlineCell.textContent = DateUtils.ToDayFormat(assignment.TimeLimit);
 
             this.Element.insertBefore(this.ScoreCell, this.DeadlineCell);
             this.Element.insertBefore(this.AssignedCell, this.DeadlineCell);
         }else{
-            this.SolveButton.href = 'testy/rozwiąż/' + assignment.GetId();
+            this.SolveButton.href = 'testy/rozwiąż/' + assignment.Id;
             this.SolveButton.addEventListener('click', (e) => HandleLinkClick(e, 'testy/rozwiąż', assignment));
         }
     }

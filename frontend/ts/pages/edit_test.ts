@@ -6,6 +6,7 @@ import Test from '../entities/test';
 import PageParams from '../1page/pageparams';
 
 import * as PageManager from '../1page/pagemanager';
+import TestLoader from '../entities/loaders/testloader';
 
 export default class EditTestPage extends Page {
     QuestionsTable: QuestionsTable;
@@ -34,16 +35,16 @@ export default class EditTestPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams){
-        if(typeof params === 'number') this.Test = new Test(params);
+        if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
         else this.Test = params as Test;
 
         this.QuestionsTable.LoadQuestions(this.Test);
         this.TestSettingsCard.Populate(this.Test);
         container.appendChild(this.Element);
         
-        this.TestNameHeading.textContent = await this.Test.GetName();
+        this.TestNameHeading.textContent = this.Test.Name;
         this.Test.AddEventListener('change', (async () => {
-            let new_name = (await this.Test?.GetName()) ?? '';
+            let new_name = this.Test?.Name ?? '';
             this.TestNameHeading.textContent = new_name;
             PageManager.SetTitle('Edycja: ' + new_name);
         }).bind(this));
@@ -54,10 +55,10 @@ export default class EditTestPage extends Page {
     }
 
     GetUrlPath(){
-        return 'testy/edytuj/' + (this.Test?.GetId() ?? 0);
+        return 'testy/edytuj/' + (this.Test?.Id ?? 0);
     }
 
     async GetTitle(){
-        return 'Edycja: ' + (await this.Test?.GetName());
+        return 'Edycja: ' + this.Test?.Name;
     }
 }

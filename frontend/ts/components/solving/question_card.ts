@@ -109,13 +109,13 @@ export default class QuestionCard extends Card {
         this.CurrentQuestionNumber = 0;
         this.Questions = QuestionWithUserAnswers.FromArray(await attempt.GetQuestions());
 
-        let assignment = attempt.GetAssignment();
-        this.AssignmentTimeLimit = await assignment.GetTimeLimit();
+        let assignment = attempt.Assignment;
+        this.AssignmentTimeLimit = assignment.TimeLimit;
 
-        let test = await assignment.GetTest();
+        let test = assignment.Test;
 
-        if(await test.HasTimeLimit()){
-            this.TimeLimit = await test.GetTimeLimit();
+        if(test.HasTimeLimit()){
+            this.TimeLimit = test.TimeLimit;
             let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentTimeLimit);
             if(this.TimeLimit > assignment_time_limit_diff) this.TimeLimit = undefined;
         }else{
@@ -132,7 +132,7 @@ export default class QuestionCard extends Card {
 
     async DisplayQuestion(question: QuestionWithUserAnswers, number: number){
         this.CurrentQuestion = question;
-        let question_text = await question.GetQuestion().GetText();
+        let question_text = question.GetQuestion().Text;
         this.QuestionText.textContent = question_text;
         if(question_text.length > 350){
             this.QuestionText.classList.add('long');
@@ -147,7 +147,7 @@ export default class QuestionCard extends Card {
         this.CurrentQuestion.SetAnswers(answers);
 
         // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
-        switch(await this.CurrentQuestion.GetQuestion().GetType()){
+        switch(this.CurrentQuestion.GetQuestion().Type){
             case Question.TYPE_SINGLE_CHOICE:
             case Question.TYPE_MULTI_CHOICE:
                 this.AnswerWrapper.textContent = '';
@@ -155,7 +155,7 @@ export default class QuestionCard extends Card {
                     const answer = answers[i];
                     let answer_button = document.createElement('button');
                     answer_button.classList.add('answer-button');
-                    answer_button.textContent = await answer.GetText();
+                    answer_button.textContent = answer.Text;
                     answer_button.dataset.index = i.toString();
                     answer_button.addEventListener('click', ((e: MouseEvent) => {
                         this.OnAnswerButtonClick(e, i);
@@ -177,7 +177,7 @@ export default class QuestionCard extends Card {
     protected async OnAnswerButtonClick(e: MouseEvent, answer_index: number){
         if(this.DisableAnswers) return;
 
-        switch(await this.CurrentQuestion?.GetQuestion().GetType()){
+        switch(this.CurrentQuestion?.GetQuestion().Type){
             case Question.TYPE_SINGLE_CHOICE:
                 this.CurrentQuestion?.DeselectAllAnswers();
                 this.CurrentQuestion?.SetAnswerSelection(answer_index, true);
@@ -218,7 +218,7 @@ export default class QuestionCard extends Card {
         let answers_buttons = document.querySelectorAll('.answer-button');
         for(let button of answers_buttons){
             let index = parseInt((button as HTMLElement).dataset.index ?? '0');
-            if(await this.CurrentQuestion.GetAnswers()[index].IsCorrect()){
+            if(this.CurrentQuestion.GetAnswers()[index].Correct){
                 button.classList.add('correct');
             }else{
                 button.classList.add('wrong');
@@ -227,7 +227,7 @@ export default class QuestionCard extends Card {
     
         // Zaktualizuj wynik
         this.PointsGot += await this.CurrentQuestion.CountPoints();
-        this.PointsMax += await this.CurrentQuestion.GetQuestion().GetPoints();
+        this.PointsMax += this.CurrentQuestion.GetQuestion().Points;
         this.UpdateScore();
     }
 
@@ -261,7 +261,7 @@ export default class QuestionCard extends Card {
 
         let points_max = 0;
         for(let question of this.Questions){
-            points_max += await question.GetQuestion().GetPoints();
+            points_max += question.GetQuestion().Points;
         }
         this.PointsMax = points_max;
         this.UpdateScore();

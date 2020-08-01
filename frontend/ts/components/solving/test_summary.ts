@@ -3,6 +3,7 @@ import { HandleLinkClick } from '../../1page/pagemanager';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
 import Assignment from '../../entities/assignment';
 import ScoreDetailsDialog from '../tests_lists/score_details_dialog';
+import AssignmentLoader from '../../entities/loaders/assignmentloader';
 
 export default class TestSummary extends Card {
     PercentageScoreNode: Text;
@@ -66,12 +67,14 @@ export default class TestSummary extends Card {
     }
 
     async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment){
+        // Przypisanie jest wczytywane ponownie, by odświeżyć wynik
+        let assignment_awaiter = AssignmentLoader.LoadById(assignment.Id);
         this.Assignment = assignment;
 
         this.DisplayParticularScores(questions);
         
-        assignment.Reload();    // Żeby odświeżyć średni wynik
-        let score = await assignment.GetScore();
+        assignment.Score = (await assignment_awaiter).Score;
+        let score = assignment.Score;
         this.AverageScoreNode.textContent = score?.toString() ?? '0';
         this.AverageScoreSubtitle.style.display = '';
     }
@@ -92,15 +95,15 @@ export default class TestSummary extends Card {
 
         for(let question of questions){
             let q_got = await question.CountPoints();
-            let q_max = await question.GetQuestion().GetPoints();
+            let q_max = question.GetQuestion().Points;
 
             total_got += q_got;
             total_max += q_max;
 
-            let q_id = question.GetQuestion().GetId();
+            let q_id = question.GetQuestion().Id;
             if(question_data[q_id] === undefined){
                 question_data[q_id] = {
-                    text: await question.GetQuestion().GetText(),
+                    text: question.GetQuestion().Text,
                     got: 0,
                     max: 0
                 }

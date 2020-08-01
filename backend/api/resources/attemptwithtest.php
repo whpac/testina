@@ -39,8 +39,10 @@ class AttemptWithTest extends Resource {
         $attempt = \Entities\Attempt::Create($current_user, $assignment, null, 0, $max_score);
 
         $this->AddSubResource('id', new ValueResource($attempt->GetId()));
-        $this->AddSubResource('questions', new QuestionCollection($questions));
+        $this->AddSubResource('user', new User($attempt->GetUser()));
         $this->AddSubResource('max_score', new ValueResource($max_score));
+        $this->AddSubResource('begin_time', new ValueResource($attempt->GetBeginTime()->format('Y-m-d H:i:s')));
+        $this->AddSubResource('questions', new QuestionCollection($questions));
         $this->AddSubResource('path', new ValueResource($path));
 
         return true;

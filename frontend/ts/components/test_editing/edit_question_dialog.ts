@@ -212,13 +212,13 @@ export default class EditQuestionDialog extends Dialog {
     async PopulateAndShow(question?: Question){
         this.Question = question;
         this.IgnoreChanges = true;
-        this.TextTextarea.value = await question?.GetText() ?? '';
-        this.TypeSelect.value = (await question?.GetType() ?? 0).toString();
-        this.PointsInput.value = (await question?.GetPoints() ?? 1).toString();
+        this.TextTextarea.value = question?.Text ?? '';
+        this.TypeSelect.value = (question?.Type ?? 0).toString();
+        this.PointsInput.value = (question?.Points ?? 1).toString();
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
         this.ErrorWrapper.textContent = '';
 
-        switch(await question?.GetPointsCounting() ?? Question.COUNTING_BINARY){
+        switch(question?.PointsCounting ?? Question.COUNTING_BINARY){
             case Question.COUNTING_BINARY:
                 this.CountingBinaryRadio.checked = true;
                 break;
@@ -227,7 +227,7 @@ export default class EditQuestionDialog extends Dialog {
                 break;
         }
 
-        let typos_count = await question?.GetMaxTypos() ?? 0;
+        let typos_count = question?.MaxTypos ?? 0;
         if(typos_count == 0){
             this.TyposDisallowRadio.checked = true;
             this.TyposAllowCountInput.value = '1';

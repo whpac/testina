@@ -6,6 +6,7 @@ import QuestionCard from '../components/solving/question_card';
 import Attempt from '../entities/attempt';
 import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import TestSummary from '../components/solving/test_summary';
+import AssignmentLoader from '../entities/loaders/assignmentloader';
 
 export default class SolveTestPage extends Page{
     HeadingTestName: Text;
@@ -59,7 +60,7 @@ export default class SolveTestPage extends Page{
 
     async LoadInto(container: HTMLElement, params?: PageParams){
         if(params === undefined) throw 'Nie podano testu do rozwiązania';
-        if(typeof params === 'number') this.Assignment = new Assignment(params);
+        if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
         else this.Assignment = params as Assignment;
 
         this.Invitation.GetElement().style.display = '';
@@ -67,7 +68,7 @@ export default class SolveTestPage extends Page{
         this.TestSummary.GetElement().style.display = 'none';
 
         container.appendChild(this.Element);
-        this.HeadingTestName.textContent = await (await this.Assignment.GetTest()).GetName();
+        this.HeadingTestName.textContent = this.Assignment.Test.Name;
         this.Invitation.Populate(this.Assignment);
     }
 
@@ -76,11 +77,11 @@ export default class SolveTestPage extends Page{
     }
 
     GetUrlPath(){
-        return 'testy/rozwiąż/' + (this.Assignment?.GetId().toString() ?? '');
+        return 'testy/rozwiąż/' + (this.Assignment?.Id.toString() ?? '');
     }
 
     async GetTitle(){
         if(this.Assignment === undefined) return 'Rozwiąż test';
-        return 'Rozwiąż: ' + await (await this.Assignment?.GetTest()).GetName();
+        return 'Rozwiąż: ' + this.Assignment?.Test.Name;
     }
 }

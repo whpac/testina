@@ -1,5 +1,6 @@
 import Component from '../../basic/component';
 import Group from '../../../entities/group';
+import GroupLoader from '../../../entities/loaders/grouploader';
 
 export default class GroupsTable extends Component<'selectionchanged'> {
     protected Element: HTMLTableElement;
@@ -41,7 +42,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         if(this.AreGroupsPopulated) return;
         this.GroupsTBody.textContent = '';
 
-        let groups = await Group.GetAll();
+        let groups = await GroupLoader.GetAll();
         for(let group of groups){
             let tr = this.GroupsTBody.insertRow(-1);
 
@@ -51,7 +52,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
             checkbox.addEventListener('change', (() => this.OnRowSelectionChanged(checkbox.checked, tr)).bind(this));
             checkbox_cell.appendChild(checkbox);
 
-            let group_name = await group.GetName();
+            let group_name = group.Name;
             tr.dataset.groupName = group_name;
             tr.insertCell(-1).textContent = group_name;
 

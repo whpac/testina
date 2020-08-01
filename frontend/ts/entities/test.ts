@@ -3,216 +3,123 @@ import Entity, { Collection } from './entity';
 import User from './user';
 import PageParams from '../1page/pageparams';
 
-import { UserDescriptor } from './user';
-import Question, { QuestionDescriptor, QuestionCollection } from './question';
-import Assignment, { AssignmentDescriptor } from './assignment';
-
-/** Deskryptor testu w odpowiedzi z API */
-export interface TestDescriptor {
-    id: number,
-    name: string,
-    author: UserDescriptor,
-    creation_date: string,
-    time_limit: number,
-    question_multiplier: number,
-    question_count: number,
-    questions: QuestionCollection,
-    assignment_count: number | undefined,
-    assignments: Collection<AssignmentDescriptor>
-}
-
-/** @deprecated - użyć Collection<TestDescriptor> */
-type TestCollection = {
-    [test_id: number]: TestDescriptor
-}
+import Question from './question';
+import Assignment from './assignment';
+import TestLoader from './loaders/testloader';
+import QuestionLoader from './loaders/questionloader';
+import AssignmentLoader, { AssignmentDescriptor } from './loaders/assignmentloader';
 
 /** Klasa reprezentująca test */
 export default class Test extends Entity implements PageParams {
     /** Unikatowy identyfikator testu */
-    protected id: number;
+    public readonly Id: number;
     /** Nazwa testu */
-    protected name: string | undefined;
+    protected _Name: string;
     /** Autor testu */
-    protected author: User | undefined;
+    public readonly Author: User;
     /** Data utworzenia testu */
-    protected creation_date: Date | undefined;
+    public readonly CreationDate: Date;
     /** Limit czasu na rozwiązanie testu */
-    protected time_limit: number | undefined;
+    protected _TimeLimit: number;
     /** Mnożnik pytań */
-    protected question_multiplier: number | undefined;
+    protected _QuestionMultiplier: number;
     /** Ilość pytań (bez uwzględniania mnożnika) */
-    protected question_count: number | undefined;
+    protected _QuestionCount: number | undefined;
     /** Ile razy test został przypisany */
-    protected assignment_count: number | undefined;
-    
-    /** Deskryptory pytań */
-    protected question_descriptors: QuestionDescriptor[] | undefined;
-    /** Pytania */
-    protected questions: Question[] | undefined;
+    public readonly AssignmentCount: number | undefined;
+
+    /** Nazwa testu */
+    public get Name(){
+        return this._Name;
+    }
+    public set Name(new_name: string){
+        this._Name = new_name;
+        this.FireEvent('change');
+    }
+
+    /** Limit czasu na rozwiązanie testu */
+    public get TimeLimit(){
+        return this._TimeLimit;
+    }
+    public set TimeLimit(new_value: number){
+        this._TimeLimit = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Mnożnik pytań */
+    public get QuestionMultiplier() {
+        return this._QuestionMultiplier;
+    }
+    public set QuestionMultiplier(new_value: number) {
+        this._QuestionMultiplier = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Ilość pytań (bez uwzględniania mnożnika) */
+    public get QuestionCount(){
+        return this._QuestionCount;
+    }
+
+    /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
+    protected QuestionLoader: QuestionLoader;
+    /** Obiekt odpowiedzialny za wczytywanie przypisań */
+    protected AssignmentLoader: AssignmentLoader;
 
     /** Deskryptory przypisań tego testu */
     protected assignment_descriptors: AssignmentDescriptor[] | undefined;
     /** Przypisania */
     protected assignments: Assignment[] | undefined;
 
-    /** Reprezentuje status operacji pobierania danych */
-    private _fetch_awaiter: Promise<void> | undefined;
-
     /**
      * Klasa reprezentująca test
-     * @param test Identyfikator testu lub deskryptor
+     * @param id Identyfikator testu
+     * @param name Nazwa testu
+     * @param author Autor testu
+     * @param creation_date Data utworzenia testu
+     * @param time_limit Limit czasu na rozwiązanie testu
+     * @param question_multiplier Mnożnik pytań
+     * @param question_loader Obiekt wczytujący pytania
+     * @param assignment_loader Obiekt wczytujący przypisania
      */
-    constructor(test: number | TestDescriptor){
+    constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
+        question_multiplier: number, question_loader: QuestionLoader, assignment_loader: AssignmentLoader){
+        
         super();
 
-        if(typeof test === 'number'){
-            this.id = test;
-            this._fetch_awaiter = this.Fetch();
-        }else{
-            this.id = test.id;
-            this.Populate(test);
+        this.Id = id;
+        this._Name = name;
+        this.Author = author;
+        this.CreationDate = creation_date;
+        this._TimeLimit = time_limit;
+        this._QuestionMultiplier = question_multiplier;
+        this._QuestionCount = question_loader.QuestionCount;
+        this.AssignmentCount = assignment_loader.AssignmentCount;
+
+        this.QuestionLoader = question_loader;
+        this.AssignmentLoader = assignment_loader;
+    }
+
+    protected _Questions: Question[] | undefined;
+    /** Zwraca pytania do tego testu */
+    public async GetQuestions(){
+        if(this._Questions === undefined){
+            this._Questions = await this.QuestionLoader.GetAllInCurrentTest();
         }
+        return this._Questions;
     }
 
-    /** Zwraca wszystkie testy utworzone przez użytkownika */
-    static async GetAll(){
-        let response = await XHR.Request('api/tests?depth=4', 'GET');
-        let json = response.Response as TestCollection;
-        let out_array: Test[] = [];
-
-        Object.keys(json).forEach((test_id) => {
-            out_array.push(new Test(json[parseInt(test_id)]));
-        });
-
-        return out_array;
-    }
-
-    /** Pobiera test z serwera */
-    protected async Fetch(){
-        let response = await XHR.Request(this.GetApiUrl() + '?depth=3', 'GET');
-        let json = response.Response as TestDescriptor;
-        this.Populate(json);
-    }
-
-    /**
-     * Wypełnia właściwości według danych w deskryptorze
-     * @param descriptor Deskryptor testu
-     */
-    protected Populate(descriptor: TestDescriptor){
-        this.name = descriptor.name;
-        this.author = new User(descriptor.author);
-        this.creation_date = new Date(descriptor.creation_date);
-        this.time_limit = descriptor.time_limit;
-        this.question_multiplier = descriptor.question_multiplier;
-        this.question_count = descriptor.question_count;
-        this.question_descriptors = [];
-        this.assignment_count = descriptor.assignment_count;
-        this.assignment_descriptors = [];
-
-        if(descriptor.questions !== undefined){
-            Object.keys(descriptor.questions).forEach((q_id) => {
-                this.question_descriptors?.push(descriptor.questions[parseInt(q_id)]);
-            });
+    protected _Assignments: Assignment[] | undefined;
+    /** Zwraca pytania do tego testu */
+    public async GetAssignments(){
+        if(this._Assignments === undefined){
+            this._Assignments = await this.AssignmentLoader.GetAll();
         }
-
-        if(descriptor.assignments !== undefined){
-            Object.keys(descriptor.assignments).forEach((a_id) => {
-                this.assignment_descriptors?.push(descriptor.assignments[parseInt(a_id)]);
-            });
-        }
-    }
-
-    /** Adres testu w API */
-    GetApiUrl(){
-        return 'api/tests/' + this.id;
-    }
-
-    /** Zwraca identyfikator testu */
-    GetId(): number{
-        return this.id;
-    }
-
-    /** Zwraca nazwę testu */
-    async GetName(): Promise<string>{
-        await this?._fetch_awaiter;
-        return this.name as string;
-    }
-
-    /** Zwraca autora testu */
-    async GetAuthor(): Promise<User>{
-        await this?._fetch_awaiter;
-        return this.author as User;
-    }
-
-    /** Zwraca datę utworzenia */
-    async GetCreationDate(): Promise<Date>{
-        await this?._fetch_awaiter;
-        return this.creation_date as Date;
-    }
-
-    /** Zwraca limit czasu na rozwiązanie */
-    async GetTimeLimit(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.time_limit as number;
-    }
-
-    /** Zwraca mnożnik pytań */
-    async GetQuestionMultiplier(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.question_multiplier as number;
-    }
-
-    /** Zwraca ilość pytań (bez uwzględniania mnożnika) */
-    async GetQuestionCount(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.question_count as number;
+        return this._Assignments;
     }
 
     /** Czy test ma limit czasu na rozwiązanie */
-    async HasTimeLimit(): Promise<boolean>{
-        return (await this.GetTimeLimit()) != 0;
-    }
-
-    /** Ile razy test został przypisany */
-    async GetAssignmentCount(): Promise<number | undefined>{
-        await this?._fetch_awaiter;
-        return this.assignment_count;
-    }
-
-    /** Zwraca pytania */
-    async GetQuestions(): Promise<Question[]>{
-        await this?._fetch_awaiter;
-
-        if(this.questions !== undefined) return this.questions;
-
-        let first_question = (this.question_descriptors ?? [null])[0];
-        if(first_question === undefined || first_question === null || Object.keys(first_question).length == 0){
-            this.questions = await Question.GetForTest(this);
-        }else{
-            this.questions = [];
-            this.question_descriptors?.forEach((descriptor) => {
-                this.questions?.push(new Question(this, descriptor));
-            });
-        }
-        return this.questions;
-    }
-
-    /** Zwraca przypisania dla tego testu */
-    async GetAssignments(): Promise<Assignment[]>{
-        await this?._fetch_awaiter;
-
-        if(this.assignments !== undefined) return this.assignments;
-
-        let first_assignment = (this.assignment_descriptors ?? [null])[0];
-        if(first_assignment === undefined || first_assignment === null || Object.keys(first_assignment).length == 0){
-            this.assignments = [];
-        }else{
-            this.assignments = [];
-            this.assignment_descriptors?.forEach((descriptor) => {
-                this.assignments?.push(new Assignment(descriptor));
-            });
-        }
-        return this.assignments;
+    HasTimeLimit(){
+        return this.TimeLimit != 0;
     }
 
     /**
@@ -231,35 +138,14 @@ export default class Test extends Entity implements PageParams {
         
         if(result.Status != 201) throw result;
         
-        return new Test(parseInt(result.ContentLocation));
+        return TestLoader.LoadById(parseInt(result.ContentLocation));
     }
 
     /** Usuwa test */
     async Remove(){
-        let result = await XHR.Request(this.GetApiUrl(), 'DELETE');
+        let result = await XHR.Request('api/tests/' + this.Id.toString(), 'DELETE');
         if(result.Status == 204){
             this.FireEvent('remove');
-        }else throw result;
-    }
-
-    /**
-     * Aktualizuje ustawienia testu
-     * @param name Nowa nazwa testu
-     * @param question_multiplier Nowa wartość mnożnika pytań
-     * @param time_limit Nowy limit czasu na rozwiązanie
-     */
-    async UpdateSettings(name: string, question_multiplier: number, time_limit: number){
-        let request_data = {
-            name: name,
-            question_multiplier: question_multiplier,
-            time_limit: time_limit
-        };
-        let result = await XHR.Request(this.GetApiUrl(), 'PUT', request_data);
-        if(result.Status == 204){
-            this.name = name;
-            this.question_multiplier = question_multiplier;
-            this.time_limit = time_limit;
-            this.FireEvent('change');
         }else throw result;
     }
 
@@ -267,21 +153,21 @@ export default class Test extends Entity implements PageParams {
     GetSimpleRepresentation(){
         return {
             type: 'test',
-            id: this.GetId()
+            id: this.Id
         };
     }
 
     /** Zapewnia spójność danych po dodaniu pytania */
     OnQuestionAdded(){
-        if(this.question_count === undefined) this.question_count = 0;
-        this.question_count++;
+        if(this._QuestionCount === undefined) this._QuestionCount = 0;
+        this._QuestionCount++;
         this.FireEvent('change');
     }
 
     /** Zapewnia spójność danych po usunięciu pytania */
     OnQuestionRemoved(){
-        if(this.question_count === undefined || this.question_count < 1) return;
-        this.question_count--;
+        if(this._QuestionCount === undefined || this._QuestionCount < 1) return;
+        this._QuestionCount--;
         this.FireEvent('change');
     }
 }

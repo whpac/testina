@@ -1,5 +1,6 @@
 import Component from '../../basic/component';
 import User from '../../../entities/user';
+import UserLoader from '../../../entities/loaders/userloader';
 
 export default class UsersTable extends Component<'selectionchanged'> {
     protected Element: HTMLTableElement;
@@ -41,7 +42,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
         if(this.AreUsersPopulated) return;
         this.UsersTBody.textContent = '';
 
-        let users = await User.GetAll();
+        let users = await UserLoader.GetAll();
         for(let user of users){
             let tr = this.UsersTBody.insertRow(-1);
             
@@ -51,7 +52,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
             checkbox.addEventListener('change', (() => this.OnRowSelectionChanged(checkbox.checked, tr)).bind(this));
             checkbox_cell.appendChild(checkbox);
             
-            let user_name = await user.GetName();
+            let user_name = user.GetFullName();
             tr.dataset.userName = user_name;
             tr.insertCell(-1).textContent = user_name;
 

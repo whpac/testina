@@ -108,21 +108,21 @@ export default class QuestionWithUserAnswers {
     }
 
     /** Liczy uzyskane punkty */
-    public async CountPoints(){
+    public CountPoints(){
         if(!this.IsDone) return 0;
         if(this.Score !== undefined) return this.Score;
 
-        switch(await this.Question.GetPointsCounting()){
+        switch(this.Question.PointsCounting){
             case Question.COUNTING_BINARY:
                 let number_of_correct_choices = 0;
                 for(let i = 0; i < this.IsAnswerSelected.length; i++){
-                    if(this.IsAnswerSelected[i] == await this.Answers[i].IsCorrect()){
+                    if(this.IsAnswerSelected[i] == this.Answers[i].Correct){
                         number_of_correct_choices++;
                     }
                 }
 
                 if(number_of_correct_choices == this.Answers.length){
-                    this.Score = await this.Question.GetPoints();
+                    this.Score = this.Question.Points;
                 }else{
                     this.Score = 0;
                 }
@@ -133,17 +133,17 @@ export default class QuestionWithUserAnswers {
                 let number_of_wrong_choices = 0;
                 let number_of_correct_answers = 0;
                 for(let i = 0; i < this.IsAnswerSelected.length; i++){
-                    if(this.IsAnswerSelected[i] != await this.Answers[i].IsCorrect()){
+                    if(this.IsAnswerSelected[i] != this.Answers[i].Correct){
                         number_of_wrong_choices++;
                     }
-                    if(await this.Answers[i].IsCorrect()){
+                    if(this.Answers[i].Correct){
                         number_of_correct_answers++;
                     }
                 }
 
                 let correct_factor = 1 - (number_of_wrong_choices / number_of_correct_answers);
                 if(correct_factor < 0) correct_factor = 0;
-                this.Score = correct_factor * (await this.Question.GetPoints());
+                this.Score = correct_factor * this.Question.Points;
                 return this.Score;
             break;
 

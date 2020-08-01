@@ -68,21 +68,21 @@ export default class TestSummaryDialog extends Dialog {
 
     async Prepare(test: Test){
         this.CurrentTest = test;
-        this.SetHeader(await test.GetName());
+        this.SetHeader(test.Name);
 
         this.QuestionCountElement.textContent = 
-            (await test.GetQuestionCount()).toString() + 
-            ' (×' +  (await test.GetQuestionMultiplier()).toString() + ')';
-        this.QuestionCreationDateElement.textContent = DateUtils.ToMediumFormat(await test.GetCreationDate());
+            (test.QuestionCount ?? 0).toString() + 
+            ' (×' + test.QuestionMultiplier.toString() + ')';
+        this.QuestionCreationDateElement.textContent = DateUtils.ToMediumFormat(test.CreationDate);
 
-        let assignment_count = await test.GetAssignmentCount();
+        let assignment_count = test.AssignmentCount;
         if(assignment_count === undefined){
             this.AssignmentCountRow.style.display = 'none';
         }else{
             let link = document.createElement('a');
             link.title = 'Kliknij, aby zobaczyć wyniki oraz szczegóły przypisań';
             link.textContent = assignment_count.toString() + ' raz' + n(assignment_count, '', 'y', 'y');
-            link.href = 'testy/przypisane/' + test.GetId();
+            link.href = 'testy/przypisane/' + test.Id;
             link.addEventListener('click', (e) => {
                 this.Hide();
                 HandleLinkClick(e, 'testy/przypisane', test);

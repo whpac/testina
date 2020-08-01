@@ -4,6 +4,7 @@ import Test from '../../entities/test';
 import Card from '../basic/card';
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigationprevention';
+import TestSaver from '../../entities/savers/testsaver';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;
@@ -147,12 +148,12 @@ export default class TestSettings extends Card {
     async Populate(test: Test){
         this.IgnoreChange = true;
         this.Test = test;
-        this.TestNameInput.value = (await test.GetName());
-        this.QuestionMultiplierInput.value = (await test.GetQuestionMultiplier()).toString();
+        this.TestNameInput.value = test.Name;
+        this.QuestionMultiplierInput.value = test.QuestionMultiplier.toString();
 
         if(await test.HasTimeLimit()){
             this.TimeLimitPresentRadio.checked = true;
-            this.TimeLimitInput.value = ((await test.GetTimeLimit()) / 60).toString();
+            this.TimeLimitInput.value = (test.TimeLimit / 60).toString();
         }else{
             this.NoTimeLimitRadio.checked = true;
             this.TimeLimitInput.value = '15';
@@ -184,7 +185,7 @@ export default class TestSettings extends Card {
         let result = window.confirm('Usunięcia testu nie da się cofnąć.\nKontynuować?');
         if(!result) return;
 
-        let test_name = await (this.Test as Test).GetName();
+        let test_name = (this.Test as Test).Name;
 
         let removing_toast = new Toast('Usuwanie testu „' + test_name + '”...');
         removing_toast.Show();
@@ -210,11 +211,11 @@ export default class TestSettings extends Card {
         saving_toast.Show();
 
         try{
-            await (this.Test as Test).UpdateSettings(
-                this.TestNameInput.value,
-                parseFloat(this.QuestionMultiplierInput.value),
-                this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0
-            );
+            let test = this.Test as Test;
+            test.Name = this.TestNameInput.value;
+            test.QuestionMultiplier = parseFloat(this.QuestionMultiplierInput.value);
+            test.TimeLimit = this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0;
+            TestSaver.Update(test);
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
             NavigationPrevention.Unprevent('test-settings');

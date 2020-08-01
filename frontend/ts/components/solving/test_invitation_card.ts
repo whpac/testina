@@ -6,6 +6,7 @@ import { n } from '../../utils/textutils';
 import { HandleLinkClick } from '../../1page/pagemanager';
 import User from '../../entities/user';
 import Attempt from '../../entities/attempt';
+import UserLoader from '../../entities/loaders/userloader';
 
 export default class TestInvitationCard extends Card {
     protected NameHeader: HTMLHeadingElement;
@@ -90,21 +91,21 @@ export default class TestInvitationCard extends Card {
 
         let time_limit = '0:00';
         let has_time_limit = false;
-        let test = await assignment.GetTest();
-        let question_count = Math.round(await test.GetQuestionCount() * await test.GetQuestionMultiplier());
+        let test = assignment.Test;
+        let question_count = Math.round((test.QuestionCount ?? 0) * test.QuestionMultiplier);
 
-        if(await test.HasTimeLimit()){
-            if(await test.GetTimeLimit() > DateUtils.DiffInSeconds(await assignment.GetTimeLimit())){
-                time_limit = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
+        if(test.HasTimeLimit()){
+            if(test.TimeLimit > DateUtils.DiffInSeconds(assignment.TimeLimit)){
+                time_limit = DateUtils.ToDayHourFormat(assignment.TimeLimit);
             }else{
-                time_limit = DateUtils.SecondsToTime(await test.GetTimeLimit());
+                time_limit = DateUtils.SecondsToTime(test.TimeLimit);
                 has_time_limit = true;
             }
         }else{
-            time_limit = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
+            time_limit = DateUtils.ToDayHourFormat(assignment.TimeLimit);
         }
 
-        this.NameHeader.textContent = await test.GetName();
+        this.NameHeader.textContent = test.Name;
         this.QuestionCount.textContent = question_count.toString();
         this.QuestionCountText.textContent = 'pyta' + n(question_count, 'nie', 'nia', 'ń');
         this.TimeLimit.textContent = time_limit;
@@ -114,12 +115,12 @@ export default class TestInvitationCard extends Card {
         let attempts_left = await assignment.GetRemainingAttemptsCount();
         if(await assignment.HasTimeLimitExceeded()) rem_text = 'Termin rozwiązania tego testu upłynął';
         else if(await assignment.AreAttemptsUnlimited()) rem_text = 'Do tego testu możesz podejść dowolną liczbę razy';
-        else if(attempts_left == 0) rem_text = 'Wykorzystał' + (await (await User.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś już wszystkie podejścia';
+        else if(attempts_left == 0) rem_text = 'Wykorzystał' + ((await UserLoader.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś już wszystkie podejścia';
         else rem_text = 'Pozostał' + n(attempts_left, 'o', 'y', 'o') + ' ci jeszcze ' + attempts_left + ' podejś' + n(attempts_left, 'cie', 'cia', 'ć');
 
         this.RemainingAttempts.textContent = rem_text;
 
-        if(!(await assignment.AreRemainingAttempts()) || (await assignment.HasTimeLimitExceeded())){
+        if(!assignment.IsActive()){
             this.StartButton.remove();
         }
     }

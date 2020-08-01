@@ -1,159 +1,70 @@
 import * as XHR from '../utils/xhr';
 import Entity, { Collection } from './entity';
-import User, { UserDescriptor } from './user';
-import Question, { QuestionDescriptor } from './question';
+import User from './user';
+import Question from './question';
 import Assignment from './assignment';
 import QuestionWithUserAnswers from './question_with_user_answers';
-
-/** Deskryptor podejścia w odpowiedzi z API */
-export interface AttemptDescriptor {
-    id: number,
-    user: UserDescriptor | undefined,
-    score: number | undefined,
-    max_score: number,
-    begin_time: string | undefined,
-    questions: Collection<QuestionDescriptor> | undefined,
-    path: number[] | undefined
-}
+import QuestionLoader, { QuestionDescriptor } from './loaders/questionloader';
+import AttemptLoader, { AttemptDescriptor } from './loaders/attemptloader';
 
 /** Klasa reprezentująca podejście */
 export default class Attempt extends Entity {
     /** Unikatowy identyfikator podejścia */
-    protected id: number;
+    public readonly Id: number;
     /** Przypisanie, do którego należy to podejście */
-    protected assignment: Assignment;
+    public readonly Assignment: Assignment;
     /** Użytkownik, który wykonał podejście */
-    protected user: User | undefined;
+    public readonly User: User;
     /** Wynik punktowy w podejściu */
-    protected score: number | undefined;
+    public readonly Score: number | undefined;
     /** Maksymalny wynik punktowy w podejściu */
-    protected max_score: number | undefined;
+    public readonly MaxScore: number;
     /** Czas rozpoczęcia podejścia */
-    protected begin_time: Date | undefined;
+    public readonly BeginTime: Date;
     /** Ścieżka pytań (lista identyfikatorów) */
-    protected path: number[] | undefined;
+    public readonly Path: number[] | undefined;
 
-    /** Deskryptory pytań w podejściu */
-    protected question_descriptors: Collection<QuestionDescriptor> | undefined;
-    /** Pytania w podejściu */
-    protected questions: Question[] | undefined;
-
-    /** Reprezentuje status operacji pobierania danych z serwera */
-    private _fetch_awaiter: Promise<void> | undefined;
+    /** Obiekt wczytujący pytania */
+    protected QuestionLoader: QuestionLoader | undefined;
 
     /**
      * Klasa reprezentująca podejście
      * @param assignment Przypisanie, którego częścią jest podejście
      * @param attempt Identyfikator podejścia lub deskryptor
      */
-    constructor(assignment: Assignment, attempt: number | AttemptDescriptor){
+    constructor(id: number, assignment: Assignment, user: User, score: number | undefined,
+        max_score: number, begin_time: Date, path: number[] | undefined, question_loader: QuestionLoader | undefined){
         super();
 
-        this.assignment = assignment;
-        if(typeof attempt === 'number'){
-            this.id = attempt;
-            this._fetch_awaiter = this.Fetch();
-        }else{
-            this.id = attempt.id;
-            this.Populate(attempt);
-        }
-    }
-
-    /** Pobiera podejście */
-    protected async Fetch(){
-        let response = await XHR.Request(this.GetApiUrl() + '?depth=2', 'GET');
-        let json = response.Response as AttemptDescriptor;
-        this.Populate(json);
-    }
-
-    /** Pobiera wszystkie podejścia dla przypisania */
-    static async GetForAssignment(assignment: Assignment){
-        let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=2', 'GET');
-        let json = response.Response as Collection<AttemptDescriptor>;
-        let out_array: Attempt[] = [];
-
-        Object.keys(json).forEach((attempt_id) => {
-            out_array.push(new Attempt(assignment, json[parseInt(attempt_id)]));
-        });
-
-        return out_array;
-    }
-
-    /**
-     * Ustawia właściwości podejścia zgodnie z deskryptorem
-     * @param descriptor Deskryptor z właściwościami do ustawienia
-     */
-    protected Populate(descriptor: AttemptDescriptor){
-        this.user = descriptor.user === undefined ? undefined : new User(descriptor.user);
-        this.score = descriptor.score;
-        this.max_score = descriptor.max_score;
-        this.begin_time = (descriptor.begin_time === undefined) ? undefined : new Date(descriptor.begin_time);
-        this.path = descriptor.path;
-        this.question_descriptors = descriptor.questions;
-    }
-
-    /** Zwraca adres podejścia w API */
-    GetApiUrl(){
-        return this.assignment.GetApiUrl() + '/attempts/' + this.id;
-    }
-
-    /** Zwraca unikatowy identyfikator podejścia */
-    GetId(): number{
-        return this.id;
-    }
-
-    /** Zwraca przypisanie, do którego należy podejście */
-    GetAssignment(): Assignment{
-        return this.assignment;
-    }
-
-    /** Zwraca użytkownika, który wykonał podejście */
-    async GetUser(): Promise<User>{
-        await this?._fetch_awaiter;
-        return this.user as User;
-    }
-
-    /** Zwraca zdobytą liczbę punktów */
-    async GetScore(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.score as number;
-    }
-
-    /** Zwraca maksymalną liczbę punktów, które można było zdobyć */
-    async GetMaxScore(): Promise<number>{
-        await this?._fetch_awaiter;
-        return this.max_score as number;
+        this.Id = id;
+        this.Assignment = assignment;
+        this.User = user;
+        this.Score = score;
+        this.MaxScore = max_score;
+        this.BeginTime = begin_time;
+        this.Path = path;
+        this.QuestionLoader = question_loader;
     }
 
     /** Zwraca wynik procentowy uzyskany w podejściu */
-    async GetPercentageScore(): Promise<number>{
-        await this?._fetch_awaiter;
+    public GetPercentageScore(){
+        if(this.Score === undefined || this.MaxScore === undefined) return 0;
+        if(this.MaxScore == 0) return 0;
 
-        if(this.score === undefined || this.max_score === undefined) return 0;
-        if(this.max_score == 0) return 0;
-
-        return Math.round(100 * this.score / this.max_score);
+        return Math.round(100 * this.Score / this.MaxScore);
     }
 
-    /** Zwraca czas rozpoczęcia podejścia */
-    async GetBeginTime(): Promise<Date>{
-        await this?._fetch_awaiter;
-        return this.begin_time as Date;
-    }
-
+    protected _Questions: Question[] | undefined;
     /** Zwraca pytania według ścieżki */
     async GetQuestions(): Promise<Question[]>{
-        await this?._fetch_awaiter;
-        if(this.questions !== undefined) return this.questions;
-        if(this.question_descriptors === undefined || this.path === undefined) return [];
+        if(this._Questions !== undefined) return this._Questions;
+        if(this.QuestionLoader === undefined || this.Path === undefined) throw 'Obiekt Attempt nie posiada danych do utworzenia ścieżki pytań.';
 
-        let test = await this.GetAssignment().GetTest();
         let questions: Question[] = [];
-        for(const q_id of this.path) {
-            if(this.question_descriptors[q_id] === undefined) continue;
-            questions.push(new Question(test, this.question_descriptors[q_id]));
+        for(const q_id of this.Path) {
+            questions.push(await this.QuestionLoader.LoadById(q_id));
         };
-        this.questions = questions;
+        this._Questions = questions;
 
         return questions;
     }
@@ -163,9 +74,9 @@ export default class Attempt extends Entity {
      * @param assignment Przypisanie, do którego należy utworzyć podejście
      */
     static async Create(assignment: Assignment){
-        let response = await XHR.Request(assignment.GetApiUrl() + '/attempts?depth=8', 'POST');
+        let response = await XHR.Request('api/assignments/' + assignment.Id + '/attempts?depth=8', 'POST');
         let json = response.Response as AttemptDescriptor;
-        return new Attempt(assignment, json);
+        return AttemptLoader.CreateFromDescriptor(assignment, json);
     }
 
     /**
@@ -180,7 +91,7 @@ export default class Attempt extends Entity {
         for(let question of questions){
             let answers: {id:number}[] = [];
             let q = {
-                id: question.GetQuestion().GetId(),
+                id: question.GetQuestion().Id,
                 done: question.GetIsDone(),
                 answers: answers
             };
@@ -188,14 +99,14 @@ export default class Attempt extends Entity {
             let selected_answers = question.GetSelectedAnswers();
             for(let selected_answer of selected_answers){
                 q.answers.push({
-                    id: selected_answer.GetId()
+                    id: selected_answer.Id
                 });
             }
 
             data.questions.push(q);
         }
 
-        let response = await XHR.Request(this.GetApiUrl() + '/answers', 'POST', data);
+        let response = await XHR.Request('api/assignments/' + this.Assignment.Id + '/attempts/' + this.Id.toString() + '/answers', 'POST', data);
 
         if(response.Status != 201){
             throw 'Nie udało się zapisać odpowiedzi.';

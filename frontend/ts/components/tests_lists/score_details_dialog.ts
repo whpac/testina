@@ -38,11 +38,10 @@ export default class ScoreDetailsDialog extends Dialog{
     }
 
     async Populate(assignment: Assignment){
-        let test_awaiter = assignment.GetTest();
-        let attempts_awaiter = Attempt.GetForAssignment(assignment);
-
-        let test = await test_awaiter;
-        this.SetHeader(await test.GetName());
+        let attempts_awaiter = assignment.GetAttempts();
+        
+        let test = assignment.Test;
+        this.SetHeader(test.Name);
 
         let attempts = await attempts_awaiter;
         for(let attempt of attempts){
@@ -50,11 +49,11 @@ export default class ScoreDetailsDialog extends Dialog{
             
             let td_date = tr.insertCell(-1);
             td_date.classList.add('center');
-            td_date.textContent = ToDayHourFormat(await attempt.GetBeginTime());
+            td_date.textContent = ToDayHourFormat(attempt.BeginTime);
 
             let td_score = tr.insertCell(-1);
             td_score.classList.add('center');
-            td_score.textContent = await attempt.GetPercentageScore() + '%';
+            td_score.textContent = attempt.GetPercentageScore() + '%';
         }
 
         let avg_tr = this.TBody.insertRow(-1);
@@ -69,6 +68,6 @@ export default class ScoreDetailsDialog extends Dialog{
         td_avg_score.appendChild(em_score = document.createElement('em'));
 
         em_avg.textContent = 'Średnia:';
-        em_score.textContent = await assignment.GetScore() + '%';
+        em_score.textContent = assignment.Score + '%';
     }
 }

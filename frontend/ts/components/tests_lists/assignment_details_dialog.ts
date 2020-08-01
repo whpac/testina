@@ -69,17 +69,17 @@ export default class AssignmentDetailsDialog extends Dialog {
     }
 
     public async Populate(assignment: Assignment){
-        let test = await assignment.GetTest();
-        this.SetHeader(await test.GetName());
+        let test = assignment.Test;
+        this.SetHeader(test.Name);
 
-        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(await assignment.GetTimeLimit());
+        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.TimeLimit);
         if(await assignment.HasTimeLimitExceeded()){
             this.DeadlineCell.classList.add('error');
         }
 
-        this.AssignmentDateCell.textContent = DateUtils.ToDayHourFormat(await assignment.GetAssignmentDate());
+        this.AssignmentDateCell.textContent = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
 
-        let avg_score = await assignment.GetScore();
+        let avg_score = assignment.Score;
         if(avg_score === null){
             this.ScoreCell.textContent = '—';
         }else{
@@ -92,12 +92,12 @@ export default class AssignmentDetailsDialog extends Dialog {
             this.ScoreCell.appendChild(score_link);
         }
 
-        this.AuthorCell.textContent = await (await test.GetAuthor()).GetName();
+        this.AuthorCell.textContent = test.Author.GetFullName();
 
-        if(await assignment.AreAttemptsUnlimited()){
+        if(assignment.AreAttemptsUnlimited()){
             this.AttemptsLeftCell.textContent = 'bez ograniczeń';
         }else{
-            let remaining_attempts_count = await assignment.GetRemainingAttemptsCount();
+            let remaining_attempts_count = assignment.GetRemainingAttemptsCount();
             if(remaining_attempts_count < 0) remaining_attempts_count = 0;
 
             this.AttemptsLeftCell.textContent = remaining_attempts_count.toString();
@@ -106,7 +106,7 @@ export default class AssignmentDetailsDialog extends Dialog {
             }
         }
 
-        if(await assignment.IsActive()){
+        if(assignment.IsActive()){
             this.SolveButton.addEventListener('click', () => this.ProceedToSolvePage(assignment));
         }else{
             this.SolveButton.remove();

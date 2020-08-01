@@ -84,7 +84,7 @@ class Attempt extends Entity {
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)
-                ->Select(['id'])
+                ->Select()
                 ->Where('user_id', '=', $user->GetId())
                 ->OrderBy('id', 'DESC')
                 ->Run();

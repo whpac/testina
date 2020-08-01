@@ -97,11 +97,11 @@ export default class QuestionsTable extends Component {
         td_num.textContent = row_number.toString() + '.';
 
         let td_text = tr.insertCell(-1);
-        td_text.textContent = Truncate(await question.GetText(), 60);
+        td_text.textContent = Truncate(question.Text, 60);
 
         let td_pts = tr.insertCell(-1);
         td_pts.classList.add('center');
-        td_pts.textContent = (await question.GetPoints()).toLocaleString();
+        td_pts.textContent = question.Points.toLocaleString();
 
         let td_edit = tr.insertCell(-1);
         let btn_edit = document.createElement('button');
@@ -118,8 +118,8 @@ export default class QuestionsTable extends Component {
         td_rem.appendChild(btn_rem);
 
         question.AddEventListener('change', async () => {
-            td_text.textContent = Truncate(await question.GetText(), 60);
-            td_pts.textContent = (await question.GetPoints()).toLocaleString();
+            td_text.textContent = Truncate(question.Text, 60);
+            td_pts.textContent = question.Points.toLocaleString();
         });
 
         question.AddEventListener('remove', (async () => {
@@ -142,7 +142,7 @@ export default class QuestionsTable extends Component {
     }
 
     async RemoveQuestion(question: Question){
-        let question_text = Truncate(await question.GetText(), 30);
+        let question_text = Truncate(question.Text, 30);
         let result = window.confirm('Usunięcia pytania nie da się cofnąć.\nCzy usunąć pytanie „' + question_text + '” mimo to?');
         if(!result) return;
 

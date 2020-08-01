@@ -64,8 +64,8 @@ export default class AnswerRow extends Component {
 
     async Populate(){
         this.IgnoreChanges = true;
-        this.TextInput.value = (await this.Answer?.GetText()) ?? '';
-        this.CorrectCheckbox.checked = (await this.Answer?.IsCorrect()) ?? false;
+        this.TextInput.value = this.Answer?.Text ?? '';
+        this.CorrectCheckbox.checked = this.Answer?.Correct ?? false;
         this.IgnoreChanges = false;
     }
 

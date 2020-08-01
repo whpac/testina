@@ -1,6 +1,7 @@
 import Page from '../components/basic/page';
 import Test from '../entities/test';
 import AssignmentsCard from '../components/assignments/assignments_card';
+import TestLoader from '../entities/loaders/testloader';
 
 export default class AssignmentsPage extends Page {
     protected Test: Test | undefined;
@@ -24,9 +25,9 @@ export default class AssignmentsPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any){
-        if(typeof params === 'number') this.Test = new Test(params);
+        if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
         else this.Test = params as Test;
-        this.TestNameHeading.textContent = await this.Test.GetName();
+        this.TestNameHeading.textContent = this.Test.Name;
 
         this.AssignmentsCard.Populate(this.Test);
 
@@ -38,10 +39,10 @@ export default class AssignmentsPage extends Page {
     }
 
     GetUrlPath(){
-        return 'testy/przypisane/' + this.Test?.GetId().toString() ?? '0';
+        return 'testy/przypisane/' + this.Test?.Id.toString() ?? '0';
     }
 
     async GetTitle(){
-        return (await this.Test?.GetName() ?? '') + ' – przypisania';
+        return (this.Test?.Name ?? '') + ' – przypisania';
     }
 }
