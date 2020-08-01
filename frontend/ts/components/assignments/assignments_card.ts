@@ -1,7 +1,9 @@
 import Card from '../basic/card';
 import Test from '../../entities/test';
+import AssignmentsTable from './assignments_table';
 
 export default class AssignmentsCard extends Card {
+    protected Table: AssignmentsTable;
 
     constructor(){
         super('semi-wide');
@@ -14,9 +16,13 @@ export default class AssignmentsCard extends Card {
         description.classList.add('secondary');
         description.textContent = 'Każdy wiersz tabeli odpowiada jednemu przypisaniu. Naciśnij przysisk „Szczegóły”, aby zobaczyć indywidualne wyniki uczniów. Możesz także dopisać test dodatkowym osobom.';
         this.AppendChild(description);
+
+        this.Table = new AssignmentsTable();
+        this.AppendChild(this.Table);
     }
 
     async Populate(test: Test){
-        console.log(await test.GetAssignments());
+        let assignments = await test.GetAssignments();
+        this.Table.Populate(assignments);
     }
 }
