@@ -51,7 +51,7 @@ export default class AssignedTestRow extends Component {
 
     public async Populate(assignment: Assignment){
         this.NameCell.textContent = assignment.Test.Name;
-        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.TimeLimit);
+        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
         this.AssignedCell.textContent = DateUtils.ToDayFormat(assignment.AssignmentDate);
         this.AssignedCell.title = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
         this.AuthorCell.textContent = assignment.Test.Author.GetFullName();
@@ -82,7 +82,7 @@ export default class AssignedTestRow extends Component {
             this.ButtonsCell.classList.add('narrow-screen-only');
 
             this.DeadlineCell.title = this.DeadlineCell.textContent;
-            this.DeadlineCell.textContent = DateUtils.ToDayFormat(assignment.TimeLimit);
+            this.DeadlineCell.textContent = DateUtils.ToDayFormat(assignment.Deadline);
 
             this.Element.insertBefore(this.ScoreCell, this.DeadlineCell);
             this.Element.insertBefore(this.AssignedCell, this.DeadlineCell);

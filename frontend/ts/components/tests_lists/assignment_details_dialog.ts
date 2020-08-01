@@ -72,8 +72,8 @@ export default class AssignmentDetailsDialog extends Dialog {
         let test = assignment.Test;
         this.SetHeader(test.Name);
 
-        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.TimeLimit);
-        if(await assignment.HasTimeLimitExceeded()){
+        this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
+        if(assignment.HasDeadlineExceeded()){
             this.DeadlineCell.classList.add('error');
         }
 

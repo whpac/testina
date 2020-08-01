@@ -95,14 +95,14 @@ export default class TestInvitationCard extends Card {
         let question_count = Math.round((test.QuestionCount ?? 0) * test.QuestionMultiplier);
 
         if(test.HasTimeLimit()){
-            if(test.TimeLimit > DateUtils.DiffInSeconds(assignment.TimeLimit)){
-                time_limit = DateUtils.ToDayHourFormat(assignment.TimeLimit);
+            if(test.TimeLimit > DateUtils.DiffInSeconds(assignment.Deadline)){
+                time_limit = DateUtils.ToDayHourFormat(assignment.Deadline);
             }else{
                 time_limit = DateUtils.SecondsToTime(test.TimeLimit);
                 has_time_limit = true;
             }
         }else{
-            time_limit = DateUtils.ToDayHourFormat(assignment.TimeLimit);
+            time_limit = DateUtils.ToDayHourFormat(assignment.Deadline);
         }
 
         this.NameHeader.textContent = test.Name;
@@ -112,9 +112,9 @@ export default class TestInvitationCard extends Card {
         this.TimeLimitText.textContent = has_time_limit ? 'limit czasu' : 'termin';
 
         let rem_text;
-        let attempts_left = await assignment.GetRemainingAttemptsCount();
-        if(await assignment.HasTimeLimitExceeded()) rem_text = 'Termin rozwiązania tego testu upłynął';
-        else if(await assignment.AreAttemptsUnlimited()) rem_text = 'Do tego testu możesz podejść dowolną liczbę razy';
+        let attempts_left = assignment.GetRemainingAttemptsCount();
+        if(assignment.HasDeadlineExceeded()) rem_text = 'Termin rozwiązania tego testu upłynął';
+        else if(assignment.AreAttemptsUnlimited()) rem_text = 'Do tego testu możesz podejść dowolną liczbę razy';
         else if(attempts_left == 0) rem_text = 'Wykorzystał' + ((await UserLoader.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś już wszystkie podejścia';
         else rem_text = 'Pozostał' + n(attempts_left, 'o', 'y', 'o') + ' ci jeszcze ' + attempts_left + ' podejś' + n(attempts_left, 'cie', 'cia', 'ć');
 

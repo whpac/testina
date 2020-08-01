@@ -22,7 +22,7 @@ export default class Assignment extends Entity implements PageParams {
     /** Limit podejść */
     public readonly AttemptLimit: number;
     /** Termin na rozwiązanie */
-    public readonly TimeLimit: Date;
+    public readonly Deadline: Date;
     /** Data przypisania */
     public readonly AssignmentDate: Date;
     /** Ilość już rozpoczętych podejść */
@@ -49,13 +49,13 @@ export default class Assignment extends Entity implements PageParams {
      * @param id Identyfikator przypisania
      * @param test Test, który został przypisany
      * @param attempt_limit Limit podejść
-     * @param time_limit Termin na rozwiązanie
+     * @param deadline Termin na rozwiązanie
      * @param assignment_date Data przypisania
      * @param attempt_loader Obiekt ładujący podejścia
      * @param score Średni wynik (lub null, jeśli nie było podejść)
      * @param assigned_by Osoba przypisująca
      */
-    constructor(id: number, test: Test, attempt_limit: number, time_limit: Date, assignment_date: Date,
+    constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User){
         
         super();
@@ -65,7 +65,7 @@ export default class Assignment extends Entity implements PageParams {
         this.Id = id;
         this.Test = test;
         this.AttemptLimit = attempt_limit;
-        this.TimeLimit = time_limit;
+        this.Deadline = deadline;
         this.AssignmentDate = assignment_date;
         this.AttemptCount = attempt_loader.AttemptCount;
         this._Score = score;
@@ -100,13 +100,13 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     /** Czy termin na wykonanie minął */
-    HasTimeLimitExceeded(){
-        return this.TimeLimit < new Date();
+    HasDeadlineExceeded(){
+        return this.Deadline < new Date();
     }
 
     /** Czy przypisanie jest aktywne (są wolne podejścia i nie upłynął termin) */
     IsActive(){
-        return !this.HasTimeLimitExceeded() && this.AreRemainingAttempts();
+        return !this.HasDeadlineExceeded() && this.AreRemainingAttempts();
     }
 
     GetSimpleRepresentation(){
