@@ -11,4 +11,6 @@ PageManager::SetTitle('');
 <div class="card wide">
     <h2>Ostatnie zdarzenia</h2>
     W ostatnim czasie zdarzyło się to i tamto:
+    <a href="./" id="btn-home" class="button">Home</a>
+    <a href="testy/biblioteka" id="btn-second" class="button">Biblioteka</a>
 </div>

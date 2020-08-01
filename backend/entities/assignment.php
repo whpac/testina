@@ -15,6 +15,7 @@ class Assignment extends Entity {
     protected /* int[][] */ $targets;
     protected /* DateTime */ $time_limit;
     protected /* DateTime */ $assignment_date;
+    protected /* int */ $assigning_user_id;
 
     const TARGET_TYPE_USER = 0;
     const TARGET_TYPE_GROUP = 1;
@@ -30,6 +31,8 @@ class Assignment extends Entity {
     protected /* void */ function OnPopulate(){
         settype($this->id, 'int');
         settype($this->test_id, 'int');
+        settype($this->attempt_limit, 'int');
+        settype($this->assigning_user_id, 'int');
 
         $this->assignment_date = \DateTime::createFromFormat('Y-m-d H:i:s', $this->assignment_date);
         $this->time_limit = \DateTime::createFromFormat('Y-m-d H:i:s', $this->time_limit);
@@ -77,6 +80,11 @@ class Assignment extends Entity {
         return $this->assignment_date;
     }
 
+    public /* User */ function GetAssigningUser(){
+        $this->FetchIfNeeded();
+        return new User($this->assigning_user_id);
+    }
+
     public /* bool */ function HasTimeLimitExceeded(){
         return $this->GetTimeLimit() < (new \DateTime());
     }
@@ -110,10 +118,10 @@ class Assignment extends Entity {
         foreach($this->targets as $target){
             switch($target[1]){
                 case self::TARGET_TYPE_USER:
-                    $targets[] = new User($row['target_id']);
+                    $targets[] = new User($target[0]);
                 break;
                 case self::TARGET_TYPE_GROUP:
-                    $targets[] = new Group($row['target_id']);
+                    $targets[] = new Group($target[0]);
                 break;
             }
         }
@@ -140,6 +148,33 @@ class Assignment extends Entity {
         return false;
     }
 
+    public static /* Assignment[] */ function GetForTest(Test $test){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Select()
+                ->Where('test_id', '=', $test->GetId())
+                ->Run();
+
+        if($result === false) throw new \Exception('Nie udało się odczytać przypisań dla testu.');
+
+        $assignments = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $assignments[] = new Assignment($result->fetch_assoc());
+        }
+        return $assignments;
+    }
+
+    public static /* int */ function CountForTest(Test $test){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Select(['id'])
+                ->Where('test_id', '=', $test->GetId())
+                ->Run();
+
+        if($result === false) throw new \Exception('Nie udało się policzyć, ile razy test został przypisany.');
+        return $result->num_rows;
+    }
+
     public /* Attempt[] */ function GetUserAttempts(User $user){
         return Attempt::GetAttemptsByUserAndAssignment($user, $this);
     }
@@ -148,7 +183,43 @@ class Assignment extends Entity {
         return Attempt::CountAttemptsByUserAndAssignment($user, $this);
     }
 
-    public static /* Assignment */ function GetAssignmentsForUser(User $user){
+    public /* void */ function AddTarget($target_type, $target_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENT_TARGETS)
+                ->Insert()
+                ->Value('assignment_id', $this->GetId())
+                ->Value('target_type', $target_type)
+                ->Value('target_id', $target_id)
+                ->Run();
+        
+        if(!$result) throw new \Exception('Nie udało się przypisać testu użytkownikowi lub grupie.');
+    }
+
+    public static /* Assignment */ function Create(User $assigning_user, Test $test, int $attempt_limit, \DateTime $time_limit){
+        $db = DatabaseManager::GetProvider();
+
+        $result = $db->Table(TABLE_ASSIGNMENTS)
+                ->Insert()
+                ->Value('assigning_user_id', $assigning_user->GetId())
+                ->Value('test_id', $test->GetId())
+                ->Value('attempt_limit', $attempt_limit)
+                ->Value('time_limit', $time_limit->format('Y-m-d H:i:s'))
+                ->Run();
+
+        if(!$result) throw new \Exception('Nie udało się przypisać testu');
+
+        $result = $db->Table(TABLE_ASSIGNMENTS)
+                ->Select(['id'])
+                ->OrderBy('id', 'DESC')
+                ->Run();
+
+        if($result === false || $result->num_rows == 0) throw new \Exception('Nie udało się przypisać testu');
+        $row = $result->fetch_assoc();
+        $assignment_id = $row['id'];
+        return new Assignment($assignment_id);
+    }
+
+    public static /* Assignment[] */ function GetAssignmentsForUser(User $user){
         $groups = $user->GetGroups();
 
         $master_cond = new Condition('OR');
@@ -179,6 +250,24 @@ class Assignment extends Entity {
             $id = $row['assignment_id'];
             if(isset($assignment_ids[$id])) continue;
             $assignment_ids[$id] = true;
+            $assignments[] = new Assignment($id);
+        }
+
+        return $assignments;
+    }
+
+    public static /* Assignment[] */ function GetAssignedByUser(User $user){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Select()
+                ->Where('assigning_user_id', '=', $user->GetId())
+                ->OrderBy('id', 'DESC')
+                ->Run();
+        
+        $assignments = [];
+        for($i=0; $i<$result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $id = $row['id'];
             $assignments[] = new Assignment($id);
         }
 

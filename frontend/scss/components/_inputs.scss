@@ -1,0 +1,50 @@
+input[type=text], input[type=password], input[type=number], input[type=datetime-local], textarea, select, .input {
+    background:var(--input-background-color); border:1px solid var(--input-border-color);
+    transition:border-color 0.3s; padding:2px 5px; font-size:0.9em; color:var(--text-primary-color);
+    border-radius:2px;
+
+    &:hover {border-color:var(--input-hover-border-color);}
+    &:focus {
+        border-color:var(--input-active-border-color); outline:none;
+        box-shadow:0 0 2px var(--input-active-border-color);
+    }
+    &:disabled {
+        background:var(--background-empty-color); border:1px solid var(--input-border-color);
+        color:var(--text-secondary-color);
+    }
+    &.error {border-color:var(--error-color); color:var(--text-primary-color);}
+}
+textarea {resize:vertical; min-height:3em; font-family:inherit;}
+
+input[type=radio] {margin-left:15px;}
+input[type=number] {width:6ch;}
+
+input.discreet, textarea.discreet {
+    transition:border-color 0.3s, background 0.3s;
+
+    &:not(:hover):not(:active):not(:focus) {
+        background:transparent; border-color:transparent;
+    }
+}
+
+input.deleted {opacity:0.5; text-decoration:line-through;}
+
+.input {
+    input[type=text], input[type=password], input[type=number], input[type=datetime-local], textarea, select {
+        border: none; padding:0;
+    }
+
+    .separator {
+        margin:0 5px; border-left:1px solid var(--input-separator-color); display:inline-block;
+        vertical-align:top; padding:0.5rem 0;
+
+        &.spaced {
+            margin:-2px 10px; border-color:var(--input-border-color); transition:border-color 0.3s;
+            padding:calc(0.5rem + 3px) 0;
+        }
+    }
+
+    &:hover .separator.spaced {border-color:var(--input-hover-border-color);}
+}
+
+select.hide-arrow {-webkit-appearance:none; -moz-appearance:none; appearance:none;}

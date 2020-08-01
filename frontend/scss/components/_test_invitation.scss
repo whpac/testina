@@ -1,0 +1,27 @@
+.test-summary {
+    display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto auto auto; justify-items:center;
+    grid-template-areas:'count time' 'count-text time-text' 'attempts attempts' 'buttons buttons';
+
+    .question-count {grid-area:count; font-size:2.5em; font-weight:var(--header-font-weight);}
+    .question-count-text {grid-area:count-text; font-size:0.8em; color:var(--text-secondary-color);}
+
+    .time-limit {grid-area:time; font-size:2.5em; font-weight:var(--header-font-weight);}
+    .time-limit-text {grid-area:time-text; font-size:0.8em; color:var(--text-secondary-color); text-align:center;}
+
+    .remaining-attempts {grid-area:attempts; margin:0.6em; color:var(--text-secondary-color);}
+    .buttons {
+        grid-area:buttons; display:grid; grid-template-columns:1fr 1fr; column-gap:10px;
+        grid-template-areas:'btn-cancel btn-start';
+
+        *:only-child {grid-column:1/3;}
+        .exit-test {grid-area:btn-cancel; text-align:center;}
+        .start-test {grid-area:btn-start; text-align:center;}
+    }
+
+    @include media-small {
+        grid-template-rows:auto auto auto auto auto auto; grid-template-columns:1fr; row-gap:8px;
+        grid-template-areas:'count' 'count-text' 'time' 'time-text' 'attempts' 'buttons';
+    }
+}
+
+.loading-test {text-align:center; margin-top:20px; font-size:0.9em; color:var(--text-secondary-color);}

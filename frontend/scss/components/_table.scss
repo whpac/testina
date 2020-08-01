@@ -1,0 +1,30 @@
+table.table {
+    border-spacing:0; margin-top:0.5rem;
+
+    &:first-child {margin-top:0;}
+
+    td, th {
+        padding:5px 11px; border-bottom:1px solid var(--table-border-color);
+
+        &:empty {padding-top:0; padding-bottom:0;}
+        &.right {text-align:right;}
+
+        @include media-small {
+            padding-top:8px; padding-bottom:8px;
+        }
+    }
+    th {font-weight:500;}
+    tr:first-child:not(.not-header) th {border-bottom:1px solid var(--table-main-border-color);}
+    td button:only-child, td button.only-child {margin-left:-10px; margin-right:-10px;}
+    td input[type=text]:only-child {width:calc(100% + 10px); box-sizing:border-box; margin:0 -5px;}
+    col.shrink {width:min-content;}
+}
+table.full-width {width:100%;}
+
+@include media-small {
+    table.card.auto-width {width:100%;}
+}
+
+.content-tbody:not(:empty) + .nocontent-tbody {display:none}
+
+.overflow-container-y > table.table {margin-top:0;}

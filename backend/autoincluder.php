@@ -4,7 +4,7 @@ function ClassLoader($name){
     $name = str_replace('\\', '/', $name);
 
     // Only apply this autoloader to classes in specified namespaces
-    $namespaces = ['entities', 'layout', 'handling', 'utils'];
+    $namespaces = ['api', 'entities', 'layout', 'handling', 'utils'];
     $is_found = false;
 
     foreach($namespaces as $ns){

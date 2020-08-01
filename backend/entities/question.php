@@ -21,6 +21,7 @@ class Question extends Entity {
 
     const COUNTING_LINEAR = 0;
     const COUNTING_BINARY = 1;
+    const COUNTING_OPEN_ANSWER = 2;
 
     protected static /* string */ function GetTableName(){
         return TABLE_QUESTIONS;

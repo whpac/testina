@@ -1,0 +1,28 @@
+.toast {
+    position:fixed; bottom:15px; left:20vw; width:calc(60vw - var(--nav-panel-width));
+    background:var(--toast-background-color); color:var(--toast-text-color);
+    padding:10px 20px; box-sizing:border-box; border-radius:3px;
+    box-shadow:var(--toast-box-shadow); opacity:1;
+    transition:opacity 0.5s, bottom 0.5s; z-index:1000;
+
+    &.hidden {opacity:0; bottom:-100px;}
+
+    @include media-medium {
+        left:10vw; width:calc(80vw - var(--nav-panel-width));
+    }
+    @include media-small {
+        left:15px; width:calc(100vw - 30px);
+    }
+    @include media-xlarge {
+        left:25vw; width:calc(50vw - var(--nav-panel-width));
+    }
+}
+
+.dialog-backdrop.shown ~ .toast {
+    @include media-large {
+        left:calc(20vw + var(--nav-panel-width) / 2);
+    }
+    @include media-xlarge {
+        left:calc(25vw + var(--nav-panel-width) / 2);
+    }
+}
