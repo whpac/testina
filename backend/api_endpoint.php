@@ -50,7 +50,6 @@ PageManager::BeginFetchingContent();
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
-// This should be extended to support mutable objects
 try{
     // Read the method
     $method = ReadMethod($SUPPORTED_METHODS);
@@ -154,7 +153,7 @@ function ReadTarget(){
     return $target;
 }
 
-function ReadDepth(/* int */ $default, /* int */ $max){
+function ReadDepth(int $default, int $max){
     if(isset($_GET['depth'])) $depth = $_GET['depth'];
     else $depth = $default;
 
@@ -181,19 +180,33 @@ function GetFormatter(){
     throw new Exceptions\NotAcceptable($_SERVER['HTTP_ACCEPT']);
 }
 
-function GetResource(/* string */ $target, Context $context){
-    // Start from root resource
+function GetResource(string $target, Context $context){
+    // Rozpocznij od głównego zasobu
     $current_resource = new Resources\Root();
     $current_resource->SetContext($context);
-
-    // Split names by '/'
+    
+    // Podziel ścieżkę docelową przy znakach '/'
     $target_chain = explode('/', $target);
     foreach($target_chain as $current_resource_name){
-        // This is done to skip multiple slashes next to each other
+        // Pomija dwa ukośniki umieszczone obok siebie
         if(empty($current_resource_name)) continue;
+        $current_resource_name = strtolower($current_resource_name);
 
-        // Follow the specified resource path
-        $current_resource = $current_resource->GetSubResource($current_resource_name, $context);
+        // Zasadniczo zasób jest albo pojedynczym obiektem albo tablicą
+        if(is_array($current_resource)){
+            if(isset($current_resource[$current_resource_name]))
+                $current_resource = $current_resource[$current_resource_name];
+            else
+                throw new \Exception(404);
+        }else{
+            if(method_exists($current_resource, $current_resource_name))
+                $current_resource = $current_resource->$current_resource_name();
+            else
+                throw new \Exception(404);
+        }
+
+        // Dodaj kontekst do zasobu, który nie jest tablicą
+        if($current_resource instanceof Resources\Resource) $current_resource->SetContext($context);
     }
 
     return $current_resource;
@@ -204,11 +217,11 @@ function ParseRequestBody(){
     return json_decode($body);
 }
 
-function SetResponseCode(/* int */ $code){
+function SetResponseCode(int $code){
     header('X-Response-Code: '.$code, true, $code);
 }
 
-function ParseQList(/* string */ $qlist){
+function ParseQList(string $qlist){
     $parsed = [];
     $values = explode(',', $qlist);
     $order = 0;

@@ -2,11 +2,13 @@
 namespace Api\Resources;
 
 use Api\Exceptions;
+use Api\Schemas;
 
-class Assignment extends Resource{
+class Assignment extends Resource implements Schemas\Assignment{
+    protected $Assignment;
 
     protected function LazyLoad($assignment, $name){
-        $current_user = $this->GetContext()->GetUser();
+        /*$current_user = $this->GetContext()->GetUser();
 
         $this->AddSubResource('id', new ValueResource($assignment->GetId()));
         $this->AddSubResource('attempt_limit', new ValueResource($assignment->GetAttemptLimit()));
@@ -17,7 +19,7 @@ class Assignment extends Resource{
         $this->AddSubResource('test', new Test($assignment->GetTest()));
         $this->AddSubResource('attempts', new AttemptCollection($assignment));
         $this->AddSubResource('assigned_by', new User($assignment->GetAssigningUser()));
-        return true;
+        return true;*/
     }
 
     public function Update(/* object */ $source){
@@ -33,6 +35,78 @@ class Assignment extends Resource{
                 $assignment->AddTarget($target_type, $target_id);
             }
         }
+    }
+
+    public function __construct($assignment){
+        parent::__construct($assignment);
+        if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');
+        $this->Assignment = $assignment;
+    }
+
+    public function GetKeys(): array{
+        return [
+            'id',
+            'attempt_limit',
+            'time_limit',
+            'assignment_date',
+            'score',
+            'test',
+            'assigned_by',
+            'attempt_count',
+            'attempts'
+        ];
+    }
+
+    public function id(): int{
+        return $this->Assignment->GetId();
+    }
+
+    public function attempt_limit(): int{
+        return $this->Assignment->GetAttemptLimit();
+    }
+
+    public function time_limit(): \DateTime{
+        return $this->Assignment->GetTimeLimit();
+    }
+
+    public function assignment_date(): \DateTime{
+        return $this->Assignment->GetAssignmentDate();
+    }
+
+    public function score(): ?float{
+        $current_user = $this->GetContext()->GetUser();
+        return $this->Assignment->GetAverageScore($current_user);
+    }
+
+    public function test(): Schemas\Test{
+        $t = new Test($this->Assignment->GetTest());
+        $t->SetContext($this->GetContext());
+        return $t;
+    }
+
+    public function assigned_by(): Schemas\User{
+        $u = new User($this->Assignment->GetAssigningUser());
+        $u->SetContext($this->GetContext());
+        return $u;
+    }
+
+    public function attempt_count(): int{
+        $current_user = $this->GetContext()->GetUser();
+        return $this->Assignment->CountUserAttempts($current_user);
+    }
+
+    public function attempts(): array{
+        $current_user = $this->GetContext()->GetUser();
+        $attempts = $this->Assignment->GetUserAttempts($current_user);
+        $out_attempts = [];
+
+        foreach($attempts as $attempt){
+            $a = new Attempt($attempt);
+            $a->SetContext($this->GetContext());
+            $out_attempts[$attempt->GetId()] = $a;
+        }
+
+        return $out_attempts;
     }
 }
 ?>

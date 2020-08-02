@@ -5,22 +5,26 @@ use \Api\Resources\Resource;
 
 class JsonFormatter extends Formatter {
 
-    public /* string */ function FormatResource(Resource $obj, /* int */ $depth = 3){
+    public function FormatResource($obj, int $depth = 3): string{
         // Return empty string - not to have an empty field
         if($depth <= -1) return '""';
         
         $out = '';
 
-        // If the value is array, parse it as an object
-        $value = $obj->GetValue();
-        if(!$obj->IsValueResource()){
+        if($obj instanceof Resource){
             // Don't go deeper and return an empty object
             if($depth <= 0) return '{}';
-            $out .= '{';
+
+            $keys = $obj->GetKeys();
+
+            $out = '{';
 
             // Used to separate properties
             $add_comma = false;
-            foreach($value as $key => $resource){
+            foreach($keys as $key){
+                if(!method_exists($obj, $key)) continue;
+                $resource = $obj->$key();
+
                 if($add_comma) $out .= ',';
                 $add_comma = true;
 
@@ -30,27 +34,29 @@ class JsonFormatter extends Formatter {
             }
             $out .= '}';
         }else{
-            if(is_array($value)){
-                $out = '[';
+            if(is_array($obj)){
+                if($depth <= 0) return '{}';
+                $out = '{';
 
                 $add_comma = false;
-                foreach($value as $item){
+                foreach($obj as $key => $item){
                     if($add_comma) $out .= ',';
                     $add_comma = true;
 
-                    $out .= $this->FormatScalar($item);
+                    $out .= '"'.$key.'":';
+                    $out .= $this->FormatResource($item, $depth - 1);
                 }
 
-                $out .= ']';
+                $out .= '}';
             }else{
-                $out = $this->FormatScalar($value);
+                $out = $this->FormatScalar($obj);
             }
         }
         return $out;
     }
 
-    protected /* string */ function FormatScalar($value){
-        // Print numbers and bools without quotes
+    protected function FormatScalar($value): string{
+        // Wypisz liczby i wartości logiczne bez cudzysłowów
         if(is_bool($value)){
             return $value ? 'true' : 'false';
         }elseif(is_null($value)){
@@ -59,6 +65,8 @@ class JsonFormatter extends Formatter {
             return $value;
         }elseif(is_array($value)){
             return '[]';
+        }elseif($value instanceof \DateTime){
+            return $value->format('Y-m-d H:i:s');
         }else{
             $v = $value;
             $v = str_replace("\\", "\\\\", $v);
@@ -72,7 +80,7 @@ class JsonFormatter extends Formatter {
         }
     }
 
-    public /* string */ function GetContentType(){
+    public function GetContentType(): string{
         return 'application/json';
     }
 }

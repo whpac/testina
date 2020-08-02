@@ -117,5 +117,9 @@ abstract class Resource {
     public function Delete(){
         throw new Exceptions\MethodNotAllowed('DELETE');
     }
+
+    public function GetKeys(): array{
+        return [];
+    }
 }
 ?>

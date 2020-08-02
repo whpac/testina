@@ -1,10 +1,13 @@
 <?php
 namespace Api\Resources;
 
-class Question extends Resource{
+use Api\Schemas;
+
+class Question extends Resource implements Schemas\Question{
+    protected $Question;
 
     protected function LazyLoad($question, $name){
-        $this->AddSubResource('id', new ValueResource($question->GetId()));
+        /*$this->AddSubResource('id', new ValueResource($question->GetId()));
         $this->AddSubResource('text', new ValueResource($question->GetText()));
         $this->AddSubResource('type', new ValueResource($question->GetType()));
         $this->AddSubResource('points', new ValueResource($question->GetPoints()));
@@ -13,7 +16,7 @@ class Question extends Resource{
         $this->AddSubResource('answer_count', new ValueResource(count($question->GetAnswers())));
         
         $this->AddSubResource('answers', new AnswerCollection($question));
-        return true;
+        return true;*/
     }
 
     public function Update(/* mixed */ $data){
@@ -28,6 +31,66 @@ class Question extends Resource{
         $res = $question->Remove();
 
         if(!$res) throw new \Exception('Nie udało się usunąć pytania.');
+    }
+
+    public function __construct($question){
+        parent::__construct($question);
+        if(is_null($question)) throw new \Exception('$question nie może być null.');
+        $this->Question = $question;
+    }
+
+    public function GetKeys(): array{
+        return [
+            'id',
+            'text',
+            'type',
+            'points',
+            'points_counting',
+            'max_typos',
+            'answer_count',
+            'answers'
+        ];
+    }
+
+    public function id(): int{
+        return $this->Question->GetId();
+    }
+
+    public function text(): string{
+        return $this->Question->GetText();
+    }
+
+    public function type(): int{
+        return $this->Question->GetType();
+    }
+
+    public function points(): float{
+        return $this->Question->GetPoints();
+    }
+
+    public function points_counting(): int{
+        return $this->Question->GetPointsCounting();
+    }
+
+    public function max_typos(): int{
+        return $this->Question->GetMaxNumberOfTypos();
+    }
+
+    public function answer_count(): int{
+        return count($this->Question->GetAnswers());
+    }
+
+    public function answers(): array{
+        $answers = $this->Question->GetAnswers();
+        $out_answers = [];
+
+        foreach($answers as $answer){
+            $a = new Answer($answer);
+            $a->SetContext($this->GetContext());
+            $out_answers[$answer->GetId()] = $a;
+        }
+
+        return $out_answers;
     }
 }
 ?>

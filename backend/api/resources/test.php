@@ -1,10 +1,13 @@
 <?php
 namespace Api\Resources;
 
-class Test extends Resource{
+use Api\Schemas;
+
+class Test extends Resource implements Schemas\Test{
+    protected $Test;
 
     protected function LazyLoad($data, $name){
-        $test = $this->GetConstructorArgument();
+        /*$test = $this->GetConstructorArgument();
 
         $this->AddSubResource('id', new ValueResource($test->GetId()));
         $this->AddSubResource('name', new ValueResource($test->GetName()));
@@ -20,7 +23,7 @@ class Test extends Resource{
         }
         
         $this->AddSubResource('questions', new QuestionCollection($test));
-        return true;
+        return true;*/
     }
 
     public function Update(/* mixed */ $data){
@@ -33,6 +36,90 @@ class Test extends Resource{
     public function Delete(){
         $test = $this->GetConstructorArgument();
         $test->Remove();
+    }
+
+    public function __construct($test){
+        parent::__construct($test);
+        if(is_null($test)) throw new \Exception('$test nie może być null');
+        $this->Test = $test;
+    }
+
+    public function GetKeys(): array{
+        return [
+            'id',
+            'name',
+            'author',
+            'creation_date',
+            'time_limit',
+            'question_multiplier',
+            'question_count',
+            'questions',
+            'assignment_count',
+            'assignments'
+        ];
+    }
+
+    public function id(): int{
+        return $this->Test->GetId();
+    }
+
+    public function name(): string{
+        return $this->Test->GetName();
+    }
+
+    public function author(): Schemas\User{
+        $u = new User($this->Test->GetAuthor());
+        $u->SetContext($this->GetContext());
+        return $u;
+    }
+
+    public function creation_date(): \DateTime{
+        return $this->Test->GetCreationDate();
+    }
+
+    public function time_limit(): int{
+        return $this->Test->GetTimeLimit();
+    }
+
+    public function question_multiplier(): float{
+        return $this->Test->GetQuestionMultiplier();
+    }
+
+    public function question_count(): int{
+        return count($this->Test->GetQuestions());
+    }
+
+    public function questions(): array{
+        $questions = $this->Test->GetQuestions();
+        $out_questions = [];
+
+        foreach($questions as $question){
+            $q = new Question($question);
+            $q->SetContext($this->GetContext());
+            $out_questions[$question->GetId()] = $q;
+        }
+
+        return $out_questions;
+    }
+
+    public function assignment_count(): ?int{
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+        return $this->Test->GetAssignmentCount();
+    }
+
+    public function assignments(): ?array{
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+
+        $assignments = $this->Test->GetAssignments();
+        $out_assignments = [];
+
+        foreach($assignments as $assignment){
+            $a = new Assignment($assignment);
+            $a->SetContext($this->GetContext());
+            $out_assignments[$assignment->GetId()] = $a;
+        }
+
+        return $out_assignments;
     }
 }
 ?>
