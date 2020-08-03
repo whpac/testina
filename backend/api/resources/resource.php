@@ -121,5 +121,9 @@ abstract class Resource {
     public function GetKeys(): array{
         return [];
     }
+
+    public function KeyExists($key_name): bool{
+        return method_exists($this, $key_name);
+    }
 }
 ?>

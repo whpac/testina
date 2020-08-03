@@ -1,6 +1,7 @@
 <?php
 namespace Api\Resources;
 
+use Api\Exceptions;
 use Api\Schemas;
 
 class Root extends Resource implements Schemas\Root {
@@ -23,7 +24,7 @@ class Root extends Resource implements Schemas\Root {
         ];
     }
 
-    public function assignments(): array{
+    public function assignments(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
 
         $out_assignments = [];
@@ -44,10 +45,10 @@ class Root extends Resource implements Schemas\Root {
             $out_assignments[$assignment->GetId()] = $a;
         }
 
-        return $out_assignments;
+        return new Collection($out_assignments);
     }
 
-    public function groups(): array{
+    public function groups(): Schemas\Collection{
         $groups = \Entities\Group::GetAll();
 
         $out_groups = [];
@@ -58,10 +59,10 @@ class Root extends Resource implements Schemas\Root {
             $out_groups[$group->GetId()] = $g;
         }
 
-        return $out_groups;
+        return new Collection($out_groups);
     }
 
-    public function tests(): array{
+    public function tests(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
         $tests = \Entities\Test::GetTestsCreatedByUser($current_user);
 
@@ -73,10 +74,10 @@ class Root extends Resource implements Schemas\Root {
             $out_tests[$test->GetId()] = $t;
         }
 
-        return $out_tests;
+        return new Collection($out_tests);
     }
 
-    public function users(): array{
+    public function users(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
         if($current_user->GetId() < 1){
             throw new Exceptions\ResourceInaccessible('users');
@@ -95,7 +96,7 @@ class Root extends Resource implements Schemas\Root {
             $out_users[$user->GetId()] = $u;
         }
 
-        return $out_users;
+        return new Collection($out_users);
     }
 }
 ?>

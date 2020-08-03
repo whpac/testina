@@ -22,7 +22,8 @@ class JsonFormatter extends Formatter {
             // Used to separate properties
             $add_comma = false;
             foreach($keys as $key){
-                if(!method_exists($obj, $key)) continue;
+                if(!$obj->KeyExists($key)) continue;
+                $key = strval($key);
                 $resource = $obj->$key();
 
                 if($add_comma) $out .= ',';

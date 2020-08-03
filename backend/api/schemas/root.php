@@ -2,9 +2,9 @@
 namespace Api\Schemas;
 
 interface Root{
-    public function assignments(): array; // Assignment[]
-    public function groups(): array; // Group[]
-    public function tests(): array; // Test[]
-    public function users(): array; // User[]
+    public function assignments(): Collection; // <Assignment>
+    public function groups(): Collection; // <Group>
+    public function tests(): Collection; // <Test>
+    public function users(): Collection; // <User>
 }
 ?>

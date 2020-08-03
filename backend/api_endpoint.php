@@ -199,7 +199,7 @@ function GetResource(string $target, Context $context){
             else
                 throw new \Exception(404);
         }else{
-            if(method_exists($current_resource, $current_resource_name))
+            if($current_resource->KeyExists($current_resource_name))
                 $current_resource = $current_resource->$current_resource_name();
             else
                 throw new \Exception(404);
