@@ -45,18 +45,23 @@ class Test extends Resource implements Schemas\Test{
     }
 
     public function GetKeys(): array{
-        return [
+        $keys = [
             'id',
             'name',
             'author',
             'creation_date',
             'time_limit',
-            'question_multiplier',
-            'question_count',
-            'questions',
-            'assignment_count',
-            'assignments'
+            'question_multiplier'
         ];
+
+        if($this->Test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId()){
+            $keys[] = 'question_count';
+            $keys[] = 'questions';
+            $keys[] = 'assignment_count';
+            $keys[] = 'assignments';
+        }
+
+        return $keys;
     }
 
     public function id(): int{
@@ -85,11 +90,14 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetQuestionMultiplier();
     }
 
-    public function question_count(): int{
+    public function question_count(): ?int{
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
         return count($this->Test->GetQuestions());
     }
 
-    public function questions(): array{
+    public function questions(): ?array{
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+
         $questions = $this->Test->GetQuestions();
         $out_questions = [];
 
