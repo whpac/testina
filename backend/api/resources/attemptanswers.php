@@ -5,11 +5,6 @@ use Api\Exceptions;
 
 class AttemptAnswers extends Resource {
 
-    protected function LazyLoad($attempt, $name){
-        // Kolekcja odpowiedzi dla podejścia jest na razie pusta
-        return true;
-    }
-
     public function CreateSubResource(/* object */ $source){
         $attempt = $this->GetConstructorArgument();
 
