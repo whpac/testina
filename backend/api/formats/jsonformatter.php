@@ -66,7 +66,7 @@ class JsonFormatter extends Formatter {
         }elseif(is_array($value)){
             return '[]';
         }elseif($value instanceof \DateTime){
-            return $value->format('Y-m-d H:i:s');
+            return '"'.$value->format('Y-m-d H:i:s').'"';
         }else{
             $v = $value;
             $v = str_replace("\\", "\\\\", $v);
