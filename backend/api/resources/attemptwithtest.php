@@ -96,7 +96,7 @@ class AttemptWithTest extends Resource implements Schemas\Attempt {
     }
 
     public function answers(){
-
+        return null;
     }
 }
 ?>

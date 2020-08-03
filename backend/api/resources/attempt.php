@@ -18,7 +18,8 @@ class Attempt extends Resource implements Schemas\Attempt {
             'user',
             'score',
             'max_score',
-            'begin_time'
+            'begin_time',
+            'answers'
         ];
     }
 
