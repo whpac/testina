@@ -6,19 +6,6 @@ use Api\Schemas;
 class Question extends Resource implements Schemas\Question{
     protected $Question;
 
-    protected function LazyLoad($question, $name){
-        /*$this->AddSubResource('id', new ValueResource($question->GetId()));
-        $this->AddSubResource('text', new ValueResource($question->GetText()));
-        $this->AddSubResource('type', new ValueResource($question->GetType()));
-        $this->AddSubResource('points', new ValueResource($question->GetPoints()));
-        $this->AddSubResource('points_counting', new ValueResource($question->GetPointsCounting()));
-        $this->AddSubResource('max_typos', new ValueResource($question->GetMaxNumberOfTypos()));
-        $this->AddSubResource('answer_count', new ValueResource(count($question->GetAnswers())));
-        
-        $this->AddSubResource('answers', new AnswerCollection($question));
-        return true;*/
-    }
-
     public function Update(/* mixed */ $data){
         $question = $this->GetConstructorArgument();
         $res = $question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
@@ -80,17 +67,17 @@ class Question extends Resource implements Schemas\Question{
         return count($this->Question->GetAnswers());
     }
 
-    public function answers(): array{
+    public function answers(): Schemas\Collection{
         $answers = $this->Question->GetAnswers();
         $out_answers = [];
 
         foreach($answers as $answer){
-            $a = new Answer($answer);
-            $a->SetContext($this->GetContext());
-            $out_answers[$answer->GetId()] = $a;
+            $out_answers[$answer->GetId()] = new Answer($answer);
         }
 
-        return $out_answers;
+        $collection = new AnswerCollection($out_answers, $this->Question);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 }
 ?>

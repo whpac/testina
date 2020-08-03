@@ -6,26 +6,6 @@ use Api\Schemas;
 class Test extends Resource implements Schemas\Test{
     protected $Test;
 
-    protected function LazyLoad($data, $name){
-        /*$test = $this->GetConstructorArgument();
-
-        $this->AddSubResource('id', new ValueResource($test->GetId()));
-        $this->AddSubResource('name', new ValueResource($test->GetName()));
-        $this->AddSubResource('author', new User($test->GetAuthor()));
-        $this->AddSubResource('creation_date', new ValueResource($test->GetCreationDate()->format('Y-m-d H:i:s')));
-        $this->AddSubResource('time_limit', new ValueResource($test->GetTimeLimit()));
-        $this->AddSubResource('question_multiplier', new ValueResource($test->GetQuestionMultiplier()));
-        $this->AddSubResource('question_count', new ValueResource(count($test->GetQuestions())));
-
-        if($test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId()){
-            $this->AddSubResource('assignment_count', new ValueResource($test->GetAssignmentCount()));
-            $this->AddSubResource('assignments', new TestAssignmentCollection($test));
-        }
-        
-        $this->AddSubResource('questions', new QuestionCollection($test));
-        return true;*/
-    }
-
     public function Update(/* mixed */ $data){
         $test = $this->GetConstructorArgument();
         $res = $test->Update($data->name, $data->question_multiplier, $data->time_limit);
@@ -95,19 +75,19 @@ class Test extends Resource implements Schemas\Test{
         return count($this->Test->GetQuestions());
     }
 
-    public function questions(): ?array{
+    public function questions(): ?Schemas\Collection{
         if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
 
         $questions = $this->Test->GetQuestions();
         $out_questions = [];
 
         foreach($questions as $question){
-            $q = new Question($question);
-            $q->SetContext($this->GetContext());
-            $out_questions[$question->GetId()] = $q;
+            $out_questions[$question->GetId()] = new Question($question);;
         }
 
-        return $out_questions;
+        $collection = new QuestionCollection($out_questions, $this->Test);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 
     public function assignment_count(): ?int{
@@ -115,19 +95,19 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetAssignmentCount();
     }
 
-    public function assignments(): ?array{
+    public function assignments(): ?Schemas\Collection{
         if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
 
         $assignments = $this->Test->GetAssignments();
         $out_assignments = [];
 
         foreach($assignments as $assignment){
-            $a = new Assignment($assignment);
-            $a->SetContext($this->GetContext());
-            $out_assignments[$assignment->GetId()] = $a;
+            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
         }
 
-        return $out_assignments;
+        $collection = new Collection($out_assignments);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 }
 ?>

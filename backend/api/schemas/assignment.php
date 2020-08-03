@@ -11,6 +11,6 @@ interface Assignment{
     public function assigned_by(): User;
     
     public function attempt_count(): int;
-    public function attempts(): array; // Attempt[]
+    public function attempts(): Collection; // <Attempt>
 }
 ?>

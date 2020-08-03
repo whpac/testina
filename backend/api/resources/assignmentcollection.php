@@ -1,25 +1,7 @@
 <?php
 namespace Api\Resources;
 
-class AssignmentCollection extends Resource {
-
-    protected function LazyLoad($data, $test_id){
-        $current_user = $this->GetContext()->GetUser();
-
-        $assignments = \Entities\Assignment::GetAssignmentsForUser($current_user);
-
-        foreach($assignments as $assignment){
-            $this->AddSubResource($assignment->GetId(), new Assignment($assignment));
-        }
-
-        $assignments = \Entities\Assignment::GetAssignedByUser($current_user);
-
-        foreach($assignments as $assignment){
-            $this->AddSubResource($assignment->GetId(), new Assignment($assignment));
-        }
-
-        return true;
-    }
+class AssignmentCollection extends Collection {
 
     public function CreateSubResource(/* mixed */ $source){
         $current_user = $this->GetContext()->GetUser();

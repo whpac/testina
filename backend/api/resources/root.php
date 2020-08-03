@@ -32,20 +32,18 @@ class Root extends Resource implements Schemas\Root {
         $assignments = \Entities\Assignment::GetAssignmentsForUser($current_user);
 
         foreach($assignments as $assignment){
-            $a = new Assignment($assignment);
-            $a->SetContext($this->GetContext());
-            $out_assignments[$assignment->GetId()] = $a;
+            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
         }
 
         $assignments = \Entities\Assignment::GetAssignedByUser($current_user);
 
         foreach($assignments as $assignment){
-            $a = new Assignment($assignment);
-            $a->SetContext($this->GetContext());
-            $out_assignments[$assignment->GetId()] = $a;
+            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
         }
 
-        return new Collection($out_assignments);
+        $collection = new AssignmentCollection($out_assignments);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 
     public function groups(): Schemas\Collection{
@@ -54,12 +52,12 @@ class Root extends Resource implements Schemas\Root {
         $out_groups = [];
 
         foreach($groups as $group){
-            $g = new Group($group);
-            $g->SetContext($this->GetContext());
-            $out_groups[$group->GetId()] = $g;
+            $out_groups[$group->GetId()] = new Group($group);
         }
 
-        return new Collection($out_groups);
+        $collection = new Collection($out_groups);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 
     public function tests(): Schemas\Collection{
@@ -69,12 +67,12 @@ class Root extends Resource implements Schemas\Root {
         $out_tests = [];
 
         foreach($tests as $test){
-            $t = new Test($test);
-            $t->SetContext($this->GetContext());
-            $out_tests[$test->GetId()] = $t;
+            $out_tests[$test->GetId()] = new Test($test);
         }
 
-        return new Collection($out_tests);
+        $collection = new TestCollection($out_tests);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 
     public function users(): Schemas\Collection{
@@ -86,17 +84,16 @@ class Root extends Resource implements Schemas\Root {
         $out_users = [];
 
         $u = new User($current_user);
-        $u->SetContext($context);
         $out_users['current'] = $u;
 
         $all_users = \Entities\User::GetAll();
         foreach($all_users as $user){
-            $u = new User($user);
-            $u->SetContext($context);
-            $out_users[$user->GetId()] = $u;
+            $out_users[$user->GetId()] = new User($user);
         }
 
-        return new Collection($out_users);
+        $collection = new Collection($out_users);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 }
 ?>

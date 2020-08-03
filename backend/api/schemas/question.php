@@ -10,6 +10,6 @@ interface Question{
     public function max_typos(): int;
 
     public function answer_count(): int;
-    public function answers(): array; // Answer[]
+    public function answers(): Collection; // <Answer>
 }
 ?>

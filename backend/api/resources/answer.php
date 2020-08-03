@@ -6,14 +6,6 @@ use Api\Schemas;
 class Answer extends Resource implements Schemas\Answer{
     protected $Answer;
 
-    protected function LazyLoad($answer, $name){
-        /*$this->AddSubResource('id', new ValueResource($answer->GetId()));
-        $this->AddSubResource('text', new ValueResource($answer->GetText()));
-        $this->AddSubResource('correct', new ValueResource($answer->IsCorrect()));
-
-        return true;*/
-    }
-
     public function Update(/* mixed */ $data){
         $answer = $this->GetConstructorArgument();
         $res = $answer->Update($data->text, ['correct' => $data->correct]);

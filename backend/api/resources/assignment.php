@@ -95,18 +95,18 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $this->Assignment->CountUserAttempts($current_user);
     }
 
-    public function attempts(): array{
+    public function attempts(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
         $attempts = $this->Assignment->GetUserAttempts($current_user);
         $out_attempts = [];
 
         foreach($attempts as $attempt){
-            $a = new Attempt($attempt);
-            $a->SetContext($this->GetContext());
-            $out_attempts[$attempt->GetId()] = $a;
+            $out_attempts[$attempt->GetId()] = new Attempt($attempt);
         }
 
-        return $out_attempts;
+        $collection = new AttemptCollection($out_attempts);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 }
 ?>

@@ -8,7 +8,7 @@ interface Attempt{
     public function max_score(): float;
     public function begin_time(): \DateTime;
 
-    public function questions(): ?array; // Question[]
+    public function questions(): ?Collection; // <Question>
     public function path(): ?array; // int[]
     public function answers(); // Writeonly
 }

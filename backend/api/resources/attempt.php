@@ -55,7 +55,7 @@ class Attempt extends Resource implements Schemas\Attempt {
         return $this->Attempt->GetBeginTime();
     }
 
-    public function questions(): ?array{
+    public function questions(): ?Schemas\Collection{
         return null;
     }
 
