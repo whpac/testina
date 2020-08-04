@@ -29,7 +29,7 @@ class Assignment extends Resource implements Schemas\Assignment{
     }
 
     public function GetKeys(): array{
-        return [
+        $keys = [
             'id',
             'attempt_limit',
             'time_limit',
@@ -40,6 +40,13 @@ class Assignment extends Resource implements Schemas\Assignment{
             'attempt_count',
             'attempts'
         ];
+
+        if($this->Assignment->GetAssigningUser()->GetId() == $this->GetContext()->GetUser()->GetId()){
+            $keys[] = 'target_count';
+            $keys[] = 'targets';
+        }
+
+        return $keys;
     }
 
     public function id(): int{
@@ -92,6 +99,19 @@ class Assignment extends Resource implements Schemas\Assignment{
         $collection = new AttemptCollection($out_attempts);
         $collection->SetContext($this->GetContext());
         return $collection;
+    }
+
+    public function target_count(): ?int{
+        if($this->Assignment->GetAssigningUser()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+        
+        return count($this->Assignment->GetTargets());
+    }
+
+    public function targets(): ?Schemas\AssignmentTargets{
+        if($this->Assignment->GetAssigningUser()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+
+        $targets = $this->Assignment->GetTargets();
+        return new AssignmentTargets($targets);
     }
 }
 ?>

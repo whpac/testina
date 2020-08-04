@@ -12,5 +12,8 @@ interface Assignment{
     
     public function attempt_count(): int;
     public function attempts(): Collection; // <Attempt>
+
+    public function target_count(): ?int;
+    public function targets(): ?AssignmentTargets; // <User | Group>
 }
 ?>
