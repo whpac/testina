@@ -18,6 +18,9 @@ export default class User extends Entity {
     constructor(id: number, first_name: string, last_name: string){
         super();
 
+        if(id === undefined || first_name === undefined || last_name === undefined)
+            throw new TypeError('Wszystkie parametry konstruktora User() muszą być zdefiniowane.');
+
         this.Id = id;
         this.FirstName = first_name;
         this.LastName = last_name;

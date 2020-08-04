@@ -12,15 +12,40 @@ export interface UserDescriptor {
 export default class UserLoader {
     /** Przechowuje aktualnie zalogowanego użytkownika */
     protected static CurrentUser: (User | undefined) = undefined;
+    protected UserDescriptors: Collection<UserDescriptor> | undefined;
+
+    public SaveDescriptors(user_descriptors: Collection<UserDescriptor>){
+        this.UserDescriptors = user_descriptors;
+    }
+
+    /**
+     * Wczytuje użytkownika o określonym identyfikatorze
+     * @param user_id Identyfikator użytkownika
+     */
+    public async LoadById(user_id: number): Promise<User>{
+        let descriptor: UserDescriptor;
+        if(this.UserDescriptors?.[user_id] !== undefined){
+            descriptor = this.UserDescriptors?.[user_id];
+        }else{
+            let response = await XHR.Request('api/users/' + user_id.toString() + '?depth=2', 'GET');
+            descriptor = response.Response as UserDescriptor;
+        }
+        try{
+            return UserLoader.CreateFromDescriptor(descriptor);
+        }catch(e){
+            if(e instanceof TypeError){
+                return UserLoader.LoadById(user_id);
+            }else throw e;
+        }
+    }
 
     /**
      * Wczytuje użytkownika o określonym identyfikatorze
      * @param user_id Identyfikator użytkownika
      */
     public static async LoadById(user_id: number){
-        let response = await XHR.Request('api/user/' + user_id.toString() + '?depth=2', 'GET');
-        let json = response.Response as UserDescriptor;
-        return this.CreateFromDescriptor(json);
+        let loader = new UserLoader();
+        return loader.LoadById(user_id);
     }
 
     /**
@@ -35,18 +60,36 @@ export default class UserLoader {
         );
     }
 
-    /** Wczytuje wszystkich zarejestrowanych użytkowników */
-    public static async GetAll(){
-        let response = await XHR.Request('api/users?depth=3', 'GET');
-        let json = response.Response as Collection<UserDescriptor>;
+    public async GetAll(){
+        let descriptors: Collection<UserDescriptor>;
+        if(this.UserDescriptors !== undefined){
+            descriptors = this.UserDescriptors;
+        }else{
+            let response = await XHR.Request('api/users?depth=3', 'GET');
+            descriptors = response.Response as Collection<UserDescriptor>;
+        }
 
-        let user_ids = Object.keys(json);
+        let user_ids = Object.keys(descriptors);
         let users: User[] = [];
         for(let user_id of user_ids){
             if(user_id == 'current') continue;
-            users.push(this.CreateFromDescriptor(json[parseInt(user_id)]));
+            let u: User;
+            try{
+                u = UserLoader.CreateFromDescriptor(descriptors[parseInt(user_id)]);
+            }catch(e){
+                if(e instanceof TypeError){
+                    u = await UserLoader.LoadById(parseInt(user_id));
+                }else throw e;
+            }
+            users.push(u);
         }
         return users;
+    }
+
+    /** Wczytuje wszystkich zarejestrowanych użytkowników */
+    public static async GetAll(){
+        let loader = new UserLoader();
+        return loader.GetAll();
     }
 
     /**
