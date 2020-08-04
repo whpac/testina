@@ -12,6 +12,7 @@ class ApiRenderer extends Renderers\PlainRenderer{
     }
 
     public /* void */ function Prepend(array $options){
+        header('Cache-Control: max-age=30');
         header('Content-Type: '.$this->mime);
     }
 
