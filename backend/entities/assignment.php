@@ -45,6 +45,7 @@ class Assignment extends Entity {
                 ->Where('assignment_id', '=', $this->GetId())
                 ->Run();
         
+        $this->targets = [];
         for($i=0; $i<$result->num_rows; $i++){
             $row = $result->fetch_assoc();
             $this->targets[] = [$row['target_id'], $row['target_type']];
