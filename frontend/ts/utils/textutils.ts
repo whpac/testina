@@ -5,8 +5,9 @@
  * @param f2 Końcówka formy liczby mnogiej
  * @param f5 Końcówka formy dopełniacza liczby mnogiej
  */
-export function n(n: number, f1: string, f2: string, f5: string){
+export function n(n: number, f1: string, f2: string, f5?: string){
     if(n == 1) return f1;
+    f5 = f5 ?? f2;
     
     let n1 = n % 10;
     let n2 = ((n % 100) - n1) / 10;
