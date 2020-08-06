@@ -6,6 +6,7 @@ import { Collection } from '../entity';
 import Test from '../test';
 import AttemptLoader, { AttemptDescriptor } from './attemptloader';
 import ApiEndpoints from './apiendpoints';
+import AssignmentTargetsLoader, { AssignmentTargetsDescriptor } from './assignmenttargetsloader';
 
 /** Deskryptor przypisania w odpowiedzi z API */
 export interface AssignmentDescriptor {
@@ -13,11 +14,13 @@ export interface AssignmentDescriptor {
     attempt_limit: number,
     time_limit: string,
     assignment_date: string,
-    attempt_count: number,
     score: number | null,
     test: TestDescriptor,
     assigned_by: UserDescriptor,
-    attempts: Collection<AttemptDescriptor>
+    attempt_count: number,
+    attempts: Collection<AttemptDescriptor>,
+    target_count: number | undefined,
+    targets: AssignmentTargetsDescriptor | undefined
 }
 
 export default class AssignmentLoader {
@@ -82,6 +85,7 @@ export default class AssignmentLoader {
      */
     public static CreateFromDescriptor(assignment_descriptor: AssignmentDescriptor){
         let attempt_loader = new AttemptLoader(assignment_descriptor.attempt_count);
+        let targets_loader = new AssignmentTargetsLoader(assignment_descriptor.target_count);
 
         let assignment = new Assignment(
             assignment_descriptor.id,
@@ -91,12 +95,17 @@ export default class AssignmentLoader {
             new Date(assignment_descriptor.assignment_date),
             attempt_loader,
             assignment_descriptor.score,
-            UserLoader.CreateFromDescriptor(assignment_descriptor.assigned_by)
+            UserLoader.CreateFromDescriptor(assignment_descriptor.assigned_by),
+            targets_loader
         );
 
         attempt_loader.SetAssignment(assignment);
         if(!Collection.IsEmpty(assignment_descriptor.attempts))
             attempt_loader.SaveDescriptors(assignment_descriptor.attempts);
+
+        targets_loader.SetAssignment(assignment);
+        if(assignment_descriptor.targets !== undefined)
+            targets_loader.SaveDescriptor(assignment_descriptor.targets);
 
         return assignment;
     }

@@ -10,6 +10,7 @@ import * as DateUtils from '../utils/dateutils';
 import AssignmentLoader from './loaders/assignmentloader';
 import AttemptLoader from './loaders/attemptloader';
 import Attempt from './attempt';
+import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 
 type AssignmentTarget = User | Group;
 
@@ -43,6 +44,8 @@ export default class Assignment extends Entity implements PageParams {
 
     /** Obiekt ładujący podejścia */
     protected AttemptLoader: AttemptLoader;
+    /** Obiekt ładujący cele */
+    protected TargetsLoader: AssignmentTargetsLoader | undefined;
 
     /**
      * Klasa reprezentująca przypisanie
@@ -56,7 +59,8 @@ export default class Assignment extends Entity implements PageParams {
      * @param assigned_by Osoba przypisująca
      */
     constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
-        attempt_loader: AttemptLoader, score: number | null, assigned_by: User){
+        attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
+        targets_loader: AssignmentTargetsLoader | undefined){
         
         super();
 
@@ -72,6 +76,7 @@ export default class Assignment extends Entity implements PageParams {
         this.AssignedBy = assigned_by;
 
         this.AttemptLoader = attempt_loader;
+        this.TargetsLoader = targets_loader;
     }
 
     protected _Attempts: Attempt[] | undefined;
@@ -83,9 +88,13 @@ export default class Assignment extends Entity implements PageParams {
         return this._Attempts;
     }
 
+    protected _Targets: {Groups: Group[], Users: User[]} | undefined;
     /** Zwraca cele przypisania */
     public async GetTargets(){
-        return [];
+        if(this._Targets === undefined){
+            this._Targets = await this.TargetsLoader?.Load();
+        }
+        return this._Targets;
     }
 
     /** Czy pozostały jeszcze podejścia */
