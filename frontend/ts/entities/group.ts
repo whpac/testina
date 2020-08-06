@@ -15,6 +15,9 @@ export default class Group extends Entity {
     constructor(id: number, name: string){
         super();
 
+        if(id === undefined || name === undefined)
+            throw new TypeError('Wszystkie parametry konstruktora Group() muszą być zdefiniowane.');
+
         this.Id = id;
         this.Name = name;
     }
