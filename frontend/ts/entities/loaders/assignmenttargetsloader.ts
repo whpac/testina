@@ -60,15 +60,18 @@ export default class AssignmentTargetsLoader {
     public async CreateFromDescriptor(targets_descriptor: AssignmentTargetsDescriptor){
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
-        let user_loader = new UserLoader();
-        user_loader.SaveDescriptors(targets_descriptor.users);
-
         let group_loader = new GroupLoader();
         group_loader.SaveDescriptors(targets_descriptor.groups);
 
+        let user_loader = new UserLoader();
+        user_loader.SaveDescriptors(targets_descriptor.users);
+
+        let group_awaiter = group_loader.GetAll();
+        let user_awaiter = user_loader.GetAll();
+
         return {
-            Groups: await group_loader.GetAll(),
-            Users: await user_loader.GetAll()
+            Groups: await group_awaiter,
+            Users: await user_awaiter
         }
     }
 }
