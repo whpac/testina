@@ -45,7 +45,7 @@ export default class Assignment extends Entity implements PageParams {
     /** Obiekt ładujący podejścia */
     protected AttemptLoader: AttemptLoader;
     /** Obiekt ładujący cele */
-    protected TargetsLoader: AssignmentTargetsLoader | undefined;
+    protected TargetsLoader: AssignmentTargetsLoader;
 
     /**
      * Klasa reprezentująca przypisanie
@@ -60,7 +60,7 @@ export default class Assignment extends Entity implements PageParams {
      */
     constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
-        targets_loader: AssignmentTargetsLoader | undefined){
+        targets_loader: AssignmentTargetsLoader){
         
         super();
 
@@ -92,7 +92,7 @@ export default class Assignment extends Entity implements PageParams {
     /** Zwraca cele przypisania */
     public async GetTargets(){
         if(this._Targets === undefined){
-            this._Targets = await this.TargetsLoader?.Load();
+            this._Targets = await this.TargetsLoader.Load();
         }
         return this._Targets;
     }
