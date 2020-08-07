@@ -1,6 +1,8 @@
 import Component from '../basic/component';
 import Assignment from '../../entities/assignment';
 import * as DateUtils from '../../utils/dateutils';
+import { n } from '../../utils/textutils';
+import { HandleLinkClick } from '../../1page/pagemanager';
 
 export default class AssignmentsTable extends Component{
     protected Element: HTMLTableElement;
@@ -34,7 +36,7 @@ export default class AssignmentsTable extends Component{
         }
         ths[0].textContent = 'Przypisano';
         ths[1].textContent = 'Termin';
-        ths[2].textContent = 'Osoby';
+        ths[2].textContent = 'Komu';
     }
 
     public async Populate(assignments: Assignment[]){
@@ -48,16 +50,17 @@ export default class AssignmentsTable extends Component{
 
             cells[0].textContent = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
             cells[1].textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
-            cells[2].textContent = (await assignment.GetTargets()).length.toString();
 
-            let assign_more_btn = document.createElement('button');
-            assign_more_btn.classList.add('compact');
-            assign_more_btn.textContent = 'Dopisz\xa0osoby';        // \xa0 = &nbsp;
-            cells[3].appendChild(assign_more_btn);
+            let edit_btn = document.createElement('button');
+            edit_btn.classList.add('compact', 'todo');
+            edit_btn.textContent = 'Edytuj';
+            cells[3].appendChild(edit_btn);
 
-            let results_btn = document.createElement('button');
-            results_btn.classList.add('compact');
+            let results_btn = document.createElement('a');
+            results_btn.classList.add('button', 'compact', 'todo');
             results_btn.textContent = 'Wyniki';
+            results_btn.href = 'testy/wyniki/' + assignment.Id;
+            results_btn.addEventListener('click', (e) => HandleLinkClick(e, 'testy/wyniki', assignment));
             cells[4].appendChild(results_btn);
 
             if(!assignment.HasDeadlineExceeded()){
@@ -66,6 +69,21 @@ export default class AssignmentsTable extends Component{
             }else{
                 cells[1].title = 'Termin upłynął';
             }
+
+            let targets = await assignment.GetTargets();
+            let groups_count = targets.Groups.length;
+            let users_count = targets.Users.length;
+
+            let targets_text = '';
+            if(groups_count > 0){
+                targets_text += ' ' + groups_count.toString() + ' grup' + n(groups_count, 'ie', 'om');
+            }
+            if(groups_count > 0 && users_count > 0) targets_text += ' i';
+            if(users_count > 0){
+                targets_text += ' ' + users_count.toString() + ' osob' + n(users_count, 'ie', 'om');
+            }
+            cells[2].textContent = targets_text != '' ? targets_text.substr(1) : 'nikomu';
+            cells[2].classList.add('todo');
         }
     }
 }
