@@ -15,9 +15,13 @@ table.table {
     }
     th {font-weight:500;}
     tr:first-child:not(.not-header) th {border-bottom:1px solid var(--table-main-border-color);}
-    td button:only-child, td button.only-child {margin-left:-10px; margin-right:-10px;}
     td input[type=text]:only-child {width:calc(100% + 10px); box-sizing:border-box; margin:0 -5px;}
     col.shrink {width:min-content;}
+    td {
+        button, .button {
+            &:only-child, &.only-child {margin-left:-10px; margin-right:-10px;}
+        }
+    }
 }
 table.full-width {width:100%;}
 
