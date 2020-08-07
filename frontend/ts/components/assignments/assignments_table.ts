@@ -40,6 +40,7 @@ export default class AssignmentsTable extends Component{
     }
 
     public async Populate(assignments: Assignment[]){
+        this.TableBody.textContent = '';
         for(let assignment of assignments){
             let tr = this.TableBody.insertRow(0);
             let cells: HTMLTableDataCellElement[] = [];
