@@ -63,7 +63,7 @@ export default class Test extends Entity implements PageParams {
     /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
     protected QuestionLoader: QuestionLoader;
     /** Obiekt odpowiedzialny za wczytywanie przypisań */
-    protected AssignmentLoader: AssignmentLoader;
+    protected AssignmentLoader: () => Promise<Assignment[]>;
 
     /** Deskryptory przypisań tego testu */
     protected assignment_descriptors: AssignmentDescriptor[] | undefined;
@@ -82,7 +82,8 @@ export default class Test extends Entity implements PageParams {
      * @param assignment_loader Obiekt wczytujący przypisania
      */
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
-        question_multiplier: number, question_loader: QuestionLoader, assignment_loader: AssignmentLoader){
+        question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
+        assignment_loader: () => Promise<Assignment[]>){
         
         super();
 
@@ -93,7 +94,7 @@ export default class Test extends Entity implements PageParams {
         this._TimeLimit = time_limit;
         this._QuestionMultiplier = question_multiplier;
         this._QuestionCount = question_loader.QuestionCount;
-        this.AssignmentCount = assignment_loader.AssignmentCount;
+        this.AssignmentCount = assignment_count;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;
@@ -112,7 +113,7 @@ export default class Test extends Entity implements PageParams {
     /** Zwraca pytania do tego testu */
     public async GetAssignments(){
         if(this._Assignments === undefined){
-            this._Assignments = await this.AssignmentLoader.GetAll();
+            this._Assignments = await this.AssignmentLoader();
         }
         return this._Assignments;
     }

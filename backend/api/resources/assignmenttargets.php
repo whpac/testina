@@ -13,26 +13,26 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
 
         foreach($targets as $target){
             if($target instanceof \Entities\User){
-                $this->Users[$target->GetId()] = new User($target);
+                $this->Users[] = $target->GetId();
             }elseif($target instanceof \Entities\Group){
-                $this->Groups[$target->GetId()] = new Group($target);
+                $this->Groups[] = $target->GetId();
             }
         }
     }
 
     public function GetKeys(): array{
         return [
-            'groups',
-            'users'
+            'group_ids',
+            'user_ids'
         ];
     }
 
-    public function groups(): Schemas\Collection{
-        return new Collection($this->Groups);
+    public function group_ids(): array{
+        return $this->Groups;
     }
 
-    public function users(): Schemas\Collection{
-        return new Collection($this->Users);
+    public function user_ids(): array{
+        return $this->Users;
     }
 }
 ?>

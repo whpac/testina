@@ -1,23 +1,23 @@
 import * as XHR from '../../utils/xhr';
 
-import UserLoader, { UserDescriptor } from './userloader';
+import UserLoader from './userloader';
 import { Collection } from '../entity';
 import Test from '../test';
 import QuestionLoader, { QuestionDescriptor } from './questionloader';
-import AssignmentLoader, { AssignmentDescriptor } from './assignmentloader';
+import AssignmentLoader from './assignmentloader';
 
 /** Deskryptor testu w odpowiedzi z API */
 export interface TestDescriptor {
     id: number,
     name: string,
-    author: UserDescriptor,
+    author_id: number,
     creation_date: string,
     time_limit: number,
     question_multiplier: number,
     question_count: number,
     questions: Collection<QuestionDescriptor>,
     assignment_count: number | undefined,
-    assignments: Collection<AssignmentDescriptor>
+    assignment_ids: number[]
 }
 
 export default class TestLoader {
@@ -36,28 +36,29 @@ export default class TestLoader {
      * Tworzy test na podstawie deskryptora
      * @param test_descriptor Deskryptor testu
      */
-    public static CreateFromDescriptor(test_descriptor: TestDescriptor){
+    public static async CreateFromDescriptor(test_descriptor: TestDescriptor){
         let question_loader = new QuestionLoader(test_descriptor.question_count);
-        let assignment_loader = new AssignmentLoader(test_descriptor.assignment_count);
+        //let assignment_loader = new AssignmentLoader(test_descriptor.assignment_count);
+
+        let assignment_loader = () => new AssignmentLoader().LoadById(test_descriptor.assignment_ids);
 
         let test = new Test(
             test_descriptor.id,
             test_descriptor.name,
-            UserLoader.CreateFromDescriptor(test_descriptor.author),
+            await UserLoader.LoadById(test_descriptor.author_id),
             new Date(test_descriptor.creation_date),
             test_descriptor.time_limit,
             test_descriptor.question_multiplier,
             question_loader,
+            test_descriptor.assignment_count,
             assignment_loader
         );
 
         question_loader.SetTest(test);
-        assignment_loader.SetTest(test);
+        //assignment_loader.SetTest(test);
 
         if(!Collection.IsEmpty(test_descriptor.questions))
             question_loader.SaveDescriptors(test_descriptor.questions);
-        if(!Collection.IsEmpty(test_descriptor.assignments))
-            assignment_loader.SaveDescriptors(test_descriptor.assignments);
 
         return test;
     }
@@ -65,12 +66,12 @@ export default class TestLoader {
     /** Wczytuje wszystkie testy utworzone przez bieżącego użytkownika */
     public static async GetCreatedByCurrentUser(){
         let response = await XHR.Request('api/tests?depth=4', 'GET');
-        let json = response.Response as Collection<TestDescriptor>;
+        let descriptors = response.Response as Collection<TestDescriptor>;
         let out_array: Test[] = [];
 
-        Object.keys(json).forEach((test_id) => {
-            out_array.push(this.CreateFromDescriptor(json[parseInt(test_id)]));
-        });
+        for(let test_id in descriptors){
+            out_array.push(await this.CreateFromDescriptor(descriptors[parseInt(test_id)]));
+        }
 
         return out_array;
     }

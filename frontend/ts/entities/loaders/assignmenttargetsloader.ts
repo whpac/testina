@@ -1,14 +1,13 @@
 import * as XHR from '../../utils/xhr';
-import UserLoader, { UserDescriptor } from './userloader';
-import { Collection } from '../entity';
+import UserLoader from './userloader';
 import Assignment from '../assignment';
 import ApiEndpoints from './apiendpoints';
-import GroupLoader, { GroupDescriptor } from './grouploader';
+import GroupLoader from './grouploader';
 
 /** Deskryptor celów w odpowiedzi z API */
 export interface AssignmentTargetsDescriptor {
-    groups: Collection<GroupDescriptor>,
-    users: Collection<UserDescriptor>
+    group_ids: number[],
+    user_ids: number[]
 }
 
 export default class AssignmentTargetsLoader {
@@ -61,13 +60,10 @@ export default class AssignmentTargetsLoader {
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
         let group_loader = new GroupLoader();
-        group_loader.SaveDescriptors(targets_descriptor.groups);
-
         let user_loader = new UserLoader();
-        user_loader.SaveDescriptors(targets_descriptor.users);
 
-        let group_awaiter = group_loader.GetAll();
-        let user_awaiter = user_loader.GetAll();
+        let group_awaiter = group_loader.LoadById(targets_descriptor.group_ids);
+        let user_awaiter = user_loader.LoadById(targets_descriptor.user_ids);
 
         return {
             Groups: await group_awaiter,

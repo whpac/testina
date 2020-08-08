@@ -28,7 +28,7 @@ class Test extends Resource implements Schemas\Test{
         $keys = [
             'id',
             'name',
-            'author',
+            'author_id',
             'creation_date',
             'time_limit',
             'question_multiplier'
@@ -38,7 +38,7 @@ class Test extends Resource implements Schemas\Test{
             $keys[] = 'question_count';
             $keys[] = 'questions';
             $keys[] = 'assignment_count';
-            $keys[] = 'assignments';
+            $keys[] = 'assignment_ids';
         }
 
         return $keys;
@@ -52,10 +52,8 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetName();
     }
 
-    public function author(): Schemas\User{
-        $u = new User($this->Test->GetAuthor());
-        $u->SetContext($this->GetContext());
-        return $u;
+    public function author_id(): int{
+        return $this->Test->GetAuthor()->GetId();
     }
 
     public function creation_date(): \DateTime{
@@ -95,19 +93,17 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetAssignmentCount();
     }
 
-    public function assignments(): ?Schemas\Collection{
+    public function assignment_ids(): ?array{
         if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
 
         $assignments = $this->Test->GetAssignments();
         $out_assignments = [];
 
         foreach($assignments as $assignment){
-            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
+            $out_assignments[] = $assignment->GetId();
         }
 
-        $collection = new Collection($out_assignments);
-        $collection->SetContext($this->GetContext());
-        return $collection;
+        return $out_assignments;
     }
 }
 ?>

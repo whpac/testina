@@ -1,6 +1,7 @@
 import * as XHR from '../../utils/xhr';
 import User from '../user';
 import { Collection } from '../entity';
+import Loader from './loader';
 
 /** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {
@@ -9,43 +10,49 @@ export interface UserDescriptor {
     last_name: string
 }
 
-export default class UserLoader {
+export default class UserLoader implements Loader<User> {
     /** Przechowuje aktualnie zalogowanego użytkownika */
     protected static CurrentUser: (User | undefined) = undefined;
-    protected UserDescriptors: Collection<UserDescriptor> | undefined;
-
-    public SaveDescriptors(user_descriptors: Collection<UserDescriptor>){
-        this.UserDescriptors = user_descriptors;
-    }
 
     /**
-     * Wczytuje użytkownika o określonym identyfikatorze
-     * @param user_id Identyfikator użytkownika
+     * Wczytuje użytkowników o określonym identyfikatorze
+     * @param user_id Identyfikatory użytkowników
      */
-    public async LoadById(user_id: number): Promise<User>{
-        let descriptor: UserDescriptor;
-        if(this.UserDescriptors?.[user_id] !== undefined){
-            descriptor = this.UserDescriptors?.[user_id];
-        }else{
+    LoadById(user_id: number): Promise<User>;
+    LoadById(user_id: number[]): Promise<User[]>;
+    public async LoadById(user_id: number | number[]): Promise<User | User[]>{
+        if(typeof user_id == 'number'){
+            let descriptor: UserDescriptor;
             let response = await XHR.Request('api/users/' + user_id.toString() + '?depth=2', 'GET');
             descriptor = response.Response as UserDescriptor;
-        }
-        try{
-            return UserLoader.CreateFromDescriptor(descriptor);
-        }catch(e){
-            if(e instanceof TypeError){
-                return UserLoader.LoadById(user_id);
-            }else throw e;
+
+            try{
+                return UserLoader.CreateFromDescriptor(descriptor);
+            }catch(e){
+                if(e instanceof TypeError){
+                    return UserLoader.LoadById(user_id);
+                }else throw e;
+            }
+        }else{
+            let users: User[] = [];
+            for(let id of user_id){
+                let response = await XHR.Request('api/users/' + id.toString() + '?depth=2', 'GET');
+                let descriptor = response.Response as UserDescriptor;
+                users.push(UserLoader.CreateFromDescriptor(descriptor));
+            }
+            return users;
         }
     }
 
     /**
-     * Wczytuje użytkownika o określonym identyfikatorze
-     * @param user_id Identyfikator użytkownika
+     * Wczytuje użytkowników o określonym identyfikatorze
+     * @param user_id Identyfikatory użytkowników
      */
-    public static async LoadById(user_id: number){
-        let loader = new UserLoader();
-        return loader.LoadById(user_id);
+    static LoadById(user_id: number): Promise<User>;
+    static LoadById(user_id: number[]): Promise<User[]>;
+    public static async LoadById(user_id: number | number[]): Promise<User | User[]>{
+        //@ts-ignore - Kompilator niesłusznie zwraca błąd
+        return new UserLoader().LoadById(user_id);
     }
 
     /**
@@ -60,14 +67,11 @@ export default class UserLoader {
         );
     }
 
-    public async GetAll(){
+    /** Wczytuje wszystkich zarejestrowanych użytkowników */
+    public static async GetAll(){
         let descriptors: Collection<UserDescriptor>;
-        if(this.UserDescriptors !== undefined){
-            descriptors = this.UserDescriptors;
-        }else{
-            let response = await XHR.Request('api/users?depth=3', 'GET');
-            descriptors = response.Response as Collection<UserDescriptor>;
-        }
+        let response = await XHR.Request('api/users?depth=3', 'GET');
+        descriptors = response.Response as Collection<UserDescriptor>;
 
         let user_ids = Object.keys(descriptors);
         let users: User[] = [];
@@ -84,12 +88,6 @@ export default class UserLoader {
             users.push(u);
         }
         return users;
-    }
-
-    /** Wczytuje wszystkich zarejestrowanych użytkowników */
-    public static async GetAll(){
-        let loader = new UserLoader();
-        return loader.GetAll();
     }
 
     /**

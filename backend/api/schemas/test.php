@@ -4,7 +4,7 @@ namespace Api\Schemas;
 interface Test{
     public function id(): int;
     public function name(): string;
-    public function author(): User;
+    public function author_id(): int;
     public function creation_date(): \DateTime;
     public function time_limit(): int;
     public function question_multiplier(): float;
@@ -13,6 +13,6 @@ interface Test{
     public function questions(): ?Collection; // <Question>
 
     public function assignment_count(): ?int;
-    public function assignments(): ?Collection; // <Assignment>
+    public function assignment_ids(): ?array; // int[]
 }
 ?>
