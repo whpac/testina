@@ -36,19 +36,18 @@ class JsonFormatter extends Formatter {
             $out .= '}';
         }else{
             if(is_array($obj)){
-                if($depth <= 0) return '{}';
-                $out = '{';
+                if($depth <= 0) return '[]';
+                $out = '[';
 
                 $add_comma = false;
-                foreach($obj as $key => $item){
+                foreach($obj as $item){
                     if($add_comma) $out .= ',';
                     $add_comma = true;
 
-                    $out .= '"'.$key.'":';
                     $out .= $this->FormatResource($item, $depth - 1);
                 }
 
-                $out .= '}';
+                $out .= ']';
             }else{
                 $out = $this->FormatScalar($obj);
             }
