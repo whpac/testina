@@ -131,7 +131,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * Wczytuje wszystkie przypisania dla bieżącego użytkownika
      */
     public static async GetAssignedToCurrentUser(){
-        let response = await XHR.Request('api/assigned_to_me?depth=4', 'GET');
+        let response = await XHR.Request('api/assignments?depth=4&filter=to_me', 'GET');
         let descriptors = response.Response as Collection<AssignmentDescriptor>;
         let out_array: Assignment[] = [];
 

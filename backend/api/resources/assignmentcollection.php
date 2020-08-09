@@ -3,6 +3,24 @@ namespace Api\Resources;
 
 class AssignmentCollection extends Collection {
 
+    public function GetKeys(): array{
+        if($this->Filters == []) return array_keys($this->Items);
+        if(in_array('to_me', $this->Filters)){
+            $assigned_to_me_ids = [];
+            $current_user = $this->GetContext()->GetUser();
+
+            $assignments = \Entities\Assignment::GetAssignmentsForUser($current_user);
+
+            foreach($assignments as $assignment){
+                $assigned_to_me_ids[] = $assignment->GetId();
+            }
+
+            return array_intersect(array_keys($this->Items), $assigned_to_me_ids);
+        }
+
+        return array_intersect(array_keys($this->Items), $this->Filters);
+    }
+
     public function CreateSubResource(/* mixed */ $source){
         $current_user = $this->GetContext()->GetUser();
         $test = new \Entities\Test($source->test_id);
