@@ -94,7 +94,7 @@ class Assignment extends Resource implements Schemas\Assignment{
             $out_attempts[$attempt->GetId()] = new Attempt($attempt);
         }
 
-        $collection = new AttemptCollection($out_attempts);
+        $collection = new AttemptCollection($out_attempts, $this->Assignment);
         $collection->SetContext($this->GetContext());
         return $collection;
     }
