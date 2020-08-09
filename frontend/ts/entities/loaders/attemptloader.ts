@@ -1,16 +1,15 @@
 import * as XHR from '../../utils/xhr';
-import UserLoader, { UserDescriptor } from './userloader';
+import UserLoader from './userloader';
 import { Collection } from '../entity';
 import QuestionLoader, { QuestionDescriptor } from './questionloader';
 import Attempt from '../attempt';
 import Assignment from '../assignment';
-import User from '../user';
 import ApiEndpoints from './apiendpoints';
 
 /** Deskryptor podejścia w odpowiedzi z API */
 export interface AttemptDescriptor {
     id: number,
-    user: UserDescriptor,
+    user_id: number,
     score: number | undefined,
     max_score: number,
     begin_time: string,
@@ -70,7 +69,7 @@ export default class AttemptLoader {
      * Tworzy podejście na podstawie deskryptora
      * @param attempt_descriptor Deskryptor podejścia
      */
-    public CreateFromDescriptor(attempt_descriptor: AttemptDescriptor){
+    public async CreateFromDescriptor(attempt_descriptor: AttemptDescriptor){
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
         let question_loader = new QuestionLoader();
@@ -82,7 +81,7 @@ export default class AttemptLoader {
         return new Attempt(
             attempt_descriptor.id,
             this.Assignment,
-            UserLoader.CreateFromDescriptor(attempt_descriptor.user),
+            await UserLoader.LoadById(attempt_descriptor.user_id),
             attempt_descriptor.score,
             attempt_descriptor.max_score,
             new Date(attempt_descriptor.begin_time),
@@ -98,12 +97,12 @@ export default class AttemptLoader {
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
         let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts?depth=2', 'GET');
-        let json = response.Response as Collection<AttemptDescriptor>;
+        let descriptors = response.Response as Collection<AttemptDescriptor>;
         let out_array: Attempt[] = [];
 
-        Object.keys(json).forEach((attempt_id) => {
-            out_array.push(this.CreateFromDescriptor(json[parseInt(attempt_id)]));
-        });
+        for(let attempt_id in descriptors){
+            out_array.push(await this.CreateFromDescriptor(descriptors[parseInt(attempt_id)]));
+        }
 
         return out_array;
     }

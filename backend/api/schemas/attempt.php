@@ -3,7 +3,7 @@ namespace Api\Schemas;
 
 interface Attempt{
     public function id(): int;
-    public function user(): User;
+    public function user_id(): int;
     public function score(): ?float;
     public function max_score(): float;
     public function begin_time(): \DateTime;

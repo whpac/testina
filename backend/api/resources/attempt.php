@@ -15,7 +15,7 @@ class Attempt extends Resource implements Schemas\Attempt {
     public function GetKeys(): array{
         return [
             'id',
-            'user',
+            'user_id',
             'score',
             'max_score',
             'begin_time',
@@ -27,10 +27,8 @@ class Attempt extends Resource implements Schemas\Attempt {
         return $this->Attempt->GetId();
     }
 
-    public function user(): Schemas\User{
-        $u = new User($this->Attempt->GetUser());
-        $u->SetContext($this->GetContext());
-        return $u;
+    public function user_id(): int{
+        return $this->Attempt->GetUser()->GetId();
     }
 
     public function score(): ?float{
