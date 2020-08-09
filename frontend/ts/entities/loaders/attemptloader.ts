@@ -72,10 +72,10 @@ export default class AttemptLoader {
     public async CreateFromDescriptor(attempt_descriptor: AttemptDescriptor){
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
-        let question_loader = new QuestionLoader();
+        let question_loader = new QuestionLoader(attempt_descriptor.path?.length);
         question_loader.SetTest(this.Assignment.Test);
 
-        if(attempt_descriptor.questions !== undefined && !Collection.IsEmpty(attempt_descriptor.questions))
+        if(!Collection.IsEmpty(attempt_descriptor.questions))
             question_loader.SaveDescriptors(attempt_descriptor.questions);
 
         return new Attempt(
