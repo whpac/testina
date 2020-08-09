@@ -17,12 +17,12 @@ export class Collection<T> {
      * Sprawdza, czy podana kolekcja jest pusta. Kolekcja jest uważana za pustą, jeżeli nie zawiera elementów lub pierwszy element jest pustym obiektem.
      * @param collection Kolekcja do sprawdzenia
      */
-    public static IsEmpty<T>(collection: Collection<T> | undefined){
+    public static IsEmpty<T>(collection: Collection<T> | undefined): collection is undefined{
         if(collection === undefined) return true;
         
         let keys = Object.keys(collection);
         if(keys.length == 0) return true;
-        if(Object.keys(collection[Number(keys[0])])) return true;
+        if(Object.keys(collection[Number(keys[0])]).length == 0) return true;
         return false;
     }
 }
