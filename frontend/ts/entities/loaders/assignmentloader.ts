@@ -1,6 +1,6 @@
 import * as XHR from '../../utils/xhr';
 import TestLoader, { TestDescriptor } from './testloader';
-import UserLoader, { UserDescriptor } from './userloader';
+import UserLoader from './userloader';
 import Assignment from '../assignment';
 import { Collection } from '../entity';
 import Test from '../test';
@@ -17,7 +17,7 @@ export interface AssignmentDescriptor {
     assignment_date: string,
     score_current: number | null,
     test: TestDescriptor,
-    assigned_by: UserDescriptor,
+    assigned_by_id: number,
     attempt_count: number,
     attempts: Collection<AttemptDescriptor>,
     target_count: number | undefined,
@@ -112,7 +112,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
             new Date(assignment_descriptor.assignment_date),
             attempt_loader,
             assignment_descriptor.score_current,
-            UserLoader.CreateFromDescriptor(assignment_descriptor.assigned_by),
+            await UserLoader.LoadById(assignment_descriptor.assigned_by_id),
             targets_loader
         );
 

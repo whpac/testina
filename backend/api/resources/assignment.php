@@ -36,7 +36,7 @@ class Assignment extends Resource implements Schemas\Assignment{
             'assignment_date',
             'score_current',
             'test',
-            'assigned_by',
+            'assigned_by_id',
             'attempt_count',
             'attempts'
         ];
@@ -76,10 +76,8 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $t;
     }
 
-    public function assigned_by(): Schemas\User{
-        $u = new User($this->Assignment->GetAssigningUser());
-        $u->SetContext($this->GetContext());
-        return $u;
+    public function assigned_by_id(): int{
+        return $this->Assignment->GetAssigningUser()->GetId();
     }
 
     public function attempt_count(): int{
