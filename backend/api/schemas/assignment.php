@@ -6,7 +6,7 @@ interface Assignment{
     public function attempt_limit(): int;
     public function time_limit(): \DateTime;
     public function assignment_date(): \DateTime;
-    public function score(): ?float;
+    public function score_current(): ?float;
     public function test(): Test;
     public function assigned_by(): User;
     

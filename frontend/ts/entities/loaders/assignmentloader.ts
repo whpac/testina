@@ -15,7 +15,7 @@ export interface AssignmentDescriptor {
     attempt_limit: number,
     time_limit: string,
     assignment_date: string,
-    score: number | null,
+    score_current: number | null,
     test: TestDescriptor,
     assigned_by: UserDescriptor,
     attempt_count: number,
@@ -93,9 +93,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * @param assignment_id Identyfikator przypisania
      */
     public static async LoadById(assignment_id: number){
-        let response = await XHR.Request('api/assignments/' + assignment_id.toString() + '?depth=3', 'GET');
-        let json = response.Response as AssignmentDescriptor;
-        return this.CreateFromDescriptor(json);
+        return new AssignmentLoader().LoadById(assignment_id);
     }
 
     /**
@@ -113,7 +111,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
             new Date(assignment_descriptor.time_limit),
             new Date(assignment_descriptor.assignment_date),
             attempt_loader,
-            assignment_descriptor.score,
+            assignment_descriptor.score_current,
             UserLoader.CreateFromDescriptor(assignment_descriptor.assigned_by),
             targets_loader
         );

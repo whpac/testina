@@ -65,7 +65,7 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $this->Assignment->GetAssignmentDate();
     }
 
-    public function score(): ?float{
+    public function score_current(): ?float{
         $current_user = $this->GetContext()->GetUser();
         return $this->Assignment->GetAverageScore($current_user);
     }
