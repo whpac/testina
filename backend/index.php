@@ -57,7 +57,6 @@ PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:400&d
 PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:300,400i,500,700&display=fallback');
 PageManager::AddStylesheet('css/font-awesome.min.css');
 PageManager::AddStylesheet('css/style.css');
-PageManager::AddScript('js/jquery-3.4.1.min.js');
 PageManager::AddScript('js/script', true);
 PageManager::AddHeadTag('<base href="/p/" />');
 PageManager::SetRenderer(new \Layout\StandardRenderer());
