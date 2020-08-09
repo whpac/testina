@@ -13,7 +13,9 @@ class Collection extends Resource implements Schemas\Collection{
     }
 
     public function GetKeys(): array{
-        return array_keys($this->Items);
+        if($this->Filters == []) return array_keys($this->Items);
+
+        return array_intersect(array_keys($this->Items), $this->Filters);
     }
 
     public function KeyExists($key_name): bool{

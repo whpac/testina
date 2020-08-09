@@ -10,9 +10,11 @@ use Api\Exceptions;
 abstract class Resource {
     private $Context;
     private $CreationArg;
+    protected $Filters;
 
     public function __construct($arg = null){
         $this->CreationArg = $arg;
+        $this->Filters = [];
     }
 
     /**
@@ -21,21 +23,6 @@ abstract class Resource {
      */
     protected function GetConstructorArgument(){
         return $this->CreationArg;
-    }
-
-    /**
-     * Zwraca tablicę nazw wszystkich pól w zasobie
-     */
-    public function GetKeys(): array{
-        return [];
-    }
-
-    /**
-     * Sprawdza, czy pole o podanej nazwie istnieje
-     * @param $key_name Nazwa pola
-     */
-    public function KeyExists($key_name): bool{
-        return method_exists($this, $key_name);
     }
 
     /**
@@ -51,6 +38,29 @@ abstract class Resource {
      */
     protected function GetContext(){
         return $this->Context;
+    }
+
+    /**
+     * Ustawia filtry w zasobie
+     * @param $filters Filtry
+     */
+    public function SetFilters(array $filters){
+        $this->Filters = $filters;
+    }
+
+    /**
+     * Zwraca tablicę nazw wszystkich pól w zasobie
+     */
+    public function GetKeys(): array{
+        return [];
+    }
+
+    /**
+     * Sprawdza, czy pole o podanej nazwie istnieje
+     * @param $key_name Nazwa pola
+     */
+    public function KeyExists($key_name): bool{
+        return method_exists($this, $key_name);
     }
 
     /**
