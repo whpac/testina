@@ -34,7 +34,7 @@ class Assignment extends Resource implements Schemas\Assignment{
             'attempt_limit',
             'time_limit',
             'assignment_date',
-            'score',
+            'score_current',
             'test',
             'assigned_by',
             'attempt_count',
