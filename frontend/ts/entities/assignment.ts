@@ -12,7 +12,12 @@ import AttemptLoader from './loaders/attemptloader';
 import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 
-type AssignmentTarget = User | Group;
+type AssignmentTargetEntity = User | Group;
+export type AssignmentTargets = {
+    Groups: Group[],
+    Users: User[],
+    AllUsers: User[]
+}
 
 /** Klasa reprezentująca przypisanie */
 export default class Assignment extends Entity implements PageParams {
@@ -88,7 +93,7 @@ export default class Assignment extends Entity implements PageParams {
         return this._Attempts;
     }
 
-    protected _Targets: {Groups: Group[], Users: User[]} | undefined;
+    protected _Targets: AssignmentTargets | undefined;
     /** Zwraca cele przypisania */
     public async GetTargets(){
         if(this._Targets === undefined){
@@ -146,7 +151,7 @@ export default class Assignment extends Entity implements PageParams {
         return AssignmentLoader.LoadById(parseInt(result.ContentLocation));
     }
 
-    async AddTargets(targets: AssignmentTarget[]){
+    async AddTargets(targets: AssignmentTargetEntity[]){
         let payload_targets: {type: number, id: number}[] = [];
 
         for(let target of targets){
