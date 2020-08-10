@@ -5,6 +5,7 @@ use \UEngine\Modules\Core\RichException;
 use \UEngine\Modules\Core\Database\DatabaseManager;
 
 define('TABLE_GROUPS', 'groups');
+define('TABLE_GROUP_MEMBERS', 'group_members');
 
 class Group extends Entity{
     protected /* int */ $id;
@@ -30,6 +31,22 @@ class Group extends Entity{
     public /* string */ function GetName(){
         $this->FetchIfNeeded();
         return $this->name;
+    }
+
+    public /* User[] */ function GetUsers(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_GROUP_MEMBERS)
+                ->Select(['user_id'])
+                ->Where('group_id', '=', $this->GetId())
+                ->Run();
+
+        $users = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $users[] = new User($row['user_id']);
+        }
+
+        return $users;
     }
 
     public static /* Group[] */ function GetAll(){
