@@ -26,6 +26,11 @@ export default class AssignmentsTable extends Component{
         this.Element.appendChild(colgroup);
 
         this.TableBody = this.Element.createTBody();
+        let tr_loading = this.TableBody.insertRow(-1);
+        let td_loading = tr_loading.insertCell(-1);
+        td_loading.colSpan = 5;
+        td_loading.classList.add('secondary');
+        td_loading.textContent = 'Ładowanie...';
 
         let thead_row = this.Element.createTHead().insertRow(-1);
         let ths: HTMLTableHeaderCellElement[] = [];
