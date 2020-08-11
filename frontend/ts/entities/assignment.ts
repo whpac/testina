@@ -40,10 +40,10 @@ export default class Assignment extends Entity implements PageParams {
 
     /** Średni wynik procentowy */
     public get Score(){
-        return this._Score;
+        return this._Score ?? undefined;
     }
-    public set Score(new_value: number | null){
-        this._Score = new_value;
+    public set Score(new_value: number | undefined){
+        this._Score = new_value ?? null;
         this.FireEvent('change');
     }
 
@@ -126,6 +126,22 @@ export default class Assignment extends Entity implements PageParams {
     /** Czy przypisanie jest aktywne (są wolne podejścia i nie upłynął termin) */
     IsActive(){
         return !this.HasDeadlineExceeded() && this.AreRemainingAttempts();
+    }
+
+    /**
+     * Zwraca wynik danego użytkownika lub undefined, jeśli nie podszedł
+     * @param user Użytkownik, którego wynik zwrócić
+     */
+    GetUsersScore(user: User): number | undefined{
+        return undefined;
+    }
+
+    /**
+     * Zwraca ilość podejść, które użytkownik wykonał
+     * @param user Użytkownik, któremu policzyć podejścia
+     */
+    CountUsersAttempts(user: User): number{
+        return 0;
     }
 
     GetSimpleRepresentation(){
