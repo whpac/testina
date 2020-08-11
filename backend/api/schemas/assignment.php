@@ -13,6 +13,7 @@ interface Assignment{
     public function attempt_count(): int;
     public function attempts(): Collection; // <Attempt>
 
-    public function targets(): ?AssignmentTargets; // <User | Group>
+    public function targets(): ?AssignmentTargets;
+    public function results(): ?array; // AssignmentResults[]
 }
 ?>

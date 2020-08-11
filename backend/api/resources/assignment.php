@@ -43,6 +43,7 @@ class Assignment extends Resource implements Schemas\Assignment{
 
         if($this->Assignment->GetAssigningUser()->GetId() == $this->GetContext()->GetUser()->GetId()){
             $keys[] = 'targets';
+            $keys[] = 'results';
         }
 
         return $keys;
@@ -103,6 +104,29 @@ class Assignment extends Resource implements Schemas\Assignment{
 
         $targets = $this->Assignment->GetTargets();
         return new AssignmentTargets($targets);
+    }
+
+    public function results(): ?array{
+        if($this->Assignment->GetAssigningUser()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+
+        $all_users = [];
+        $targets = $this->Assignment->GetTargets();
+        foreach($targets as $target){
+            if($target instanceof \Entities\User){
+                $all_users[$target->GetId()] = $target;
+            }elseif($target instanceof \Entities\Group){
+                $users = $target->GetUsers();
+                foreach($users as $user){
+                    $all_users[$user->GetId()] = $user;
+                }
+            }
+        }
+
+        $out_array = [];
+        foreach($all_users as $user){
+            $out_array[] = new AssignmentResults($this->Assignment, $user);
+        }
+        return $out_array;
     }
 }
 ?>
