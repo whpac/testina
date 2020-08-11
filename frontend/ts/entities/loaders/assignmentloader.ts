@@ -20,7 +20,6 @@ export interface AssignmentDescriptor {
     assigned_by_id: number,
     attempt_count: number,
     attempts: Collection<AttemptDescriptor>,
-    target_count: number | undefined,
     targets: AssignmentTargetsDescriptor | undefined
 }
 
@@ -102,7 +101,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      */
     public static async CreateFromDescriptor(assignment_descriptor: AssignmentDescriptor){
         let attempt_loader = new AttemptLoader(assignment_descriptor.attempt_count);
-        let targets_loader = new AssignmentTargetsLoader(assignment_descriptor.target_count);
+        let targets_loader = new AssignmentTargetsLoader();
 
         let assignment = new Assignment(
             assignment_descriptor.id,
