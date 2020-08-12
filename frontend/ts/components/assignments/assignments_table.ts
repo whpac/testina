@@ -63,7 +63,7 @@ export default class AssignmentsTable extends Component{
             cells[3].appendChild(edit_btn);
 
             let results_btn = document.createElement('a');
-            results_btn.classList.add('button', 'compact', 'todo');
+            results_btn.classList.add('button', 'compact');
             results_btn.textContent = 'Wyniki';
             results_btn.href = 'testy/wyniki/' + assignment.Id;
             results_btn.addEventListener('click', (e) => HandleLinkClick(e, 'testy/wyniki', assignment));
