@@ -64,7 +64,13 @@ export default class ResultsTable extends Component{
                     tds[2].title = 'Ten uczeń wykorzystał już wszystkie podejścia.';
             }
 
-            tds[3].textContent = DateUtils.ToDayHourFormat(results[user.Id].LastAttempt);
+            let last_attempt = results[user.Id].LastAttempt;
+            if(last_attempt === undefined){
+                tds[3].textContent = '—';
+                tds[3].title = 'Nie pod' + (user.IsFemale() ? 'eszła' : 'szedł');
+            }else{
+                tds[3].textContent = DateUtils.ToDayHourFormat(last_attempt);
+            }
 
             tds[1].classList.add('center');
             tds[2].classList.add('center');
