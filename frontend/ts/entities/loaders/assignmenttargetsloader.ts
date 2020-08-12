@@ -58,7 +58,7 @@ export default class AssignmentTargetsLoader {
      * @param targets_descriptor Deskryptor celów
      */
     public async CreateFromDescriptor(targets_descriptor: AssignmentTargetsDescriptor): Promise<AssignmentTargets>{
-        if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
+        if(this.Assignment === undefined) throw 'AssignmentTargetsLoader.Assignment nie może być undefined.';
 
         let group_loader = new GroupLoader();
         let user_loader = new UserLoader();
