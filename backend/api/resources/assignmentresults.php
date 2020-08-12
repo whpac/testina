@@ -35,8 +35,10 @@ class AssignmentResults extends Resource implements Schemas\AssignmentResults{
         return $this->Assignment->CountUserAttempts($this->User);
     }
 
-    public function last_attempt(): \DateTime{
-        return new \DateTime();
+    public function last_attempt(): ?\DateTime{
+        $attempt = $this->Assignment->GetUsersLastAttempt($this->User);
+        if(is_null($attempt)) return null;
+        return $attempt->GetBeginTime();
     }
 
     public function average_score(): ?int{

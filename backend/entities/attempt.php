@@ -92,7 +92,7 @@ class Attempt extends Entity {
         return new Attempt($result->fetch_assoc());
     }
 
-    public static /* int */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment){
+    public static /* Attempt */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)
                 ->Select()
@@ -117,6 +117,19 @@ class Attempt extends Entity {
                 ->Run();
                 
         return $result->num_rows;
+    }
+
+    public static /* ?Attempt */ function GetLastAttemptByUserAndAssignment(User $user, Assignment $assignment){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Select()
+                ->Where('user_id', '=', $user->GetId())
+                ->AndWhere('assignment_id', '=', $assignment->GetId())
+                ->OrderBy('begin_time', 'DESC')
+                ->Run();
+        
+        if($result->num_rows == 0) return null;
+        return new Attempt($result->fetch_assoc());
     }
 
     public /* UserAnswerCollection */ function GetUserAnswers(){

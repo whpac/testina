@@ -184,6 +184,10 @@ class Assignment extends Entity {
         return Attempt::CountAttemptsByUserAndAssignment($user, $this);
     }
 
+    public /* ?Attempt */ function GetUsersLastAttempt(User $user){
+        return Attempt::GetLastAttemptByUserAndAssignment($user, $this);
+    }
+
     public /* void */ function AddTarget($target_type, $target_id){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENT_TARGETS)
