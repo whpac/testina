@@ -7,7 +7,7 @@ import ApiEndpoints from './apiendpoints';
 export interface AssignmentResultsDescriptor {
     user_id: number,
     attempt_count: number,
-    last_attempt: string,
+    last_attempt: string | null,
     average_score: number | null
 }
 
@@ -66,7 +66,7 @@ export default class AssignmentResultsLoader {
         return {
             User: await user_awaiter,
             AttemptCount: results_descriptor.attempt_count,
-            LastAttempt: new Date(results_descriptor.last_attempt),
+            LastAttempt: results_descriptor.last_attempt !== null ? new Date(results_descriptor.last_attempt) : undefined,
             AverageScore: results_descriptor.average_score ?? undefined
         }
     }
