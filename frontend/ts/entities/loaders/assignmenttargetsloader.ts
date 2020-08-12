@@ -40,7 +40,7 @@ export default class AssignmentTargetsLoader {
      * Wczytuje cele dla bieżącego przypisania
      */
     public async Load(){
-        if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
+        if(this.Assignment === undefined) throw 'AssignmentTargetsLoader.Assignment nie może być undefined.';
 
         let descriptor: AssignmentTargetsDescriptor;
         if(this.TargetDescriptor !== undefined){
