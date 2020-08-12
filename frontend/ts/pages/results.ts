@@ -1,10 +1,12 @@
 import Page from '../components/basic/page';
 import Assignment from '../entities/assignment';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
+import ResultsCard from '../components/results/results_card';
 
 export default class ResultsPage extends Page{
     protected Assignment: Assignment | undefined;
     protected TestNameHeading: Text;
+    protected ResultsCard: ResultsCard;
 
     constructor(){
         super();
@@ -17,6 +19,9 @@ export default class ResultsPage extends Page{
         span_secondary.classList.add('secondary');
         span_secondary.textContent = ' – wyniki';
         page_heading.appendChild(span_secondary);
+
+        this.ResultsCard = new ResultsCard();
+        this.AppendChild(this.ResultsCard);
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
@@ -26,6 +31,7 @@ export default class ResultsPage extends Page{
 
         this.TestNameHeading.textContent = this.Assignment.Test.Name;
         container.appendChild(this.Element);
+        this.ResultsCard.Populate(this.Assignment);
     }
 
     UnloadFrom(container: HTMLElement) {
