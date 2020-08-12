@@ -23,7 +23,7 @@ export type AssignmentTargets = {
 export type AssignmentResult = {
     User: User,
     AttemptCount: number,
-    LastAttempt: Date,
+    LastAttempt: Date | undefined,
     AverageScore: number | undefined
 }
 
