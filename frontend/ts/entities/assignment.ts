@@ -1,4 +1,4 @@
-import Entity from './entity';
+import Entity, { Collection } from './entity';
 
 import * as XHR from '../utils/xhr';
 import Test from './test';
@@ -11,12 +11,20 @@ import AssignmentLoader from './loaders/assignmentloader';
 import AttemptLoader from './loaders/attemptloader';
 import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
+import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 
 type AssignmentTargetEntity = User | Group;
 export type AssignmentTargets = {
     Groups: Group[],
     Users: User[],
     AllUsers: User[]
+}
+
+export type AssignmentResult = {
+    User: User,
+    AttemptCount: number,
+    LastAttempt: Date,
+    AverageScore: number | undefined
 }
 
 /** Klasa reprezentująca przypisanie */
@@ -51,6 +59,8 @@ export default class Assignment extends Entity implements PageParams {
     protected AttemptLoader: AttemptLoader;
     /** Obiekt ładujący cele */
     protected TargetsLoader: AssignmentTargetsLoader;
+    /** Obiekt ładujący wyniki innych osób */
+    protected ResultsLoader: AssignmentResultsLoader;
 
     /**
      * Klasa reprezentująca przypisanie
@@ -65,7 +75,7 @@ export default class Assignment extends Entity implements PageParams {
      */
     constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
-        targets_loader: AssignmentTargetsLoader){
+        targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader){
         
         super();
 
@@ -82,6 +92,7 @@ export default class Assignment extends Entity implements PageParams {
 
         this.AttemptLoader = attempt_loader;
         this.TargetsLoader = targets_loader;
+        this.ResultsLoader = results_loader;
     }
 
     protected _Attempts: Attempt[] | undefined;
@@ -100,6 +111,19 @@ export default class Assignment extends Entity implements PageParams {
             this._Targets = await this.TargetsLoader.Load();
         }
         return this._Targets;
+    }
+
+    protected _Results: Collection<AssignmentResult> | undefined;
+    /** Zwraca wyniki innych osób, indeksowane id użytkownika */
+    public async GetResults(){
+        if(this._Results === undefined){
+            let results = await this.ResultsLoader.Load();
+            this._Results = {};
+            for(let result of results){
+                this._Results[result.User.Id] = result;
+            }
+        }
+        return this._Results;
     }
 
     /** Czy pozostały jeszcze podejścia */
@@ -132,16 +156,18 @@ export default class Assignment extends Entity implements PageParams {
      * Zwraca wynik danego użytkownika lub undefined, jeśli nie podszedł
      * @param user Użytkownik, którego wynik zwrócić
      */
-    GetUsersScore(user: User): number | undefined{
-        return undefined;
+    async GetUsersScore(user: User): Promise<number | undefined>{
+        let results = await this.GetResults();
+        return results[user.Id].AverageScore;
     }
 
     /**
      * Zwraca ilość podejść, które użytkownik wykonał
      * @param user Użytkownik, któremu policzyć podejścia
      */
-    CountUsersAttempts(user: User): number{
-        return 0;
+    async CountUsersAttempts(user: User): Promise<number>{
+        let results = await this.GetResults();
+        return results[user.Id].AttemptCount;
     }
 
     GetSimpleRepresentation(){

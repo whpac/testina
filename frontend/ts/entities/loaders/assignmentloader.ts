@@ -8,6 +8,7 @@ import AttemptLoader, { AttemptDescriptor } from './attemptloader';
 import ApiEndpoints from './apiendpoints';
 import AssignmentTargetsLoader, { AssignmentTargetsDescriptor } from './assignmenttargetsloader';
 import Loader from './loader';
+import AssignmentResultsLoader, { AssignmentResultsDescriptor } from './assignmentresultsloader';
 
 /** Deskryptor przypisania w odpowiedzi z API */
 export interface AssignmentDescriptor {
@@ -20,7 +21,8 @@ export interface AssignmentDescriptor {
     assigned_by_id: number,
     attempt_count: number,
     attempts: Collection<AttemptDescriptor>,
-    targets: AssignmentTargetsDescriptor | undefined
+    targets: AssignmentTargetsDescriptor | undefined,
+    results: AssignmentResultsDescriptor[] | undefined
 }
 
 export default class AssignmentLoader implements Loader<Assignment> {
@@ -102,6 +104,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
     public static async CreateFromDescriptor(assignment_descriptor: AssignmentDescriptor){
         let attempt_loader = new AttemptLoader(assignment_descriptor.attempt_count);
         let targets_loader = new AssignmentTargetsLoader();
+        let results_loader = new AssignmentResultsLoader();
 
         let assignment = new Assignment(
             assignment_descriptor.id,
@@ -112,7 +115,8 @@ export default class AssignmentLoader implements Loader<Assignment> {
             attempt_loader,
             assignment_descriptor.score_current,
             await UserLoader.LoadById(assignment_descriptor.assigned_by_id),
-            targets_loader
+            targets_loader,
+            results_loader
         );
 
         attempt_loader.SetAssignment(assignment);
@@ -122,6 +126,10 @@ export default class AssignmentLoader implements Loader<Assignment> {
         targets_loader.SetAssignment(assignment);
         if(assignment_descriptor.targets !== undefined)
             targets_loader.SaveDescriptor(assignment_descriptor.targets);
+
+        results_loader.SetAssignment(assignment);
+        if(assignment_descriptor.results !== undefined)
+            results_loader.SaveDescriptors(assignment_descriptor.results);
 
         return assignment;
     }
