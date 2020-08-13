@@ -3,7 +3,7 @@ import Test from '../../../entities/test';
 import TargetsWrapper from './targets_wrapper';
 import SettingsWrapper from './settings_wrapper';
 import NavigationPrevention from '../../../1page/navigationprevention';
-import Assignment from '../../../entities/assignment';
+import Assignment, { AssignmentTargets } from '../../../entities/assignment';
 import Toast from '../../basic/toast';
 
 export default class AssignTestDialog extends Dialog {
@@ -50,9 +50,9 @@ export default class AssignTestDialog extends Dialog {
         this.AddButton(btn_cancel);
     }
 
-    async Populate(test: Test){
+    async Populate(test: Test, preselected_targets?: AssignmentTargets){
         this.Test = test;
-        this.TargetsWrapper.Populate();
+        this.TargetsWrapper.Populate(preselected_targets);
         this.SettingsWrapper.Clear();
 
         this.PrevButton.style.display = 'none';

@@ -38,7 +38,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         tr_head.appendChild(document.createElement('th'));
     }
 
-    async Populate(){
+    async Populate(preselected_groups?: Group[]){
         if(this.AreGroupsPopulated) return;
         this.GroupsTBody.textContent = '';
 

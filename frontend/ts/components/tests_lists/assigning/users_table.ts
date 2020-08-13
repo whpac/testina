@@ -38,7 +38,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
         tr_head.appendChild(document.createElement('th'));
     }
 
-    async Populate(){
+    async Populate(preselected_users?: User[]){
         if(this.AreUsersPopulated) return;
         this.UsersTBody.textContent = '';
 

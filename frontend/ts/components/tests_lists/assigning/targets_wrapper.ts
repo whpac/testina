@@ -8,6 +8,7 @@ import { n } from '../../../utils/textutils';
 import NavigationPrevention from '../../../1page/navigationprevention';
 import User from '../../../entities/user';
 import Group from '../../../entities/group';
+import { AssignmentTargets } from '../../../entities/assignment';
 
 type TargetType = 'user' | 'group';
 
@@ -76,14 +77,14 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.AppendChild(this.NothingSelectedError);
     }
 
-    async Populate(){
+    async Populate(preselected_targets?: AssignmentTargets){
         this.SearchField.value = '';
         this.UsersTab.Select();
         this.SwitchTargetType('user');
         this.PrintNumberOfSelectedEntities(0, 0);
 
-        let users_awaiter = this.UsersTable.Populate();
-        let groups_awaiter = this.GroupsTable.Populate();
+        let users_awaiter = this.UsersTable.Populate(preselected_targets?.Users);
+        let groups_awaiter = this.GroupsTable.Populate(preselected_targets?.Groups);
         await users_awaiter;
         await groups_awaiter;
 
