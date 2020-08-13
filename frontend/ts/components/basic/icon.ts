@@ -10,7 +10,7 @@ export default class Icon extends Component{
      * @param icon Nazwa ikony
      * @param classes Klasy CSS elementu HTML
      */
-    constructor(icon: string, classes?: string[]){
+    constructor(icon: string, ...classes: string[]){
         super();
 
         this.Element = document.createElement('span');
