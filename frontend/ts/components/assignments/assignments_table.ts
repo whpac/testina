@@ -1,8 +1,9 @@
 import Component from '../basic/component';
-import Assignment from '../../entities/assignment';
+import Assignment, { AssignmentTargets } from '../../entities/assignment';
 import * as DateUtils from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
 import { HandleLinkClick } from '../../1page/pagemanager';
+import Icon from '../basic/icon';
 
 export default class AssignmentsTable extends Component{
     protected Element: HTMLTableElement;
@@ -17,10 +18,12 @@ export default class AssignmentsTable extends Component{
         let colgroup = document.createElement('colgroup');
         let col_shrink = document.createElement('col');
         col_shrink.classList.add('shrink');
+        let col_wide = document.createElement('col');
+        col_wide.classList.add('wide-screen-only');
 
         colgroup.appendChild(document.createElement('col'));
         colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(col_wide.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         this.Element.appendChild(colgroup);
@@ -42,6 +45,8 @@ export default class AssignmentsTable extends Component{
         ths[0].textContent = 'Przypisano';
         ths[1].textContent = 'Termin';
         ths[2].textContent = 'Komu';
+
+        ths[2].classList.add('wide-screen-only');
     }
 
     public async Populate(assignments: Assignment[]){
@@ -59,8 +64,13 @@ export default class AssignmentsTable extends Component{
 
             let edit_btn = document.createElement('button');
             edit_btn.classList.add('compact', 'todo');
-            edit_btn.textContent = 'Edytuj';
+            edit_btn.appendChild(new Icon('pencil', 'narrow-screen-only').GetElement());
             cells[3].appendChild(edit_btn);
+
+            let edit_btn_text = document.createElement('span');
+            edit_btn_text.textContent = 'Edytuj';
+            edit_btn_text.classList.add('wide-screen-only');
+            edit_btn.appendChild(edit_btn_text);
 
             let results_btn = document.createElement('a');
             results_btn.classList.add('button', 'compact');
@@ -77,19 +87,30 @@ export default class AssignmentsTable extends Component{
             }
 
             let targets = await assignment.GetTargets();
-            let groups_count = targets.Groups.length;
-            let users_count = targets.Users.length;
-
-            let targets_text = '';
-            if(groups_count > 0){
-                targets_text += ' ' + groups_count.toString() + ' grup' + n(groups_count, 'ie', 'om');
-            }
-            if(groups_count > 0 && users_count > 0) targets_text += ' i';
-            if(users_count > 0){
-                targets_text += ' ' + users_count.toString() + ' osob' + n(users_count, 'ie', 'om');
-            }
-            cells[2].textContent = targets_text != '' ? targets_text.substr(1) : 'nikomu';
-            cells[2].classList.add('todo');
+            cells[2].textContent = this.MakeTargetsText(targets);
+            cells[2].classList.add('wide-screen-only');
         }
+    }
+
+    protected MakeTargetsText(targets: AssignmentTargets){
+        let groups_count = targets.Groups.length;
+        let users_count = targets.Users.length;
+
+        if(users_count == 1 && groups_count == 0){
+            return targets.Users[0].GetFullName();
+        }
+        if(users_count == 0 && groups_count == 1){
+            return targets.Groups[0].Name;
+        }
+
+        let targets_text = '';
+        if(groups_count > 0){
+            targets_text += ' ' + groups_count.toString() + ' grup' + n(groups_count, 'ie', 'om');
+        }
+        if(groups_count > 0 && users_count > 0) targets_text += ' i';
+        if(users_count > 0){
+            targets_text += ' ' + users_count.toString() + ' osob' + n(users_count, 'ie', 'om');
+        }
+        return targets_text != '' ? targets_text.substr(1) : 'nikomu';
     }
 }
