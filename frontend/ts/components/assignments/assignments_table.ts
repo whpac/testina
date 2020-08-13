@@ -4,10 +4,12 @@ import * as DateUtils from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
 import { HandleLinkClick } from '../../1page/pagemanager';
 import Icon from '../basic/icon';
+import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 
 export default class AssignmentsTable extends Component{
     protected Element: HTMLTableElement;
     protected TableBody: HTMLTableSectionElement;
+    protected AssignTestDialog: AssignTestDialog;
 
     constructor(){
         super();
@@ -47,6 +49,8 @@ export default class AssignmentsTable extends Component{
         ths[2].textContent = 'Komu';
 
         ths[2].classList.add('wide-screen-only');
+
+        this.AssignTestDialog = new AssignTestDialog();
     }
 
     public async Populate(assignments: Assignment[]){
@@ -89,6 +93,11 @@ export default class AssignmentsTable extends Component{
             let targets = await assignment.GetTargets();
             cells[2].textContent = this.MakeTargetsText(targets);
             cells[2].classList.add('wide-screen-only');
+
+            edit_btn.addEventListener('click', () => {
+                this.AssignTestDialog.Populate(assignment.Test, targets);
+                this.AssignTestDialog.Show();
+            });
         }
     }
 
