@@ -2,7 +2,7 @@
 namespace Entities;
 
 use \UEngine\Modules\Core\RichException;
-use \UEngine\Modules\Core\Database\DatabaseManager;
+use Database\DatabaseManager;
 
 abstract class Entity {
     protected /* (int|array) */ $_entity_descriptor;
