@@ -23,7 +23,15 @@ export default class EditTestPage extends Page {
         this.Element.appendChild(page_heading);
 
         let question_list_card = new Card();
-        question_list_card.GetContentElement().innerHTML = '<h2>Pytania</h2>';
+        let close_button = document.createElement('button');
+        close_button.classList.add('button', 'header-button');
+        close_button.innerHTML = '<i class="fa fa-times icon"></i><span>Zamknij</span>';
+        close_button.addEventListener('click', () => PageManager.GoToPage('testy/biblioteka'));
+        question_list_card.AppendChild(close_button);
+
+        let card_heading = document.createElement('h2');
+        card_heading.textContent = 'Pytania';
+        question_list_card.AppendChild(card_heading);
 
         this.QuestionsTable = new QuestionsTable();
         question_list_card.AppendChild(this.QuestionsTable.GetElement());
