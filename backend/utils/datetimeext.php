@@ -3,7 +3,7 @@ namespace Utils;
 
 class DateTimeExt {
 
-    /*
+    /* Nieużywane przynajmniej od 14.08.
     public static function createFromFormat($format, $string){
         return new self(\DateTime::createFromFormat($format, $string)->format(\DateTime::ATOM));
     }
@@ -39,34 +39,35 @@ class DateTimeExt {
         return $this->format('d.m. H:i');
     }*/
 
-    public static /* int */ function DiffInSeconds(\DateTime $dt, \DateTime $reference_dt = null){
-        if($reference_dt == null) $reference_dt = new \DateTime();
+    // Nieużywane przynajmniej od 14.08.
+    // public static /* int */ function DiffInSeconds(\DateTime $dt, \DateTime $reference_dt = null){
+    //     if($reference_dt == null) $reference_dt = new \DateTime();
 
-        $diff = $reference_dt->diff($dt);
+    //     $diff = $reference_dt->diff($dt);
 
-        $seconds_diff = $diff->days * 24;
-        $seconds_diff += $diff->h;
-        $seconds_diff *= 60;
-        $seconds_diff += $diff->i;
-        $seconds_diff *= 60;
-        $seconds_diff += $diff->s;
+    //     $seconds_diff = $diff->days * 24;
+    //     $seconds_diff += $diff->h;
+    //     $seconds_diff *= 60;
+    //     $seconds_diff += $diff->i;
+    //     $seconds_diff *= 60;
+    //     $seconds_diff += $diff->s;
 
-        if($diff->invert == 1) $seconds_diff *= -1;
+    //     if($diff->invert == 1) $seconds_diff *= -1;
 
-        return $seconds_diff;
-    }
+    //     return $seconds_diff;
+    // }
 
-    public static /* string */ function SecondsToTime(/* int */ $seconds){
-        $secs = $seconds % 60;
-        $seconds = ($seconds - $secs) / 60;
+    // public static /* string */ function SecondsToTime(/* int */ $seconds){
+    //     $secs = $seconds % 60;
+    //     $seconds = ($seconds - $secs) / 60;
 
-        $mins = $seconds % 60;
-        $hrs = ($seconds - $mins) / 60;
+    //     $mins = $seconds % 60;
+    //     $hrs = ($seconds - $mins) / 60;
 
-        if($secs < 10) $secs = '0'.$secs;
-        if($mins < 10 && $hrs != 0) $mins = '0'.$mins;
+    //     if($secs < 10) $secs = '0'.$secs;
+    //     if($mins < 10 && $hrs != 0) $mins = '0'.$mins;
 
-        return ($hrs > 0 ? $hrs.':' : '').$mins.':'.$secs;
-    }
+    //     return ($hrs > 0 ? $hrs.':' : '').$mins.':'.$secs;
+    // }
 }
 ?>
