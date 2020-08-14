@@ -100,7 +100,8 @@ export default class AssignTestDialog extends Dialog {
 
         NavigationPrevention.Unprevent('assign-test-dialog');
 
-        let targets = this.TargetsWrapper.GetSelectedTargets();
+        let selected_targets = this.TargetsWrapper.GetSelectedTargets();
+        let deselected_targets = this.TargetsWrapper.GetDeselectedTargets();
         let attempt_limit = this.SettingsWrapper.GetAttemptLimit();
         let deadline = this.SettingsWrapper.GetDeadline();
 
@@ -108,7 +109,8 @@ export default class AssignTestDialog extends Dialog {
         try{
             assigning_toast.Show();
             let assignment = await Assignment.Create(this.Test, attempt_limit, deadline);
-            await assignment.AddTargets(targets);
+            await assignment.AddTargets(selected_targets);
+            await assignment.RemoveTargets(deselected_targets);
             this.Hide();
             new Toast('Test „' + this.Test.Name + '” został przypisany.').Show(0);
         }catch(e){

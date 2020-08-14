@@ -105,6 +105,13 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         return targets;
     }
 
+    GetDeselectedTargets(){
+        let targets: (User | Group)[] = [];
+        targets = this.UsersTable.GetDeselected();
+        targets = targets.concat(this.GroupsTable.GetDeselected());
+        return targets;
+    }
+
     protected Validate(){
         let old_validity = this.IsValid;
         this.IsValid = true;
