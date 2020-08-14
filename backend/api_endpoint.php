@@ -7,6 +7,8 @@ use Api\Resources;
 use Database\DatabaseManager;
 use Database\MySQL;
 
+use Session\SessionManager;
+
 use \UEngine\Modules\Auth\AuthHandler;
 use \UEngine\Modules\Auth\AccessControl\AuthManager;
 use \UEngine\Modules\Core\Properties;
@@ -35,14 +37,18 @@ $db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
 UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
 
+$kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
+UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
+UEngine\Modules\Session\SessionManager::Start(36000);
+
 // Inicjalizacja dostawcy bazy danych oraz sesji
 $db = new MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
-$kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
-UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
-UEngine\Modules\Session\SessionManager::Start(36000);
+$kp = new Session\Key\CookieKeyProvider('SESSION');
+SessionManager::SetKeyProvider($kp);
+SessionManager::Start(36000);
 
 // Set UserFactory
 AuthManager::RegisterUserFactory(new Entities\UserFactory());
