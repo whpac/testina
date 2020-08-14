@@ -88,8 +88,10 @@ class SessionManager {
 
         $result = DatabaseManager::GetProvider()
                 ->Table(Properties::Get('session.tables.session_data'))
-                ->Insert(['session_id', 'key', 'value'])
-                ->Values([self::$session_id, $key, $value])
+                ->Insert()
+                ->Value('session_id', self::$session_id)
+                ->Value('key', $key)
+                ->Value('value', $value)
                 ->Run();
 
         if(!$result) throw new RichException('Nie udało się zapisać danych sesji.', DatabaseManager::GetProvider()->GetError());
@@ -110,8 +112,9 @@ class SessionManager {
 
         DatabaseManager::GetProvider()
                 ->Table(Properties::Get('session.tables.sessions'))
-                ->Insert(['session_key', 'expire_date'])
-                ->Values([$key, date('Y-m-d H:i:s', time()+self::$session_duration)])
+                ->Insert()
+                ->Value('session_key', $key)
+                ->Value('expire_date', date('Y-m-d H:i:s', time()+self::$session_duration))
                 ->Run();
                 
         self::GetKeyProvider()->SetKey($key);
