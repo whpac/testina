@@ -1,9 +1,10 @@
 <?php
 namespace Utils;
 
-class String {
+class StringUtils {
 
-    public static function Truncate($str, $length){
+    // Nieużywane przynajmniej od 14.08.
+    /*public static function Truncate($str, $length){
         if(strlen($str) <= $length) return $str;
 
         $sp_pos = strpos($str, ' ', $length);
@@ -11,6 +12,6 @@ class String {
 
         $str = substr($str, 0, $sp_pos);
         return $str.'…';
-    }
+    }*/
 }
 ?>
