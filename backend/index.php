@@ -12,6 +12,9 @@ use \UEngine\Modules\Pages\Handlers\RegistryHandler;
 use \UEngine\Modules\Pages\Navbar;
 use \UEngine\Modules\Pages\Navbar\NavbarStorage;
 
+use Database\DatabaseManager;
+use Database\MySQL;
+
 // Uses UE.dev not to duplicate files
 require('../../ue/uengine/uengine.php');
 require('autoincluder.php');
@@ -30,10 +33,15 @@ Properties::Set('core.tables.exceptions', 'exceptions');
 Properties::Set('session.tables.sessions', 'sessions');
 Properties::Set('session.tables.session_data', 'session_data');
 
-// Initializing MySQL and session
+// @deprecated
 $db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
 UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
+
+// Inicjalizacja dostawcy bazy danych oraz sesji
+$db = new MySQL('localhost', 'user', 'passwd', 'p');
+$db->Connect();
+DatabaseManager::SetProvider($db);
 
 $kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
 UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
