@@ -7,21 +7,6 @@ use Api\Schemas;
 class Assignment extends Resource implements Schemas\Assignment{
     protected $Assignment;
 
-    public function Update(/* object */ $source){
-        $assignment = $this->GetConstructorArgument();
-        $current_user = $this->GetContext()->GetUser();
-        if($assignment->GetAssigningUser()->GetId() != $current_user->GetId())
-            throw new Exceptions\MethodNotAllowed('PUT');
-
-        if(is_array($source->targets)){
-            foreach($source->targets as $target){
-                $target_type = $target->type;
-                $target_id = $target->id;
-                $assignment->AddTarget($target_type, $target_id);
-            }
-        }
-    }
-
     public function __construct($assignment){
         parent::__construct($assignment);
         if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');
@@ -102,8 +87,7 @@ class Assignment extends Resource implements Schemas\Assignment{
     public function targets(): ?Schemas\AssignmentTargets{
         if($this->Assignment->GetAssigningUser()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
 
-        $targets = $this->Assignment->GetTargets();
-        return new AssignmentTargets($targets);
+        return new AssignmentTargets($this->Assignment);
     }
 
     public function results(): ?array{

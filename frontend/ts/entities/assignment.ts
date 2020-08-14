@@ -211,8 +211,12 @@ export default class Assignment extends Entity implements PageParams {
             targets: payload_targets
         }
 
-        let result = await XHR.Request('api/assignments/' + this.Id, 'PUT', payload);
+        let result = await XHR.Request('api/assignments/' + this.Id + '/targets', 'POST', payload);
 
-        if(result.Status != 204) throw result;
+        if(result.Status != 201) throw result;
+    }
+
+    async RemoveTargets(targets: AssignmentTargetEntity[]){
+
     }
 }
