@@ -57,7 +57,7 @@ export default class AssignedTestRow extends Component {
         this.AuthorCell.textContent = assignment.Test.Author.GetFullName();
         
         let score = assignment.Score;
-        if(score === null){
+        if(score === undefined){
             this.ScoreCell.textContent = '—';
         }else{
             this.ScoreCell.textContent = '';
