@@ -83,13 +83,16 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.SwitchTargetType('user');
         this.PrintNumberOfSelectedEntities(0, 0);
 
-        let users_awaiter = this.UsersTable.Populate(preselected_targets?.Users);
-        let groups_awaiter = this.GroupsTable.Populate(preselected_targets?.Groups);
+        let users_awaiter = this.UsersTable.Populate();
+        let groups_awaiter = this.GroupsTable.Populate();
         await users_awaiter;
         await groups_awaiter;
 
         this.UsersTable.DeselectAll();
         this.GroupsTable.DeselectAll();
+        
+        this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
+        this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
         this.Validate();
 
         this.FilterTable();

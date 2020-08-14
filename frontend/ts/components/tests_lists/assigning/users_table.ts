@@ -38,7 +38,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
         tr_head.appendChild(document.createElement('th'));
     }
 
-    async Populate(preselected_users?: User[]){
+    async Populate(){
         if(this.AreUsersPopulated) return;
         this.UsersTBody.textContent = '';
 
@@ -70,6 +70,27 @@ export default class UsersTable extends Component<'selectionchanged'> {
             let checkbox = first_cell.children[0] as HTMLInputElement;
             if(checkbox.checked !== undefined) checkbox.checked = false;
         }
+
+        for(let row of this.Rows){
+            row.OriginallySelected = false;
+        }
+    }
+
+    SelectUsers(users_to_select: User[]){
+        let users = [...users_to_select];
+        for(let row of this.Rows){
+            for(let i = 0; i < users.length; i++){
+                if(row.User.Id == users[i].Id){
+                    let first_cell = row.Tr.children[0];
+                    let checkbox = first_cell.children[0] as HTMLInputElement;
+                    checkbox.checked = true;
+                    users.splice(i, 1);
+                    this.SelectedCount++;
+                    row.OriginallySelected = true;
+                    break;
+                }
+            }
+        }
     }
 
     Filter(search_query: string){
@@ -90,19 +111,37 @@ export default class UsersTable extends Component<'selectionchanged'> {
         this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
     }
 
+    /**
+     * Zwraca osoby zaznaczone przez użytkownika
+     * Jeśli dana pozycja była zaznaczona w okienku od początku, nie zostanie zwrócona
+     */
     GetSelected(){
         let users: User[] = [];
         for(let row of this.Rows){
             let first_cell = row.Tr.children[0];
             let checkbox = first_cell.children[0] as HTMLInputElement;
-            if(checkbox.checked !== undefined && checkbox.checked) users.push(row.User);
+            if(checkbox.checked !== undefined && checkbox.checked && !row.OriginallySelected) users.push(row.User);
+        }
+        return users;
+    }
+
+    /**
+     * Zwraca osoby odznaczone przez użytkownika
+     * Jeśli dana pozycja nie była zaznaczona w okienku od początku, nie zostanie zwrócona
+     */
+    GetDeselected(){
+        let users: User[] = [];
+        for(let row of this.Rows){
+            let first_cell = row.Tr.children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined && !checkbox.checked && row.OriginallySelected) users.push(row.User);
         }
         return users;
     }
 
     protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
         if(is_checked) this.SelectedCount++; else this.SelectedCount--;
-        row.dataset.isSelected = is_checked ? 'true' : 'false';
+        //row.dataset.isSelected = is_checked ? 'true' : 'false';
         this.FireEvent('selectionchanged');
     }
 
@@ -113,10 +152,12 @@ export default class UsersTable extends Component<'selectionchanged'> {
 
 class Row {
     Tr: HTMLTableRowElement;
+    OriginallySelected: boolean;
     User: User;
 
     constructor(row: HTMLTableRowElement, user: User){
         this.Tr = row;
         this.User = user;
+        this.OriginallySelected = false;
     }
 }

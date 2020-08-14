@@ -38,7 +38,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         tr_head.appendChild(document.createElement('th'));
     }
 
-    async Populate(preselected_groups?: Group[]){
+    async Populate(){
         if(this.AreGroupsPopulated) return;
         this.GroupsTBody.textContent = '';
 
@@ -70,6 +70,27 @@ export default class GroupsTable extends Component<'selectionchanged'> {
             let checkbox = first_cell.children[0] as HTMLInputElement;
             if(checkbox.checked !== undefined) checkbox.checked = false;
         }
+
+        for(let row of this.Rows){
+            row.OriginallySelected = false;
+        }
+    }
+
+    SelectGroups(groups_to_select: Group[]){
+        let groups = [...groups_to_select];
+        for(let row of this.Rows){
+            for(let i = 0; i < groups.length; i++){
+                if(row.Group.Id == groups[i].Id){
+                    let first_cell = row.Tr.children[0];
+                    let checkbox = first_cell.children[0] as HTMLInputElement;
+                    checkbox.checked = true;
+                    groups.splice(i, 1);
+                    this.SelectedCount++;
+                    row.OriginallySelected = true;
+                    break;
+                }
+            }
+        }
     }
 
     Filter(search_query: string){
@@ -90,19 +111,37 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         this.SearchEmptyTBody.style.display = (found > 0) ? 'none' : '';
     }
 
+    /**
+     * Zwraca grupy zaznaczone przez użytkownika
+     * Jeśli dana pozycja była zaznaczona w okienku od początku, nie zostanie zwrócona
+     */
     GetSelected(){
         let groups: Group[] = [];
         for(let row of this.Rows){
             let first_cell = row.Tr.children[0];
             let checkbox = first_cell.children[0] as HTMLInputElement;
-            if(checkbox.checked !== undefined && checkbox.checked) groups.push(row.Group);
+            if(checkbox.checked !== undefined && checkbox.checked && !row.OriginallySelected) groups.push(row.Group);
+        }
+        return groups;
+    }
+
+    /**
+     * Zwraca grupy odznaczone przez użytkownika
+     * Jeśli dana pozycja nie była zaznaczona w okienku od początku, nie zostanie zwrócona
+     */
+    GetDeselected(){
+        let groups: Group[] = [];
+        for(let row of this.Rows){
+            let first_cell = row.Tr.children[0];
+            let checkbox = first_cell.children[0] as HTMLInputElement;
+            if(checkbox.checked !== undefined && !checkbox.checked && row.OriginallySelected) groups.push(row.Group);
         }
         return groups;
     }
 
     protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
         if(is_checked) this.SelectedCount++; else this.SelectedCount--;
-        row.dataset.isSelected = is_checked ? 'true' : 'false';
+        //row.dataset.isSelected = is_checked ? 'true' : 'false';
         this.FireEvent('selectionchanged');
     }
 
@@ -113,10 +152,12 @@ export default class GroupsTable extends Component<'selectionchanged'> {
 
 class Row {
     Tr: HTMLTableRowElement;
+    OriginallySelected: boolean;
     Group: Group;
 
     constructor(row: HTMLTableRowElement, group: Group){
         this.Tr = row;
         this.Group = group;
+        this.OriginallySelected = false;
     }
 }
