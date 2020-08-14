@@ -4,6 +4,9 @@ use Api\Exceptions;
 use Api\Formats;
 use Api\Resources;
 
+use Database\DatabaseManager;
+use Database\MySQL;
+
 use \UEngine\Modules\Auth\AuthHandler;
 use \UEngine\Modules\Auth\AccessControl\AuthManager;
 use \UEngine\Modules\Core\Properties;
@@ -31,6 +34,11 @@ Properties::Set('session.tables.session_data', 'session_data');
 $db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
 UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
+
+// Inicjalizacja dostawcy bazy danych oraz sesji
+$db = new MySQL('localhost', 'user', 'passwd', 'p');
+$db->Connect();
+DatabaseManager::SetProvider($db);
 
 $kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
 UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
