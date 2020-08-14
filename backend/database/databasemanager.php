@@ -7,7 +7,7 @@ namespace Database;
 class DatabaseManager {
     protected static $current_provider = null;
 
-    public static function SetProvider(IDatabaseProvider $provider){
+    public static function SetProvider(DatabaseProvider $provider){
         self::$current_provider = $provider;
     }
 
