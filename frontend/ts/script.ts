@@ -1,4 +1,4 @@
-import * as Navbar from './navbar';
+import Navbar from './navbar';
 
 import * as PageManager from './1page/pagemanager';
 import LoadingIndicator from './1page/loadingindicator';
@@ -11,6 +11,8 @@ import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
 
+let AppNavbar: Navbar;
+
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
     let root = document.getElementById('content-container');
@@ -18,8 +20,8 @@ try {
     let loading_wrapper = new LoadingIndicator('loading-wrapper');
 
     // Inicjalizacja paska nawigacji
-    Navbar.Draw();
-    Navbar.AttachEventHandlers();
+    AppNavbar = new Navbar('main-nav');
+    AppNavbar.Draw();
 
     // Inicjalizacja menedżera stron
     PageManager.Initialize(root, loading_wrapper);
