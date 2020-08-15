@@ -1,27 +1,27 @@
 import UserLoader from './entities/loaders/userloader';
 import { HandleLinkClick } from './1page/pagemanager';
 
-export function ToggleVisibility(){
+export function ToggleVisibility() {
     document.getElementById('main-nav')?.classList.toggle('shown');
 }
 
-export function Hide(){
+export function Hide() {
     document.getElementById('main-nav')?.classList.remove('shown');
 }
 
-export function AttachEventHandlers(){
+export function AttachEventHandlers() {
     let navbar_toggles = document.querySelectorAll('.nav-toggle');
-    for(let element of navbar_toggles){
+    for(let element of navbar_toggles) {
         element.addEventListener('click', ToggleVisibility);
     }
 
     let navbar_backdrops = document.querySelectorAll('.nav-backdrop');
-    for(let element of navbar_backdrops){
+    for(let element of navbar_backdrops) {
         element.addEventListener('click', Hide);
     }
 }
 
-export async function Draw(){
+export async function Draw() {
     let navbar_root = document.getElementById('main-nav');
     if(navbar_root === null) throw 'Nie udało się utworzyć panelu nawigacji.';
 
@@ -33,7 +33,7 @@ export async function Draw(){
     li.classList.add('link', 'nav-toggle');
     li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
-    ul.appendChild(CreateNavHeader((await UserLoader.GetCurrent()).GetFullName()));
+    ul.appendChild(CreateNavHeader((await UserLoader.GetCurrent())?.GetFullName() ?? 'Niezalogowany'));
     ul.appendChild(CreateNavLink('Strona główna', 'home', 'fa-home'));
     ul.appendChild(CreateNavLink('Testy', 'testy/lista', 'fa-pencil-square-o'));
     ul.appendChild(CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'));
@@ -59,7 +59,7 @@ export async function Draw(){
     });
 }
 
-function CreateNavLink(caption: string, href: string, icon?: string, css?: string[]){
+function CreateNavLink(caption: string, href: string, icon?: string, css?: string[]) {
     let li = document.createElement('li');
     li.classList.add('link');
     if(css !== undefined) li.classList.add(...css);
@@ -85,13 +85,13 @@ function CreateNavLink(caption: string, href: string, icon?: string, css?: strin
     return li;
 }
 
-function CreateNavSeparator(){
+function CreateNavSeparator() {
     let li = document.createElement('li');
     li.classList.add('separator');
     return li;
 }
 
-function CreateNavHeader(caption: string){
+function CreateNavHeader(caption: string) {
     let li = document.createElement('li');
     li.classList.add('header');
     li.textContent = caption;

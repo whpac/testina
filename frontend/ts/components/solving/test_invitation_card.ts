@@ -21,7 +21,7 @@ export default class TestInvitationCard extends Card {
 
     OnTestLoaded: ((attempt: Attempt) => void) | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element.classList.add('semi-wide');
@@ -86,7 +86,7 @@ export default class TestInvitationCard extends Card {
         this.TestLoadingWrapper.appendChild(progress_bar);
     }
 
-    async Populate(assignment: Assignment){
+    async Populate(assignment: Assignment) {
         this.Assignment = assignment;
 
         let time_limit = '0:00';
@@ -94,14 +94,14 @@ export default class TestInvitationCard extends Card {
         let test = assignment.Test;
         let question_count = Math.round((test.QuestionCount ?? 0) * test.QuestionMultiplier);
 
-        if(test.HasTimeLimit()){
-            if(test.TimeLimit > DateUtils.DiffInSeconds(assignment.Deadline)){
+        if(test.HasTimeLimit()) {
+            if(test.TimeLimit > DateUtils.DiffInSeconds(assignment.Deadline)) {
                 time_limit = DateUtils.ToDayHourFormat(assignment.Deadline);
-            }else{
+            } else {
                 time_limit = DateUtils.SecondsToTime(test.TimeLimit);
                 has_time_limit = true;
             }
-        }else{
+        } else {
             time_limit = DateUtils.ToDayHourFormat(assignment.Deadline);
         }
 
@@ -115,24 +115,24 @@ export default class TestInvitationCard extends Card {
         let attempts_left = assignment.GetRemainingAttemptsCount();
         if(assignment.HasDeadlineExceeded()) rem_text = 'Termin rozwiązania tego testu upłynął';
         else if(assignment.AreAttemptsUnlimited()) rem_text = 'Do tego testu możesz podejść dowolną liczbę razy';
-        else if(attempts_left == 0) rem_text = 'Wykorzystał' + ((await UserLoader.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś już wszystkie podejścia';
+        else if(attempts_left == 0) rem_text = 'Wykorzystał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś już wszystkie podejścia';
         else rem_text = 'Pozostał' + n(attempts_left, 'o', 'y', 'o') + ' ci jeszcze ' + attempts_left + ' podejś' + n(attempts_left, 'cie', 'cia', 'ć');
 
         this.RemainingAttempts.textContent = rem_text;
 
-        if(!assignment.IsActive()){
+        if(!assignment.IsActive()) {
             this.StartButton.remove();
         }
     }
 
-    async LoadTest(){
+    async LoadTest() {
         if(this.Assignment === undefined) throw 'TestInvitationCard.Assignment is not defined.';
         let attempt_awaiter = Attempt.Create(this.Assignment);
         this.TestLoadingWrapper.style.display = '';
 
         let attempt = await attempt_awaiter;
         this.OnTestLoaded?.(attempt);
-        
+
         this.TestLoadingWrapper.style.display = 'none';
     }
 }

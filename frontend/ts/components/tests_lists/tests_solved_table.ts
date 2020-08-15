@@ -8,7 +8,7 @@ export default class TestsSolvedTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
     Subheading: HTMLParagraphElement;
 
-    constructor(){
+    constructor() {
         super();
 
         this.GetElement().classList.add('semi-wide');
@@ -84,7 +84,7 @@ export default class TestsSolvedTable extends Card {
         let tr = nocontent_tbody.insertRow();
 
         let cell = tr.insertCell();
-        (async () => cell.textContent = 'Nie rozwiązał' + ((await UserLoader.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś jeszcze żadnego testu.')();
+        (async () => cell.textContent = 'Nie rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś jeszcze żadnego testu.')();
         cell.classList.add('secondary');
         tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
@@ -103,10 +103,10 @@ export default class TestsSolvedTable extends Card {
         tr.insertCell().classList.add('narrow-screen-only');
     }
 
-    async Populate(assignments: Assignment[]){
-        this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + ((await UserLoader.GetCurrent()).IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
+    async Populate(assignments: Assignment[]) {
+        this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
         this.ContentWrapper.textContent = '';
-        for(let i = assignments.length - 1; i >= 0; i--){
+        for(let i = assignments.length - 1; i >= 0; i--) {
             if(await assignments[i].IsActive()) continue;
             this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
         }

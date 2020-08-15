@@ -1,8 +1,11 @@
+import MalformedResponseException from '../exceptions/malformed_response';
+import FetchingErrorException from '../exceptions/fetching_error';
+
 type XHRResult = {
     Status: number,
     StatusText: string,
     Response: any,
-    ContentLocation: string
+    ContentLocation: string;
 };
 type ResolveFunction = (value?: XHRResult | PromiseLike<XHRResult> | undefined) => void;
 type RejectFunction = (reason?: any) => void;
@@ -13,7 +16,7 @@ type RejectFunction = (reason?: any) => void;
  * @param method Metoda zapytania (domyślnie GET)
  * @param request_data Dane przesyłane razem z zapytaniem, zostaną zserializowane jako JSON
  */
-export function Request(url: string, method?: string, request_data?: any){
+export function Request(url: string, method?: string, request_data?: any) {
     return new Promise<XHRResult>((resolve, reject) => {
         let xhr = new XMLHttpRequest();
         xhr.open(method ?? 'GET', url, true);
@@ -22,7 +25,7 @@ export function Request(url: string, method?: string, request_data?: any){
 
         // Zserializuj dane żądania
         let serialized_data: (string | null) = null;
-        if(request_data !== undefined){
+        if(request_data !== undefined) {
             serialized_data = JSON.stringify(request_data);
             xhr.setRequestHeader('Content-Type', 'application/json');
         }
@@ -36,25 +39,24 @@ export function Request(url: string, method?: string, request_data?: any){
  * @param resolve Funkcja, którą należy wywołać, by spełnić Promise
  * @param reject Funkcja, którą należy wywołać, by odrzucić Promise
  */
-function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction){
+function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction) {
     return function (this: XMLHttpRequest) {
         let xhr = this;
         if(xhr.readyState != 4) return;
 
-        if (xhr.status >= 200 && xhr.status < 300){
+        if(xhr.status >= 200 && xhr.status < 300) {
             let parsed_json = {};
             let content_location = xhr.getResponseHeader('Content-Location') ?? '';
-            if(xhr.responseText !== ''){
-                try{
+            if(xhr.responseText !== '') {
+                try {
                     parsed_json = JSON.parse(xhr.responseText);
-                }catch(e){
-                    console.log('Response contains malformed JSON.');
-                    reject({
+                } catch(e) {
+                    console.error('Odpowiedź serwera zawiera niepoprawny JSON');
+                    reject(new MalformedResponseException('Serwer zwrócił odpowiedź w nieznanym formacie.', {
                         Status: xhr.status,
                         StatusText: xhr.statusText,
-                        Response: {},
-                        ContentLocation: content_location
-                    });
+                        ResponseText: xhr.responseText
+                    }));
                 }
             }
 
@@ -64,13 +66,20 @@ function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction){
                 Response: parsed_json,
                 ContentLocation: content_location
             });
-        }else{
-            reject({
+        } else {
+            let parsed_json = {};
+            if(xhr.responseText !== '') {
+                try {
+                    parsed_json = JSON.parse(xhr.responseText);
+                } catch(e) { }
+            }
+
+            console.error('Serwer nie mógł zrealizować żądania. Kod odpowiedzi: ' + xhr.status);
+            reject(new FetchingErrorException('Serwer nie był w stanie zrealizować żądania.', {
                 Status: xhr.status,
                 StatusText: xhr.statusText,
-                Response: {},
-                ContentLocation: ''
-            });
+                Response: parsed_json
+            }));
         }
     };
 }
