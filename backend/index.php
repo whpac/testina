@@ -3,10 +3,6 @@
 $time_start = microtime(true);
 
 use \UEngine\Modules\Core\Properties;
-use \UEngine\Modules\Loader;
-use \UEngine\Modules\Pages\PageManager;
-use \UEngine\Modules\Pages\UrlHandler;
-use \UEngine\Modules\Pages\Handlers\RegistryHandler;
 use \UEngine\Modules\Pages\Navbar;
 use \UEngine\Modules\Pages\Navbar\NavbarStorage;
 
@@ -21,12 +17,7 @@ use Session\SessionManager;
 // Uses UE.dev not to duplicate files
 require('../../ue/uengine/uengine.php');
 require('autoincluder.php');
-
-UEngine\SetLanguageList(['pl']);
-UEngine\Load();
-
-// Loading modules
-Loader::LoadModule('pages');
+require('layout/standardrenderer.php');
 
 // Passing some tables' names
 Properties::Set('core.tables.exceptions', 'exceptions');
@@ -51,17 +42,6 @@ AuthManager::RegisterUserFactory(new Entities\UserFactory());
 AuthHandler::HandleAuthIfNecessary();
 AuthManager::RestoreCurrentUser();
 
-// Initializing the page manager
-PageManager::SetTitleFormat('%sLorem Ipsum');
-PageManager::SetTitleParser(['\UEngine\Modules\Pages\TitleParsers', 'HyphenAfter']);
-PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:400&display=fallback');
-PageManager::AddStylesheet('https://fonts.googleapis.com/css?family=Roboto:300,400i,500,700&display=fallback');
-PageManager::AddStylesheet('css/font-awesome.min.css');
-PageManager::AddStylesheet('css/style.css');
-PageManager::AddScript('js/script', true);
-PageManager::AddHeadTag('<base href="/p/" />');
-PageManager::SetRenderer(new \Layout\StandardRenderer());
-
 // Initializing a navbar
 NavbarStorage::AddItem(new Navbar\NavbarHeader(AuthManager::GetCurrentUser()->GetFullName()));
 NavbarStorage::AddItem('Strona główna', ['href' => 'home', 'icon' => 'fa-home']);
@@ -75,23 +55,20 @@ NavbarStorage::AddItem(new Navbar\NavbarSeparator());
 NavbarStorage::AddItem('Pomoc', ['href' => 'pomoc', 'icon' => 'fa-question-circle']);
 
 // The handled site is being included and buffered here
-PageManager::BeginFetchingContent();
+Layout\Prepend();
 
 if(!AuthManager::IsAuthorized()){
     include('pages/login.php');
 }
 
-PageManager::EndFetchingContent();
-
 // End masuring time
 $time_end = microtime(true);
 $render_time = (($time_end-$time_start)*1000).'ms';
 
-// Generating the whole website and flushing it
-PageManager::Render(['lang' => 'pl', 'render_time' => $render_time, 'cache' => 'no']);
+Layout\Append();
 
 // Function responsible for matching singular, double and plural
-function n($n, $f1, $f2, $f5){
+/*function n($n, $f1, $f2, $f5){
     if($n == 1) return $f1;
     
     $n1 = $n % 10;
@@ -100,5 +77,5 @@ function n($n, $f1, $f2, $f5){
     if(($n1 == 2 || $n1 == 3 || $n1 == 4) && $n2 != 1) return $f2;
 
     return $f5;
-}
+}*/
 ?>
