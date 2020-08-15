@@ -1,14 +1,27 @@
 import UserLoader from './entities/loaders/userloader';
+import { HandleLinkClick } from './1page/pagemanager';
 
-export function ToggleNavigationVisibility(){
+export function ToggleVisibility(){
     document.getElementById('main-nav')?.classList.toggle('shown');
 }
 
-export function HideNavigation(){
+export function Hide(){
     document.getElementById('main-nav')?.classList.remove('shown');
 }
 
-export async function DrawNavbar(){
+export function AttachEventHandlers(){
+    let navbar_toggles = document.querySelectorAll('.nav-toggle');
+    for(let element of navbar_toggles){
+        element.addEventListener('click', ToggleVisibility);
+    }
+
+    let navbar_backdrops = document.querySelectorAll('.nav-backdrop');
+    for(let element of navbar_backdrops){
+        element.addEventListener('click', Hide);
+    }
+}
+
+export async function Draw(){
     let navbar_root = document.getElementById('main-nav');
     if(navbar_root === null) throw 'Nie udało się utworzyć panelu nawigacji.';
 
@@ -39,8 +52,11 @@ export async function DrawNavbar(){
     span_info.appendChild(a_info);
     a_info.classList.add('event-navigation-link');
     a_info.href = 'informacje';
-    a_info.dataset.href = 'informacje';
     a_info.textContent = 'Informacje o stronie';
+    a_info.addEventListener('click', (e) => {
+        HandleLinkClick(e, 'informacje');
+        Hide();
+    });
 }
 
 function CreateNavLink(caption: string, href: string, icon?: string, css?: string[]){
@@ -50,9 +66,11 @@ function CreateNavLink(caption: string, href: string, icon?: string, css?: strin
 
     let a = document.createElement('a');
     li.appendChild(a);
-    a.classList.add('event-navigation-link');
     a.href = href;
-    a.dataset.href = href;
+    a.addEventListener('click', (e) => {
+        HandleLinkClick(e, href);
+        Hide();
+    });
 
     let i = document.createElement('i');
     a.appendChild(i);
