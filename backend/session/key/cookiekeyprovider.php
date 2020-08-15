@@ -1,32 +1,37 @@
 <?php
 namespace Session\Key;
 
+/**
+ * Dostawca klucza sesji z plików cookies
+ */
 class CookieKeyProvider implements KeyProvider {
     protected $cookie_name;
 
     /**
-     * Creates the class and assigns it to the specified cookie.
+     * Dostawca klucza sesji z plików cookies
+     * @param $cookie_name Nazwa ciasteczka z kluczem sesji
      */
     public function __construct($cookie_name){
         $this->cookie_name = $cookie_name;
     }
 
     /**
-     * Checks if $_COOKIE[cookie_name] exists.
+     * Sprawdza, czy klucz sesji został zdefiniowany
      */
     public function KeyExists(){
         return isset($_COOKIE[$this->cookie_name]);
     }
 
     /**
-     * Returns the key.
+     * Zwraca klucz sesji
      */
     public function GetKey(){
         return $_COOKIE[$this->cookie_name];
     }
 
     /**
-     * Saves new session key in a cookie
+     * Zapisuje klucz sesji do ciasteczka
+     * @param $key nowy klucz sesji
      */
     public function SetKey($key){
         setcookie($this->cookie_name, $key, 0, '/');

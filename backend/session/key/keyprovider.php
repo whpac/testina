@@ -1,9 +1,24 @@
 <?php
 namespace Session\Key;
 
+/**
+ * Ogólny interfejs określający dostawcę klucza sesji
+ */
 interface KeyProvider {
-    public function KeyExists();    // Whether the key was generated and saved earlier (i.e. cookie)
-    public function GetKey();       // Returns the saved key
-    public function SetKey($key);   // Sets a new key.
+
+    /**
+     * Sprawdza, czy klucz sesji został zdefiniowany
+     */
+    public function KeyExists();
+
+    /**
+     * Zwraca zapisany klucz sesji
+     */
+    public function GetKey();
+
+    /**
+     * Ustawia nowy klucz sesji
+     */
+    public function SetKey($key);
 }
 ?>

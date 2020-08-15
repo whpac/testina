@@ -8,28 +8,42 @@ use Database\Queries;
 define('TABLE_SESSIONS', 'sessions');
 define('TABLE_SESSION_DATA', 'session_data');
 
+/**
+ * Menedżer sesji
+ */
 class SessionManager {
     protected static $key_provider = null;
     protected static $session_id;
     protected static $data;
     protected static $session_duration;
     
+    /**
+     * Ustawia dostawcę klucza sesji
+     * @param @provider Dostawca klucza sesji
+     */
     public static function SetKeyProvider(Key\KeyProvider $provider){
         self::$key_provider = $provider;
     }
 
+    /**
+     * Zwraca dostawcę klucza sesji
+     */
     protected static function GetKeyProvider(){
         if(self::$key_provider == null) self::SetKeyProvider(new Key\StaticKeyProvider('(null)'));
         return self::$key_provider;
     }
 
+    /**
+     * Rozpoczyna sesję lub tworzy nową
+     * @param $time Czas, po którym nowa sesja się przeterminuje
+     */
     public static function Start($time = 3600){
         self::$session_duration = $time;
 
         if(!self::GetKeyProvider()->KeyExists())
             $key = self::GenerateKey();
     
-        // Create a new session instead of an outdated one
+        // Utwórz nową sesję zamiast przestarzałej
         if(strtotime(self::GetExpireTime()) < time())
             $key = self::GenerateKey();
 
@@ -52,6 +66,9 @@ class SessionManager {
         } 
     }
 
+    /**
+     * Zwraca identyfikator sesji
+     */
     protected static function GetSessionId(){
         $key = self::GetKeyProvider()->GetKey();
         $result = DatabaseManager::GetProvider()
@@ -65,6 +82,9 @@ class SessionManager {
         return $result['id'];
     }
 
+    /**
+     * Zwraca termin ważności sesji
+     */
     protected static function GetExpireTime(){
         $key = self::GetKeyProvider()->GetKey();
 
@@ -80,11 +100,21 @@ class SessionManager {
         return $result['expire_date'];
     }
     
+    /**
+     * Zwraca wartość zmiennej sesji
+     * @param $key Nazwa zmiennej
+     * @param $default_value Wartość zwracana, gdy zmienna nie została zdefiniowana
+     */
     public static function Get($key, $default_value = null){
         if(!isset(self::$data[$key])) return $default_value;
         return self::$data[$key];
     }
     
+    /**
+     * Ustawia wartość zmiennej sesji
+     * @param $key Nazwa zmiennej
+     * @param $value Wartość zmiennej do zapisania
+     */
     public static function Set($key, $value){
         self::$data[$key] = $value;
 
@@ -99,6 +129,9 @@ class SessionManager {
         if(!$result) throw new RichException('Nie udało się zapisać danych sesji.', DatabaseManager::GetProvider()->GetError());
     }
 
+    /**
+     * Generuje klucz sesji
+     */
     protected static function GenerateKey(){
         $unique = false;
         $key = '';
