@@ -69,7 +69,7 @@ class Root extends Resource implements Schemas\Root {
     public function users(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
         if($current_user->GetId() < 1){
-            throw new Exceptions\ResourceInaccessible('users');
+            throw new Exceptions\AuthorizationRequired('users');
         }
 
         $out_users = [];

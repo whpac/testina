@@ -2,11 +2,11 @@
 namespace Entities;
 
 use \UEngine\Modules\Core\RichException;
-use \UEngine\Modules\Core\Database\DatabaseManager;
+use Database\DatabaseManager;
 
 define('TABLE_USERS', 'users');
 
-class User extends Entity implements \UEngine\Modules\Auth\AccessControl\IUser {
+class User extends Entity implements \Auth\AccessControl\User {
     protected /* int */ $id;
     protected /* string */ $first_name;
     protected /* string */ $last_name;

@@ -14,7 +14,6 @@ body {
     overflow-x:hidden; display:grid; grid-template-columns:1fr var(--nav-panel-width);
     grid-template-areas:'main nav';
 }
-body.preload * {transition:none !important;}
 
 aside.loading-wrapper {position:fixed; top:30vh; left:10vw; background:lime;}
 

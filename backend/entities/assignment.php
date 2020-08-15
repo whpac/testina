@@ -2,8 +2,8 @@
 namespace Entities;
 
 use \UEngine\Modules\Core\RichException;
-use \UEngine\Modules\Core\Database\DatabaseManager;
-use \UEngine\Modules\Database\Entities\Condition;
+use Database\DatabaseManager;
+use Database\Entities\Condition;
 
 define('TABLE_ASSIGNMENTS', 'assignments');
 define('TABLE_ASSIGNMENT_TARGETS', 'assignment_targets');

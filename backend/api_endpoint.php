@@ -4,37 +4,30 @@ use Api\Exceptions;
 use Api\Formats;
 use Api\Resources;
 
-use \UEngine\Modules\Auth\AuthHandler;
-use \UEngine\Modules\Auth\AccessControl\AuthManager;
+use Auth\AuthHandler;
+use Auth\AccessControl\AuthManager;
+
+use Database\DatabaseManager;
+use Database\MySQL;
+
+use Session\SessionManager;
+
 use \UEngine\Modules\Core\Properties;
-use \UEngine\Modules\Loader;
-use \UEngine\Modules\Pages\PageManager;
 
 require('../../ue/uengine/uengine.php');
 require('autoincluder.php');
 
-UEngine\SetLanguageList(['pl']);
-UEngine\Load();
-
-// Loading modules
-Loader::LoadModule('database');
-Loader::LoadModule('session');
-Loader::LoadModule('pages');
-Loader::LoadModule('auth');
-
 // Passing some tables' names
 Properties::Set('core.tables.exceptions', 'exceptions');
-Properties::Set('session.tables.sessions', 'sessions');
-Properties::Set('session.tables.session_data', 'session_data');
 
-// Initializing MySQL and session
-$db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
+// Inicjalizacja dostawcy bazy danych oraz sesji
+$db = new MySQL('localhost', 'user', 'passwd', 'p');
 $db->Connect();
-UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
+DatabaseManager::SetProvider($db);
 
-$kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
-UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
-UEngine\Modules\Session\SessionManager::Start(36000);
+$kp = new Session\Key\CookieKeyProvider('SESSION');
+SessionManager::SetKeyProvider($kp);
+SessionManager::Start(36000);
 
 // Set UserFactory
 AuthManager::RegisterUserFactory(new Entities\UserFactory());
@@ -42,11 +35,6 @@ AuthManager::RegisterUserFactory(new Entities\UserFactory());
 // Handle potential login attempt
 AuthHandler::HandleAuthIfNecessary();
 AuthManager::RestoreCurrentUser();
-
-// Initializing the page manager
-PageManager::SetRenderer(new \Layout\ApiRenderer());
-
-PageManager::BeginFetchingContent();
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -60,12 +48,15 @@ try{
     $filters = ReadFilters();
 
     // Przygotuj kontekst zabezpieczeń
-    $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+    $current_user = Auth\AccessControl\AuthManager::GetCurrentUser();
     $context = new Context($current_user);
 
     // Przygotuj formater wyjścia na podstawie nagłówków HTTP
     $formatter = GetFormatter();
     $formatter->SetContext($context);
+
+    // Wyślij nagłówki odpowiedzi, w tym typ zawartości
+    SendHeaders($formatter->GetContentType());
 
     // Odczytaj żądany zasób i ustaw w nim filtry
     $current_resource = GetResource($target, $context);
@@ -130,11 +121,6 @@ try{
     echo('500');
     echo('Exception thrown: '.$e->getMessage());
 }
-
-PageManager::EndFetchingContent();
-
-// Generating the whole website and flushing it
-PageManager::Render(['cache' => 'no']);
 
 
 /**
@@ -226,12 +212,12 @@ function GetResource(string $target, Context $context){
             if(isset($current_resource[$current_resource_name]))
                 $current_resource = $current_resource[$current_resource_name];
             else
-                throw new \Exception(404);
+                throw new Exceptions\ResourceNotFound($current_resource_name);
         }else{
             if($current_resource->KeyExists($current_resource_name))
                 $current_resource = $current_resource->$current_resource_name();
             else
-                throw new \Exception(404);
+                throw new Exceptions\ResourceNotFound($current_resource_name);
         }
 
         // Dodaj kontekst do zasobu, który nie jest tablicą
@@ -255,6 +241,15 @@ function ParseRequestBody(){
  */
 function SetResponseCode(int $code){
     header('X-Response-Code: '.$code, true, $code);
+}
+
+/**
+ * Wysyła nagłówki odpowiedzi HTTP
+ * @param $mime Typ MIME zawartości odpowiedzi
+ */
+function SendHeaders($mime){
+    header('Content-Type: '.$mime);
+    header('Cache-Control: max-age=30');
 }
 
 /**

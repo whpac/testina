@@ -1,10 +1,15 @@
 <?php
-function ClassLoader($name){
+/**
+ * Funkcja odpowiedzialna za automatyczne ładowanie klas aplikacji Testina
+ * Ładowane są tylko klasy w określonych przestrzeniach nazw
+ */
+function TestinaClassLoader($name){
+    // Nazwy plików są pisane małymi literami; separatorem ścieżki jest '/'
     $name = strtolower($name);
     $name = str_replace('\\', '/', $name);
 
-    // Only apply this autoloader to classes in specified namespaces
-    $namespaces = ['api', 'entities', 'layout', 'handling', 'utils'];
+    // Wczytaj automatycznie tylko te przestrzenie nazw
+    $namespaces = ['api', 'auth', 'database', 'entities', 'handling', 'layout', 'session', 'utils'];
     $is_found = false;
 
     foreach($namespaces as $ns){
@@ -20,5 +25,5 @@ function ClassLoader($name){
         include(__DIR__.'/'.$name.'.php');
 }
 
-spl_autoload_register('ClassLoader');
+spl_autoload_register('TestinaClassLoader');
 ?>
