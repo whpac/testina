@@ -1,5 +1,6 @@
 import UserLoader from './entities/loaders/userloader';
 import { HandleLinkClick } from './1page/pagemanager';
+import AuthManager from './auth/auth_manager';
 
 /**
  * Klasa reprezentująca panel nawigacji
@@ -19,8 +20,12 @@ export default class Navbar {
 
     /**
      * Wypełnia panel nawigacji linkami
+     * 
+     * Jeżeli użytkownik nie jest zalogowany, panel pozostaje pusty
      */
     public async Draw() {
+        if(!(await AuthManager.IsAuthorized())) return;
+
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
 
