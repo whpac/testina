@@ -30,7 +30,7 @@ function Prepend(){
 
     $get_path = '';
     if(isset($_GET['_path'])) $get_path = $_GET['_path'];
-    echo('<body class="preload" data-url="'.$get_path.'">');
+    echo('<body data-url="'.$get_path.'">');
 
     echo('<nav class="main-nav" id="main-nav">');
     echo('</nav>');
