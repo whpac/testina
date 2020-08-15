@@ -212,12 +212,12 @@ function GetResource(string $target, Context $context){
             if(isset($current_resource[$current_resource_name]))
                 $current_resource = $current_resource[$current_resource_name];
             else
-                throw new \Exception(404);
+                throw new Exceptions\ResourceNotFound($current_resource_name);
         }else{
             if($current_resource->KeyExists($current_resource_name))
                 $current_resource = $current_resource->$current_resource_name();
             else
-                throw new \Exception(404);
+                throw new Exceptions\ResourceNotFound($current_resource_name);
         }
 
         // Dodaj kontekst do zasobu, który nie jest tablicą
