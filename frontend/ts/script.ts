@@ -10,6 +10,7 @@ import SolveTestPage from './pages/solve_test';
 import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
+import AuthManager from './auth/auth_manager';
 
 let AppNavbar: Navbar;
 
@@ -35,10 +36,25 @@ try {
     PageManager.AddPage('testy/wyniki', new ResultsPage(), true);
 
     // Załaduj stronę początkową
-    let initial_page = 'home';
-    let body_url = document.body.dataset.url;
-    if(body_url !== undefined && body_url != '') initial_page = body_url;
-    PageManager.GoToPage(initial_page, undefined, true);
+    LoadInitialPage();
 } catch(e) {
     alert('Wystąpił błąd: ' + e.toString() + '.');
+}
+
+/**
+ * Ładuje stronę zgodnie z danymi otrzymanymi z serwera
+ */
+async function LoadInitialPage() {
+    // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
+    let initial_page = 'home';
+    let body_url = document.body.dataset.url;
+
+    // Jeżeli element body zawiera adres strony, do załadowania - załaduj ją
+    if(body_url !== undefined && body_url != '') initial_page = body_url;
+
+    // Użytkownik niezalogowany powinien zobaczyć stronę logowania
+    if(!(await AuthManager.IsAuthorized())) initial_page = 'login';
+
+    // Załaduj stronę
+    PageManager.GoToPage(initial_page, undefined, true);
 }
