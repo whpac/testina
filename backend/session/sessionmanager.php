@@ -1,10 +1,12 @@
 <?php
 namespace Session;
 
-use \UEngine\Modules\Core\Properties;
 use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
 use Database\Queries;
+
+define('TABLE_SESSIONS', 'sessions');
+define('TABLE_SESSION_DATA', 'session_data');
 
 class SessionManager {
     protected static $key_provider = null;
@@ -37,7 +39,7 @@ class SessionManager {
         if(empty(self::$session_id)) self::$session_id = 0;
     
         $result = DatabaseManager::GetProvider()
-                ->Table(Properties::Get('session.tables.session_data'))
+                ->Table(TABLE_SESSION_DATA)
                 ->Select()
                 ->Where('session_id', '=', self::$session_id)
                 ->OrderBy('id')
@@ -53,7 +55,7 @@ class SessionManager {
     protected static function GetSessionId(){
         $key = self::GetKeyProvider()->GetKey();
         $result = DatabaseManager::GetProvider()
-                ->Table(Properties::Get('session.tables.sessions'))
+                ->Table(TABLE_SESSIONS)
                 ->Select(['id'])
                 ->Where('session_key', '=', $key)
                 ->Run();
@@ -67,7 +69,7 @@ class SessionManager {
         $key = self::GetKeyProvider()->GetKey();
 
         $result = DatabaseManager::GetProvider()
-                ->Table(Properties::Get('session.tables.sessions'))
+                ->Table(TABLE_SESSIONS)
                 ->Select(['expire_date'])
                 ->Where('session_key', '=', $key)
                 ->Run();
@@ -87,7 +89,7 @@ class SessionManager {
         self::$data[$key] = $value;
 
         $result = DatabaseManager::GetProvider()
-                ->Table(Properties::Get('session.tables.session_data'))
+                ->Table(TABLE_SESSION_DATA)
                 ->Insert()
                 ->Value('session_id', self::$session_id)
                 ->Value('key', $key)
@@ -103,7 +105,7 @@ class SessionManager {
         while(!$unique){
             $key = Key\KeyGenerator::Generate();
             $res = DatabaseManager::GetProvider()
-                    ->Table(Properties::Get('session.tables.sessions'))
+                    ->Table(TABLE_SESSIONS)
                     ->Select(['id'])
                     ->Where('session_key', '=', $key)
                     ->Run();
@@ -111,7 +113,7 @@ class SessionManager {
         }
 
         DatabaseManager::GetProvider()
-                ->Table(Properties::Get('session.tables.sessions'))
+                ->Table(TABLE_SESSIONS)
                 ->Insert()
                 ->Value('session_key', $key)
                 ->Value('expire_date', date('Y-m-d H:i:s', time()+self::$session_duration))
@@ -122,7 +124,7 @@ class SessionManager {
     }
 
     /*protected static function Renew(){
-        DatabaseManager::GetProvider()->Query('UPDATE '.Properties::Get('session.tables.sessions').' SET expire_date = FROM_UNIXTIME('.(time()+3600).') WHERE id='.self::$session_id);
+        DatabaseManager::GetProvider()->Query('UPDATE '.TABLE_SESSIONS.' SET expire_date = FROM_UNIXTIME('.(time()+3600).') WHERE id='.self::$session_id);
     }*/
 }
 ?>
