@@ -3,8 +3,6 @@
 $time_start = microtime(true);
 
 use \UEngine\Modules\Core\Properties;
-use \UEngine\Modules\Pages\Navbar;
-use \UEngine\Modules\Pages\Navbar\NavbarStorage;
 
 use Auth\AuthHandler;
 use Auth\AccessControl\AuthManager;
@@ -42,18 +40,6 @@ AuthManager::RegisterUserFactory(new Entities\UserFactory());
 AuthHandler::HandleAuthIfNecessary();
 AuthManager::RestoreCurrentUser();
 
-// Initializing a navbar
-NavbarStorage::AddItem(new Navbar\NavbarHeader(AuthManager::GetCurrentUser()->GetFullName()));
-NavbarStorage::AddItem('Strona główna', ['href' => 'home', 'icon' => 'fa-home']);
-NavbarStorage::AddItem('Testy', ['href' => 'testy/lista', 'icon' => 'fa-pencil-square-o']);
-NavbarStorage::AddItem('Biblioteka testów', ['href' => 'testy/biblioteka', 'icon' => 'fa-files-o']);
-NavbarStorage::AddItem('Ankiety', ['href' => 'ankiety', 'icon' => 'fa-bar-chart']);
-NavbarStorage::AddItem(new Navbar\NavbarSeparator());
-NavbarStorage::AddItem('Konto', ['href' => 'konto', 'icon' => 'fa-user-o']);
-NavbarStorage::AddItem('Wyloguj', ['href' => '?wyloguj', 'icon' => 'fa-sign-out', 'css' => 'vulnerable']);
-NavbarStorage::AddItem(new Navbar\NavbarSeparator());
-NavbarStorage::AddItem('Pomoc', ['href' => 'pomoc', 'icon' => 'fa-question-circle']);
-
 // The handled site is being included and buffered here
 Layout\Prepend();
 
@@ -66,16 +52,4 @@ $time_end = microtime(true);
 $render_time = (($time_end-$time_start)*1000).'ms';
 
 Layout\Append();
-
-// Function responsible for matching singular, double and plural
-/*function n($n, $f1, $f2, $f5){
-    if($n == 1) return $f1;
-    
-    $n1 = $n % 10;
-    $n2 = (($n % 100) - $n1) / 10;
-
-    if(($n1 == 2 || $n1 == 3 || $n1 == 4) && $n2 != 1) return $f2;
-
-    return $f5;
-}*/
 ?>

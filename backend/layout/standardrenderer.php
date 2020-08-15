@@ -33,7 +33,6 @@ function Prepend(){
     echo('<body class="preload" data-url="'.$get_path.'">');
 
     echo('<nav class="main-nav" id="main-nav">');
-    Navbar::PrintCode();
     echo('</nav>');
     echo('<div class="nav-backdrop"></div>');
     echo('<aside class="mobile-header">');

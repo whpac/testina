@@ -17,6 +17,8 @@ let root = document.getElementById('content-container');
 if(root === null) throw 'Błąd ładowania';
 let loading_wrapper = new LoadingIndicator('loading-wrapper');
 
+UI.DrawNavbar();
+
 PageManager.Initialize(root, loading_wrapper);
 PageManager.AddPage('home', new HomePage(), false);
 PageManager.AddPage('informacje', new AboutPage(), false);
