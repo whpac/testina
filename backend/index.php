@@ -26,24 +26,10 @@ UEngine\SetLanguageList(['pl']);
 UEngine\Load();
 
 // Loading modules
-Loader::LoadModule('database');
-Loader::LoadModule('session');
 Loader::LoadModule('pages');
-Loader::LoadModule('auth');
 
 // Passing some tables' names
 Properties::Set('core.tables.exceptions', 'exceptions');
-Properties::Set('session.tables.sessions', 'sessions');
-Properties::Set('session.tables.session_data', 'session_data');
-
-// @deprecated
-$db = new UEngine\Modules\Database\MySQL('localhost', 'user', 'passwd', 'p');
-$db->Connect();
-UEngine\Modules\Core\Database\DatabaseManager::SetProvider($db);
-
-$kp = new UEngine\Modules\Session\Key\CookieKeyProvider('SESSION');
-UEngine\Modules\Session\SessionManager::SetKeyProvider($kp);
-UEngine\Modules\Session\SessionManager::Start(36000);
 
 // Inicjalizacja dostawcy bazy danych oraz sesji
 $db = new MySQL('localhost', 'user', 'passwd', 'p');
