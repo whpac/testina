@@ -9,7 +9,7 @@ function TestinaClassLoader($name){
     $name = str_replace('\\', '/', $name);
 
     // Wczytaj automatycznie tylko te przestrzenie nazw
-    $namespaces = ['api', 'database', 'entities', 'handling', 'layout', 'session', 'utils'];
+    $namespaces = ['api', 'auth', 'database', 'entities', 'handling', 'layout', 'session', 'utils'];
     $is_found = false;
 
     foreach($namespaces as $ns){

@@ -6,7 +6,7 @@ use Database\DatabaseManager;
 
 define('TABLE_USERS', 'users');
 
-class User extends Entity implements \UEngine\Modules\Auth\AccessControl\IUser {
+class User extends Entity implements \Auth\AccessControl\User {
     protected /* int */ $id;
     protected /* string */ $first_name;
     protected /* string */ $last_name;

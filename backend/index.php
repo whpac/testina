@@ -2,8 +2,6 @@
 // Measure page render time
 $time_start = microtime(true);
 
-use \UEngine\Modules\Auth\AuthHandler;
-use \UEngine\Modules\Auth\AccessControl\AuthManager;
 use \UEngine\Modules\Core\Properties;
 use \UEngine\Modules\Loader;
 use \UEngine\Modules\Pages\PageManager;
@@ -11,6 +9,9 @@ use \UEngine\Modules\Pages\UrlHandler;
 use \UEngine\Modules\Pages\Handlers\RegistryHandler;
 use \UEngine\Modules\Pages\Navbar;
 use \UEngine\Modules\Pages\Navbar\NavbarStorage;
+
+use Auth\AuthHandler;
+use Auth\AccessControl\AuthManager;
 
 use Database\DatabaseManager;
 use Database\MySQL;

@@ -4,13 +4,14 @@ use Api\Exceptions;
 use Api\Formats;
 use Api\Resources;
 
+use Auth\AuthHandler;
+use Auth\AccessControl\AuthManager;
+
 use Database\DatabaseManager;
 use Database\MySQL;
 
 use Session\SessionManager;
 
-use \UEngine\Modules\Auth\AuthHandler;
-use \UEngine\Modules\Auth\AccessControl\AuthManager;
 use \UEngine\Modules\Core\Properties;
 use \UEngine\Modules\Loader;
 use \UEngine\Modules\Pages\PageManager;
@@ -74,7 +75,7 @@ try{
     $filters = ReadFilters();
 
     // Przygotuj kontekst zabezpieczeń
-    $current_user = \UEngine\Modules\Auth\AccessControl\AuthManager::GetCurrentUser();
+    $current_user = Auth\AccessControl\AuthManager::GetCurrentUser();
     $context = new Context($current_user);
 
     // Przygotuj formater wyjścia na podstawie nagłówków HTTP
