@@ -249,7 +249,7 @@ function SetResponseCode(int $code){
  */
 function SendHeaders($mime){
     header('Content-Type: '.$mime);
-    header('Cache-Control: max-age=30');
+    header('X-Expires: '.(new DateTime())->add(new \DateInterval('PT30S'))->format('Y-m-d\TH:i:sO'));
 }
 
 /**
