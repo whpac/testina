@@ -1,5 +1,6 @@
 import MalformedResponseException from '../exceptions/malformed_response';
 import FetchingErrorException from '../exceptions/fetching_error';
+import CacheManager, { CacheStorages } from '../cache/cache_manager';
 
 type XHRResult = {
     Status: number,
@@ -16,12 +17,26 @@ type RejectFunction = (reason?: any) => void;
  * @param method Metoda zapytania (domyślnie GET)
  * @param request_data Dane przesyłane razem z zapytaniem, zostaną zserializowane jako JSON
  */
-export function Request(url: string, method?: string, request_data?: any) {
-    return new Promise<XHRResult>((resolve, reject) => {
+export function PerformRequest(url: string, method?: string, request_data?: any) {
+    return new Promise<XHRResult>(async (resolve, reject) => {
+        let request = new Request(url);
+        let cache = await CacheManager.Open(CacheStorages.Entities);
+        let resource = await cache.GetResource(request);
+        if(resource !== undefined) {
+            try {
+                return resolve({
+                    Status: resource.status,
+                    StatusText: resource.statusText,
+                    Response: JSON.parse(await resource.text()),
+                    ContentLocation: resource.headers.get('Content-Location') ?? ''
+                });
+            } catch(e) { }
+        }
+
         let xhr = new XMLHttpRequest();
         xhr.open(method ?? 'GET', url, true);
         xhr.setRequestHeader('Accept', 'application/json');
-        xhr.onreadystatechange = OnReadyStateChange(resolve, reject);
+        xhr.onreadystatechange = OnReadyStateChange(request, resolve, reject);
 
         // Zserializuj dane żądania
         let serialized_data: (string | null) = null;
@@ -39,8 +54,8 @@ export function Request(url: string, method?: string, request_data?: any) {
  * @param resolve Funkcja, którą należy wywołać, by spełnić Promise
  * @param reject Funkcja, którą należy wywołać, by odrzucić Promise
  */
-function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction) {
-    return function (this: XMLHttpRequest) {
+function OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: RejectFunction) {
+    return async function (this: XMLHttpRequest) {
         let xhr = this;
         if(xhr.readyState != 4) return;
 
@@ -52,7 +67,7 @@ function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction) {
                     parsed_json = JSON.parse(xhr.responseText);
                 } catch(e) {
                     console.error('Odpowiedź serwera zawiera niepoprawny JSON');
-                    reject(new MalformedResponseException('Serwer zwrócił odpowiedź w nieznanym formacie.', {
+                    return reject(new MalformedResponseException('Serwer zwrócił odpowiedź w nieznanym formacie.', {
                         Status: xhr.status,
                         StatusText: xhr.statusText,
                         ResponseText: xhr.responseText
@@ -60,7 +75,17 @@ function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction) {
                 }
             }
 
-            resolve({
+            let cache = await CacheManager.Open(CacheStorages.Entities);
+            cache.SaveResponse(request, new Response(xhr.responseText, {
+                status: xhr.status,
+                statusText: xhr.statusText,
+                headers: {
+                    'Content-Location': content_location,
+                    'X-Expires': xhr.getResponseHeader('X-Expires') ?? ''
+                }
+            }));
+
+            return resolve({
                 Status: xhr.status,
                 StatusText: xhr.statusText,
                 Response: parsed_json,
@@ -75,7 +100,7 @@ function OnReadyStateChange(resolve: ResolveFunction, reject: RejectFunction) {
             }
 
             console.error('Serwer nie mógł zrealizować żądania. Kod odpowiedzi: ' + xhr.status);
-            reject(new FetchingErrorException('Serwer nie był w stanie zrealizować żądania.', {
+            return reject(new FetchingErrorException('Serwer nie był w stanie zrealizować żądania.', {
                 Status: xhr.status,
                 StatusText: xhr.statusText,
                 Response: parsed_json
