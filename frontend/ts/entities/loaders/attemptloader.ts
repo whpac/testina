@@ -14,7 +14,7 @@ export interface AttemptDescriptor {
     max_score: number,
     begin_time: string,
     questions: Collection<QuestionDescriptor> | undefined,
-    path: number[] | undefined
+    path: number[] | undefined;
 }
 
 export default class AttemptLoader {
@@ -22,7 +22,7 @@ export default class AttemptLoader {
     protected Assignment: Assignment | undefined;
     protected AttemptDescriptors: Collection<AttemptDescriptor> | undefined;
 
-    constructor(attempt_count?: number){
+    constructor(attempt_count?: number) {
         this.AttemptCount = attempt_count;
     }
 
@@ -31,7 +31,7 @@ export default class AttemptLoader {
      * @param assignment Przypisanie, do którego należy podejście
      * @param descriptor Deskryptor podejścia
      */
-    public static CreateFromDescriptor(assignment: Assignment, descriptor: AttemptDescriptor){
+    public static CreateFromDescriptor(assignment: Assignment, descriptor: AttemptDescriptor) {
         let loader = new AttemptLoader();
         loader.SetAssignment(assignment);
         return loader.CreateFromDescriptor(descriptor);
@@ -41,7 +41,7 @@ export default class AttemptLoader {
      * Ustawia przypisanie, dla którego będą wczytywane podejścia
      * @param assignment Przypisanie, dla którego będą wczytywane podejścia
      */
-    public SetAssignment(assignment: Assignment){
+    public SetAssignment(assignment: Assignment) {
         this.Assignment = assignment;
     }
 
@@ -49,7 +49,7 @@ export default class AttemptLoader {
      * Zapisuje deskryptory podejść do późniejszego wykorzystania
      * @param attempt_descriptors Deskryptory podejść
      */
-    public SaveDescriptors(attempt_descriptors: Collection<AttemptDescriptor>){
+    public SaveDescriptors(attempt_descriptors: Collection<AttemptDescriptor>) {
         this.AttemptDescriptors = attempt_descriptors;
     }
 
@@ -57,10 +57,10 @@ export default class AttemptLoader {
      * Wczytuje podejście o podanym identyfikatorze
      * @param attempt_id Identyfikator podejścia
      */
-    public async LoadById(attempt_id: number){
+    public async LoadById(attempt_id: number) {
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
-        let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts/' + attempt_id.toString() + '?depth=2', 'GET');
+        let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts/' + attempt_id.toString() + '?depth=2', 'GET');
         let json = response.Response as AttemptDescriptor;
         return this.CreateFromDescriptor(json);
     }
@@ -69,7 +69,7 @@ export default class AttemptLoader {
      * Tworzy podejście na podstawie deskryptora
      * @param attempt_descriptor Deskryptor podejścia
      */
-    public async CreateFromDescriptor(attempt_descriptor: AttemptDescriptor){
+    public async CreateFromDescriptor(attempt_descriptor: AttemptDescriptor) {
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
         let question_loader = new QuestionLoader(attempt_descriptor.path?.length);
@@ -93,14 +93,14 @@ export default class AttemptLoader {
     /**
      * Zwraca wszystkie podejścia dla bieżącego przypisania
      */
-    public async GetAllForAssignment(){
+    public async GetAllForAssignment() {
         if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
 
-        let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts?depth=2', 'GET');
+        let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts?depth=2', 'GET');
         let descriptors = response.Response as Collection<AttemptDescriptor>;
         let out_array: Attempt[] = [];
 
-        for(let attempt_id in descriptors){
+        for(let attempt_id in descriptors) {
             out_array.push(await this.CreateFromDescriptor(descriptors[parseInt(attempt_id)]));
         }
 

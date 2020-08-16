@@ -17,15 +17,15 @@ type AssignmentTargetEntity = User | Group;
 export type AssignmentTargets = {
     Groups: Group[],
     Users: User[],
-    AllUsers: User[]
-}
+    AllUsers: User[];
+};
 
 export type AssignmentResult = {
     User: User,
     AttemptCount: number,
     LastAttempt: Date | undefined,
-    AverageScore: number | undefined
-}
+    AverageScore: number | undefined;
+};
 
 /** Klasa reprezentująca przypisanie */
 export default class Assignment extends Entity implements PageParams {
@@ -47,10 +47,10 @@ export default class Assignment extends Entity implements PageParams {
     public readonly AssignedBy: User;
 
     /** Średni wynik procentowy */
-    public get Score(){
+    public get Score() {
         return this._Score ?? undefined;
     }
-    public set Score(new_value: number | undefined){
+    public set Score(new_value: number | undefined) {
         this._Score = new_value ?? null;
         this.FireEvent('change');
     }
@@ -75,8 +75,8 @@ export default class Assignment extends Entity implements PageParams {
      */
     constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
-        targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader){
-        
+        targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader) {
+
         super();
 
         if(attempt_loader.AttemptCount === undefined) throw 'AttemptLoader.AttemptCount nie może być undefined.';
@@ -97,8 +97,8 @@ export default class Assignment extends Entity implements PageParams {
 
     protected _Attempts: Attempt[] | undefined;
     /** Zwraca pytania do tego testu */
-    public async GetAttempts(){
-        if(this._Attempts === undefined){
+    public async GetAttempts() {
+        if(this._Attempts === undefined) {
             this._Attempts = await this.AttemptLoader.GetAllForAssignment();
         }
         return this._Attempts;
@@ -106,8 +106,8 @@ export default class Assignment extends Entity implements PageParams {
 
     protected _Targets: AssignmentTargets | undefined;
     /** Zwraca cele przypisania */
-    public async GetTargets(){
-        if(this._Targets === undefined){
+    public async GetTargets() {
+        if(this._Targets === undefined) {
             this._Targets = await this.TargetsLoader.Load();
         }
         return this._Targets;
@@ -115,11 +115,11 @@ export default class Assignment extends Entity implements PageParams {
 
     protected _Results: Collection<AssignmentResult> | undefined;
     /** Zwraca wyniki innych osób, indeksowane id użytkownika */
-    public async GetResults(){
-        if(this._Results === undefined){
+    public async GetResults() {
+        if(this._Results === undefined) {
             let results = await this.ResultsLoader.Load();
             this._Results = {};
-            for(let result of results){
+            for(let result of results) {
                 this._Results[result.User.Id] = result;
             }
         }
@@ -127,28 +127,28 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     /** Czy pozostały jeszcze podejścia */
-    AreRemainingAttempts(){
+    AreRemainingAttempts() {
         return (this.AttemptCount < this.AttemptLimit) || this.AreAttemptsUnlimited();
     }
 
     /** Czy ilość podejść jest nieograniczona */
-    AreAttemptsUnlimited(){
+    AreAttemptsUnlimited() {
         return this.AttemptLimit == 0;
     }
 
     /** Zwraca, ile pozostało podejść */
-    GetRemainingAttemptsCount(){
+    GetRemainingAttemptsCount() {
         if(this.AreAttemptsUnlimited()) return Number.POSITIVE_INFINITY;
         return this.AttemptLimit - this.AttemptCount;
     }
 
     /** Czy termin na wykonanie minął */
-    HasDeadlineExceeded(){
+    HasDeadlineExceeded() {
         return this.Deadline < new Date();
     }
 
     /** Czy przypisanie jest aktywne (są wolne podejścia i nie upłynął termin) */
-    IsActive(){
+    IsActive() {
         return !this.HasDeadlineExceeded() && this.AreRemainingAttempts();
     }
 
@@ -156,7 +156,7 @@ export default class Assignment extends Entity implements PageParams {
      * Zwraca wynik danego użytkownika lub undefined, jeśli nie podszedł
      * @param user Użytkownik, którego wynik zwrócić
      */
-    async GetUsersScore(user: User): Promise<number | undefined>{
+    async GetUsersScore(user: User): Promise<number | undefined> {
         let results = await this.GetResults();
         return results[user.Id].AverageScore;
     }
@@ -165,38 +165,38 @@ export default class Assignment extends Entity implements PageParams {
      * Zwraca ilość podejść, które użytkownik wykonał
      * @param user Użytkownik, któremu policzyć podejścia
      */
-    async CountUsersAttempts(user: User): Promise<number>{
+    async CountUsersAttempts(user: User): Promise<number> {
         let results = await this.GetResults();
         return results[user.Id].AttemptCount;
     }
 
-    GetSimpleRepresentation(){
+    GetSimpleRepresentation() {
         return {
             type: 'assignment',
             id: this.Id
         };
     }
 
-    static async Create(test: Test, attempt_limit: number, deadline: Date){
+    static async Create(test: Test, attempt_limit: number, deadline: Date) {
         if(attempt_limit == Number.POSITIVE_INFINITY) attempt_limit = 0;
 
         let payload = {
             test_id: test.Id,
             attempt_limit: attempt_limit,
             time_limit: DateUtils.ToLongFormat(deadline)
-        }
+        };
 
-        let result = await XHR.Request('api/assignments', 'POST', payload);
+        let result = await XHR.PerformRequest('api/assignments', 'POST', payload);
 
         if(result.Status != 201) throw result;
-        
+
         return AssignmentLoader.LoadById(parseInt(result.ContentLocation));
     }
 
-    async AddTargets(targets: AssignmentTargetEntity[]){
-        let payload_targets: {type: number, id: number}[] = [];
+    async AddTargets(targets: AssignmentTargetEntity[]) {
+        let payload_targets: { type: number, id: number; }[] = [];
 
-        for(let target of targets){
+        for(let target of targets) {
             let type = 0;
             if(target instanceof User) type = 0;
             if(target instanceof Group) type = 1;
@@ -209,14 +209,14 @@ export default class Assignment extends Entity implements PageParams {
 
         let payload = {
             targets: payload_targets
-        }
+        };
 
-        let result = await XHR.Request('api/assignments/' + this.Id + '/targets', 'POST', payload);
+        let result = await XHR.PerformRequest('api/assignments/' + this.Id + '/targets', 'POST', payload);
 
         if(result.Status != 201) throw result;
     }
 
-    async RemoveTargets(targets: AssignmentTargetEntity[]){
+    async RemoveTargets(targets: AssignmentTargetEntity[]) {
 
     }
 }

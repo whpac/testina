@@ -24,7 +24,7 @@ export default class UserLoader implements Loader<User> {
     public async LoadById(user_id: number | number[]): Promise<User | User[]> {
         if(typeof user_id == 'number') {
             let descriptor: UserDescriptor;
-            let response = await XHR.Request('api/users/' + user_id.toString() + '?depth=2', 'GET');
+            let response = await XHR.PerformRequest('api/users/' + user_id.toString() + '?depth=2', 'GET');
             descriptor = response.Response as UserDescriptor;
 
             try {
@@ -37,7 +37,7 @@ export default class UserLoader implements Loader<User> {
         } else {
             let users: User[] = [];
             for(let id of user_id) {
-                let response = await XHR.Request('api/users/' + id.toString() + '?depth=2', 'GET');
+                let response = await XHR.PerformRequest('api/users/' + id.toString() + '?depth=2', 'GET');
                 let descriptor = response.Response as UserDescriptor;
                 users.push(UserLoader.CreateFromDescriptor(descriptor));
             }
@@ -71,7 +71,7 @@ export default class UserLoader implements Loader<User> {
     /** Wczytuje wszystkich zarejestrowanych użytkowników */
     public static async GetAll() {
         let descriptors: Collection<UserDescriptor>;
-        let response = await XHR.Request('api/users?depth=3', 'GET');
+        let response = await XHR.PerformRequest('api/users?depth=3', 'GET');
         descriptors = response.Response as Collection<UserDescriptor>;
 
         let user_ids = Object.keys(descriptors);
@@ -98,7 +98,7 @@ export default class UserLoader implements Loader<User> {
     public static async GetCurrent(force: boolean = false) {
         if(this.CurrentUser === undefined || force) {
             try {
-                let response = await XHR.Request('api/users/current?depth=2', 'GET');
+                let response = await XHR.PerformRequest('api/users/current?depth=2', 'GET');
                 let json = response.Response as UserDescriptor;
                 this.CurrentUser = this.CreateFromDescriptor(json);
             } catch(e) {

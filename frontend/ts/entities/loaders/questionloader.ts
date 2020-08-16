@@ -14,7 +14,7 @@ export interface QuestionDescriptor {
     points_counting: number,
     max_typos: number,
     answer_count: number,
-    answers: Collection<AnswerDescriptor>
+    answers: Collection<AnswerDescriptor>;
 }
 
 export default class QuestionLoader {
@@ -22,7 +22,7 @@ export default class QuestionLoader {
     protected Test: Test | undefined;
     protected QuestionDescriptors: Collection<QuestionDescriptor> | undefined;
 
-    constructor(question_count?: number){
+    constructor(question_count?: number) {
         this.QuestionCount = question_count;
     }
 
@@ -31,7 +31,7 @@ export default class QuestionLoader {
      * @param test Test, do którego należy pytanie
      * @param question_id Identyfikator pytania
      */
-    static async LoadById(test: Test, question_id: number){
+    static async LoadById(test: Test, question_id: number) {
         let loader = new QuestionLoader();
         loader.SetTest(test);
         return loader.LoadById(question_id);
@@ -41,7 +41,7 @@ export default class QuestionLoader {
      * Ustawia test, dla którego będą ładowane pytania
      * @param test Test, dla którego będą ładowane pytania
      */
-    public SetTest(test: Test){
+    public SetTest(test: Test) {
         this.Test = test;
     }
 
@@ -49,7 +49,7 @@ export default class QuestionLoader {
      * Zapisuje deskryptory pytań do późniejszego wykorzystania
      * @param question_descriptors Deskryptory pytań
      */
-    public SaveDescriptors(question_descriptors: Collection<QuestionDescriptor>){
+    public SaveDescriptors(question_descriptors: Collection<QuestionDescriptor>) {
         this.QuestionDescriptors = question_descriptors;
     }
 
@@ -57,14 +57,14 @@ export default class QuestionLoader {
      * Wczytuje pytanie o określonym identyfikatorze
      * @param question_id Identyfikator pytania
      */
-    public async LoadById(question_id: number){
+    public async LoadById(question_id: number) {
         if(this.Test === undefined) throw 'QuestionLoader.Test nie może być undefined';
 
         let descriptor: QuestionDescriptor;
-        if(this.QuestionDescriptors?.[question_id] !== undefined){
+        if(this.QuestionDescriptors?.[question_id] !== undefined) {
             descriptor = this.QuestionDescriptors[question_id];
-        }else{
-            let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + question_id.toString() + '?depth=2', 'GET');
+        } else {
+            let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + question_id.toString() + '?depth=2', 'GET');
             descriptor = response.Response as QuestionDescriptor;
         }
 
@@ -75,7 +75,7 @@ export default class QuestionLoader {
      * Tworzy pytanie na podstawie deskryptora
      * @param question_descriptor Deskryptor pytania
      */
-    public CreateFromDescriptor(question_descriptor: QuestionDescriptor){
+    public CreateFromDescriptor(question_descriptor: QuestionDescriptor) {
         if(this.Test === undefined) throw 'QuestionLoader.Test nie może być undefined';
 
         let answer_loader = new AnswerLoader(question_descriptor.answer_count);
@@ -99,14 +99,14 @@ export default class QuestionLoader {
     }
 
     /** Zwraca wszystkie pytania w wybranym teście */
-    public async GetAllInCurrentTest(){
+    public async GetAllInCurrentTest() {
         if(this.Test === undefined) throw 'QuestionLoader.Test nie może być undefined';
 
         let descriptors: Collection<QuestionDescriptor>;
-        if(this.QuestionDescriptors !== undefined){
+        if(this.QuestionDescriptors !== undefined) {
             descriptors = this.QuestionDescriptors;
-        }else{
-            let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Test) + '/questions?depth=3', 'GET');
+        } else {
+            let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions?depth=3', 'GET');
             descriptors = response.Response as Collection<QuestionDescriptor>;
         }
 

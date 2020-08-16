@@ -14,19 +14,19 @@ export default class Answer extends Entity {
     protected _Correct: boolean;
 
     /** Treść odpowiedzi */
-    public get Text(){
+    public get Text() {
         return this._Text;
     }
-    public set Text(new_value: string){
+    public set Text(new_value: string) {
         this._Text = new_value;
         this.FireEvent('change');
     }
 
     /** Czy odpowiedź jest poprawna */
-    public get Correct(){
+    public get Correct() {
         return this._Correct;
     }
-    public set Correct(new_value: boolean){
+    public set Correct(new_value: boolean) {
         this._Correct = new_value;
         this.FireEvent('change');
     }
@@ -38,7 +38,7 @@ export default class Answer extends Entity {
      * @param text Treść odpowiedzi
      * @param correct Czy odpowiedź jest prawidłowa
      */
-    constructor(id: number, question: Question, text: string, correct: boolean){
+    constructor(id: number, question: Question, text: string, correct: boolean) {
         super();
 
         this.Id = id;
@@ -53,13 +53,13 @@ export default class Answer extends Entity {
      * @param text Treść odpowiedzi
      * @param correct Czy odpowiedź jest poprawna
      */
-    static async Create(question: Question, text: string, correct: boolean){
+    static async Create(question: Question, text: string, correct: boolean) {
         let request_data = {
             text: text,
             correct: correct
         };
-        let result = await XHR.Request('api/tests/' + question.Test.Id.toString() + '/questions/' + question.Id.toString() + '/answers', 'POST', request_data);
-        
+        let result = await XHR.PerformRequest('api/tests/' + question.Test.Id.toString() + '/questions/' + question.Id.toString() + '/answers', 'POST', request_data);
+
         if(result.Status != 201) throw result;
     }
 
@@ -68,13 +68,13 @@ export default class Answer extends Entity {
      * @param text Nowa treść odpowiedzi
      * @param correct Czy odpowiedź jest poprawna
      */
-    async Update(text: string, correct: boolean){
+    async Update(text: string, correct: boolean) {
         let request_data = {
             text: text,
             correct: correct
         };
-        let result = await XHR.Request('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'PUT', request_data);
-        if(result.Status == 204){
+        let result = await XHR.PerformRequest('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'PUT', request_data);
+        if(result.Status == 204) {
             this.Text = text;
             this.Correct = correct;
             //this.FireEvent('change');
@@ -82,9 +82,9 @@ export default class Answer extends Entity {
     }
 
     /** Usuwa odpowiedź */
-    async Remove(){
-        let result = await XHR.Request('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'DELETE');
-        if(result.Status == 204){
+    async Remove() {
+        let result = await XHR.PerformRequest('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'DELETE');
+        if(result.Status == 204) {
             this.FireEvent('remove');
         } else throw result;
     }

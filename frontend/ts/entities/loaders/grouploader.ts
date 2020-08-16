@@ -6,7 +6,7 @@ import Loader from './loader';
 /** Deskryptor grupy w odpowiedzi z API */
 export interface GroupDescriptor {
     id: number,
-    name: string
+    name: string;
 }
 
 export default class GroupLoader implements Loader<Group> {
@@ -17,23 +17,23 @@ export default class GroupLoader implements Loader<Group> {
      */
     LoadById(group_id: number): Promise<Group>;
     LoadById(group_id: number[]): Promise<Group[]>;
-    public async LoadById(group_id: number | number[]): Promise<Group | Group[]>{
-        if(typeof group_id == 'number'){
+    public async LoadById(group_id: number | number[]): Promise<Group | Group[]> {
+        if(typeof group_id == 'number') {
             let descriptor: GroupDescriptor;
-            let response = await XHR.Request('api/groups/' + group_id.toString() + '?depth=2', 'GET');
+            let response = await XHR.PerformRequest('api/groups/' + group_id.toString() + '?depth=2', 'GET');
             descriptor = response.Response as GroupDescriptor;
 
-            try{
+            try {
                 return GroupLoader.CreateFromDescriptor(descriptor);
-            }catch(e){
-                if(e instanceof TypeError){
+            } catch(e) {
+                if(e instanceof TypeError) {
                     return GroupLoader.LoadById(group_id);
-                }else throw e;
+                } else throw e;
             }
-        }else{
+        } else {
             let groups: Group[] = [];
-            for(let id of group_id){
-                let response = await XHR.Request('api/groups/' + group_id.toString() + '?depth=2', 'GET');
+            for(let id of group_id) {
+                let response = await XHR.PerformRequest('api/groups/' + group_id.toString() + '?depth=2', 'GET');
                 let descriptor = response.Response as GroupDescriptor;
                 groups.push(GroupLoader.CreateFromDescriptor(descriptor));
             }
@@ -45,7 +45,7 @@ export default class GroupLoader implements Loader<Group> {
      * Tworzy grupę na podstawie deskryptora
      * @param group_descriptor Deskryptor grupy
      */
-    public static CreateFromDescriptor(group_descriptor: GroupDescriptor){
+    public static CreateFromDescriptor(group_descriptor: GroupDescriptor) {
         return new Group(
             group_descriptor.id,
             group_descriptor.name
@@ -53,20 +53,20 @@ export default class GroupLoader implements Loader<Group> {
     }
 
     /** Zwraca wszystkie grupy */
-    public static async GetAll(){
+    public static async GetAll() {
         let descriptors: Collection<GroupDescriptor>;
-        let response = await XHR.Request('api/groups?depth=3', 'GET');
+        let response = await XHR.PerformRequest('api/groups?depth=3', 'GET');
         descriptors = response.Response as Collection<GroupDescriptor>;
 
         let groups: Group[] = [];
-        for(let group_id in descriptors){
+        for(let group_id in descriptors) {
             let g: Group;
-            try{
+            try {
                 g = GroupLoader.CreateFromDescriptor(descriptors[parseInt(group_id)]);
-            }catch(e){
-                if(e instanceof TypeError){
+            } catch(e) {
+                if(e instanceof TypeError) {
                     g = await GroupLoader.LoadById(parseInt(group_id));
-                }else throw e;
+                } else throw e;
             }
             groups.push(g);
         }
@@ -80,7 +80,7 @@ export default class GroupLoader implements Loader<Group> {
      */
     static LoadById(group_id: number): Promise<Group>;
     static LoadById(group_id: number[]): Promise<Group[]>;
-    public static async LoadById(group_id: number | number[]): Promise<Group | Group[]>{
+    public static async LoadById(group_id: number | number[]): Promise<Group | Group[]> {
         //@ts-ignore
         return new GroupLoader().LoadById(group_id);
     }

@@ -29,19 +29,19 @@ export default class Test extends Entity implements PageParams {
     public readonly AssignmentCount: number | undefined;
 
     /** Nazwa testu */
-    public get Name(){
+    public get Name() {
         return this._Name;
     }
-    public set Name(new_name: string){
+    public set Name(new_name: string) {
         this._Name = new_name;
         this.FireEvent('change');
     }
 
     /** Limit czasu na rozwiązanie testu */
-    public get TimeLimit(){
+    public get TimeLimit() {
         return this._TimeLimit;
     }
-    public set TimeLimit(new_value: number){
+    public set TimeLimit(new_value: number) {
         this._TimeLimit = new_value;
         this.FireEvent('change');
     }
@@ -56,7 +56,7 @@ export default class Test extends Entity implements PageParams {
     }
 
     /** Ilość pytań (bez uwzględniania mnożnika) */
-    public get QuestionCount(){
+    public get QuestionCount() {
         return this._QuestionCount;
     }
 
@@ -83,8 +83,8 @@ export default class Test extends Entity implements PageParams {
      */
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
-        assignment_loader: () => Promise<Assignment[]>){
-        
+        assignment_loader: () => Promise<Assignment[]>) {
+
         super();
 
         this.Id = id;
@@ -102,8 +102,8 @@ export default class Test extends Entity implements PageParams {
 
     protected _Questions: Question[] | undefined;
     /** Zwraca pytania do tego testu */
-    public async GetQuestions(){
-        if(this._Questions === undefined){
+    public async GetQuestions() {
+        if(this._Questions === undefined) {
             this._Questions = await this.QuestionLoader.GetAllInCurrentTest();
         }
         return this._Questions;
@@ -111,15 +111,15 @@ export default class Test extends Entity implements PageParams {
 
     protected _Assignments: Assignment[] | undefined;
     /** Zwraca pytania do tego testu */
-    public async GetAssignments(){
-        if(this._Assignments === undefined){
+    public async GetAssignments() {
+        if(this._Assignments === undefined) {
             this._Assignments = await this.AssignmentLoader();
         }
         return this._Assignments;
     }
 
     /** Czy test ma limit czasu na rozwiązanie */
-    HasTimeLimit(){
+    HasTimeLimit() {
         return this.TimeLimit != 0;
     }
 
@@ -129,29 +129,29 @@ export default class Test extends Entity implements PageParams {
      * @param question_multiplier Mnożnik pytań
      * @param time_limit Limit czasu na rozwiązanie
      */
-    static async Create(name: string, question_multiplier: number, time_limit: number){
+    static async Create(name: string, question_multiplier: number, time_limit: number) {
         let request_data = {
             name: name,
             question_multiplier: question_multiplier,
             time_limit: time_limit
         };
-        let result = await XHR.Request('api/tests', 'POST', request_data);
-        
+        let result = await XHR.PerformRequest('api/tests', 'POST', request_data);
+
         if(result.Status != 201) throw result;
-        
+
         return TestLoader.LoadById(parseInt(result.ContentLocation));
     }
 
     /** Usuwa test */
-    async Remove(){
-        let result = await XHR.Request('api/tests/' + this.Id.toString(), 'DELETE');
-        if(result.Status == 204){
+    async Remove() {
+        let result = await XHR.PerformRequest('api/tests/' + this.Id.toString(), 'DELETE');
+        if(result.Status == 204) {
             this.FireEvent('remove');
-        }else throw result;
+        } else throw result;
     }
 
     /** Zwraca prostą reprezentację obiektu */
-    GetSimpleRepresentation(){
+    GetSimpleRepresentation() {
         return {
             type: 'test',
             id: this.Id
@@ -159,14 +159,14 @@ export default class Test extends Entity implements PageParams {
     }
 
     /** Zapewnia spójność danych po dodaniu pytania */
-    OnQuestionAdded(){
+    OnQuestionAdded() {
         if(this._QuestionCount === undefined) this._QuestionCount = 0;
         this._QuestionCount++;
         this.FireEvent('change');
     }
 
     /** Zapewnia spójność danych po usunięciu pytania */
-    OnQuestionRemoved(){
+    OnQuestionRemoved() {
         if(this._QuestionCount === undefined || this._QuestionCount < 1) return;
         this._QuestionCount--;
         this.FireEvent('change');

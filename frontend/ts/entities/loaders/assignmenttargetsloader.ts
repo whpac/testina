@@ -8,7 +8,7 @@ import GroupLoader from './grouploader';
 export interface AssignmentTargetsDescriptor {
     group_ids: number[],
     user_ids: number[],
-    all_user_ids: number[]
+    all_user_ids: number[];
 }
 
 export default class AssignmentTargetsLoader {
@@ -16,7 +16,7 @@ export default class AssignmentTargetsLoader {
     protected Assignment: Assignment | undefined;
     protected TargetDescriptor: AssignmentTargetsDescriptor | undefined;
 
-    constructor(target_count?: number){
+    constructor(target_count?: number) {
         this.TargetCount = target_count;
     }
 
@@ -24,7 +24,7 @@ export default class AssignmentTargetsLoader {
      * Ustawia przypisanie, dla którego będą wczytywane cele
      * @param assignment Przypisanie, dla którego będą wczytywane cele
      */
-    public SetAssignment(assignment: Assignment){
+    public SetAssignment(assignment: Assignment) {
         this.Assignment = assignment;
     }
 
@@ -32,21 +32,21 @@ export default class AssignmentTargetsLoader {
      * Zapisuje deskryptory celów do późniejszego wykorzystania
      * @param target_descriptors Deskryptory celów
      */
-    public SaveDescriptor(target_descriptors: AssignmentTargetsDescriptor){
+    public SaveDescriptor(target_descriptors: AssignmentTargetsDescriptor) {
         this.TargetDescriptor = target_descriptors;
     }
 
     /**
      * Wczytuje cele dla bieżącego przypisania
      */
-    public async Load(){
+    public async Load() {
         if(this.Assignment === undefined) throw 'AssignmentTargetsLoader.Assignment nie może być undefined.';
 
         let descriptor: AssignmentTargetsDescriptor;
-        if(this.TargetDescriptor !== undefined){
+        if(this.TargetDescriptor !== undefined) {
             descriptor = this.TargetDescriptor;
-        }else{
-            let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Assignment) + '/targets?depth=4', 'GET');
+        } else {
+            let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Assignment) + '/targets?depth=4', 'GET');
             descriptor = response.Response as AssignmentTargetsDescriptor;
         }
 
@@ -57,7 +57,7 @@ export default class AssignmentTargetsLoader {
      * Tworzy cele na podstawie deskryptora
      * @param targets_descriptor Deskryptor celów
      */
-    public async CreateFromDescriptor(targets_descriptor: AssignmentTargetsDescriptor): Promise<AssignmentTargets>{
+    public async CreateFromDescriptor(targets_descriptor: AssignmentTargetsDescriptor): Promise<AssignmentTargets> {
         if(this.Assignment === undefined) throw 'AssignmentTargetsLoader.Assignment nie może być undefined.';
 
         let group_loader = new GroupLoader();
@@ -72,6 +72,6 @@ export default class AssignmentTargetsLoader {
             Groups: await group_awaiter,
             Users: await user_awaiter,
             AllUsers: await all_user_awaiter
-        }
+        };
     }
 }

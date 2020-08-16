@@ -17,7 +17,7 @@ export interface TestDescriptor {
     question_count: number,
     questions: Collection<QuestionDescriptor>,
     assignment_count: number | undefined,
-    assignment_ids: number[]
+    assignment_ids: number[];
 }
 
 export default class TestLoader {
@@ -26,8 +26,8 @@ export default class TestLoader {
      * Wczytuje test o określonym identyfikatorze
      * @param test_id Identyfikator testu
      */
-    public static async LoadById(test_id: number){
-        let response = await XHR.Request('api/tests/' + test_id.toString() + '?depth=3', 'GET');
+    public static async LoadById(test_id: number) {
+        let response = await XHR.PerformRequest('api/tests/' + test_id.toString() + '?depth=3', 'GET');
         let json = response.Response as TestDescriptor;
         return this.CreateFromDescriptor(json);
     }
@@ -36,7 +36,7 @@ export default class TestLoader {
      * Tworzy test na podstawie deskryptora
      * @param test_descriptor Deskryptor testu
      */
-    public static async CreateFromDescriptor(test_descriptor: TestDescriptor){
+    public static async CreateFromDescriptor(test_descriptor: TestDescriptor) {
         let question_loader = new QuestionLoader(test_descriptor.question_count);
         //let assignment_loader = new AssignmentLoader(test_descriptor.assignment_count);
 
@@ -64,12 +64,12 @@ export default class TestLoader {
     }
 
     /** Wczytuje wszystkie testy utworzone przez bieżącego użytkownika */
-    public static async GetCreatedByCurrentUser(){
-        let response = await XHR.Request('api/tests?depth=4', 'GET');
+    public static async GetCreatedByCurrentUser() {
+        let response = await XHR.PerformRequest('api/tests?depth=4', 'GET');
         let descriptors = response.Response as Collection<TestDescriptor>;
         let out_array: Test[] = [];
 
-        for(let test_id in descriptors){
+        for(let test_id in descriptors) {
             out_array.push(await this.CreateFromDescriptor(descriptors[parseInt(test_id)]));
         }
 

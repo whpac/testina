@@ -39,46 +39,46 @@ export default class Question extends Entity {
     public readonly AnswerCount: number | undefined;
 
     /** Treść pytania */
-    public get Text(){
+    public get Text() {
         return this._Text;
     }
-    public set Text(new_value: string){
+    public set Text(new_value: string) {
         this._Text = new_value;
         this.FireEvent('change');
     }
 
     /** Typ pytania */
-    public get Type(){
+    public get Type() {
         return this._Type;
     }
-    public set Type(new_value: number){
+    public set Type(new_value: number) {
         this._Type = new_value;
         this.FireEvent('change');
     }
 
     /** Ilość punktów do zdobycia */
-    public get Points(){
+    public get Points() {
         return this._Points;
     }
-    public set Points(new_value: number){
+    public set Points(new_value: number) {
         this._Points = new_value;
         this.FireEvent('change');
     }
 
     /** Sposób liczenia punktów */
-    public get PointsCounting(){
+    public get PointsCounting() {
         return this._PointsCounting;
     }
-    public set PointsCounting(new_value: number){
+    public set PointsCounting(new_value: number) {
         this._PointsCounting = new_value;
         this.FireEvent('change');
     }
 
     /** Maksymalna dozwolona liczba literówek */
-    public get MaxTypos(){
+    public get MaxTypos() {
         return this._MaxTypos;
     }
-    public set MaxTypos(new_value: number){
+    public set MaxTypos(new_value: number) {
         this._MaxTypos = new_value;
         this.FireEvent('change');
     }
@@ -98,7 +98,7 @@ export default class Question extends Entity {
      * @param answer_loader Obiekt wczytujący odpowiedzi
      */
     constructor(id: number, test: Test, text: string, type: number, points: number,
-        points_counting: number, max_typos: number, answer_loader: AnswerLoader){
+        points_counting: number, max_typos: number, answer_loader: AnswerLoader) {
         super();
 
         this.Id = id;
@@ -115,8 +115,8 @@ export default class Question extends Entity {
 
     protected _Answers: Answer[] | undefined;
     /** Zwraca odpowiedzi do tego pytania */
-    public async GetAnswers(){
-        if(this._Answers === undefined){
+    public async GetAnswers() {
+        if(this._Answers === undefined) {
             this._Answers = await this.AnswerLoader.GetAllForCurrentQuestion();
         }
         return this._Answers;
@@ -131,7 +131,7 @@ export default class Question extends Entity {
      * @param points_counting Sposób liczenia punktów
      * @param max_typos Maksymalna liczba literówek
      */
-    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number){
+    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number) {
         let request_data = {
             text: text,
             type: type,
@@ -139,12 +139,12 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.Request('api/tests/' + test.Id.toString() + '/questions', 'POST', request_data);
-        
+        let result = await XHR.PerformRequest('api/tests/' + test.Id.toString() + '/questions', 'POST', request_data);
+
         if(result.Status != 201) throw result;
 
         test.OnQuestionAdded();
-        
+
         return QuestionLoader.LoadById(test, parseInt(result.ContentLocation));
     }
 
@@ -156,7 +156,7 @@ export default class Question extends Entity {
      * @param points_counting Nowy sposób liczenia punktów
      * @param max_typos Nowa maksymalna ilość literówek
      */
-    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number){
+    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number) {
         let request_data = {
             text: text,
             type: type,
@@ -164,8 +164,8 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.Request('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'PUT', request_data);
-        if(result.Status == 204){
+        let result = await XHR.PerformRequest('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'PUT', request_data);
+        if(result.Status == 204) {
             this.Text = text;
             this.Type = type;
             this.Points = points;
@@ -176,11 +176,11 @@ export default class Question extends Entity {
     }
 
     /** Usuwa pytanie */
-    async Remove(){
-        let result = await XHR.Request('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'DELETE');
-        if(result.Status == 204){
+    async Remove() {
+        let result = await XHR.PerformRequest('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'DELETE');
+        if(result.Status == 204) {
             this.FireEvent('remove');
             this.Test.OnQuestionRemoved();
-        }else throw result;
+        } else throw result;
     }
 }

@@ -33,7 +33,7 @@ export default class Attempt extends Entity {
      * @param attempt Identyfikator podejścia lub deskryptor
      */
     constructor(id: number, assignment: Assignment, user: User, score: number | undefined,
-        max_score: number, begin_time: Date, path: number[] | undefined, question_loader: QuestionLoader | undefined){
+        max_score: number, begin_time: Date, path: number[] | undefined, question_loader: QuestionLoader | undefined) {
         super();
 
         this.Id = id;
@@ -47,7 +47,7 @@ export default class Attempt extends Entity {
     }
 
     /** Zwraca wynik procentowy uzyskany w podejściu */
-    public GetPercentageScore(){
+    public GetPercentageScore() {
         if(this.Score === undefined || this.MaxScore === undefined) return 0;
         if(this.MaxScore == 0) return 0;
 
@@ -56,7 +56,7 @@ export default class Attempt extends Entity {
 
     protected _Questions: Question[] | undefined;
     /** Zwraca pytania według ścieżki */
-    async GetQuestions(): Promise<Question[]>{
+    async GetQuestions(): Promise<Question[]> {
         if(this._Questions !== undefined) return this._Questions;
         if(this.QuestionLoader === undefined || this.Path === undefined) throw 'Obiekt Attempt nie posiada danych do utworzenia ścieżki pytań.';
 
@@ -73,8 +73,8 @@ export default class Attempt extends Entity {
      * Tworzy nowe podejście
      * @param assignment Przypisanie, do którego należy utworzyć podejście
      */
-    static async Create(assignment: Assignment){
-        let response = await XHR.Request('api/assignments/' + assignment.Id + '/attempts?depth=8', 'POST');
+    static async Create(assignment: Assignment) {
+        let response = await XHR.PerformRequest('api/assignments/' + assignment.Id + '/attempts?depth=8', 'POST');
         let json = response.Response as AttemptDescriptor;
         return AttemptLoader.CreateFromDescriptor(assignment, json);
     }
@@ -83,13 +83,13 @@ export default class Attempt extends Entity {
      * Zapisuje odpowiedzi użytkownika
      * @param questions Pytania z odpowiedziami
      */
-    async SaveUserAnswers(questions: QuestionWithUserAnswers[]){
+    async SaveUserAnswers(questions: QuestionWithUserAnswers[]) {
         let data: SaveUserAnswersPayload = {
             questions: []
         };
 
-        for(let question of questions){
-            let answers: {id:number}[] = [];
+        for(let question of questions) {
+            let answers: { id: number; }[] = [];
             let q = {
                 id: question.GetQuestion().Id,
                 done: question.GetIsDone(),
@@ -97,7 +97,7 @@ export default class Attempt extends Entity {
             };
 
             let selected_answers = question.GetSelectedAnswers();
-            for(let selected_answer of selected_answers){
+            for(let selected_answer of selected_answers) {
                 q.answers.push({
                     id: selected_answer.Id
                 });
@@ -106,9 +106,9 @@ export default class Attempt extends Entity {
             data.questions.push(q);
         }
 
-        let response = await XHR.Request('api/assignments/' + this.Assignment.Id + '/attempts/' + this.Id.toString() + '/answers', 'POST', data);
+        let response = await XHR.PerformRequest('api/assignments/' + this.Assignment.Id + '/attempts/' + this.Id.toString() + '/answers', 'POST', data);
 
-        if(response.Status != 201){
+        if(response.Status != 201) {
             throw 'Nie udało się zapisać odpowiedzi.';
         }
     }
@@ -120,7 +120,7 @@ type SaveUserAnswersPayload = {
         id: number,
         done: boolean,
         answers: {
-            id: number
-        }[]
-    }[]
-}
+            id: number;
+        }[];
+    }[];
+};

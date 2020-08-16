@@ -22,7 +22,7 @@ export interface AssignmentDescriptor {
     attempt_count: number,
     attempts: Collection<AttemptDescriptor>,
     targets: AssignmentTargetsDescriptor | undefined,
-    results: AssignmentResultsDescriptor[] | undefined
+    results: AssignmentResultsDescriptor[] | undefined;
 }
 
 export default class AssignmentLoader implements Loader<Assignment> {
@@ -30,21 +30,21 @@ export default class AssignmentLoader implements Loader<Assignment> {
     protected Test: Test | undefined;
     protected AssignmentDescriptors: Collection<AssignmentDescriptor> | undefined;
 
-    constructor(question_count?: number){
+    constructor(question_count?: number) {
         this.AssignmentCount = question_count;
     }
 
     LoadById(entity_id: number): Promise<Assignment>;
     LoadById(entity_ids: number[]): Promise<Assignment[]>;
-    public async LoadById(assignment_id: number | number[]): Promise<Assignment | Assignment[]>{
-        if(typeof assignment_id == 'number'){
-            let response = await XHR.Request('api/assignments/' + assignment_id.toString() + '?depth=3', 'GET');
+    public async LoadById(assignment_id: number | number[]): Promise<Assignment | Assignment[]> {
+        if(typeof assignment_id == 'number') {
+            let response = await XHR.PerformRequest('api/assignments/' + assignment_id.toString() + '?depth=3', 'GET');
             let descriptor = response.Response as AssignmentDescriptor;
             return AssignmentLoader.CreateFromDescriptor(descriptor);
-        }else{
+        } else {
             let assignments: Assignment[] = [];
-            for(let id of assignment_id){
-                let response = await XHR.Request('api/assignments/' + id.toString() + '?depth=3', 'GET');
+            for(let id of assignment_id) {
+                let response = await XHR.PerformRequest('api/assignments/' + id.toString() + '?depth=3', 'GET');
                 let descriptor = response.Response as AssignmentDescriptor;
                 assignments.push(await AssignmentLoader.CreateFromDescriptor(descriptor));
             }
@@ -56,7 +56,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * Ustawia test, dla którego będą ładowane przypisania
      * @param test Test, dla którego będą ładowane przypisania
      */
-    public SetTest(test: Test){
+    public SetTest(test: Test) {
         this.Test = test;
     }
 
@@ -64,21 +64,21 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * Zapisuje deskryptory przypisań do późniejszego wykorzystania
      * @param assignment_descriptors Deskryptory przypisań
      */
-    public SaveDescriptors(assignment_descriptors: Collection<AssignmentDescriptor>){
+    public SaveDescriptors(assignment_descriptors: Collection<AssignmentDescriptor>) {
         this.AssignmentDescriptors = assignment_descriptors;
     }
 
     /**
      * Zwraca wszystkie przypisania dla bieżącego testu
      */
-    public async GetAll(){
+    public async GetAll() {
         if(this.Test === undefined) throw 'AssignmentLoader.Test nie może być undefined.';
 
         let descriptors;
-        if(this.AssignmentDescriptors === undefined){
-            let response = await XHR.Request(ApiEndpoints.GetEntityUrl(this.Test) + '/assignments?depth=4', 'GET');
+        if(this.AssignmentDescriptors === undefined) {
+            let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/assignments?depth=4', 'GET');
             descriptors = response.Response as Collection<AssignmentDescriptor>;
-        }else{
+        } else {
             descriptors = this.AssignmentDescriptors;
         }
 
@@ -93,7 +93,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * Wczytuje przypisanie o podanym identyfikatorze
      * @param assignment_id Identyfikator przypisania
      */
-    public static async LoadById(assignment_id: number){
+    public static async LoadById(assignment_id: number) {
         return new AssignmentLoader().LoadById(assignment_id);
     }
 
@@ -101,7 +101,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
      * Tworzy przypisanie na podstawie deskryptora
      * @param assignment_descriptor Deskryptor przypisania
      */
-    public static async CreateFromDescriptor(assignment_descriptor: AssignmentDescriptor){
+    public static async CreateFromDescriptor(assignment_descriptor: AssignmentDescriptor) {
         let attempt_loader = new AttemptLoader(assignment_descriptor.attempt_count);
         let targets_loader = new AssignmentTargetsLoader();
         let results_loader = new AssignmentResultsLoader();
@@ -137,12 +137,12 @@ export default class AssignmentLoader implements Loader<Assignment> {
     /**
      * Wczytuje wszystkie przypisania dla bieżącego użytkownika
      */
-    public static async GetAssignedToCurrentUser(){
-        let response = await XHR.Request('api/assignments?depth=4&filter=to_me', 'GET');
+    public static async GetAssignedToCurrentUser() {
+        let response = await XHR.PerformRequest('api/assignments?depth=4&filter=to_me', 'GET');
         let descriptors = response.Response as Collection<AssignmentDescriptor>;
         let out_array: Assignment[] = [];
 
-        for(let assignment_id in descriptors){
+        for(let assignment_id in descriptors) {
             out_array.push(await this.CreateFromDescriptor(descriptors[parseInt(assignment_id)]));
         }
 
