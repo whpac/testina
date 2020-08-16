@@ -51,6 +51,7 @@ export function PerformRequest(url: string, method?: string, request_data?: any)
 
 /**
  * Funkcja zajmuje się przetwarzaniem każdej zmiany stanu przez obiekt XMLHttpRequest
+ * @param request Obiekt opisujący wykonywane żądanie
  * @param resolve Funkcja, którą należy wywołać, by spełnić Promise
  * @param reject Funkcja, którą należy wywołać, by odrzucić Promise
  */
