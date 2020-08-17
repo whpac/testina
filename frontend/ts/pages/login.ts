@@ -1,5 +1,5 @@
 import Page from '../components/basic/page';
-import LoginCard from '../components/login/logincard';
+import LoginCard from '../components/login/login_card';
 
 export default class LoginPage extends Page {
 
