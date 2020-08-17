@@ -25,7 +25,8 @@ export default class AuthManager {
      * Sprawdza, czy bieżący użytkownik jest zalogowany
      */
     public static async IsAuthorized() {
-        return (await this.GetCurrentUser(true)) !== undefined;
+        let response = (await XHR.PerformRequest('api/session')).Response as { is_authorized: boolean; };
+        return response.is_authorized;
     }
 
     /**
