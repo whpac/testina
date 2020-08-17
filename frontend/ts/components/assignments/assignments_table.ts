@@ -67,7 +67,7 @@ export default class AssignmentsTable extends Component {
             cells[1].textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
 
             let edit_btn = document.createElement('button');
-            edit_btn.classList.add('compact', 'todo');
+            edit_btn.classList.add('compact');
             edit_btn.appendChild(new Icon('pencil', 'narrow-screen-only').GetElement());
             cells[3].appendChild(edit_btn);
 
@@ -94,9 +94,22 @@ export default class AssignmentsTable extends Component {
             cells[2].textContent = this.MakeTargetsText(targets);
             cells[2].classList.add('wide-screen-only');
 
-            edit_btn.addEventListener('click', () => {
-                this.AssignTestDialog.Populate(assignment.Test, targets, assignment);
+            edit_btn.addEventListener('click', async () => {
+                this.AssignTestDialog.Populate(assignment.Test, await assignment.GetTargets(), assignment);
                 this.AssignTestDialog.Show();
+            });
+
+            assignment.AddEventListener('change', async () => {
+                cells[1].textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
+                if(!assignment.HasDeadlineExceeded()) {
+                    cells[1].classList.add('success');
+                    cells[1].title = 'Termin jeszcze nie upłynął';
+                } else {
+                    cells[1].title = 'Termin upłynął';
+                }
+
+                let targets = await assignment.GetTargets();
+                cells[2].textContent = this.MakeTargetsText(targets);
             });
         }
     }
