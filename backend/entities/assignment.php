@@ -253,13 +253,13 @@ class Assignment extends Entity {
 
         $master_cond = new Condition('OR');
 
-        $user_cond = new Condition();
+        $user_cond = new Condition('AND');
         $user_cond->Add('target_id = '.$user->GetId());
         $user_cond->Add('target_type = '.self::TARGET_TYPE_USER);
         $master_cond->Add($user_cond);
 
         foreach($groups as $group){
-            $group_cond = new Condition();
+            $group_cond = new Condition('AND');
             $group_cond->Add('target_id = '.$group->GetId());
             $group_cond->Add('target_type = '.self::TARGET_TYPE_GROUP);
             $master_cond->Add($group_cond);
