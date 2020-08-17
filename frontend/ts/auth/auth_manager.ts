@@ -1,5 +1,8 @@
 import UserLoader from '../entities/loaders/userloader';
 import * as XHR from '../utils/xhr';
+import CacheManager, { CacheStorages } from '../cache/cache_manager';
+import { GoToPage } from '../1page/pagemanager';
+import Navbar from '../navbar';
 
 export type AuthResult = {
     is_success: boolean;
@@ -22,7 +25,19 @@ export default class AuthManager {
             password: password
         };
 
-        let response = await XHR.PerformRequest('api/session', 'POST', payload);
-        return response.Response as AuthResult;
+        let result = await XHR.PerformRequest('api/session', 'POST', payload);
+        let response = result.Response as AuthResult;
+
+        if(response.is_success) {
+            Navbar.AppNavbar.Draw();
+        }
+
+        return response;
+    }
+
+    public static async LogOut() {
+        await XHR.PerformRequest('api/session', 'DELETE');
+        (await CacheManager.Open(CacheStorages.Entities)).Purge();
+        GoToPage('zaloguj');
     }
 }
