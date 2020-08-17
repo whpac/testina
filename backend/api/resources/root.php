@@ -52,7 +52,7 @@ class Root extends Resource implements Schemas\Root {
         return $collection;
     }
 
-    public function session(){
+    public function session(): Schemas\Session{
         $session = new Session();
         $session->SetContext($this->GetContext());
         return $session;

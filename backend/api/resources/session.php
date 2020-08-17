@@ -1,7 +1,9 @@
 <?php
 namespace Api\Resources;
 
-class Session extends Resource{
+use Api\Schemas;
+
+class Session extends Resource implements Schemas\Session{
 
     /**
      * Tworzy sesję, czyli loguje użytkownika
@@ -15,7 +17,13 @@ class Session extends Resource{
     }
 
     public function GetKeys(): array{
-        return [];
+        return [
+            'is_authorized'
+        ];
+    }
+
+    public function is_authorized(): bool{
+        return \Auth\AuthManager::IsAuthorized();
     }
 }
 
