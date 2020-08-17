@@ -16,6 +16,13 @@ class Session extends Resource implements Schemas\Session{
         return new LoginResponse($result->IsSuccess(), $result->GetReason());
     }
 
+    /**
+     * Niszczy sesję, czyli wylogowuje
+     */
+    public function Delete(){
+        \Auth\AuthManager::LogOut();
+    }
+
     public function GetKeys(): array{
         return [
             'is_authorized'
