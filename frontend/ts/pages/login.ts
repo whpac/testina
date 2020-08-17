@@ -1,5 +1,6 @@
 import Page from '../components/basic/page';
 import LoginCard from '../components/login/login_card';
+import AuthManager from '../auth/auth_manager';
 
 export default class LoginPage extends Page {
 
@@ -14,6 +15,10 @@ export default class LoginPage extends Page {
         this.AppendChild(card);
     }
 
+    public async IsAccessible() {
+        return !(await AuthManager.IsAuthorized());
+    }
+
     async LoadInto(container: HTMLElement) {
         container.appendChild(this.Element);
     }
@@ -23,7 +28,7 @@ export default class LoginPage extends Page {
     }
 
     GetUrlPath() {
-        return 'zaloguj';
+        return null;
     }
 
     async GetTitle() {

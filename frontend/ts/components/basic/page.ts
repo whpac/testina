@@ -1,14 +1,20 @@
 import Component from './component';
+import AuthManager from '../../auth/auth_manager';
 
 /**
  * Klasa bazowa dla wszystkich stron
  */
 export default abstract class Page extends Component {
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element.classList.add('page');
+    }
+
+    /** Sprawdza, czy bieżący użytkownik może wyświetlić tę stronę */
+    public async IsAccessible() {
+        return await AuthManager.IsAuthorized();
     }
 
     /** Ładuje stronę do wskazanego elementu */
@@ -17,7 +23,7 @@ export default abstract class Page extends Component {
     abstract UnloadFrom(container: HTMLElement): void;
 
     /** Zwraca ścieżkę do wyświetlenia na pasku adresu */
-    abstract GetUrlPath(): string;
+    abstract GetUrlPath(): string | null;
     /** Zwraca tytuł strony do wyświetlenia w przeglądarce */
     abstract async GetTitle(): Promise<string>;
 }

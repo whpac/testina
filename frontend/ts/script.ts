@@ -37,6 +37,9 @@ try {
     PageManager.AddPage('testy/wyniki', new ResultsPage(), true);
     PageManager.AddPage('zaloguj', new LoginPage(), false);
 
+    PageManager.RegisterHomePage(new HomePage());
+    PageManager.RegisterLoginPage(new LoginPage());
+
     // Załaduj stronę początkową
     LoadInitialPage();
 } catch(e) {
@@ -53,9 +56,6 @@ async function LoadInitialPage() {
 
     // Jeżeli element body zawiera adres strony, do załadowania - załaduj ją
     if(body_url !== undefined && body_url != '') initial_page = body_url;
-
-    // Użytkownik niezalogowany powinien zobaczyć stronę logowania
-    if(!(await AuthManager.IsAuthorized())) initial_page = 'zaloguj';
 
     // Załaduj stronę
     PageManager.GoToPage(initial_page, undefined, true);
