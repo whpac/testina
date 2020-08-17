@@ -6,12 +6,12 @@ import { HandleLinkClick } from '../../1page/pagemanager';
 import Icon from '../basic/icon';
 import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 
-export default class AssignmentsTable extends Component{
+export default class AssignmentsTable extends Component {
     protected Element: HTMLTableElement;
     protected TableBody: HTMLTableSectionElement;
     protected AssignTestDialog: AssignTestDialog;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('table');
@@ -40,7 +40,7 @@ export default class AssignmentsTable extends Component{
         let thead_row = this.Element.createTHead().insertRow(-1);
         let ths: HTMLTableHeaderCellElement[] = [];
 
-        for(let i = 0; i < 5; i++){
+        for(let i = 0; i < 5; i++) {
             ths[i] = document.createElement('th');
             thead_row.appendChild(ths[i]);
         }
@@ -53,12 +53,12 @@ export default class AssignmentsTable extends Component{
         this.AssignTestDialog = new AssignTestDialog();
     }
 
-    public async Populate(assignments: Assignment[]){
+    public async Populate(assignments: Assignment[]) {
         this.TableBody.textContent = '';
-        for(let assignment of assignments){
+        for(let assignment of assignments) {
             let tr = this.TableBody.insertRow(0);
             let cells: HTMLTableDataCellElement[] = [];
-            for(let i = 0; i < 5; i++){
+            for(let i = 0; i < 5; i++) {
                 cells[i] = tr.insertCell(-1);
                 cells[i].classList.add('center');
             }
@@ -83,10 +83,10 @@ export default class AssignmentsTable extends Component{
             results_btn.addEventListener('click', (e) => HandleLinkClick(e, 'testy/wyniki', assignment));
             cells[4].appendChild(results_btn);
 
-            if(!assignment.HasDeadlineExceeded()){
+            if(!assignment.HasDeadlineExceeded()) {
                 cells[1].classList.add('success');
                 cells[1].title = 'Termin jeszcze nie upłynął';
-            }else{
+            } else {
                 cells[1].title = 'Termin upłynął';
             }
 
@@ -95,29 +95,29 @@ export default class AssignmentsTable extends Component{
             cells[2].classList.add('wide-screen-only');
 
             edit_btn.addEventListener('click', () => {
-                this.AssignTestDialog.Populate(assignment.Test, targets);
+                this.AssignTestDialog.Populate(assignment.Test, targets, assignment);
                 this.AssignTestDialog.Show();
             });
         }
     }
 
-    protected MakeTargetsText(targets: AssignmentTargets){
+    protected MakeTargetsText(targets: AssignmentTargets) {
         let groups_count = targets.Groups.length;
         let users_count = targets.Users.length;
 
-        if(users_count == 1 && groups_count == 0){
+        if(users_count == 1 && groups_count == 0) {
             return targets.Users[0].GetFullName();
         }
-        if(users_count == 0 && groups_count == 1){
+        if(users_count == 0 && groups_count == 1) {
             return targets.Groups[0].Name;
         }
 
         let targets_text = '';
-        if(groups_count > 0){
+        if(groups_count > 0) {
             targets_text += ' ' + groups_count.toString() + ' grup' + n(groups_count, 'ie', 'om');
         }
         if(groups_count > 0 && users_count > 0) targets_text += ' i';
-        if(users_count > 0){
+        if(users_count > 0) {
             targets_text += ' ' + users_count.toString() + ' osob' + n(users_count, 'ie', 'om');
         }
         return targets_text != '' ? targets_text.substr(1) : 'nikomu';
