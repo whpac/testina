@@ -36,6 +36,8 @@ AuthManager::RegisterUserFactory(new Entities\UserFactory());
 AuthHandler::HandleAuthIfNecessary();
 AuthManager::RestoreCurrentUser();
 
+Auth\AuthManager::Initialize('users', 'id', 'login', 'password_hash', 'sha256');
+
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
 try{

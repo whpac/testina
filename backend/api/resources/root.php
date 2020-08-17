@@ -10,6 +10,7 @@ class Root extends Resource implements Schemas\Root {
         return [
             'assignments',
             'groups',
+            'session',
             'tests',
             'users'
         ];
@@ -49,6 +50,12 @@ class Root extends Resource implements Schemas\Root {
         $collection = new Collection($out_groups);
         $collection->SetContext($this->GetContext());
         return $collection;
+    }
+
+    public function session(){
+        $session = new Session();
+        $session->SetContext($this->GetContext());
+        return $session;
     }
 
     public function tests(): Schemas\Collection{
