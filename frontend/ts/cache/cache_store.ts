@@ -52,8 +52,12 @@ export default class CacheStore {
      */
     public async Purge() {
         let keys = await this.Cache.keys();
+        let awaiters = [];
         for(let key of keys) {
-            this.Cache.delete(key);
+            awaiters.push(this.Cache.delete(key));
+        }
+        for(let awaiter of awaiters) {
+            await awaiter;
         }
     }
 }
