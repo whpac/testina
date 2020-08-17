@@ -1,5 +1,5 @@
 <?php
-namespace Auth\Providers;
+namespace Auth;
 
 use \UEngine\Modules\Core\RichException;
 

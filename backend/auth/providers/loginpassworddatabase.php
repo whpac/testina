@@ -3,6 +3,7 @@ namespace Auth\Providers;
 
 use UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Auth\AuthResult;
 
 class LoginPasswordDatabase extends LoginPassword {
     protected $users_table = '';

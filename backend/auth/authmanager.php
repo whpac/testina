@@ -3,7 +3,6 @@ namespace Auth;
 
 use UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
-use Auth\Providers\AuthResult;
 
 class AuthManager {
     private static $users_table;
