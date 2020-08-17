@@ -34,9 +34,9 @@ export default class Assignment extends Entity implements PageParams {
     /** Test, który przypisano */
     public readonly Test: Test;
     /** Limit podejść */
-    public readonly AttemptLimit: number;
+    protected _AttemptLimit: number;
     /** Termin na rozwiązanie */
-    public readonly Deadline: Date;
+    protected _Deadline: Date;
     /** Data przypisania */
     public readonly AssignmentDate: Date;
     /** Ilość już rozpoczętych podejść */
@@ -45,6 +45,15 @@ export default class Assignment extends Entity implements PageParams {
     protected _Score: number | null;
     /** Użytkownik, który przypisał test */
     public readonly AssignedBy: User;
+
+    /** Limit podejść */
+    public get AttemptLimit() {
+        return this._AttemptLimit;
+    }
+    /** Termin na rozwiązanie */
+    public get Deadline() {
+        return this._Deadline;
+    }
 
     /** Średni wynik procentowy */
     public get Score() {
@@ -83,8 +92,8 @@ export default class Assignment extends Entity implements PageParams {
 
         this.Id = id;
         this.Test = test;
-        this.AttemptLimit = attempt_limit;
-        this.Deadline = deadline;
+        this._AttemptLimit = attempt_limit;
+        this._Deadline = deadline;
         this.AssignmentDate = assignment_date;
         this.AttemptCount = attempt_loader.AttemptCount;
         this._Score = score;
@@ -144,7 +153,7 @@ export default class Assignment extends Entity implements PageParams {
 
     /** Czy termin na wykonanie minął */
     HasDeadlineExceeded() {
-        return this.Deadline < new Date();
+        return this._Deadline < new Date();
     }
 
     /** Czy przypisanie jest aktywne (są wolne podejścia i nie upłynął termin) */
@@ -204,6 +213,10 @@ export default class Assignment extends Entity implements PageParams {
         let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString(), 'PUT', payload);
 
         if(result.Status != 204) throw result;
+
+        this._AttemptLimit = attempt_limit;
+        this._Deadline = deadline;
+        this.FireEvent('change');
     }
 
     async AddTargets(targets: AssignmentTargetEntity[]) {
@@ -227,6 +240,10 @@ export default class Assignment extends Entity implements PageParams {
         let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString() + '/targets', 'POST', payload);
 
         if(result.Status != 201) throw result;
+
+        this._Targets = undefined;
+        this.TargetsLoader.SaveDescriptor(undefined);
+        this.FireEvent('change');
     }
 
     async RemoveTargets(targets: AssignmentTargetEntity[]) {
@@ -250,5 +267,9 @@ export default class Assignment extends Entity implements PageParams {
         let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString() + '/targets', 'DELETE', payload);
 
         if(result.Status != 204) throw result;
+
+        this._Targets = undefined;
+        this.TargetsLoader.SaveDescriptor(undefined);
+        this.FireEvent('change');
     }
 }
