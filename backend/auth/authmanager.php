@@ -3,6 +3,10 @@ namespace Auth;
 
 use UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Session\SessionManager;
+
+define('SESSION_USER_ID', '__user_id');
+define('ANONYMOUS_USER_ID', 0);
 
 class AuthManager {
     private static $users_table;
@@ -10,6 +14,9 @@ class AuthManager {
     private static $login_column;
     private static $password_column;
     private static $hash_algorithm;
+
+    private static $current_user;
+    private static $user_factory = null;
 
     public static function Initialize($users_table, $id_column, $login_column, $password_column, $hash_algorithm){
         self::$users_table = $users_table;
@@ -46,7 +53,38 @@ class AuthManager {
         if($row[self::$login_column] != $login || $row[self::$password_column] != $password_hash)
             return new AuthResult(false, null, null, AuthResult::REASON_POSSIBLE_SQL_INJECTION);
 
+        self::ChangeUser($row[self::$id_column]);
+
         return new AuthResult(true, $row[self::$id_column], ['login' => $row[self::$login_column]]);
+    }
+
+    public static function IsAuthorized(){
+        $uid = SessionManager::Get(SESSION_USER_ID);
+        return (!is_null($uid) && $uid != ANONYMOUS_USER_ID);
+    }
+
+    private static function ChangeUser($user_id){
+        SessionManager::Set(SESSION_USER_ID, $user_id);
+        self::RestoreCurrentUser();
+    }
+
+    public static function LogOff(){
+        self::ChangeUser(ANONYMOUS_USER_ID);
+    }
+
+    public static function GetCurrentUser(){
+        return self::$current_user;
+    }
+
+    public static function RestoreCurrentUser(){
+        if(is_null(self::$user_factory)) throw new RichException('Nie zarejestrowano żadnej fabryki użytkowników.');
+
+        $user_id = SessionManager::Get(SESSION_USER_ID, ANONYMOUS_USER_ID);
+        self::$current_user = self::$user_factory->Create($user_id);
+    }
+
+    public static function RegisterUserFactory(AccessControl\UserFactory $factory){
+        self::$user_factory = $factory;
     }
 }
 ?>
