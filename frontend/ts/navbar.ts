@@ -26,6 +26,7 @@ export default class Navbar {
      */
     public async Draw() {
         if(!(await AuthManager.IsAuthorized())) return;
+        this.NavbarRoot.style.display = '';
 
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
@@ -61,6 +62,14 @@ export default class Navbar {
         }).bind(this));
 
         this.AttachEventHandlers();
+    }
+
+    /**
+     * Niszczy panel nawigacji
+     */
+    public Destroy() {
+        this.NavbarRoot.textContent = '';
+        this.NavbarRoot.style.display = 'none';
     }
 
     /**
