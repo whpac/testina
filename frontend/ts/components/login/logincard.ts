@@ -1,4 +1,5 @@
 import Card from '../basic/card';
+import AuthManager from '../../auth/auth_manager';
 
 export default class LoginCard extends Card {
 
@@ -34,6 +35,9 @@ export default class LoginCard extends Card {
         let submit_button = document.createElement('button');
         this.AppendChild(submit_button);
         submit_button.textContent = 'Zaloguj';
+        submit_button.addEventListener('click', (() => {
+            AuthManager.TryToLogIn(login_input.value, password_input.value);
+        }).bind(this));
 
         let login_message = document.createElement('span');
         login_message.classList.add('login-message');
