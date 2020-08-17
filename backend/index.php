@@ -1,55 +1,57 @@
 <?php
-// Measure page render time
+// Policz czas ładowania strony
 $time_start = microtime(true);
 
-use \UEngine\Modules\Core\Properties;
+// Określa początkowy tytuł strony
+define('DEFAULT_TITLE', 'Lorem Ipsum');
 
-use Auth\AuthHandler;
-use Auth\AccessControl\AuthManager;
+// Odczytuje ścieżkę z zapytania i przekazuje ją z powrotem
+$get_path = '';
+if(isset($_GET['_path'])) $get_path = $_GET['_path'];
+?>
 
-use Database\DatabaseManager;
-use Database\MySQL;
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <base href="/p/" />
+        <title><?php echo(DEFAULT_TITLE); ?></title>
 
-use Session\SessionManager;
+        <!-- Arkusze stylów CSS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400&display=fallback" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400i,500,700&display=fallback" />
+        <link rel="stylesheet" href="css/font-awesome.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
 
-// Uses UE.dev not to duplicate files
-require('../../ue/uengine/uengine.php');
-require('autoincluder.php');
-require('layout/standardrenderer.php');
+        <!-- Skrypty JavaScript -->
+        <script src="js/script" type="module"></script>
 
-// Passing some tables' names
-Properties::Set('core.tables.exceptions', 'exceptions');
+        <!-- Ikona strony -->
+        <link rel="shortcut icon" href="favicon.ico" />
+    </head>
+    <body data-url="<?php echo($get_path); ?>">
+        <!-- Panel nawigacji -->
+        <nav class="main-nav" id="main-nav"></nav>
+        <div class="nav-backdrop"></div>
 
-// Inicjalizacja dostawcy bazy danych oraz sesji
-$db = new MySQL('localhost', 'user', 'passwd', 'p');
-$db->Connect();
-DatabaseManager::SetProvider($db);
+        <!-- Nagłówek dla urządzeń mobilnych -->
+        <aside class="mobile-header">
+            <a class="nav-toggle nav-icon"><i class="icon fa fa-fw fa-bars"></i></a>
+            <h1 id="mobile-header-title"><?php echo(DEFAULT_TITLE); ?></h1>
+        </aside>
 
-$kp = new Session\Key\CookieKeyProvider('SESSION');
-SessionManager::SetKeyProvider($kp);
-SessionManager::Start(36000);
+        <!-- Główna zawartość strony -->
+        <main id="content-container"></main>
 
-// Initializing authentication handler
-AuthHandler::RegisterHandler('login', new Handling\LoginHandler());
-AuthHandler::RegisterLogoutHandler('wyloguj');
+        <!-- Wskaźnik ładowania -->
+        <aside id="loading-wrapper" class="loading-wrapper">Loading</aside>
+    </body>
+</html>
 
-// Set UserFactory
-AuthManager::RegisterUserFactory(new Entities\UserFactory());
-
-// Handle potential login attempt
-AuthHandler::HandleAuthIfNecessary();
-AuthManager::RestoreCurrentUser();
-
-// The handled site is being included and buffered here
-Layout\Prepend();
-
-if(!AuthManager::IsAuthorized()){
-    include('pages/login.php');
-}
-
-// End masuring time
+<?php
+// Skończ mierzenie czasu
 $time_end = microtime(true);
 $render_time = (($time_end-$time_start)*1000).'ms';
-
-Layout\Append();
+echo('<!-- Czas generowania szablonu: '.$render_time.' -->');
 ?>
