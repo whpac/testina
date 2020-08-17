@@ -8,13 +8,14 @@ import Toast from '../../basic/toast';
 
 export default class AssignTestDialog extends Dialog {
     protected Test: Test | undefined;
+    protected ExistingAssignment: Assignment | undefined;
     protected TargetsWrapper: TargetsWrapper;
     protected SettingsWrapper: SettingsWrapper;
     protected PrevButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected SaveButton: HTMLButtonElement;
 
-    constructor(){
+    constructor() {
         super();
 
         this.DialogElement.classList.add('rich');
@@ -50,8 +51,15 @@ export default class AssignTestDialog extends Dialog {
         this.AddButton(btn_cancel);
     }
 
-    async Populate(test: Test, preselected_targets?: AssignmentTargets){
+    /**
+     * Wypełnia okienko dialogowe
+     * @param test Test, dla którego jest przypisanie
+     * @param preselected_targets Cele do zaznaczenia
+     * @param existing_assignment Istniejące przypisanie do edycji
+     */
+    async Populate(test: Test, preselected_targets?: AssignmentTargets, existing_assignment?: Assignment) {
         this.Test = test;
+        this.ExistingAssignment = existing_assignment;
         this.TargetsWrapper.Populate(preselected_targets);
         this.SettingsWrapper.Clear();
 
@@ -62,10 +70,16 @@ export default class AssignTestDialog extends Dialog {
         this.TargetsWrapper.GetElement().style.display = '';
         this.SettingsWrapper.GetElement().style.display = 'none';
 
-        this.SetHeader('Przypisz: ' + test.Name);
+        if(existing_assignment === undefined) {
+            this.SetHeader('Przypisz: ' + test.Name);
+        } else {
+            this.SetHeader('Edytuj przypisanie: ' + test.Name);
+            this.SettingsWrapper.SetAttemptLimit(existing_assignment.AttemptLimit);
+            this.SettingsWrapper.SetDeadline(existing_assignment.Deadline);
+        }
     }
 
-    protected OnNextButtonClick(){
+    protected OnNextButtonClick() {
         if(!this.TargetsWrapper.IsValid) return;
 
         this.PrevButton.style.display = '';
@@ -76,7 +90,7 @@ export default class AssignTestDialog extends Dialog {
         this.SettingsWrapper.GetElement().style.display = '';
     }
 
-    protected OnPrevButtonClick(){
+    protected OnPrevButtonClick() {
         this.PrevButton.style.display = 'none';
         this.NextButton.style.display = '';
         this.SaveButton.style.display = 'none';
@@ -85,8 +99,8 @@ export default class AssignTestDialog extends Dialog {
         this.SettingsWrapper.GetElement().style.display = 'none';
     }
 
-    protected CancelChanges(){
-        if(NavigationPrevention.IsPreventedBy('assign-test-dialog')){
+    protected CancelChanges() {
+        if(NavigationPrevention.IsPreventedBy('assign-test-dialog')) {
             let result = window.confirm('Czy na pewno chcesz przerwać przypisywanie testu?\nSpowoduje to odrzucenie wszystkich zmian dokonanych w tym okienku.');
             if(!result) return;
         }
@@ -94,7 +108,7 @@ export default class AssignTestDialog extends Dialog {
         this.Hide();
     }
 
-    protected async OnSaveButtonClick(){
+    protected async OnSaveButtonClick() {
         if(!this.SettingsWrapper.IsValid) return;
         if(this.Test === undefined) return;
 
@@ -106,21 +120,27 @@ export default class AssignTestDialog extends Dialog {
         let deadline = this.SettingsWrapper.GetDeadline();
 
         let assigning_toast = new Toast('Przypisywanie testu „' + this.Test.Name + '”...');
-        try{
+        try {
             assigning_toast.Show();
-            let assignment = await Assignment.Create(this.Test, attempt_limit, deadline);
+            let assignment;
+            if(this.ExistingAssignment === undefined) {
+                assignment = await Assignment.Create(this.Test, attempt_limit, deadline);
+            } else {
+                assignment = this.ExistingAssignment;
+                await assignment.Update(attempt_limit, deadline);
+            }
             await assignment.AddTargets(selected_targets);
             await assignment.RemoveTargets(deselected_targets);
             this.Hide();
             new Toast('Test „' + this.Test.Name + '” został przypisany.').Show(0);
-        }catch(e){
+        } catch(e) {
             new Toast('Nie udało się przypisać testu').Show(0);
-        }finally{
+        } finally {
             assigning_toast.Hide();
         }
     }
 
-    protected OnValidationChanged(){
+    protected OnValidationChanged() {
         this.NextButton.disabled = !this.TargetsWrapper.IsValid;
         this.SaveButton.disabled = !this.SettingsWrapper.IsValid;
     }
