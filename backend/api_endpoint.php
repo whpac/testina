@@ -4,8 +4,7 @@ use Api\Exceptions;
 use Api\Formats;
 use Api\Resources;
 
-use Auth\AuthHandler;
-use Auth\AccessControl\AuthManager;
+use Auth\AuthManager;
 
 use Database\DatabaseManager;
 use Database\MySQL;
@@ -29,14 +28,10 @@ $kp = new Session\Key\CookieKeyProvider('SESSION');
 SessionManager::SetKeyProvider($kp);
 SessionManager::Start(36000);
 
-// Set UserFactory
+// Inicjalizacja menedżera kont
+AuthManager::Initialize('users', 'id', 'login', 'password_hash', 'sha256');
 AuthManager::RegisterUserFactory(new Entities\UserFactory());
-
-// Handle potential login attempt
-AuthHandler::HandleAuthIfNecessary();
 AuthManager::RestoreCurrentUser();
-
-Auth\AuthManager::Initialize('users', 'id', 'login', 'password_hash', 'sha256');
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -50,7 +45,7 @@ try{
     $filters = ReadFilters();
 
     // Przygotuj kontekst zabezpieczeń
-    $current_user = Auth\AccessControl\AuthManager::GetCurrentUser();
+    $current_user = AuthManager::GetCurrentUser();
     $context = new Context($current_user);
 
     // Przygotuj formater wyjścia na podstawie nagłówków HTTP
