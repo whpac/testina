@@ -12,8 +12,6 @@ import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
 import LoginPage from './pages/login';
 
-let AppNavbar: Navbar;
-
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
     let root = document.getElementById('content-container');
@@ -21,8 +19,8 @@ try {
     let loading_wrapper = new LoadingIndicator('loading-wrapper');
 
     // Inicjalizacja paska nawigacji
-    AppNavbar = new Navbar('main-nav');
-    AppNavbar.Draw();
+    Navbar.AppNavbar = new Navbar('main-nav');
+    Navbar.AppNavbar.Draw();
 
     // Inicjalizacja menedżera stron
     PageManager.Initialize(root, loading_wrapper);
@@ -73,9 +71,24 @@ function ReadPageFromURL() {
         let url_path = window.location.href;
         if(url_path.startsWith(base_path)) {
             // Zwraca ścieżkę, ale bez części danej przez <base>
-            return url_path.substr(base_path.length ?? 0);
+            // Ucina część po ? i #
+            return StripQueryAndFragment(url_path.substr(base_path.length ?? 0));
         } else {
             return window.location.pathname.substr(1);
         }
     }
+}
+
+/**
+ * Ucina z adresu URL części: zapytanie i fragment
+ * @param url Adres URL
+ */
+function StripQueryAndFragment(url: string) {
+    let question_pos = url.indexOf('?');
+    if(question_pos != -1) return url.substr(0, question_pos);
+
+    let hash_pos = url.indexOf('#');
+    if(hash_pos != -1) return url.substr(0, hash_pos);
+
+    return url;
 }
