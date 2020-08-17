@@ -7,6 +7,10 @@ use Api\Schemas;
 class Assignment extends Resource implements Schemas\Assignment{
     protected $Assignment;
 
+    public function Update($source){
+        $this->Assignment->Update($source->attempt_limit, new \DateTime($source->time_limit));
+    }
+
     public function __construct($assignment){
         parent::__construct($assignment);
         if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');

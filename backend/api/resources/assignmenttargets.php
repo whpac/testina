@@ -23,6 +23,20 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
         }
     }
 
+    public function Delete(/* object */ $source){
+        $current_user = $this->GetContext()->GetUser();
+        if($this->Assignment->GetAssigningUser()->GetId() != $current_user->GetId())
+            throw new Exceptions\MethodNotAllowed('DELETE');
+
+        if(is_array($source->targets)){
+            foreach($source->targets as $target){
+                $target_type = $target->type;
+                $target_id = $target->id;
+                $this->Assignment->RemoveTarget($target_type, $target_id);
+            }
+        }
+    }
+
     public function __construct($assignment){
         $this->Users = [];
         $this->Groups = [];

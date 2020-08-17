@@ -200,6 +200,30 @@ class Assignment extends Entity {
         if(!$result) throw new \Exception('Nie udało się przypisać testu użytkownikowi lub grupie.');
     }
 
+    public /* void */ function RemoveTarget($target_type, $target_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENT_TARGETS)
+                ->Delete()
+                ->Where('assignment_id', '=', $this->GetId())
+                ->AndWhere('target_type', '=', $target_type)
+                ->AndWhere('target_id', '=', $target_id)
+                ->Run();
+        
+        if(!$result) throw new \Exception('Nie udało się usunąć testu użytkownikowi lub grupie.');
+    }
+
+    public function Update(int $attempt_limit, \DateTime $deadline){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENTS)
+                ->Update()
+                ->Set('attempt_limit', $attempt_limit)
+                ->Set('time_limit', $deadline->format('Y-m-d H:i:s'))
+                ->Where('id', '=', $this->id)
+                ->Run();
+        
+        if(!$result) throw new \Exception('Nie udało się zaktualizować testu.');
+    }
+
     public static /* Assignment */ function Create(User $assigning_user, Test $test, int $attempt_limit, \DateTime $time_limit){
         $db = DatabaseManager::GetProvider();
 

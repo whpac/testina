@@ -193,6 +193,19 @@ export default class Assignment extends Entity implements PageParams {
         return AssignmentLoader.LoadById(parseInt(result.ContentLocation));
     }
 
+    async Update(attempt_limit: number, deadline: Date) {
+        if(attempt_limit == Number.POSITIVE_INFINITY) attempt_limit = 0;
+
+        let payload = {
+            attempt_limit: attempt_limit,
+            time_limit: DateUtils.ToLongFormat(deadline)
+        };
+
+        let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString(), 'PUT', payload);
+
+        if(result.Status != 204) throw result;
+    }
+
     async AddTargets(targets: AssignmentTargetEntity[]) {
         let payload_targets: { type: number, id: number; }[] = [];
 
@@ -211,12 +224,31 @@ export default class Assignment extends Entity implements PageParams {
             targets: payload_targets
         };
 
-        let result = await XHR.PerformRequest('api/assignments/' + this.Id + '/targets', 'POST', payload);
+        let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString() + '/targets', 'POST', payload);
 
         if(result.Status != 201) throw result;
     }
 
     async RemoveTargets(targets: AssignmentTargetEntity[]) {
+        let payload_targets: { type: number, id: number; }[] = [];
 
+        for(let target of targets) {
+            let type = 0;
+            if(target instanceof User) type = 0;
+            if(target instanceof Group) type = 1;
+
+            payload_targets.push({
+                type: type,
+                id: target.Id
+            });
+        }
+
+        let payload = {
+            targets: payload_targets
+        };
+
+        let result = await XHR.PerformRequest('api/assignments/' + this.Id.toString() + '/targets', 'DELETE', payload);
+
+        if(result.Status != 204) throw result;
     }
 }
