@@ -11,6 +11,7 @@ import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
 import AuthManager from './auth/auth_manager';
+import LoginPage from './pages/login';
 
 let AppNavbar: Navbar;
 
@@ -34,6 +35,7 @@ try {
     PageManager.AddPage('testy/rozwiąż', new SolveTestPage(), true);
     PageManager.AddPage('testy/przypisane', new AssignmentsPage(), true);
     PageManager.AddPage('testy/wyniki', new ResultsPage(), true);
+    PageManager.AddPage('zaloguj', new LoginPage(), false);
 
     // Załaduj stronę początkową
     LoadInitialPage();
@@ -53,7 +55,7 @@ async function LoadInitialPage() {
     if(body_url !== undefined && body_url != '') initial_page = body_url;
 
     // Użytkownik niezalogowany powinien zobaczyć stronę logowania
-    if(!(await AuthManager.IsAuthorized())) initial_page = 'login';
+    if(!(await AuthManager.IsAuthorized())) initial_page = 'zaloguj';
 
     // Załaduj stronę
     PageManager.GoToPage(initial_page, undefined, true);
