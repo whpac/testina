@@ -25,7 +25,6 @@ export default class Navbar {
      * Jeżeli użytkownik nie jest zalogowany, panel pozostaje pusty
      */
     public async Draw() {
-        if(!(await AuthManager.IsAuthorized())) return;
         this.NavbarRoot.style.display = '';
 
         let ul = document.createElement('ul');
