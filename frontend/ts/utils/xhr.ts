@@ -19,22 +19,26 @@ type RejectFunction = (reason?: any) => void;
  */
 export function PerformRequest(url: string, method?: string, request_data?: any) {
     return new Promise<XHRResult>(async (resolve, reject) => {
-        let request = new Request(url);
-        let cache = await CacheManager.Open(CacheStorages.Entities);
-        let resource = await cache.GetResource(request);
-        if(resource !== undefined) {
-            try {
-                return resolve({
-                    Status: resource.status,
-                    StatusText: resource.statusText,
-                    Response: JSON.parse(await resource.text()),
-                    ContentLocation: resource.headers.get('Content-Location') ?? ''
-                });
-            } catch(e) { }
+        method = (method ?? 'GET').toUpperCase();
+        let request = new Request(url, { method: method });
+
+        if(method == 'GET') {
+            let cache = await CacheManager.Open(CacheStorages.Entities);
+            let resource = await cache.GetResource(request);
+            if(resource !== undefined) {
+                try {
+                    return resolve({
+                        Status: resource.status,
+                        StatusText: resource.statusText,
+                        Response: JSON.parse(await resource.text()),
+                        ContentLocation: resource.headers.get('Content-Location') ?? ''
+                    });
+                } catch(e) { }
+            }
         }
 
         let xhr = new XMLHttpRequest();
-        xhr.open(method ?? 'GET', url, true);
+        xhr.open(method, url, true);
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.onreadystatechange = OnReadyStateChange(request, resolve, reject);
 
@@ -76,15 +80,17 @@ function OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: 
                 }
             }
 
-            let cache = await CacheManager.Open(CacheStorages.Entities);
-            cache.SaveResponse(request, new Response(xhr.responseText, {
-                status: xhr.status,
-                statusText: xhr.statusText,
-                headers: {
-                    'Content-Location': content_location,
-                    'X-Expires': xhr.getResponseHeader('X-Expires') ?? ''
-                }
-            }));
+            if(request.method.toUpperCase() == 'GET') {
+                let cache = await CacheManager.Open(CacheStorages.Entities);
+                cache.SaveResponse(request, new Response(xhr.responseText, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: {
+                        'Content-Location': content_location,
+                        'X-Expires': xhr.getResponseHeader('X-Expires') ?? ''
+                    }
+                }));
+            }
 
             return resolve({
                 Status: xhr.status,
