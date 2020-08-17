@@ -1,6 +1,11 @@
 import UserLoader from '../entities/loaders/userloader';
 import * as XHR from '../utils/xhr';
 
+export type AuthResult = {
+    is_success: boolean;
+    reason: number | null;
+};
+
 export default class AuthManager {
 
     public static async IsAuthorized() {
@@ -18,6 +23,6 @@ export default class AuthManager {
         };
 
         let response = await XHR.PerformRequest('api/session', 'POST', payload);
-        console.log(response);
+        return response.Response as AuthResult;
     }
 }
