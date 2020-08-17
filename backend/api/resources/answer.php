@@ -13,7 +13,7 @@ class Answer extends Resource implements Schemas\Answer{
         if(!$res) throw new \Exception('Nie udało się zaktualizować odpowiedzi');
     }
 
-    public function Delete(){
+    public function Delete($source){
         $answer = $this->GetConstructorArgument();
         $res = $answer->Remove();
 

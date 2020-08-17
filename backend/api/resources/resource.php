@@ -82,7 +82,7 @@ abstract class Resource {
     /**
      * Obsługuje żądanie usunięcia zasobu
      */
-    public function Delete(){
+    public function Delete(/* object */ $source){
         throw new Exceptions\MethodNotAllowed('DELETE');
     }
 }

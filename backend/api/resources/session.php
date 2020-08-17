@@ -19,7 +19,7 @@ class Session extends Resource implements Schemas\Session{
     /**
      * Niszczy sesję, czyli wylogowuje
      */
-    public function Delete(){
+    public function Delete($source){
         \Auth\AuthManager::LogOut();
     }
 

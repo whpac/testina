@@ -86,7 +86,7 @@ try{
         break;
         case 'DELETE':
             // Usuń zasób
-            $current_resource->Delete();
+            $current_resource->Delete(ParseRequestBody());
             // Odpowiedz kodem 204 No Content
             SetResponseCode(204);
         break;

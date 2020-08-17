@@ -13,7 +13,7 @@ class Question extends Resource implements Schemas\Question{
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
 
-    public function Delete(){
+    public function Delete($source){
         $question = $this->GetConstructorArgument();
         $res = $question->Remove();
 

@@ -13,7 +13,7 @@ class Test extends Resource implements Schemas\Test{
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
 
-    public function Delete(){
+    public function Delete($source){
         $test = $this->GetConstructorArgument();
         $test->Remove();
     }
