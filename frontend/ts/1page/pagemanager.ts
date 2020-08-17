@@ -4,6 +4,7 @@ import PageParams, { SimpleObjectRepresentation } from './pageparams';
 import NavigationPrevention from './navigationprevention';
 import TestLoader from '../entities/loaders/testloader';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
+import CacheManager, { CacheStorages } from '../cache/cache_manager';
 
 /** Lista zarejestrowanych stron */
 let Pages: PageList = {};
@@ -47,6 +48,9 @@ export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicat
     MobileHeader = document.getElementById('mobile-header-title');
 
     window.addEventListener('beforeunload', (event) => {
+        // Wyczyść pamięć podręczną
+        (async () => (await CacheManager.Open(CacheStorages.Entities)).Purge())();
+
         if(NavigationPrevention.IsPrevented()) {
             // Anuluj zdarzenie standardową metodą
             event.preventDefault();
