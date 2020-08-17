@@ -65,6 +65,8 @@ export default class LoginCard extends Card {
             }
 
             login_message.textContent = '';
+            login_input.value = '';
+            password_input.value = '';
             LoadInitialPage();
         }).bind(this));
     }
