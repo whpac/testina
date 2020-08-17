@@ -6,6 +6,7 @@ import AuthManager from './auth/auth_manager';
  * Klasa reprezentująca panel nawigacji
  */
 export default class Navbar {
+    public static AppNavbar: Navbar;
     protected NavbarRoot: HTMLElement;
 
     /**
@@ -41,7 +42,7 @@ export default class Navbar {
         ul.appendChild(this.CreateNavLink('Ankiety', 'ankiety', 'fa-bar-chart'));
         ul.appendChild(this.CreateNavSeparator());
         ul.appendChild(this.CreateNavLink('Konto', 'konto', 'fa-user-o'));
-        ul.appendChild(this.CreateNavLink('Wyloguj', '?wyloguj', 'fa-sign-out', ['vulnerable']));
+        ul.appendChild(this.CreateNavLink('Wyloguj', AuthManager.LogOut, 'fa-sign-out', ['vulnerable']));
         ul.appendChild(this.CreateNavSeparator());
         ul.appendChild(this.CreateNavLink('Pomoc', 'pomoc', 'fa-question-circle'));
 
@@ -76,22 +77,32 @@ export default class Navbar {
     /**
      * Tworzy link, gotowy do umieszczenia w panelu nawigacji
      * @param caption Tekst linku
-     * @param href Adres linku
+     * @param href Adres linku lub procedura obsługi zdarzenia kliknięcia
      * @param icon Ikona obok linku
      * @param css Klasy CSS linku
      */
-    protected CreateNavLink(caption: string, href: string, icon?: string, css?: string[]) {
+    protected CreateNavLink(caption: string, href: string | (() => void), icon?: string, css?: string[]) {
         let li = document.createElement('li');
         li.classList.add('link');
         if(css !== undefined) li.classList.add(...css);
 
         let a = document.createElement('a');
         li.appendChild(a);
-        a.href = href;
-        a.addEventListener('click', ((e: MouseEvent) => {
-            HandleLinkClick(e, href);
-            this.Hide();
-        }).bind(this));
+        if(typeof href == 'string') {
+            a.href = href;
+            a.addEventListener('click', ((e: MouseEvent) => {
+                HandleLinkClick(e, href);
+                this.Hide();
+            }).bind(this));
+        } else {
+            a.href = '#';
+            a.addEventListener('click', (e) => {
+                href();
+
+                e.preventDefault();
+                return false;
+            });
+        }
 
         let i = document.createElement('i');
         a.appendChild(i);
