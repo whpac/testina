@@ -68,7 +68,7 @@ class AuthManager {
         self::RestoreCurrentUser();
     }
 
-    public static function LogOff(){
+    public static function LogOut(){
         self::ChangeUser(ANONYMOUS_USER_ID);
     }
 
