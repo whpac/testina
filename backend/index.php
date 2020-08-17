@@ -4,10 +4,6 @@ $time_start = microtime(true);
 
 // Określa początkowy tytuł strony
 define('DEFAULT_TITLE', 'Lorem Ipsum');
-
-// Odczytuje ścieżkę z zapytania i przekazuje ją z powrotem
-$get_path = '';
-if(isset($_GET['_path'])) $get_path = $_GET['_path'];
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +26,7 @@ if(isset($_GET['_path'])) $get_path = $_GET['_path'];
         <!-- Ikona strony -->
         <link rel="shortcut icon" href="favicon.ico" />
     </head>
-    <body data-url="<?php echo($get_path); ?>">
+    <body>
         <!-- Panel nawigacji -->
         <nav class="main-nav" id="main-nav"></nav>
         <div class="nav-backdrop"></div>
