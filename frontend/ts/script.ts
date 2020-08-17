@@ -48,14 +48,15 @@ try {
     PageManager.RegisterLoginPage(new LoginPage());
 
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
-    AuthManager.AddEventListener('login', () => {
+    AuthManager.AddEventListener('login', async () => {
+        (await CacheManager.Open(CacheStorages.Entities)).Purge();
         Navbar.AppNavbar.Draw();
         root?.classList.remove('login');
     });
     AuthManager.AddEventListener('logout', async () => {
+        (await CacheManager.Open(CacheStorages.Entities)).Purge();
         Navbar.AppNavbar.Destroy();
         root?.classList.add('login');
-        (await CacheManager.Open(CacheStorages.Entities)).Purge();
         PageManager.GoToPage('zaloguj');
     });
 
