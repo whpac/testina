@@ -15,7 +15,7 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
     public IsValid: boolean = true;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('section');
@@ -96,34 +96,47 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         this.AppendChild(this.WrongAttemptLimitError);
     }
 
-    Clear(){
+    Clear() {
         this.DeadlineInput.SetValue(new Date());
         this.AttemptsLimitedRadio.checked = true;
         this.AttemptsLimitedCountInput.value = '1';
         this.Validate();
     }
 
-    GetAttemptLimit(){
+    SetAttemptLimit(limit: number) {
+        this.AttemptsLimitedCountInput.value = (limit > 0) ? limit.toString() : '1';
+        this.AttemptsLimitedCountInput.disabled = (limit == 0);
+        this.AttemptsLimitedRadio.checked = (limit > 0);
+        this.AttemptsUnlimitedRadio.checked = (limit == 0);
+        this.Validate();
+    }
+
+    GetAttemptLimit() {
         let limit = Number.POSITIVE_INFINITY;
         if(this.AttemptsLimitedRadio.checked) limit = parseInt(this.AttemptsLimitedCountInput.value);
         return limit;
     }
 
-    GetDeadline(){
+    SetDeadline(deadline: Date) {
+        this.DeadlineInput.SetValue(deadline);
+        this.Validate();
+    }
+
+    GetDeadline() {
         return new Date(this.DeadlineInput.GetValue());
     }
 
-    protected UpdateAttemptCountEnableState(){
+    protected UpdateAttemptCountEnableState() {
         this.AttemptsLimitedCountInput.disabled = !this.AttemptsLimitedRadio.checked;
         this.StateChanged();
     }
 
-    protected StateChanged(){
+    protected StateChanged() {
         this.Validate();
         NavigationPrevention.Prevent('assign-test-dialog');
     }
 
-    protected Validate(){
+    protected Validate() {
         let old_validity = this.IsValid;
         this.IsValid = true;
 
@@ -131,18 +144,18 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
         let time_difference = deadline.getTime() - new Date().getTime();
         let is_too_short = time_difference < 86400000; // Termin wypadający mniej niż dobę naprzód jest określany jako potencjalnie za krótki
-        
+
         this.ShortDeadlineWarning.style.display = (is_too_short && time_difference > 0) ? '' : 'none';
         this.DeadlineInPastError.style.display = (time_difference <= 0) ? '' : 'none';
         if(time_difference <= 0) this.IsValid = false;
 
-        if(this.AttemptsLimitedRadio.checked){
+        if(this.AttemptsLimitedRadio.checked) {
             let max_attempts = parseInt(this.AttemptsLimitedCountInput.value);
             let is_wrong_attempt_limit = (max_attempts <= 0 || isNaN(max_attempts));
-            
+
             this.WrongAttemptLimitError.style.display = is_wrong_attempt_limit ? '' : 'none';
             if(is_wrong_attempt_limit) this.IsValid = false;
-        }else{
+        } else {
             this.WrongAttemptLimitError.style.display = 'none';
         }
 
