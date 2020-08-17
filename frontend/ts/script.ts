@@ -10,7 +10,6 @@ import SolveTestPage from './pages/solve_test';
 import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
-import AuthManager from './auth/auth_manager';
 import LoginPage from './pages/login';
 
 let AppNavbar: Navbar;
@@ -49,7 +48,7 @@ try {
 /**
  * Ładuje stronę zgodnie z danymi otrzymanymi z serwera
  */
-async function LoadInitialPage() {
+export async function LoadInitialPage() {
     // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
     let initial_page = 'home';
     let body_url = document.body.dataset.url;

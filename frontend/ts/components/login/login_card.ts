@@ -1,5 +1,6 @@
 import Card from '../basic/card';
 import AuthManager from '../../auth/auth_manager';
+import { LoadInitialPage } from '../../script';
 
 export default class LoginCard extends Card {
 
@@ -64,6 +65,7 @@ export default class LoginCard extends Card {
             }
 
             login_message.textContent = '';
+            LoadInitialPage();
         }).bind(this));
     }
 }
