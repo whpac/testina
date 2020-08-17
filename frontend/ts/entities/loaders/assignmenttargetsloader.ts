@@ -32,7 +32,7 @@ export default class AssignmentTargetsLoader {
      * Zapisuje deskryptory celów do późniejszego wykorzystania
      * @param target_descriptors Deskryptory celów
      */
-    public SaveDescriptor(target_descriptors: AssignmentTargetsDescriptor) {
+    public SaveDescriptor(target_descriptors: AssignmentTargetsDescriptor | undefined) {
         this.TargetDescriptor = target_descriptors;
     }
 
