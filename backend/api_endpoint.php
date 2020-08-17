@@ -57,7 +57,7 @@ try{
 
     // Odczytaj żądany zasób i ustaw w nim filtry
     $current_resource = GetResource($target, $context);
-    $current_resource->SetFilters($filters);
+    if($current_resource instanceof Api\Resource) $current_resource->SetFilters($filters);
 
     switch($method){
         case 'GET':
