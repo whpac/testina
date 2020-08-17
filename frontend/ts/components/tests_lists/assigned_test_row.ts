@@ -17,7 +17,7 @@ export default class AssignedTestRow extends Component {
     SolveButton: HTMLAnchorElement;
     DetailsButton: HTMLButtonElement;
 
-    constructor(assignment: Assignment){
+    constructor(assignment: Assignment) {
         super();
 
         this.Element = document.createElement('tr');
@@ -49,17 +49,17 @@ export default class AssignedTestRow extends Component {
         this.Populate(assignment);
     }
 
-    public async Populate(assignment: Assignment){
+    public async Populate(assignment: Assignment) {
         this.NameCell.textContent = assignment.Test.Name;
         this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
         this.AssignedCell.textContent = DateUtils.ToDayFormat(assignment.AssignmentDate);
         this.AssignedCell.title = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
         this.AuthorCell.textContent = assignment.Test.Author.GetFullName();
-        
+
         let score = assignment.Score;
-        if(score === undefined){
+        if(score === undefined) {
             this.ScoreCell.textContent = '—';
-        }else{
+        } else {
             this.ScoreCell.textContent = '';
 
             let score_link = document.createElement('a');
@@ -76,8 +76,8 @@ export default class AssignedTestRow extends Component {
         let attempt_limit = assignment.AttemptLimit;
         this.AttemptsCell.textContent =
             attempts.toString() + ((attempt_limit > 0) ? ('/' + attempt_limit.toString()) : '');
-        
-        if(!assignment.IsActive()){
+
+        if(!assignment.IsActive()) {
             this.SolveButton.remove();
             this.ButtonsCell.classList.add('narrow-screen-only');
 
@@ -86,19 +86,19 @@ export default class AssignedTestRow extends Component {
 
             this.Element.insertBefore(this.ScoreCell, this.DeadlineCell);
             this.Element.insertBefore(this.AssignedCell, this.DeadlineCell);
-        }else{
+        } else {
             this.SolveButton.href = 'testy/rozwiąż/' + assignment.Id;
             this.SolveButton.addEventListener('click', (e) => HandleLinkClick(e, 'testy/rozwiąż', assignment));
         }
     }
 
-    protected DisplayScoreDetailsDialog(assignment: Assignment){
+    protected DisplayScoreDetailsDialog(assignment: Assignment) {
         let dialog = new ScoreDetailsDialog();
         dialog.Populate(assignment);
         dialog.Show();
     }
 
-    protected DisplayAssignmentDetailsDialog(assignment: Assignment){
+    protected DisplayAssignmentDetailsDialog(assignment: Assignment) {
         let dialog = new AssignmentDetailsDialog();
         dialog.Populate(assignment);
         dialog.Show();

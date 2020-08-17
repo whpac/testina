@@ -1,4 +1,4 @@
-import Card from '../basic/card'
+import Card from '../basic/card';
 import Question from '../../entities/question';
 import Attempt from '../../entities/attempt';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
@@ -34,7 +34,7 @@ export default class QuestionCard extends Card {
 
     OnTestFinished: ((questions: QuestionWithUserAnswers[]) => void) | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element.classList.add('semi-wide');
@@ -95,7 +95,7 @@ export default class QuestionCard extends Card {
         this.AddButton(this.FinishButton);
     }
 
-    async StartTest(attempt: Attempt){
+    async StartTest(attempt: Attempt) {
         NavigationPrevention.Prevent('solving-test');
 
         this.TimeLeftTimer.textContent = '0:00';
@@ -114,11 +114,11 @@ export default class QuestionCard extends Card {
 
         let test = assignment.Test;
 
-        if(test.HasTimeLimit()){
+        if(test.HasTimeLimit()) {
             this.TimeLimit = test.TimeLimit;
             let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentDeadline);
             if(this.TimeLimit > assignment_time_limit_diff) this.TimeLimit = undefined;
-        }else{
+        } else {
             this.TimeLimit = undefined;
         }
         this.StartTimer();
@@ -130,13 +130,13 @@ export default class QuestionCard extends Card {
         this.DisplayQuestion(this.Questions[0], this.CurrentQuestionNumber + 1);
     }
 
-    async DisplayQuestion(question: QuestionWithUserAnswers, number: number){
+    async DisplayQuestion(question: QuestionWithUserAnswers, number: number) {
         this.CurrentQuestion = question;
         let question_text = question.GetQuestion().Text;
         this.QuestionText.textContent = question_text;
-        if(question_text.length > 350){
+        if(question_text.length > 350) {
             this.QuestionText.classList.add('long');
-        }else{
+        } else {
             this.QuestionText.classList.remove('long');
         }
 
@@ -147,11 +147,11 @@ export default class QuestionCard extends Card {
         this.CurrentQuestion.SetAnswers(answers);
 
         // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
-        switch(this.CurrentQuestion.GetQuestion().Type){
+        switch(this.CurrentQuestion.GetQuestion().Type) {
             case Question.TYPE_SINGLE_CHOICE:
             case Question.TYPE_MULTI_CHOICE:
                 this.AnswerWrapper.textContent = '';
-                for(let i = 0; i < answers.length; i++){
+                for(let i = 0; i < answers.length; i++) {
                     const answer = answers[i];
                     let answer_button = document.createElement('button');
                     answer_button.classList.add('answer-button');
@@ -174,16 +174,16 @@ export default class QuestionCard extends Card {
         this.DisableAnswers = false;
     }
 
-    protected async OnAnswerButtonClick(e: MouseEvent, answer_index: number){
+    protected async OnAnswerButtonClick(e: MouseEvent, answer_index: number) {
         if(this.DisableAnswers) return;
 
-        switch(this.CurrentQuestion?.GetQuestion().Type){
+        switch(this.CurrentQuestion?.GetQuestion().Type) {
             case Question.TYPE_SINGLE_CHOICE:
                 this.CurrentQuestion?.DeselectAllAnswers();
                 this.CurrentQuestion?.SetAnswerSelection(answer_index, true);
 
                 let ans_buttons_selected = document.querySelectorAll('.answer-button.selected');
-                for(let btn of ans_buttons_selected){
+                for(let btn of ans_buttons_selected) {
                     btn.classList.remove('selected');
                 }
                 (e.target as HTMLButtonElement).classList.add('selected');
@@ -193,20 +193,20 @@ export default class QuestionCard extends Card {
 
                 let is_selected = this.CurrentQuestion?.GetAnswerSelection(answer_index);
                 if(is_selected) (e.target as HTMLButtonElement).classList.add('selected');
-                else (e.target as HTMLButtonElement).classList.remove('selected');
+                else(e.target as HTMLButtonElement).classList.remove('selected');
                 break;
         }
     }
 
-    protected async CheckQuestion(){
+    protected async CheckQuestion() {
         this.DisableAnswers = true;
         this.CurrentQuestion?.MarkAsDone();
 
         // Pokaż odpowiedni przycisk
         this.DoneButton.style.display = 'none';
-        if(this.CurrentQuestionNumber + 1 < this.Questions.length){
+        if(this.CurrentQuestionNumber + 1 < this.Questions.length) {
             this.NextButton.style.display = '';
-        }else{
+        } else {
             this.FinishButton.style.display = '';
             this.StopTimer();
             this.SaveResults();
@@ -216,22 +216,22 @@ export default class QuestionCard extends Card {
 
         // Zaznacz odpowiedzi
         let answers_buttons = document.querySelectorAll('.answer-button');
-        for(let button of answers_buttons){
+        for(let button of answers_buttons) {
             let index = parseInt((button as HTMLElement).dataset.index ?? '0');
-            if(this.CurrentQuestion.GetAnswers()[index].Correct){
+            if(this.CurrentQuestion.GetAnswers()[index].Correct) {
                 button.classList.add('correct');
-            }else{
+            } else {
                 button.classList.add('wrong');
             }
         }
-    
+
         // Zaktualizuj wynik
         this.PointsGot += await this.CurrentQuestion.CountPoints();
         this.PointsMax += this.CurrentQuestion.GetQuestion().Points;
         this.UpdateScore();
     }
 
-    protected GoToNextQuestion(){
+    protected GoToNextQuestion() {
         this.DoneButton.style.display = '';
         this.NextButton.style.display = 'none';
 
@@ -239,16 +239,16 @@ export default class QuestionCard extends Card {
         this.DisplayQuestion(this.Questions[this.CurrentQuestionNumber], this.CurrentQuestionNumber + 1);
     }
 
-    protected StartTimer(){
+    protected StartTimer() {
         this.TimerRef = setInterval(this.OnTimerTick.bind(this), 1000);
     }
 
-    protected StopTimer(){
+    protected StopTimer() {
         if(this.TimerRef === undefined) return;
         clearInterval(this.TimerRef);
     }
 
-    protected async OnTimeIsUp(){
+    protected async OnTimeIsUp() {
         this.QuestionText.textContent = 'Czas na rozwiązanie testu upłynął.';
         this.QuestionText.classList.remove('long');
 
@@ -260,42 +260,42 @@ export default class QuestionCard extends Card {
         this.DoneButton.style.display = 'none';
 
         let points_max = 0;
-        for(let question of this.Questions){
+        for(let question of this.Questions) {
             points_max += question.GetQuestion().Points;
         }
         this.PointsMax = points_max;
         this.UpdateScore();
     }
 
-    protected SaveResults(){
+    protected SaveResults() {
         NavigationPrevention.Unprevent('solving-test');
-        try{
+        try {
             this.Attempt.SaveUserAnswers(this.Questions);
             new Toast('Twoje odpowiedzi zostały zapisane').Show(0);
-        }catch(e){
+        } catch(e) {
             // #25
             new Toast('Nie udało się zapisać odpowiedzi');
         }
     }
 
-    protected OnTimerTick(){
-        let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentDeadline)
-        if(this.TimeLimit === undefined && assignment_time_limit_diff > 3600){
+    protected OnTimerTick() {
+        let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentDeadline);
+        if(this.TimeLimit === undefined && assignment_time_limit_diff > 3600) {
             this.TimeLeftTimer.textContent = '—';
-        }else{
+        } else {
             let remaining_time = this.TimeLimit;
-            if(remaining_time === undefined){
+            if(remaining_time === undefined) {
                 remaining_time = assignment_time_limit_diff;
-            }else{
+            } else {
                 remaining_time -= (Date.now() - this.TestStartDate.getTime()) / 1000;
             }
             remaining_time = Math.round(remaining_time);
 
-            if(remaining_time < 0){
+            if(remaining_time < 0) {
                 this.StopTimer();
                 this.OnTimeIsUp();
-            }else{
-                if(remaining_time <= 60){
+            } else {
+                if(remaining_time <= 60) {
                     this.QuestionTimerWrapper.classList.add('error');
                 }
                 this.TimeLeftTimer.textContent = DateUtils.SecondsToTime(remaining_time);
@@ -303,12 +303,12 @@ export default class QuestionCard extends Card {
         }
     }
 
-    protected UpdateScore(){
+    protected UpdateScore() {
         if(this.PointsMax == 0) this.CurrentScore.textContent = '0';
         else this.CurrentScore.textContent = Math.round(100 * this.PointsGot / this.PointsMax).toString();
     }
 
-    protected FinishTest(){
+    protected FinishTest() {
         this.OnTestFinished?.(this.Questions);
     }
 }

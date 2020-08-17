@@ -12,7 +12,7 @@ export default class AssignmentDetailsDialog extends Dialog {
     protected AttemptsLeftCell: HTMLTableCellElement;
     protected SolveButton: HTMLButtonElement;
 
-    constructor(){
+    constructor() {
         super();
 
         let table = document.createElement('table');
@@ -68,21 +68,21 @@ export default class AssignmentDetailsDialog extends Dialog {
         this.AddButton(this.SolveButton);
     }
 
-    public async Populate(assignment: Assignment){
+    public async Populate(assignment: Assignment) {
         let test = assignment.Test;
         this.SetHeader(test.Name);
 
         this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
-        if(assignment.HasDeadlineExceeded()){
+        if(assignment.HasDeadlineExceeded()) {
             this.DeadlineCell.classList.add('error');
         }
 
         this.AssignmentDateCell.textContent = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
 
         let avg_score = assignment.Score;
-        if(avg_score === null){
+        if(avg_score === null) {
             this.ScoreCell.textContent = '—';
-        }else{
+        } else {
             let score_link = document.createElement('a');
             score_link.title = 'Zobacz szczegóły wyniku';
             score_link.href = 'javascript:void(0)';
@@ -94,32 +94,32 @@ export default class AssignmentDetailsDialog extends Dialog {
 
         this.AuthorCell.textContent = test.Author.GetFullName();
 
-        if(assignment.AreAttemptsUnlimited()){
+        if(assignment.AreAttemptsUnlimited()) {
             this.AttemptsLeftCell.textContent = 'bez ograniczeń';
-        }else{
+        } else {
             let remaining_attempts_count = assignment.GetRemainingAttemptsCount();
             if(remaining_attempts_count < 0) remaining_attempts_count = 0;
 
             this.AttemptsLeftCell.textContent = remaining_attempts_count.toString();
-            if(remaining_attempts_count == 0){
+            if(remaining_attempts_count == 0) {
                 this.AttemptsLeftCell.classList.add('error');
             }
         }
 
-        if(assignment.IsActive()){
+        if(assignment.IsActive()) {
             this.SolveButton.addEventListener('click', () => this.ProceedToSolvePage(assignment));
-        }else{
+        } else {
             this.SolveButton.remove();
         }
     }
 
-    protected DisplayScoreDetailsDialog(assignment: Assignment){
+    protected DisplayScoreDetailsDialog(assignment: Assignment) {
         let dialog = new ScoreDetailsDialog();
         dialog.Populate(assignment);
         dialog.Show();
     }
 
-    protected ProceedToSolvePage(assignment: Assignment){
+    protected ProceedToSolvePage(assignment: Assignment) {
         this.Hide();
         PageManager.GoToPage('testy/rozwiąż', assignment);
     }
