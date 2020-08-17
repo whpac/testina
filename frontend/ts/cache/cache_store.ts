@@ -12,7 +12,6 @@ export default class CacheStore {
     public async GetResource(request: Request): Promise<Response | undefined> {
         let cached = await this.Cache.match(request);
         if(cached === undefined) {
-            console.debug('Zasób nie istnieje w pamięci podręcznej');
             return undefined;
         }
 
@@ -24,12 +23,10 @@ export default class CacheStore {
         }
 
         if(new Date(expire_date) < new Date()) {
-            console.debug('Zasób jest przeterminowany');
             this.Cache.delete(request);
             return undefined;
         }
 
-        //console.debug('Wczytywanie zasobu ' + request.url);
         return cached;
     }
 
@@ -43,7 +40,6 @@ export default class CacheStore {
             console.warn('Zasób, który miał zostać zapisany w pamięci podręcznej nie posiada nagłówka X-Expires.');
             return undefined;
         }
-        //console.debug('Zapisywanie zasobu ' + request.url);
         return this.Cache.put(request, response);
     }
 
