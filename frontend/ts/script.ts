@@ -11,6 +11,8 @@ import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
 import LoginPage from './pages/login';
+import AuthManager from './auth/auth_manager';
+import CacheManager, { CacheStorages } from './cache/cache_manager';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -20,7 +22,15 @@ try {
 
     // Inicjalizacja paska nawigacji
     Navbar.AppNavbar = new Navbar('main-nav');
-    Navbar.AppNavbar.Draw();
+    (async () => {
+        if(await AuthManager.IsAuthorized()) {
+            Navbar.AppNavbar.Draw();
+            root.classList.remove('login');
+        } else {
+            Navbar.AppNavbar.Destroy();
+            root.classList.add('login');
+        }
+    })();
 
     // Inicjalizacja menedżera stron
     PageManager.Initialize(root, loading_wrapper);
@@ -36,6 +46,18 @@ try {
 
     PageManager.RegisterHomePage(new HomePage());
     PageManager.RegisterLoginPage(new LoginPage());
+
+    // Zarejestruj procedury do wykonania po za- i wylogowaniu
+    AuthManager.AddEventListener('login', () => {
+        Navbar.AppNavbar.Draw();
+        root?.classList.remove('login');
+    });
+    AuthManager.AddEventListener('logout', async () => {
+        Navbar.AppNavbar.Destroy();
+        root?.classList.add('login');
+        (await CacheManager.Open(CacheStorages.Entities)).Purge();
+        PageManager.GoToPage('zaloguj');
+    });
 
     // Załaduj stronę początkową
     LoadInitialPage();
