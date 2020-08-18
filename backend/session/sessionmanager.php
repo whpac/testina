@@ -69,7 +69,7 @@ class SessionManager {
     /**
      * Zwraca identyfikator sesji
      */
-    protected static function GetSessionId(){
+    public static function GetSessionId(){
         $key = self::GetKeyProvider()->GetKey();
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_SESSIONS)
