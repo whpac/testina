@@ -9,6 +9,9 @@ use Auth\AuthManager;
 use Database\DatabaseManager;
 use Database\MySQL;
 
+use Log\Logger;
+use Log\LogChannels;
+
 use Session\SessionManager;
 
 use \UEngine\Modules\Core\Properties;
@@ -34,6 +37,9 @@ AuthManager::RegisterUserFactory(new Entities\UserFactory());
 AuthManager::RestoreCurrentUser();
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
+
+$method = '';
+$target = '';
 
 try{
     // Odczytaj metodę żądania
@@ -94,29 +100,28 @@ try{
 
 }catch(Exceptions\BadRequest $e){
     SetResponseCode(400);
-    echo('400');
+    Logger::Log('Przeprowadzono błędne żądanie: '.$e->getMessage(), LogChannels::GENERAL);
 }catch(Exceptions\AuthorizationRequired $e){
     SetResponseCode(401);
-    echo('401');
+    Logger::Log('Zablokowano niezalogowanemu próbę dostępu do '.$target, LogChannels::ACCESS_FORBIDDEN);
 }catch(Exceptions\ResourceInaccessible $e){
     SetResponseCode(403);
-    echo('403');
+    Logger::Log('Zablokowano próbę dostępu z powodu niewystarczających uprawnień do '.$target, LogChannels::ACCESS_FORBIDDEN);
 }catch(Exceptions\ResourceNotFound $e){
     SetResponseCode(404);
-    echo('404');
+    Logger::Log('Wnioskowano o nieistniejący zasób: '.$target, LogChannels::GENERAL);
 }catch(Exceptions\MethodNotAllowed $e){
     SetResponseCode(405);
-    echo('405');
+    Logger::Log('Zablokowano próbę żądania nieznaną metodą: '.$method, LogChannels::VALIDATION_GENERAL);
 }catch(Exceptions\NotAcceptable $e){
     SetResponseCode(406);
-    echo('406');
+    Logger::Log('Serwer nie może zwrócić odpowiedzi w formacie oczekiwanym przez klienta: '.$e->GetClientAccept(), LogChannels::VALIDATION_GENERAL);
 }catch(Exceptions\NotImplemented $e){
     SetResponseCode(501);
-    echo('501');
+    Logger::Log('Próbowano wywołać niezaimplementowaną procedurę: '.$e->getMessage(), LogChannels::GENERAL);
 }catch(\Exception $e){
     SetResponseCode(500);
-    echo('500');
-    echo('Exception thrown: '.$e->getMessage());
+    Logger::Log('Wystąpił nieznany błąd: '.$e->getMessage(), LogChannels::APPLICATION_ERROR);
 }
 
 
