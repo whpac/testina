@@ -23,6 +23,7 @@ class JsonFormatter extends Formatter {
             $add_comma = false;
             foreach($keys as $key){
                 if(!$obj->KeyExists($key)) continue;
+                try{
                 $key = strval($key);
                 $resource = $obj->$key();
 
@@ -32,6 +33,9 @@ class JsonFormatter extends Formatter {
                 // Append the key: value pair
                 $out .= '"'.$key.'":';
                 $out .= $this->FormatResource($resource, $depth - 1);
+                }catch(\Exception $e){
+
+                }
             }
             $out .= '}';
         }else{
