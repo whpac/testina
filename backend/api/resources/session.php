@@ -2,6 +2,8 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Log\Logger;
+use Log\LogChannels;
 
 class Session extends Resource implements Schemas\Session{
 
@@ -13,6 +15,11 @@ class Session extends Resource implements Schemas\Session{
         $password = $source->password;
 
         $result = \Auth\AuthManager::TryToLogIn($login, $password);
+        if($result->IsSuccess()){
+            Logger::Log('Zalogowano: '.$login, LogChannels::AUTHORIZATION_SUCCESS);
+        }else{
+            Logger::Log('Nieudana próba logowania: '.$login, LogChannels::AUTHORIZATION_FAILED);
+        }
         return new LoginResponse($result->IsSuccess(), $result->GetReason());
     }
 
@@ -21,6 +28,7 @@ class Session extends Resource implements Schemas\Session{
      */
     public function Delete($source){
         \Auth\AuthManager::LogOut();
+        Logger::Log('Wylogowano użytkownika', LogChannels::AUTHORIZATION_LOG_OUT);
     }
 
     public function GetKeys(): array{
