@@ -15,5 +15,9 @@ class Context{
     public function GetUser(){
         return $this->user;
     }
+
+    public function IsAuthorized(){
+        return $this->user->GetId() != 0;
+    }
 }
 ?>
