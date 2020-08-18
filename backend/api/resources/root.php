@@ -17,6 +17,9 @@ class Root extends Resource implements Schemas\Root {
     }
 
     public function assignments(): Schemas\Collection{
+        if(!$this->GetContext()->IsAuthorized()){
+            throw new Exceptions\AuthorizationRequired('assignments');
+        }
         $current_user = $this->GetContext()->GetUser();
 
         $out_assignments = [];
@@ -39,6 +42,9 @@ class Root extends Resource implements Schemas\Root {
     }
 
     public function groups(): Schemas\Collection{
+        if(!$this->GetContext()->IsAuthorized()){
+            throw new Exceptions\AuthorizationRequired('groups');
+        }
         $groups = \Entities\Group::GetAll();
 
         $out_groups = [];
@@ -59,6 +65,9 @@ class Root extends Resource implements Schemas\Root {
     }
 
     public function tests(): Schemas\Collection{
+        if(!$this->GetContext()->IsAuthorized()){
+            throw new Exceptions\AuthorizationRequired('tests');
+        }
         $current_user = $this->GetContext()->GetUser();
         $tests = \Entities\Test::GetTestsCreatedByUser($current_user);
 
@@ -74,11 +83,10 @@ class Root extends Resource implements Schemas\Root {
     }
 
     public function users(): Schemas\Collection{
-        $current_user = $this->GetContext()->GetUser();
-        if($current_user->GetId() < 1){
+        if(!$this->GetContext()->IsAuthorized()){
             throw new Exceptions\AuthorizationRequired('users');
         }
-
+        $current_user = $this->GetContext()->GetUser();
         $out_users = [];
 
         $u = new User($current_user);
