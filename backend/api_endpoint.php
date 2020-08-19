@@ -14,13 +14,7 @@ use Log\LogChannels;
 
 use Session\SessionManager;
 
-use \UEngine\Modules\Core\Properties;
-
-require('../../ue/uengine/uengine.php');
 require('autoincluder.php');
-
-// Passing some tables' names
-Properties::Set('core.tables.exceptions', 'exceptions');
 
 // Inicjalizacja dostawcy bazy danych oraz sesji
 $db = new MySQL('localhost', 'user', 'passwd', 'p');
