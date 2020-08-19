@@ -1,7 +1,8 @@
 <?php
 namespace Session\Key;
 
-use \UEngine\Modules\Core;
+use Log\Logger;
+use Log\LogChannels;
 
 /**
  * Dostawca niezmiennego klucza sesji
@@ -41,7 +42,8 @@ class StaticKeyProvider implements IKeyProvider {
      * dlatego zgłaszany jest wyjątek
      */
     public function SetKey($key){
-        throw new Core\RichException('Klucz sesji nie może zostać zmieniony.');
+        Logger::Log('Próbowano zmienić stały klucz sesji', LogChannels::APPLICATION_ERROR);
+        throw new \Exception('Klucz sesji nie może zostać zmieniony.');
     }
 }
 ?>

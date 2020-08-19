@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_ANSWERS', 'answers');
 
@@ -92,7 +93,10 @@ class Answer extends Entity {
                 ->Value('flags', $flags_int)
                 ->Run();
         
-        if($result === false) throw new RichException('Nie udało się utworzyć odpowiedzi.');
+        if($result === false){
+            Logger::Log('Nie udało się utworzyć odpowiedzi: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się utworzyć odpowiedzi.');
+        }
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ANSWERS)

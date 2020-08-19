@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_QUESTIONS', 'questions');
 
@@ -127,11 +128,11 @@ class Question extends Entity {
     }
 
     public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting, /* int */ $max_typos){
-        if(is_null($text)) throw new RichExcpetion('Treść pytania nie może być null.');
-        if(is_null($type)) throw new RichExcpetion('Typ pytania nie może być null.');
-        if(is_null($points)) throw new RichExcpetion('Ilość punktów nie może być null.');
-        if(is_null($points_counting)) throw new RichExcpetion('Metoda liczenia punktów nie może być null.');
-        if(is_null($max_typos)) throw new RichException('Maksymalna ilość literówek nie może być null.');
+        if(is_null($text)) throw new \Exception('Treść pytania nie może być null.');
+        if(is_null($type)) throw new \Exception('Typ pytania nie może być null.');
+        if(is_null($points)) throw new \Exception('Ilość punktów nie może być null.');
+        if(is_null($points_counting)) throw new \Exception('Metoda liczenia punktów nie może być null.');
+        if(is_null($max_typos)) throw new \Exception('Maksymalna ilość literówek nie może być null.');
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
@@ -144,7 +145,10 @@ class Question extends Entity {
                 ->Value('max_typos', $max_typos)
                 ->Run();
         
-        if($result === false) throw new RichException('Nie udało się dodać pytania.');
+        if($result === false){
+            Logger::Log('Nie udało się dodać pytania: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się dodać pytania.');
+        }
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)

@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_USER_ANSWERS', 'user_answers');
 
@@ -68,7 +69,10 @@ class UserAnswer extends Entity {
                 ->Value('question_id', $answer->GetQuestion()->GetId())
                 ->Run();
 
-        if($result === false) throw new RichException('Nie udało się zapisać odpowiedzi.');
+        if($result === false){
+            Logger::Log('Nie udało się zapisać odpowiedzi: '.DatabaseManager::GetProvider()->GetError());
+            throw new \Exception('Nie udało się zapisać odpowiedzi.');
+        }
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_USER_ANSWERS)
@@ -89,7 +93,10 @@ class UserAnswer extends Entity {
                 ->Value('question_id', $question->GetId())
                 ->Run();
 
-        if($result === false) throw new RichException('Nie udało się zapisać odpowiedzi.');
+        if($result === false){
+            Logger::Log('Nie udało się zapisać odpowiedzi: '.DatabaseManager::GetProvider()->GetError());
+            throw new \Exception('Nie udało się zapisać odpowiedzi.');
+        }
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_USER_ANSWERS)

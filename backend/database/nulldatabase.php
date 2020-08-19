@@ -1,24 +1,29 @@
 <?php
 namespace Database;
 
-use \UEngine\Modules\Core\RichException;
+use Log\Logger;
+use Log\LogChannels;
 
 class NullDatabase implements DatabaseProvider {
 
     public function Connect(){
-        throw new RichException('Nie zarejestrowano dostawcy bazy danych.');
+        Logger::Log('Nie zarejestrowano dostawcy bazy danych.', LogChannels::APPLICATION_ERROR);
+        throw new \Exception('Nie zarejestrowano dostawcy bazy danych.');
     }
 
     public function Close(){
-        throw new RichException('Nie zarejestrowano dostawcy bazy danych.');
+        Logger::Log('Nie zarejestrowano dostawcy bazy danych.', LogChannels::APPLICATION_ERROR);
+        throw new \Exception('Nie zarejestrowano dostawcy bazy danych.');
     }
 
     public function Query($query){
-        throw new RichException('Nie zarejestrowano dostawcy bazy danych.');
+        Logger::Log('Nie zarejestrowano dostawcy bazy danych.', LogChannels::APPLICATION_ERROR);
+        throw new \Exception('Nie zarejestrowano dostawcy bazy danych.');
     }
 
     public function GetError(){
-        throw new RichException('Nie zarejestrowano dostawcy bazy danych.');
+        Logger::Log('Nie zarejestrowano dostawcy bazy danych.', LogChannels::APPLICATION_ERROR);
+        throw new \Exception('Nie zarejestrowano dostawcy bazy danych.');
     }
 }
 ?>

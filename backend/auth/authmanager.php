@@ -1,8 +1,9 @@
 <?php
 namespace Auth;
 
-use UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 use Session\SessionManager;
 
 define('SESSION_USER_ID', '__user_id');
@@ -25,14 +26,18 @@ class AuthManager {
         self::$password_column = $password_column;
 
         $supported_algos = hash_algos();
-        if(!in_array($hash_algorithm, $supported_algos))
-            throw new RichException('Wybrany algorytm haszowania nie jest dostępny na tym serwerze.');
+        if(!in_array($hash_algorithm, $supported_algos)){
+            Logger::Log('Algorytm '.$hash_algorithm.' nie jest dostępny na tym serwerze.', LogChannels::APPLICATION_ERROR);
+            throw new \Exception('Wybrany algorytm haszowania nie jest dostępny na tym serwerze.');
+        }
         self::$hash_algorithm = $hash_algorithm;
     }
 
     public static function TryToLogIn($login, $password){
-        if(!DatabaseManager::IsProviderRegistered())
-            throw new RichException('Nie zarejestrowano dostawcy bazy danych.');
+        if(!DatabaseManager::IsProviderRegistered()){
+            Logger::Log('Nie zarejestrowano dostawcy bazy danych.', LogChannels::APPLICATION_ERROR);
+            throw new \Exception('Nie zarejestrowano dostawcy bazy danych.');
+        }
 
         $login = strtolower($login);
         $password_hash = hash(self::$hash_algorithm, $password);
@@ -77,7 +82,10 @@ class AuthManager {
     }
 
     public static function RestoreCurrentUser(){
-        if(is_null(self::$user_factory)) throw new RichException('Nie zarejestrowano żadnej fabryki użytkowników.');
+        if(is_null(self::$user_factory)){
+            Logger::Log('Nie zarejestrowano żadnej fabryki użytkowników.', LogChannels::APPLICATION_ERRORS);
+            throw new \Exception('Nie zarejestrowano żadnej fabryki użytkowników.');
+        }
 
         $user_id = SessionManager::Get(SESSION_USER_ID, ANONYMOUS_USER_ID);
         self::$current_user = self::$user_factory->Create($user_id);

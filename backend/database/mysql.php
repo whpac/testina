@@ -1,7 +1,8 @@
 <?php
 namespace Database;
 
-use \UEngine\Modules\Core;
+use Log\Logger;
+use Log\LogChannels;
 
 /**
  * Dostawca bazy danych MySQL
@@ -71,8 +72,10 @@ class MySQL implements DatabaseProvider {
      * @param $table Nazwa tabeli
      */
     public function Table($table){
-        if(!$this->TableExists($table))
-            throw new Core\RichException('Tabela "'.$table.'" nie istnieje w wybranej bazie danych.', $this->GetError());
+        if(!$this->TableExists($table)){
+            Logger::Log('Tabela "'.$table.'" nie istnieje w wybranej bazie danych: '.$this->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Żądana tabela nie istnieje w wybranej bazie danych.');
+        }
         return new Entities\Table($this, $table);
     }
 
@@ -85,15 +88,18 @@ class MySQL implements DatabaseProvider {
         if($this->GetErrorNumber() == 0) return true;
         if($this->GetErrorNumber() == 1146) return false;
 
-        throw new Core\RichException('Nie udało się sprawdzić, czy tabela "'.$table.'" istnieje.', $this->GetError());
+        Logger::Log('Nie udało się sprawdzić, czy tabela "'.$table.'" istnieje: '.$this->GetError(), LogChannels::DATABASE);
+        throw new \Exception('Nie udało się sprawdzić, czy podana tabela istnieje w bazie danych.');
     }
 
     /**
      * Wybiera bazę danych o podanej nazwie
      */
     public function SelectDB($name){
-        if(!$this->connector->select_db($name))
-            throw new Core\RichException('Nie udało się wybrać bazy danych "'.$name.'".', $this->GetError());
+        if($this->connector->select_db($name)) return;
+
+        Logger::Log('Nie udało się wybrać bazy danych "'.$name.'": '.$this->GetError(), LogChannels::DATABASE);
+        throw new \Exception('Nie udało się wybrać odpowiedniej bazy danych.');
     }
 
     /**

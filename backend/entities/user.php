@@ -1,7 +1,6 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
 
 define('TABLE_USERS', 'users');

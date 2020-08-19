@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_ATTEMPTS', 'attempts');
 
@@ -80,7 +81,10 @@ class Attempt extends Entity {
                 ->Value('begin_time', $begin_time->format('Y-m-d H:i:s'))
                 ->Run();
         
-        if($result === false) throw new RichException('Nie udało się rozpocząć podejścia');
+        if($result === false){
+            Logger::Log('Nie udało się rozpocząć podejścia: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się rozpocząć podejścia');
+        }
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)

@@ -1,10 +1,10 @@
 <?php
 namespace Database\Translators;
 
-use \UEngine\Modules\Core;
-use \UEngine\Modules\Core\I18n\LanguageManager;
-use \UEngine\Libs\UEFunctions;
-use \Utils\ArrayUtils;
+use Database\Entities\Condition;
+use Log\Logger;
+use Log\LogChannels;
+use Utils\ArrayUtils;
 
 class MySQLTranslator implements Translator {
 
@@ -23,7 +23,8 @@ class MySQLTranslator implements Translator {
                 return self::TranslateDelete($query);
             break;
             default:
-                throw new RichException('Otrzymano zapytanie nieznanego typu.');
+                Logger::Log('Otrzymano zapytanie nieznanego typu: '.$query->GetType().'.', LogChannels::DATABASE);
+                throw new \Exception('Otrzymano zapytanie nieznanego typu.');
             break;
         }
     }
@@ -43,7 +44,7 @@ class MySQLTranslator implements Translator {
         $limit = $query->limit;
         $offset = $query->offset;
 
-        if($where instanceof \Database\Entities\Condition)
+        if($where instanceof Condition)
             $where = $where->Parse();
 
         if(is_array($order_by))
@@ -94,7 +95,7 @@ class MySQLTranslator implements Translator {
         }
 
         $where = $query->where;
-        if($where instanceof \Database\Entities\Condition)
+        if($where instanceof Condition)
             $where = $where->Parse();
 
         $query_text = 'UPDATE '.$table.' SET'.$values.' WHERE '.$where;
@@ -106,7 +107,7 @@ class MySQLTranslator implements Translator {
         $table = $query->table;
 
         $where = $query->where;
-        if($where instanceof \Database\Entities\Condition)
+        if($where instanceof Condition)
             $where = $where->Parse();
 
         $query_text = 'DELETE FROM '.$table.' WHERE '.$where;

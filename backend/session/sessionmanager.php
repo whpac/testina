@@ -32,7 +32,7 @@ class SessionManager {
      */
     protected static function GetKeyProvider(){
         if(self::$key_provider == null){
-            Logger::Log('Nie ustawiono dostawcy klucza sesji', LogChannels::SESSION_FAILURE);
+            Logger::Log('Nie ustawiono dostawcy klucza sesji', LogChannels::APPLICATION_ERROR);
             throw new \Exception('Nie ustawiono dostawcy klucza sesji.');
         }
         return self::$key_provider;

@@ -1,7 +1,8 @@
 <?php
 namespace Auth;
 
-use \UEngine\Modules\Core\RichException;
+use Log\Logger;
+use Log\LogChannels;
 
 class AuthResult {
     protected $is_success;
@@ -15,8 +16,10 @@ class AuthResult {
         $this->user_data = $user_data;
         $this->reason = $reason;
 
-        if($this->IsSuccess() && is_null($this->GetUserId()))
-            throw new RichException('Id użytkownika nie może być null, kiedy logowanie przebiegło pomyślnie.');
+        if($this->IsSuccess() && is_null($this->GetUserId())){
+            Logger::Log('Id użytkownika nie może być null, kiedy logowanie przebiegło pomyślnie.', LogChannels::APPLICATION_ERROR);
+            throw new \Exception('Id użytkownika nie może być null, kiedy logowanie przebiegło pomyślnie.');
+        }
     }
 
     public function IsSuccess(){

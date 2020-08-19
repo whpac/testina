@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 abstract class Entity {
     protected /* (int|array) */ $_entity_descriptor;
@@ -31,9 +32,13 @@ abstract class Entity {
             }
         }elseif(is_array($entity_descriptor)){
             if(static::AllowsCreationFromArray()) $row = $entity_descriptor;
-            else throw new RichException('Ten obiekt nie obsługuje tworzenia z tablicy');
+            else{
+                Logger::Log('Próbowano utworzyć obiekt '.__CLASSNAME__.'z tablicy.', LogChannels::APPLICATION_ERROR);
+                throw new \Exception('Ten obiekt nie obsługuje tworzenia z tablicy');
+            }
         }else{
-            throw new RichException('Identyfikator obiektu jest błędnego typu', $entity_descriptor);
+            Logger::Log('Identyfikator obiektu jest błędnego typu: '.$entity_descriptor, LogChannels::VALIDATION_TYPE_MISMATCH);
+            throw new \Exception('Identyfikator obiektu jest błędnego typu');
         }
 
         $this->PopulateProperties($row);
@@ -48,8 +53,9 @@ abstract class Entity {
                 ->Select()
                 ->Where('id', '=', $entity_id)
                 ->Run();
-        if($result->num_rows == 0)
-            throw new RichException('Obiekt o podanym identyfikatorze nie istnieje', $entity_id);
+        if($result->num_rows == 0){
+            throw new \Exception('Obiekt o podanym identyfikatorze nie istnieje');
+        }
         
         return $result->fetch_assoc();
     }
@@ -81,7 +87,7 @@ abstract class Entity {
      * Tworzy stan domyślny (jeśli taki istnieje)
      */
     protected /* void */ function PopulateDefaults(){
-        throw new RichException('Obiekt tego typu nie przyjmuje wartości domyślnej');
+        throw new \Exception('Obiekt tego typu nie przyjmuje wartości domyślnej');
     }
 
     /**

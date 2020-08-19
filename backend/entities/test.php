@@ -1,8 +1,9 @@
 <?php
 namespace Entities;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_TESTS', 'tests');
 
@@ -139,8 +140,10 @@ class Test extends Entity{
                 ->Value('question_multiplier', $question_multiplier)
                 ->Run();
             
-        if($result === false)
-            throw new RichException('Nie udało się stworzyć testu.');
+        if($result === false){
+            Logger::Log('Nie udało się stworzyć testu: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się stworzyć testu.');
+        }
         
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -149,8 +152,10 @@ class Test extends Entity{
                 ->Limit(1)
                 ->Run();
         
-        if($result === false || $result->num_rows == 0)
-            throw new RichException('Nie udało się wczytać utworzonego właśnie testu.');
+        if($result === false || $result->num_rows == 0){
+            Logger::Log('Nie udało się wczytać utworzonego właśnie testu: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się wczytać utworzonego właśnie testu.');
+        }
 
         return new Test($result->fetch_assoc());
     }
