@@ -83,7 +83,7 @@ class AuthManager {
         self::$current_user = self::$user_factory->Create($user_id);
     }
 
-    public static function RegisterUserFactory(AccessControl\UserFactory $factory){
+    public static function RegisterUserFactory(Users\UserFactory $factory){
         self::$user_factory = $factory;
     }
 }

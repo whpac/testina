@@ -1,5 +1,5 @@
 <?php
-namespace Auth\AccessControl;
+namespace Auth\Users;
 
 interface UserFactory{
 

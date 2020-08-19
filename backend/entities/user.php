@@ -6,7 +6,7 @@ use Database\DatabaseManager;
 
 define('TABLE_USERS', 'users');
 
-class User extends Entity implements \Auth\AccessControl\User {
+class User extends Entity implements \Auth\Users\User {
     protected /* int */ $id;
     protected /* string */ $first_name;
     protected /* string */ $last_name;
