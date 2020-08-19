@@ -24,5 +24,8 @@ class LogChannels{
 
     // Kanał dla zdarzeń podwyższonego ryzyka
     public const SUDO_MODE = 40;
+
+    // Kanał dla wiadomości związanych z bazą danych
+    public const DATABASE = 50;
 }
 ?>
