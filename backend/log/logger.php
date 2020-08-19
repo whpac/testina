@@ -8,7 +8,12 @@ define('TABLE_LOG', 'log');
 
 class Logger{
 
-    public static function Log(string $message, $channel){
+    /**
+     * Zapisuje wiadomość w dzienniku
+     * @param $message Treść wiadomości
+     * @param $channel Kanał, do którego ma trafić wiadomość
+     */
+    public static function Log(string $message, int $channel){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_LOG)
                 ->Insert()
