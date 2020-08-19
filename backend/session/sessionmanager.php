@@ -1,9 +1,11 @@
 <?php
 namespace Session;
 
-use \UEngine\Modules\Core\RichException;
 use Database\DatabaseManager;
 use Database\Queries;
+
+use Log\Logger;
+use Log\LogChannels;
 
 define('TABLE_SESSIONS', 'sessions');
 define('TABLE_SESSION_DATA', 'session_data');
@@ -29,7 +31,10 @@ class SessionManager {
      * Zwraca dostawcę klucza sesji
      */
     protected static function GetKeyProvider(){
-        if(self::$key_provider == null) self::SetKeyProvider(new Key\StaticKeyProvider('(null)'));
+        if(self::$key_provider == null){
+            Logger::Log('Nie ustawiono dostawcy klucza sesji', LogChannels::SESSION_FAILURE);
+            throw new \Exception('Nie ustawiono dostawcy klucza sesji.');
+        }
         return self::$key_provider;
     }
 
@@ -59,7 +64,11 @@ class SessionManager {
                 ->OrderBy('id')
                 ->Run();
         
-        if($result === false) throw new RichException('Nie udało się załadować danych sesji.', DatabaseManager::GetProvider()->GetError());
+        if($result === false){
+            Logger::Log('Nie udało się zapisać danych sesji: '.DatabaseManager::GetProvider()->GetError(), LogChannels::SESSION_FAILURE);
+            throw new \Exception('Nie udało się załadować danych sesji.');
+        }
+
         for($i=0; $i<$result->num_rows; $i++){
             $row = $result->fetch_assoc();
             self::$data[$row['key']] = $row['value'];
@@ -76,7 +85,10 @@ class SessionManager {
                 ->Select(['id'])
                 ->Where('session_key', '=', $key)
                 ->Run();
-        if($result === false) throw new RichException('Nie udało się odczytać identyfikatora sesji', DatabaseManager::GetProvider()->GetError());
+        if($result === false){
+            Logger::Log('Nie udało się odczytać identyfikatora sesji: '.DatabaseManager::GetProvider()->GetError(), LogChannels::SESSION_FAILURE);
+            throw new \Exception('Nie udało się odczytać identyfikatora sesji.');
+        }
 
         $result = $result->fetch_assoc();
         return $result['id'];
@@ -94,7 +106,10 @@ class SessionManager {
                 ->Where('session_key', '=', $key)
                 ->Run();
 
-        if(!$result) throw new RichException('Nie udało się odczytać terminu wygaśnięcia sesji.', DatabaseManager::GetProvider()->GetError());
+        if(!$result){
+            Logger::Log('Nie udało się odczytać terminu wygaśnięcia sesji: '.DatabaseManager::GetProvider()->GetError(), LogChannels::SESSION_FAILURE);
+            throw new \Exception('Nie udało się odczytać terminu wygaśnięcia sesji.');
+        }
 
         $result = $result->fetch_assoc();
         return $result['expire_date'];
@@ -126,7 +141,10 @@ class SessionManager {
                 ->Value('value', $value)
                 ->Run();
 
-        if(!$result) throw new RichException('Nie udało się zapisać danych sesji.', DatabaseManager::GetProvider()->GetError());
+        if(!$result) {
+            Logger::Log('Nie udało się zapisać danych sesji: '.DatabaseManager::GetProvider()->GetError(), LogChannels::SESSION_FAILURE);
+            throw new \Exception('Nie udało się zapisać danych sesji.');
+        }
     }
 
     /**
@@ -155,9 +173,5 @@ class SessionManager {
         self::GetKeyProvider()->SetKey($key);
         return $key;
     }
-
-    /*protected static function Renew(){
-        DatabaseManager::GetProvider()->Query('UPDATE '.TABLE_SESSIONS.' SET expire_date = FROM_UNIXTIME('.(time()+3600).') WHERE id='.self::$session_id);
-    }*/
 }
 ?>
