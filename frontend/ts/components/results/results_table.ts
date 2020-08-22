@@ -3,11 +3,11 @@ import Assignment from '../../entities/assignment';
 import { CompareUsersByName } from '../../utils/arrayutils';
 import * as DateUtils from '../../utils/dateutils';
 
-export default class ResultsTable extends Component{
+export default class ResultsTable extends Component {
     protected Element: HTMLTableElement;
     protected TableBody: HTMLTableSectionElement;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('table');
@@ -17,7 +17,7 @@ export default class ResultsTable extends Component{
         let tr_head = thead.insertRow(-1);
         let ths: HTMLTableHeaderCellElement[] = [];
 
-        for(let i = 0; i < 4; i++){
+        for(let i = 0; i < 4; i++) {
             ths.push(document.createElement('th'));
             tr_head.appendChild(ths[i]);
         }
@@ -36,7 +36,7 @@ export default class ResultsTable extends Component{
         loading_td.textContent = 'Wczytywanie...';
     }
 
-    public async Populate(assignment: Assignment){
+    public async Populate(assignment: Assignment) {
         let targets_awaiter = assignment.GetTargets();
         let results_awaiter = assignment.GetResults();
 
@@ -46,7 +46,7 @@ export default class ResultsTable extends Component{
 
         this.TableBody.textContent = '';
 
-        for(let user of users){
+        for(let user of users) {
             let tr = this.TableBody.insertRow(-1);
             let tds: HTMLTableCellElement[] = [];
 
@@ -55,16 +55,16 @@ export default class ResultsTable extends Component{
             tds[0].textContent = user.GetFullName();
 
             let score = await assignment.GetUsersScore(user);
-            if(score === undefined){
+            if(score === undefined) {
                 tds[1].textContent = '—';
                 tds[1].title = 'Nie pod' + (user.IsFemale() ? 'eszła' : 'szedł');
-            }else{
+            } else {
                 tds[1].textContent = score.toString() + '%';
             }
 
             let attempt_count = await assignment.CountUsersAttempts(user);
             tds[2].textContent = attempt_count.toString();
-            if(attempt_count >= assignment.AttemptLimit){
+            if(attempt_count >= assignment.AttemptLimit && !assignment.AreAttemptsUnlimited()) {
                 tds[2].classList.add('error');
                 if(user.IsFemale())
                     tds[2].title = 'Ta uczennica wykorzystała już wszystkie podejścia.';
@@ -73,10 +73,10 @@ export default class ResultsTable extends Component{
             }
 
             let last_attempt = results[user.Id].LastAttempt;
-            if(last_attempt === undefined){
+            if(last_attempt === undefined) {
                 tds[3].textContent = '—';
                 tds[3].title = 'Nie pod' + (user.IsFemale() ? 'eszła' : 'szedł');
-            }else{
+            } else {
                 tds[3].textContent = DateUtils.ToDayHourFormat(last_attempt);
             }
 
