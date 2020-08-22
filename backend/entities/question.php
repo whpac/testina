@@ -240,7 +240,9 @@ class Question extends Entity {
 
         // W pytaniu otwartym użytkownik może zaznaczyć tylko jedną odpowiedź
         $answer = $user_answers[0]->GetSuppliedAnswer();
-        $ascii_answer = \Utils\StringUtils::Utf8ToExtendedAscii($answer);
+
+        $utf8_ascii_map = [];
+        $ascii_answer = \Utils\StringUtils::Utf8ToExtendedAscii($answer, $utf8_ascii_map);
 
         $correct_answers = $this->GetAnswers();
         $max_typos = $this->GetMaxNumberOfTypos();
@@ -257,7 +259,7 @@ class Question extends Entity {
             }else{
                 // Porównaj odległość Levenshteina z ograniczeniem literówek (powolne)
                 // Ponieważ funkcja levenshtein() operuje na bajtach, należy przekodować tekst
-                $answer_text = \Utils\StringUtils::Utf8ToExtendedAscii($correct_answer->GetText());
+                $answer_text = \Utils\StringUtils::Utf8ToExtendedAscii($correct_answer->GetText(), $utf8_ascii_map);
                 if(levenshtein($ascii_answer, $answer_text) <= $max_typos){
                     return $this->GetPoints();
                 }
