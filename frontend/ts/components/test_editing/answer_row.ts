@@ -18,7 +18,7 @@ export default class AnswerRow extends Component {
     public IsRemoved = false;
     OnChange: (() => void) | undefined;
 
-    constructor(row_number: number, answer?: Answer){
+    constructor(row_number: number, answer?: Answer) {
         super();
 
         if(answer === undefined) this.StateChanged(); // answer == undefined if the answer has been just created
@@ -34,6 +34,7 @@ export default class AnswerRow extends Component {
         this.TextInput = document.createElement('input');
         this.TextInput.classList.add('discreet');
         this.TextInput.type = 'text';
+        this.TextInput.placeholder = 'Treść odpowiedzi';
         this.TextInput.addEventListener('change', this.StateChanged.bind(this));
         td_text.appendChild(this.TextInput);
 
@@ -62,24 +63,24 @@ export default class AnswerRow extends Component {
         this.Populate();
     }
 
-    async Populate(){
+    async Populate() {
         this.IgnoreChanges = true;
         this.TextInput.value = this.Answer?.Text ?? '';
         this.CorrectCheckbox.checked = this.Answer?.Correct ?? false;
         this.IgnoreChanges = false;
     }
 
-    IsCorrect(){
+    IsCorrect() {
         return this.CorrectCheckbox.checked;
     }
 
-    protected StateChanged(){
+    protected StateChanged() {
         if(this.IgnoreChanges) return;
         NavigationPrevention.Prevent('question-editor');
         this.IsChanged = true;
     }
 
-    protected RemoveAnswer(){
+    protected RemoveAnswer() {
         this.IsRemoved = true;
         this.StateChanged();
         this.TextInput.classList.add('deleted');
@@ -89,7 +90,7 @@ export default class AnswerRow extends Component {
         this.OnChange?.();
     }
 
-    protected RestoreAnswer(){
+    protected RestoreAnswer() {
         this.IsRemoved = false;
         this.StateChanged();
         this.TextInput.classList.remove('deleted');
@@ -99,22 +100,22 @@ export default class AnswerRow extends Component {
         this.OnChange?.();
     }
 
-    UpdateRowNumber(row_number: number){
+    UpdateRowNumber(row_number: number) {
         this.RowNumberCell.textContent = (row_number != 0) ? (row_number.toString() + '.') : '–';
     }
 
-    async Save(question: Question){
-        if(this.Answer !== undefined){
-            if(!this.IsRemoved){
+    async Save(question: Question) {
+        if(this.Answer !== undefined) {
+            if(!this.IsRemoved) {
                 // Update
                 if(this.IsChanged)
                     this.Answer.Update(this.TextInput.value, this.CorrectCheckbox.checked);
-            }else{
+            } else {
                 // Delete
                 this.Answer.Remove();
             }
-        }else{
-            if(!this.IsRemoved){
+        } else {
+            if(!this.IsRemoved) {
                 // Create
                 Answer.Create(question, this.TextInput.value, this.CorrectCheckbox.checked);
             }
