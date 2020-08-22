@@ -72,7 +72,7 @@ try {
 export async function LoadInitialPage() {
     // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
     let initial_page = 'home';
-    let url_path = ReadPageFromURL();
+    let url_path = decodeURI(ReadPageFromURL());
 
     // Jeżeli strona do załadowania nie jest pustym ciągiem - załaduj ją
     if(url_path != '') initial_page = url_path;
