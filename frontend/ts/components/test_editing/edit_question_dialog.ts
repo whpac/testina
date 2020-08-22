@@ -35,7 +35,7 @@ export default class EditQuestionDialog extends Dialog {
     protected PromiseResolve: ((question: Question) => void) | undefined;
     protected PromiseReject: (() => void) | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         this.AddClasses(['rich']);
@@ -209,7 +209,7 @@ export default class EditQuestionDialog extends Dialog {
         this.AddButton(this.CancelButton);
     }
 
-    async PopulateAndShow(question?: Question){
+    async PopulateAndShow(question?: Question) {
         this.Question = question;
         this.IgnoreChanges = true;
         this.TextTextarea.value = question?.Text ?? '';
@@ -218,7 +218,7 @@ export default class EditQuestionDialog extends Dialog {
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
         this.ErrorWrapper.textContent = '';
 
-        switch(question?.PointsCounting ?? Question.COUNTING_BINARY){
+        switch(question?.PointsCounting ?? Question.COUNTING_BINARY) {
             case Question.COUNTING_BINARY:
                 this.CountingBinaryRadio.checked = true;
                 break;
@@ -228,10 +228,10 @@ export default class EditQuestionDialog extends Dialog {
         }
 
         let typos_count = question?.MaxTypos ?? 0;
-        if(typos_count == 0){
+        if(typos_count == 0) {
             this.TyposDisallowRadio.checked = true;
             this.TyposAllowCountInput.value = '1';
-        }else{
+        } else {
             this.TyposAllowRadio.checked = true;
             this.TyposAllowCountInput.value = typos_count.toString();
         }
@@ -248,8 +248,8 @@ export default class EditQuestionDialog extends Dialog {
         });
     }
 
-    protected CancelChanges(){
-        if(NavigationPrevention.IsPreventedBy('question-editor')){
+    protected CancelChanges() {
+        if(NavigationPrevention.IsPreventedBy('question-editor')) {
             let confirm_result = window.confirm('Zmiany w tym pytaniu nie zostały zapisane.\nCzy chcesz wyjść mimo to?');
             if(!confirm_result) return;
         }
@@ -259,8 +259,8 @@ export default class EditQuestionDialog extends Dialog {
         this.PromiseReject?.();
     }
 
-    protected async SaveChanges(){
-        if(this.Test === undefined){
+    protected async SaveChanges() {
+        if(this.Test === undefined) {
             this.Hide();
             this.PromiseReject?.();
             return;
@@ -287,9 +287,9 @@ export default class EditQuestionDialog extends Dialog {
         this.SaveButton.disabled = true;
         this.CancelButton.disabled = true;
 
-        try{
-            
-            if(this.Question === undefined){
+        try {
+
+            if(this.Question === undefined) {
                 // Create a question
                 let new_question = await Question.Create(
                     this.Test,
@@ -303,10 +303,10 @@ export default class EditQuestionDialog extends Dialog {
                 this.Question = new_question;
                 this.AnswersTable.Question = new_question;
                 await this.AnswersTable.Save();
-            }else{
+            } else {
                 // Update the question - only if it's been changed
                 let update_awaiter: (Promise<void> | undefined) = undefined;
-                if(this.IsChanged){
+                if(this.IsChanged) {
                     update_awaiter = this.Question.Update(
                         text,
                         type,
@@ -329,48 +329,53 @@ export default class EditQuestionDialog extends Dialog {
             NavigationPrevention.Unprevent('question-editor');
             this.PromiseResolve?.(this.Question);
 
-        }catch(e){
+        } catch(e) {
             new Toast('Nie udało się zapisać pytania.').Show(0);
-        }finally{
+        } finally {
             saving_toast.Hide();
             this.SaveButton.disabled = false;
             this.CancelButton.disabled = false;
         }
     }
 
-    protected Validate(){
+    protected Validate() {
         let errors = [];
 
-        if(this.TextTextarea.value == ''){
+        if(this.TextTextarea.value == '') {
             errors.push('Treść pytania nie może być pusta.');
             this.TextTextarea.classList.add('error');
-        }else{
+        } else {
             this.TextTextarea.classList.remove('error');
         }
 
-        if(parseFloat(this.PointsInput.value) <= 0){
+        if(parseFloat(this.PointsInput.value) <= 0) {
             errors.push('Liczba punktów musi być dodatnia.');
             this.PointsInput.classList.add('error');
-        }else{
+        } else {
             this.PointsInput.classList.remove('error');
         }
 
-        if(this.AnswersTable.CountPresentRows() < 2){
-            errors.push('Pytanie musi mieć co najmniej dwa warianty odpowiedzi.');
+        let minimal_answer_count = 2;
+        if(this.TypeSelect.value == Question.TYPE_OPEN_ANSWER.toString()) minimal_answer_count = 1;
+        if(this.AnswersTable.CountPresentRows() < minimal_answer_count) {
+            errors.push(
+                'Pytanie musi mieć co najmniej ' +
+                (minimal_answer_count == 1 ? 'jeden wariant' : 'dwa warianty') +
+                ' odpowiedzi.');
         }
 
         let correct_answer_count = this.AnswersTable.CountCorrectRows();
         if(this.TypeSelect.value == Question.TYPE_MULTI_CHOICE.toString()
-            && correct_answer_count == 0){
-                errors.push('Pytanie wielokrotnego wyboru musi mieć co najmniej jedną poprawną odpowiedź.');
+            && correct_answer_count == 0) {
+            errors.push('Pytanie wielokrotnego wyboru musi mieć co najmniej jedną poprawną odpowiedź.');
         }
         if(this.TypeSelect.value == Question.TYPE_SINGLE_CHOICE.toString()
-            && correct_answer_count != 1){
-                errors.push('Pytanie jednokrotnego wyboru musi mieć dokładnie jedną poprawną odpowiedź.');
+            && correct_answer_count != 1) {
+            errors.push('Pytanie jednokrotnego wyboru musi mieć dokładnie jedną poprawną odpowiedź.');
         }
 
         let errors_html = '';
-        for(let i = 0; i < errors.length; i++){
+        for(let i = 0; i < errors.length; i++) {
             if(i > 0) errors_html += '<br/>';
             errors_html += errors[i];
         }
@@ -379,24 +384,24 @@ export default class EditQuestionDialog extends Dialog {
         return errors.length == 0;
     }
 
-    protected StateChanged(){
+    protected StateChanged() {
         if(this.IgnoreChanges) return;
         this.IsChanged = true;
         NavigationPrevention.Prevent('question-editor');
     }
 
-    protected UpdateTyposCountEnableState(){
+    protected UpdateTyposCountEnableState() {
         this.TyposAllowCountInput.disabled = !this.TyposAllowRadio.checked;
         this.StateChanged();
     }
 
-    protected UpdateFieldsetVisibilityBasedOnQuestionType(){
+    protected UpdateFieldsetVisibilityBasedOnQuestionType() {
         let type = parseInt(this.TypeSelect.value);
 
         this.CountingFieldset.style.display = 'none';
         this.TyposFieldset.style.display = 'none';
 
-        switch(type){
+        switch(type) {
             case Question.TYPE_MULTI_CHOICE:
                 this.CountingFieldset.style.display = 'block';
                 break;
@@ -404,6 +409,7 @@ export default class EditQuestionDialog extends Dialog {
                 this.TyposFieldset.style.display = 'block';
                 break;
         }
+        this.AnswersTable.SetOpenAnswerMode(type == Question.TYPE_OPEN_ANSWER);
         this.StateChanged();
     }
 }

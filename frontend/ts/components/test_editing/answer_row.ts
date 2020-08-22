@@ -7,6 +7,7 @@ import NavigationPrevention from '../../1page/navigationprevention';
 export default class AnswerRow extends Component {
     protected RowNumberCell: HTMLTableCellElement;
     protected TextInput: HTMLInputElement;
+    protected CorrectCell: HTMLTableDataCellElement;
     protected CorrectCheckbox: HTMLInputElement;
     protected RemoveButton: HTMLButtonElement;
     protected RestoreButton: HTMLButtonElement;
@@ -38,12 +39,12 @@ export default class AnswerRow extends Component {
         this.TextInput.addEventListener('change', this.StateChanged.bind(this));
         td_text.appendChild(this.TextInput);
 
-        let td_correct = (this.Element as HTMLTableRowElement).insertCell(-1);
-        td_correct.classList.add('center');
+        this.CorrectCell = (this.Element as HTMLTableRowElement).insertCell(-1);
+        this.CorrectCell.classList.add('center');
         this.CorrectCheckbox = document.createElement('input');
         this.CorrectCheckbox.type = 'checkbox';
         this.CorrectCheckbox.addEventListener('change', this.StateChanged.bind(this));
-        td_correct.appendChild(this.CorrectCheckbox);
+        this.CorrectCell.appendChild(this.CorrectCheckbox);
 
         let td_rem = (this.Element as HTMLTableRowElement).insertCell(-1);
 
@@ -100,8 +101,17 @@ export default class AnswerRow extends Component {
         this.OnChange?.();
     }
 
-    UpdateRowNumber(row_number: number) {
+    public UpdateRowNumber(row_number: number) {
         this.RowNumberCell.textContent = (row_number != 0) ? (row_number.toString() + '.') : '–';
+    }
+
+    public SetOpenAnswerMode(is_open_answer: boolean) {
+        if(is_open_answer) {
+            this.CorrectCheckbox.checked = true;
+            this.CorrectCell.style.display = 'none';
+        } else {
+            this.CorrectCell.style.display = '';
+        }
     }
 
     async Save(question: Question) {
