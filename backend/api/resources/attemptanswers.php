@@ -39,7 +39,11 @@ class AttemptAnswers extends Resource {
             if($question->done){
                 foreach($question->answers as $answer){
                     try{
-                        \Entities\UserAnswer::Create($attempt, new \Entities\Answer($answer->id), $question_index);
+                        if($answer->is_open){
+                            \Entities\UserAnswer::CreateOpenAnswer($attempt, $question_index, new \Entities\Question($question->id), $answer->text);
+                        }else{
+                            \Entities\UserAnswer::Create($attempt, new \Entities\Answer($answer->id), $question_index);
+                        }
                     }catch(Exception $e){
                         $errors++;
                     }

@@ -162,7 +162,7 @@ class Question extends Entity {
 
     public /* float */ function CountPoints(/* UserAnswer[] */ array $user_answers){
         foreach($user_answers as $user_answer){
-            if($user_answer->IsNoAnswer()) return 0;
+            if($user_answer->IsNoAnswer() || $user_answer->IsOpenAnswer()) return 0;
         }
 
         switch($this->GetType()){
@@ -171,6 +171,9 @@ class Question extends Entity {
             break;
             case self::TYPE_MULTI_CHOICE:
                 return $this->CountPointsMultiChoice($user_answers);
+            break;
+            case self::TYPE_OPEN_ANSWER:
+                return $this->CountPointsOpenAnswer($user_answers);
             break;
         }
         return null;
@@ -229,6 +232,37 @@ class Question extends Entity {
         }
 
         return $this->GetPoints();
+    }
+
+    protected /* float */ function CountPointsOpenAnswer(/* UserAnswer[] */ array $user_answers){
+        if(count($user_answers) == 0) return 0;
+        if(!$user_answers[0]->IsOpenAnswer()) return 0;
+
+        // W pytaniu otwartym użytkownik może zaznaczyć tylko jedną odpowiedź
+        $answer = $user_answers[0]->GetSuppliedAnswer();
+
+        $correct_answers = $this->GetAnswers();
+        $max_typos = $this->GetMaxNumberOfTypos();
+
+        // Przechodzi przez każdą z prawidłowych odpowiedzi
+        foreach($correct_answers as $correct_answer){
+            if(!$correct_answer->IsCorrect()) continue;
+
+            // Jeżeli literówki są niedopuszczalne, użyj zwykłego porównania (dużo szybsze)
+            if($max_typos <= 0){
+                if($answer == $correct_answer){
+                    return $this->GetPoints();
+                }
+            }else{
+                // Porównaj odległość Levenshteina z ograniczeniem literówek (powolne)
+                if(levenshtein($answer, $correct_answer) <= $max_typos){
+                    return $this->GetPoints();
+                }
+            }
+        }
+
+        // Kiedy nie znaleziono pasującej odpowiedzi, zwróć wynik 0 punktów
+        return 0;
     }
 }
 ?>

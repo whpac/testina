@@ -13,6 +13,7 @@ class UserAnswer extends Entity {
     protected /* int */ $answer_id;
     protected /* int */ $question_index;
     protected /* int */ $question_id;
+    protected /* string */ $supplied_answer;
 
     protected static /* string */ function GetTableName(){
         return TABLE_USER_ANSWERS;
@@ -27,6 +28,7 @@ class UserAnswer extends Entity {
         settype($this->attempt_id, 'int');
         settype($this->answer_id, 'int');
         settype($this->question_index, 'int');
+        settype($this->supplied_answer, 'string');
     }
 
     public /* int */ function GetId(){
@@ -39,7 +41,7 @@ class UserAnswer extends Entity {
         return new Attempt($this->attempt_id);
     }
 
-    public /* Answer */ function GetAnswer(){
+    public /* Answer? */ function GetAnswer(){
         $this->FetchIfNeeded();
         if(is_null($this->answer_id)) return null;
         return new Answer($this->answer_id);
@@ -55,8 +57,17 @@ class UserAnswer extends Entity {
         return new Question($this->question_id);
     }
 
+    public /* string? */ function GetSuppliedAnswer(){
+        $this->FetchIfNeeded();
+        return $this->supplied_answer;
+    }
+
+    public /* bool */ function IsOpenAnswer(){
+        return !is_null($this->GetSuppliedAnswer());
+    }
+
     public /* bool */ function IsNoAnswer(){
-        return is_null($this->GetAnswer());
+        return is_null($this->GetAnswer()) && !$this->IsOpenAnswer();
     }
 
     public static function Create(Attempt $attempt, Answer $answer, /* int */ $question_index){
@@ -67,6 +78,31 @@ class UserAnswer extends Entity {
                 ->Value('answer_id', $answer->GetId())
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $answer->GetQuestion()->GetId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się zapisać odpowiedzi: '.DatabaseManager::GetProvider()->GetError());
+            throw new \Exception('Nie udało się zapisać odpowiedzi.');
+        }
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Select(['id'])
+                ->Where('attempt_id', '=', $attempt->GetId())
+                ->OrderBy('id', 'DESC')
+                ->Run();
+
+        return new UserAnswer($result->fetch_assoc());
+    }
+
+    public static function CreateOpenAnswer(Attempt $attempt, /* int */ $question_index, Question $question, string $answer){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Insert()
+                ->Value('attempt_id', $attempt->GetId())
+                ->Value('question_index', $question_index)
+                ->Value('question_id', $question->GetId())
+                ->Value('supplied_answer', $answer)
                 ->Run();
 
         if($result === false){
