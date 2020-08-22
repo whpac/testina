@@ -12,7 +12,8 @@ input[type=text], input[type=password], input[type=number], input[type=datetime-
         background:var(--background-empty-color); border:1px solid var(--input-border-color);
         color:var(--text-secondary-color);
     }
-    &.error {border-color:var(--error-color); color:var(--text-primary-color);}
+    &.error {border-color:var(--error-color); color:var(--text-primary-color) !important;}
+    &.success {border-color:var(--success-color); color:var(--text-primary-color) !important;}
 }
 textarea {resize:vertical; min-height:3em; font-family:inherit;}
 
