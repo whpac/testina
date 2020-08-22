@@ -162,7 +162,7 @@ class Question extends Entity {
 
     public /* float */ function CountPoints(/* UserAnswer[] */ array $user_answers){
         foreach($user_answers as $user_answer){
-            if($user_answer->IsNoAnswer() || $user_answer->IsOpenAnswer()) return 0;
+            if($user_answer->IsNoAnswer()) return 0;
         }
 
         switch($this->GetType()){
@@ -184,7 +184,7 @@ class Question extends Entity {
         $correct_ids = [];
 
         foreach($user_answers as $user_answer){
-            $selected_ids[] = $user_answer->GetAnswer()->GetId();
+            if(!$user_answer->IsOpenAnswer()) $selected_ids[] = $user_answer->GetAnswer()->GetId();
         }
 
         $answers = $this->GetAnswers();
@@ -250,12 +250,12 @@ class Question extends Entity {
 
             // Jeżeli literówki są niedopuszczalne, użyj zwykłego porównania (dużo szybsze)
             if($max_typos <= 0){
-                if($answer == $correct_answer){
+                if($answer == $correct_answer->GetText()){
                     return $this->GetPoints();
                 }
             }else{
                 // Porównaj odległość Levenshteina z ograniczeniem literówek (powolne)
-                if(levenshtein($answer, $correct_answer) <= $max_typos){
+                if(levenshtein($answer, $correct_answer->GetText()) <= $max_typos){
                     return $this->GetPoints();
                 }
             }
