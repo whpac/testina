@@ -20,6 +20,9 @@ export default class QuestionCard extends Card {
     protected NextButton: HTMLButtonElement;
     protected FinishButton: HTMLButtonElement;
 
+    protected OpenAnswerInput: HTMLInputElement | undefined;
+    protected OpenAnswerFeedback: HTMLElement | undefined;
+
     protected TimeLimit: number | undefined;
     protected AssignmentDeadline!: Date;
     protected TestStartDate!: Date;
@@ -146,11 +149,14 @@ export default class QuestionCard extends Card {
         ShuffleArray(answers);
         this.CurrentQuestion.SetAnswers(answers);
 
+        this.OpenAnswerFeedback = undefined;
+        this.OpenAnswerInput = undefined;
+        this.AnswerWrapper.textContent = '';
+
         // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
         switch(this.CurrentQuestion.GetQuestion().Type) {
             case Question.TYPE_SINGLE_CHOICE:
             case Question.TYPE_MULTI_CHOICE:
-                this.AnswerWrapper.textContent = '';
                 for(let i = 0; i < answers.length; i++) {
                     const answer = answers[i];
                     let answer_button = document.createElement('button');
@@ -164,7 +170,16 @@ export default class QuestionCard extends Card {
                 }
                 break;
             case Question.TYPE_OPEN_ANSWER:
-                console.error('NotImplemented: OpenAnswerQuestion');
+                let type_label = document.createElement('span');
+                type_label.textContent = 'Podaj odpowiedź:';
+                this.AnswerWrapper.appendChild(type_label);
+
+                this.OpenAnswerInput = document.createElement('input');
+                this.OpenAnswerInput.type = 'text';
+                this.AnswerWrapper.appendChild(this.OpenAnswerInput);
+
+                this.OpenAnswerFeedback = document.createElement('span');
+                this.AnswerWrapper.appendChild(this.OpenAnswerFeedback);
                 break;
         }
 
@@ -200,8 +215,11 @@ export default class QuestionCard extends Card {
 
     protected async CheckQuestion() {
         this.DisableAnswers = true;
+        if(this.OpenAnswerInput !== undefined)
+            this.OpenAnswerInput.readOnly = true;
         this.CurrentQuestion?.MarkAsDone();
 
+        let whether_to_save = false;
         // Pokaż odpowiedni przycisk
         this.DoneButton.style.display = 'none';
         if(this.CurrentQuestionNumber + 1 < this.Questions.length) {
@@ -209,26 +227,49 @@ export default class QuestionCard extends Card {
         } else {
             this.FinishButton.style.display = '';
             this.StopTimer();
-            this.SaveResults();
+            whether_to_save = true;
         }
 
         if(this.CurrentQuestion === undefined) return;
 
-        // Zaznacz odpowiedzi
-        let answers_buttons = document.querySelectorAll('.answer-button');
-        for(let button of answers_buttons) {
-            let index = parseInt((button as HTMLElement).dataset.index ?? '0');
-            if(this.CurrentQuestion.GetAnswers()[index].Correct) {
-                button.classList.add('correct');
-            } else {
-                button.classList.add('wrong');
-            }
+        switch(this.CurrentQuestion.GetQuestion().Type) {
+            case Question.TYPE_SINGLE_CHOICE:
+            case Question.TYPE_MULTI_CHOICE:
+                // Zaznacz odpowiedzi
+                let answers_buttons = document.querySelectorAll('.answer-button');
+                for(let button of answers_buttons) {
+                    let index = parseInt((button as HTMLElement).dataset.index ?? '0');
+                    if(this.CurrentQuestion.GetAnswers()[index].Correct) {
+                        button.classList.add('correct');
+                    } else {
+                        button.classList.add('wrong');
+                    }
+                }
+                break;
+            case Question.TYPE_OPEN_ANSWER:
+                let user_answer = this.OpenAnswerInput?.value.trim();
+                this.CurrentQuestion.UserSuppliedAnswer = user_answer;
+                if(this.CurrentQuestion.CountPoints() == 0) {
+                    this.OpenAnswerInput?.classList.add('error');
+                    this.OpenAnswerFeedback?.classList.add('error');
+                    if(this.OpenAnswerFeedback !== undefined) {
+                        this.OpenAnswerFeedback.textContent = 'Prawidłowa odpowiedź: ' + (await this.CurrentQuestion.GetQuestion().GetAnswers())[0].Text;
+                    }
+                } else {
+                    this.OpenAnswerInput?.classList.add('success');
+                    this.OpenAnswerFeedback?.classList.add('success');
+                    if(this.OpenAnswerFeedback !== undefined) {
+                        this.OpenAnswerFeedback.textContent = 'Dobrze!';
+                    }
+                }
+                break;
         }
 
         // Zaktualizuj wynik
-        this.PointsGot += await this.CurrentQuestion.CountPoints();
+        this.PointsGot += this.CurrentQuestion.CountPoints();
         this.PointsMax += this.CurrentQuestion.GetQuestion().Points;
         this.UpdateScore();
+        if(whether_to_save) this.SaveResults();
     }
 
     protected GoToNextQuestion() {

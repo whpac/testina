@@ -89,18 +89,25 @@ export default class Attempt extends Entity {
         };
 
         for(let question of questions) {
-            let answers: { id: number; }[] = [];
+            let answers: AnswersArray = [];
             let q = {
                 id: question.GetQuestion().Id,
                 done: question.GetIsDone(),
+                is_open: (question.GetQuestion().Type == Question.TYPE_OPEN_ANSWER),
                 answers: answers
             };
 
-            let selected_answers = question.GetSelectedAnswers();
-            for(let selected_answer of selected_answers) {
+            if(question.GetQuestion().Type == Question.TYPE_OPEN_ANSWER) {
                 q.answers.push({
-                    id: selected_answer.Id
+                    text: question.UserSuppliedAnswer ?? ''
                 });
+            } else {
+                let selected_answers = question.GetSelectedAnswers();
+                for(let selected_answer of selected_answers) {
+                    q.answers.push({
+                        id: selected_answer.Id
+                    });
+                }
             }
 
             data.questions.push(q);
@@ -117,10 +124,11 @@ export default class Attempt extends Entity {
 /** Typ reprezentujący treść żądania zapisania odpowiedzi użytkownika */
 type SaveUserAnswersPayload = {
     questions: {
-        id: number,
-        done: boolean,
-        answers: {
-            id: number;
-        }[];
+        id: number;
+        done: boolean;
+        is_open: boolean;
+        answers: AnswersArray;
     }[];
 };
+
+type AnswersArray = ({ id: number; } | { text: string; })[];
