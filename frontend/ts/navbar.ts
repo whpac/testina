@@ -103,7 +103,7 @@ export default class Navbar {
                 this.Hide();
             }).bind(this));
         } else {
-            a.href = '#';
+            a.href = 'javascript:void(0)';
             a.addEventListener('click', (e) => {
                 href();
 
