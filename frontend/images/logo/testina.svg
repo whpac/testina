@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <style type="text/css" >
+        <![CDATA[
+
+        path {
+           stroke:#fff;
+           stroke-width: 16;
+           stroke-linecap: round;
+           fill: none;
+        }
+
+        .logo-backplate {
+            fill:url(#gradient-dark);
+            stroke:none;
+        }
+
+        ]]>
+    </style>
+
+    <defs>
+        <linearGradient id="gradient-light" x1="10%" y1="10%" x2="90%" y2="90%" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00acc1" offset="0%"/>
+            <stop stop-color="#1e88e5" offset="50%"/>
+            <stop stop-color="#5e35b1" offset="100%" />
+        </linearGradient>
+        <linearGradient id="gradient-dark" x1="10%" y1="10%" x2="90%" y2="90%" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#26c6da" offset="0%"/>
+            <stop stop-color="#42a5f5" offset="50%"/>
+            <stop stop-color="#7e57c2" offset="100%" />
+        </linearGradient>
+    </defs>
+
+    <rect x="0" y="0" rx="20" width="160" height="160" class="logo-backplate" />
+
+    <!-- Pozioma kreska litery T -->
+    <path d="
+        M 120 40
+        h -70
+        a 15 15 0 0 0 -15 15
+        " />
+
+    <!-- Pionowa kreska litery T -->
+    <path d="
+        M 80 40
+        v 75
+        a 15 15 0 0 0 15 15
+        " />
+</svg>
