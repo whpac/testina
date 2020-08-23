@@ -5,7 +5,7 @@ import Assignment from '../../entities/assignment';
 export default class TestsToSolveTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
 
-    constructor(){
+    constructor() {
         super();
 
         this.GetElement().classList.add('semi-wide');
@@ -94,10 +94,10 @@ export default class TestsToSolveTable extends Card {
         tr.insertCell();
     }
 
-    async Populate(assignments: Assignment[]){
+    async Populate(assignments: Assignment[]) {
         this.ContentWrapper.textContent = '';
-        for(let i = assignments.length - 1; i >= 0; i--){
-            if(!(await assignments[i].IsActive())) continue;
+        for(let i = assignments.length - 1; i >= 0; i--) {
+            if(!assignments[i].IsActive()) continue;
             this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
         }
     }
