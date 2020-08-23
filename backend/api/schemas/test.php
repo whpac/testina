@@ -9,7 +9,7 @@ interface Test{
     public function time_limit(): int;
     public function question_multiplier(): float;
 
-    public function question_count(): ?int;
+    public function question_count(): int;
     public function questions(): ?Collection; // <Question>
 
     public function assignment_count(): ?int;

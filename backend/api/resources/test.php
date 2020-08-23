@@ -31,11 +31,11 @@ class Test extends Resource implements Schemas\Test{
             'author_id',
             'creation_date',
             'time_limit',
-            'question_multiplier'
+            'question_multiplier',
+            'question_count'
         ];
 
         if($this->Test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId()){
-            $keys[] = 'question_count';
             $keys[] = 'questions';
             $keys[] = 'assignment_count';
             $keys[] = 'assignment_ids';
@@ -68,8 +68,7 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetQuestionMultiplier();
     }
 
-    public function question_count(): ?int{
-        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+    public function question_count(): int{
         return count($this->Test->GetQuestions());
     }
 
