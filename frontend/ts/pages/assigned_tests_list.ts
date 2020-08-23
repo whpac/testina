@@ -3,11 +3,12 @@ import TestsToSolveTable from '../components/tests_lists/tests_to_solve_table';
 import TestsSolvedTable from '../components/tests_lists/tests_solved_table';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 
-export default class AssignedTestsListPage extends Page{
+export default class AssignedTestsListPage extends Page {
     ToSolveTable: TestsToSolveTable;
     SolvedTable: TestsSolvedTable;
+    IsPopulated: boolean = false;
 
-    constructor(){
+    constructor() {
         super();
 
         let heading = document.createElement('h1');
@@ -21,26 +22,28 @@ export default class AssignedTestsListPage extends Page{
         this.Element.appendChild(this.SolvedTable.GetElement());
     }
 
-    async LoadInto(container: HTMLElement){
+    async LoadInto(container: HTMLElement) {
         container.appendChild(this.Element);
-        
+
         // Wrapped in a function in order to run asynchronously
         (async () => {
+            if(this.IsPopulated) return;
             let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
             this.ToSolveTable.Populate(assignments);
             this.SolvedTable.Populate(assignments);
+            this.IsPopulated = true;
         })();
     }
 
-    UnloadFrom(container: HTMLElement){
+    UnloadFrom(container: HTMLElement) {
         container.removeChild(this.Element);
     }
 
-    GetUrlPath(){
+    GetUrlPath() {
         return 'testy/lista';
     }
 
-    async GetTitle(){
+    async GetTitle() {
         return 'Testy';
     }
 }

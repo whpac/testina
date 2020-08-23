@@ -49,26 +49,15 @@ export default class AssignedTestRow extends Component {
         this.Populate(assignment);
     }
 
-    public async Populate(assignment: Assignment) {
+    public Populate(assignment: Assignment) {
         this.NameCell.textContent = assignment.Test.Name;
         this.DeadlineCell.textContent = DateUtils.ToDayHourFormat(assignment.Deadline);
         this.AssignedCell.textContent = DateUtils.ToDayFormat(assignment.AssignmentDate);
         this.AssignedCell.title = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
         this.AuthorCell.textContent = assignment.Test.Author.GetFullName();
 
-        let score = assignment.Score;
-        if(score === undefined) {
-            this.ScoreCell.textContent = '—';
-        } else {
-            this.ScoreCell.textContent = '';
-
-            let score_link = document.createElement('a');
-            score_link.title = 'Zobacz szczegóły wyniku';
-            score_link.href = 'javascript:void(0)';
-            score_link.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment));
-            score_link.textContent = score + '%';
-            this.ScoreCell.appendChild(score_link);
-        }
+        this.DisplayScore(assignment);
+        assignment.AddEventListener('change', (() => this.DisplayScore(assignment)).bind(this));
 
         this.DetailsButton.addEventListener('click', () => this.DisplayAssignmentDetailsDialog(assignment));
 
@@ -89,6 +78,23 @@ export default class AssignedTestRow extends Component {
         } else {
             this.SolveButton.href = 'testy/rozwiąż/' + assignment.Id;
             this.SolveButton.addEventListener('click', (e) => HandleLinkClick(e, 'testy/rozwiąż', assignment));
+        }
+    }
+
+    protected DisplayScore(assignment: Assignment) {
+        console.log('Display');
+        let score = assignment.Score;
+        if(score === undefined) {
+            this.ScoreCell.textContent = '—';
+        } else {
+            this.ScoreCell.textContent = '';
+
+            let score_link = document.createElement('a');
+            score_link.title = 'Zobacz szczegóły wyniku';
+            score_link.href = 'javascript:void(0)';
+            score_link.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment));
+            score_link.textContent = score + '%';
+            this.ScoreCell.appendChild(score_link);
         }
     }
 
