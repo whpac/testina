@@ -1,12 +1,12 @@
 import Card from '../basic/card';
 import AssignedTestRow from './assigned_test_row';
 import Assignment from '../../entities/assignment';
-import User from '../../entities/user';
 import UserLoader from '../../entities/loaders/userloader';
 
 export default class TestsSolvedTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
     Subheading: HTMLParagraphElement;
+    RowCount: number = 0;
 
     constructor() {
         super();
@@ -103,12 +103,17 @@ export default class TestsSolvedTable extends Card {
         tr.insertCell().classList.add('narrow-screen-only');
     }
 
-    async Populate(assignments: Assignment[]) {
-        this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
+    Populate(assignments: Assignment[]) {
+        (async () => {
+            this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
+        })();
+        this.GetElement().style.display = '';
         this.ContentWrapper.textContent = '';
+        this.RowCount = 0;
         for(let i = assignments.length - 1; i >= 0; i--) {
-            if(await assignments[i].IsActive()) continue;
+            if(assignments[i].IsActive()) continue;
             this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
+            this.RowCount++;
         }
     }
 }

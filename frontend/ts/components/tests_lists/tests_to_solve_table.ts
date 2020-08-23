@@ -4,6 +4,7 @@ import Assignment from '../../entities/assignment';
 
 export default class TestsToSolveTable extends Card {
     ContentWrapper: HTMLTableSectionElement;
+    RowCount: number = 0;
 
     constructor() {
         super();
@@ -94,11 +95,14 @@ export default class TestsToSolveTable extends Card {
         tr.insertCell();
     }
 
-    async Populate(assignments: Assignment[]) {
+    Populate(assignments: Assignment[]) {
+        this.GetElement().style.display = '';
         this.ContentWrapper.textContent = '';
+        this.RowCount = 0;
         for(let i = assignments.length - 1; i >= 0; i--) {
             if(!assignments[i].IsActive()) continue;
             this.ContentWrapper.appendChild(new AssignedTestRow(assignments[i]).GetElement());
+            this.RowCount++;
         }
     }
 }
