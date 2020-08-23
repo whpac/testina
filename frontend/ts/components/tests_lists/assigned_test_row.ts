@@ -82,7 +82,6 @@ export default class AssignedTestRow extends Component {
     }
 
     protected DisplayScore(assignment: Assignment) {
-        console.log('Display');
         let score = assignment.Score;
         if(score === undefined) {
             this.ScoreCell.textContent = '—';
