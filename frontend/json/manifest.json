@@ -1,0 +1,20 @@
+{
+    "name": "Testina",
+    "short_name": "Testina",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "description": "Aplikacja do przeprowadzania testów online.",
+    "icons": [
+        {
+            "src": "../images/logo/testina-180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "../images/touch/testina.svg",
+            "sizes": "48x48 96x96 128x128 192x192 256x256 512x512",
+            "type": "image/png"
+        }
+    ]
+}

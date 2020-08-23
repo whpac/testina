@@ -21,7 +21,10 @@ define('DEFAULT_TITLE', 'Lorem Ipsum');
         <script src="js/script" type="module"></script>
 
         <!-- Ikona strony -->
-        <link rel="shortcut icon" href="favicon.ico" />
+        <meta name="theme-color" content="#ffffff">
+        <link rel="icon" href="images/logo/testina.svg">
+        <link rel="apple-touch-icon" href="images/logo/testina-180.png">
+        <link rel="manifest" href="json/manifest.json">
 
         <!-- Stylizacja ekranu ładowania -->
         <style>
@@ -77,9 +80,16 @@ define('DEFAULT_TITLE', 'Lorem Ipsum');
                     }
 
                     .logo-backplate {
-                        fill:url(#gradient-dark);
+                        fill:url(#gradient-light);
                         stroke:none;
                     }
+
+                    @media (prefers-color-scheme: dark){
+                        .logo-backplate {fill:url(#gradient-dark);}
+                    }
+
+                    html.dark .logo-backplate {fill:url(#gradient-dark);}
+                    html.light .logo-backplate {fill:url(#gradient-light);}
 
                     ]]>
                 </style>
