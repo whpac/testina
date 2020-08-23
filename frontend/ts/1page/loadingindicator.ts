@@ -7,7 +7,7 @@ export default class LoadingIndicator {
      * Klasa reprezentująca wskaźnik ładowania
      * @param wrapper_id Identyfikator elementu HTML, użytego jako wskaźnik ładowania
      */
-    constructor(wrapper_id: string){
+    constructor(wrapper_id: string) {
         let wrapper = document.getElementById(wrapper_id);
         if(wrapper == null) throw 'Element with id ' + wrapper_id + ' doesn\'t exist.';
 
@@ -15,17 +15,17 @@ export default class LoadingIndicator {
     }
 
     /** Pokazuje wskaźnik ładowania */
-    Display(){
-        this.LoadingWrapperElement.style.display = 'block';
+    Display() {
+        this.LoadingWrapperElement.style.display = '';
     }
 
     /** Ukrywa wskaźnik ładowania */
-    Hide(){
+    Hide() {
         this.LoadingWrapperElement.style.display = 'none';
     }
 
     /** Sprawdza, czy wskaźnik ładowania jest widoczny */
-    IsVisible(){
+    IsVisible() {
         return this.LoadingWrapperElement.style.display != 'none';
     }
 }

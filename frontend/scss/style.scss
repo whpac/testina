@@ -15,8 +15,6 @@ body {
     grid-template-areas:'main nav';
 }
 
-aside.loading-wrapper {position:fixed; top:30vh; left:10vw; background:lime;}
-
 .center {text-align:center;}
 .empty-placeholder {display:block; text-align:center; color:var(--text-secondary-color); margin-bottom:2em;}
 .empty-placeholder em {display:block; font-weight:700; font-style:normal; margin-bottom:0.3em;}

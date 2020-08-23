@@ -1,7 +1,4 @@
 <?php
-// Policz czas ładowania strony
-$time_start = microtime(true);
-
 // Określa początkowy tytuł strony
 define('DEFAULT_TITLE', 'Lorem Ipsum');
 ?>
@@ -25,6 +22,31 @@ define('DEFAULT_TITLE', 'Lorem Ipsum');
 
         <!-- Ikona strony -->
         <link rel="shortcut icon" href="favicon.ico" />
+
+        <!-- Stylizacja ekranu ładowania -->
+        <style>
+            div.loading-wrapper {
+                position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:20;
+                background:var(--background-empty-color);
+                display: grid; grid-template-columns:1fr auto 1fr; grid-template-rows:1fr auto auto 1.5fr;
+            }
+
+            div.loading-wrapper img,
+            div.loading-wrapper svg {
+                grid-column:2; grid-row:2; width:160px; animation-name:logo-blink;
+                animation-duration:4s; animation-iteration-count:infinite;
+            }
+            div.loading-wrapper .loading-text {
+                grid-column:2; grid-row:3; margin-top:20px; color:var(--text-secondary-color);
+                text-align:center;
+            }
+
+            @keyframes logo-blink {
+                40% {opacity:1;}
+                50% {opacity:0.7;}
+                60% {opacity:1;}
+            }
+        </style>
     </head>
     <body>
         <!-- Panel nawigacji -->
@@ -41,13 +63,57 @@ define('DEFAULT_TITLE', 'Lorem Ipsum');
         <main id="content-container"></main>
 
         <!-- Wskaźnik ładowania -->
-        <aside id="loading-wrapper" class="loading-wrapper">Loading</aside>
+        <div id="loading-wrapper" class="loading-wrapper">
+            <!-- Logo Testiny -->
+            <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                <style type="text/css" >
+                    <![CDATA[
+
+                    path {
+                        stroke:#fff;
+                        stroke-width: 16;
+                        stroke-linecap: round;
+                        fill: none;
+                    }
+
+                    .logo-backplate {
+                        fill:url(#gradient-dark);
+                        stroke:none;
+                    }
+
+                    ]]>
+                </style>
+
+                <defs>
+                    <linearGradient id="gradient-light" x1="10%" y1="10%" x2="90%" y2="90%" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#00acc1" offset="0%"/>
+                        <stop stop-color="#1e88e5" offset="50%"/>
+                        <stop stop-color="#5e35b1" offset="100%" />
+                    </linearGradient>
+                    <linearGradient id="gradient-dark" x1="10%" y1="10%" x2="90%" y2="90%" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#26c6da" offset="0%"/>
+                        <stop stop-color="#42a5f5" offset="50%"/>
+                        <stop stop-color="#7e57c2" offset="100%" />
+                    </linearGradient>
+                </defs>
+
+                <rect x="0" y="0" rx="20" width="160" height="160" class="logo-backplate" />
+
+                <!-- Pozioma kreska litery T -->
+                <path d="
+                    M 120 40
+                    h -70
+                    a 15 15 0 0 0 -15 15
+                    " />
+
+                <!-- Pionowa kreska litery T -->
+                <path d="
+                    M 80 40
+                    v 75
+                    a 15 15 0 0 0 15 15
+                    " />
+            </svg>
+            <span class="loading-text">Ładowanie...</span>
+        </div>
     </body>
 </html>
-
-<?php
-// Skończ mierzenie czasu
-$time_end = microtime(true);
-$render_time = (($time_end-$time_start)*1000).'ms';
-echo('<!-- Czas generowania szablonu: '.$render_time.' -->');
-?>
