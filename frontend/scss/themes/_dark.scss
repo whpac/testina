@@ -12,12 +12,12 @@ html{
     --warning-color:#ffd54f;
     --success-color:#4caf50;
     --header-font-weight:300;
-    --surface-background-color:linear-gradient(-60deg, #292929, #222);
+    --surface-background-color:#222;
     --surface-border-color:transparent;
     --surface-border-width:0;
     --surface-border-radius:5px;
     --surface-box-shadow:0 0 3px rgba(85,85,85,0.65);
-    --elevated-surface-background-color:linear-gradient(-30deg, #3a3a3a, #2f2f2f);
+    --elevated-surface-background-color:#333;
     --elevated-surface-box-shadow:0 0 12px rgba(255,255,255,0.1);
     --dialog-backdrop-background-color:rgba(0,0,0,0.75);
     --dialog-separator-color:rgba(255,255,255,0.28);
@@ -48,4 +48,5 @@ html{
     --toast-background-color:#484848;
     --toast-text-color:#fff;
     --toast-box-shadow:none;
+    --logo-backplate-box-shadow:none;
 }

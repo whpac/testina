@@ -11,9 +11,11 @@ export default class AboutPage extends Page {
         this.AppendChild(header);
 
         let card = new Card('auto-width');
+        card.GetElement().style.marginTop = '60px';
+
         let logo_wrapper = document.createElement('div');
         logo_wrapper.classList.add('about-logo-wrapper');
-        logo_wrapper.innerHTML = '<img src="images/logo/testina.svg" />';
+        logo_wrapper.innerHTML = '<div class="logo-backplate"><img class="logo" src="images/logo/testina.svg" /></div>';
         card.AppendChild(logo_wrapper);
 
         card.GetContentElement().innerHTML +=

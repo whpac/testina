@@ -59,9 +59,15 @@ a {color:var(--link-color);}
 a:hover {color:var(--link-hover-color);}
 
 div.about-logo-wrapper {
-    display:grid; grid-template-columns:1fr 80px 1fr; margin-bottom:24px;
+    display:grid; grid-template-columns:1fr auto 1fr;
+    margin-top:-55px; margin-bottom:5px;
 
-    img {grid-column:2; width:100%;}
+    .logo-backplate {
+        grid-column:2; padding:5px; background:var(--surface-background-color);
+        border-radius:15px; font-size:0; border:var(--surface-border-width) solid var(--surface-border-color);
+        box-shadow:var(--logo-backplate-box-shadow);
+    }
+    .logo {width:80px;}
 }
 
 @import 'navbar';
