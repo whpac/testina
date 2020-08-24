@@ -8,38 +8,37 @@ import AssignTestDialog from './assigning/assign_test_dialog';
 import TestLoader from '../../entities/loaders/testloader';
 
 export default class TestsTable extends Component {
-    protected IsLoaded: boolean;
     protected TestRowsContainer: HTMLTableSectionElement;
     protected SummaryDialog: TestSummaryDialog;
     protected AssignDialog: AssignTestDialog;
+    protected RowCount: number = 0;
 
     /**
      * Prepare the table to be displayed
      */
-    constructor(){
+    constructor() {
         super();
-        this.IsLoaded = false;
 
         this.Element = document.createElement('table');
         this.Element.classList.add('table', 'full-width');
-        this.Element.innerHTML = 
+        this.Element.innerHTML =
             '<colgroup>' +
-                '<col />' +
-                '<col class="wide-screen-only" />' +
-                '<col class="wide-screen-only" />' +
-                '<col class="shrink xlarge-screen-only" />' +
-                '<col class="shrink wide-screen-only" />' +
-                '<col class="shrink" />' +
+            '<col />' +
+            '<col class="wide-screen-only" />' +
+            '<col class="wide-screen-only" />' +
+            '<col class="shrink xlarge-screen-only" />' +
+            '<col class="shrink wide-screen-only" />' +
+            '<col class="shrink" />' +
             '</colgroup>' +
             '<tr>' +
-                '<th>Nazwa testu</th>' +
-                '<th class="center wide-screen-only">Ilość pytań</th>' +
-                '<th class="center wide-screen-only">Utworzono</th>' +
-                '<th class="xlarge-screen-only"></th>' +
-                '<th class="wide-screen-only"></th>' +
-                '<th></th>' +
+            '<th>Nazwa testu</th>' +
+            '<th class="center wide-screen-only">Ilość pytań</th>' +
+            '<th class="center wide-screen-only">Utworzono</th>' +
+            '<th class="xlarge-screen-only"></th>' +
+            '<th class="wide-screen-only"></th>' +
+            '<th></th>' +
             '</tr>';
-        
+
         this.TestRowsContainer = document.createElement('tbody');
         this.ClearContent();
         this.Element.appendChild(this.TestRowsContainer);
@@ -48,37 +47,35 @@ export default class TestsTable extends Component {
         this.AssignDialog = new AssignTestDialog();
     }
 
-    ClearContent(message?: string){
+    ClearContent(message?: string) {
         message = message ?? 'Ładowanie...';
-        this.TestRowsContainer.innerHTML = 
+        this.TestRowsContainer.innerHTML =
             '<tr>' +
-                '<td>' + message + '</td>' +
-                '<td class="wide-screen-only"></td>' +
-                '<td class="wide-screen-only"></td>' +
-                '<td class="xlarge-screen-only"></td>' +
-                '<td class="wide-screen-only"></td>' +
-                '<td></td>' +
+            '<td>' + message + '</td>' +
+            '<td class="wide-screen-only"></td>' +
+            '<td class="wide-screen-only"></td>' +
+            '<td class="xlarge-screen-only"></td>' +
+            '<td class="wide-screen-only"></td>' +
+            '<td></td>' +
             '</tr>';
     }
 
-    async LoadTests(){
-        // Należałoby sprawdzić, kiedy została załadowana ta lista
-        if(this.IsLoaded) return;
-
+    async LoadTests() {
         let tests: Test[] = [];
-        try{
+        try {
             tests = await TestLoader.GetCreatedByCurrentUser();
             this.TestRowsContainer.innerText = '';
-        }catch(e){
+            this.RowCount = 0;
+        } catch(e) {
             this.ClearContent('Nie udało się załadować listy testów.');
         }
 
         tests.forEach(this.AppendRow.bind(this));
-        this.IsLoaded = true;
     }
 
-    async AppendRow(test: Test){
+    async AppendRow(test: Test) {
         let tr = this.TestRowsContainer.insertRow(0);
+        this.RowCount++;
 
         test.AddEventListener('remove', () => tr.remove());
 
@@ -88,7 +85,7 @@ export default class TestsTable extends Component {
         let td_qcount = tr.insertCell(-1);
         td_qcount.classList.add('center', 'wide-screen-only');
         td_qcount.textContent =
-            (test.QuestionCount ?? 0).toString() + 
+            (test.QuestionCount ?? 0).toString() +
             ' (×' + test.QuestionMultiplier.toString() + ')';
 
         let td_date = tr.insertCell(-1);
@@ -130,16 +127,20 @@ export default class TestsTable extends Component {
         test.AddEventListener('change', async () => {
             td_name.textContent = test.Name.toString();
             td_qcount.textContent =
-                (test.QuestionCount ?? 0).toString() + 
+                (test.QuestionCount ?? 0).toString() +
                 ' (×' + test.QuestionMultiplier.toString() + ')';
         });
     }
 
-    async CreateTest(){
-        try{
+    public GetRowCount() {
+        return this.RowCount;
+    }
+
+    async CreateTest() {
+        try {
             let test = await Test.Create('[Bez nazwy]', 1, 0);
             this.AppendRow(test);
-        }catch(e){
+        } catch(e) {
             new Toast('Nie udało się utworzyć nowego testu.').Show(0);
         }
     }
