@@ -32,3 +32,17 @@ table.full-width {width:100%;}
 .content-tbody:not(:empty) + .nocontent-tbody {display:none}
 
 .overflow-container-y > table.table {margin-top:0;}
+
+.row-wrapper {
+    border-bottom:1px solid var(--table-border-color); padding:6px 10px;
+    display:grid; grid-template-columns:1fr auto; grid-template-rows:auto auto;
+    grid-template-areas:"heading button" "description button";
+
+    &:first-child {border-top:1px solid var(--table-border-color);}
+
+    .row-heading {
+        display:block; grid-area:heading; color:var(--text-primary-color); font-weight:500; margin-bottom:4px;
+    }
+    .row-description {display:block; grid-area:description; color:var(--text-secondary-color); font-size:0.9em;}
+    .row-button {grid-area:button; align-self:center; padding:7px;}
+}
