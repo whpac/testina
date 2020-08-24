@@ -3,7 +3,7 @@ import Card from '../components/basic/card';
 
 export default class AboutPage extends Page {
 
-    constructor(){
+    constructor() {
         super();
 
         let header = document.createElement('h1');
@@ -11,12 +11,17 @@ export default class AboutPage extends Page {
         this.AppendChild(header);
 
         let card = new Card('auto-width');
-        card.GetContentElement().innerHTML = 
-                '<h2 class="center">Testina</h2>' +
-                '<p class="secondary center">Copyright &copy; 2020, Marcin Szwarc</p>' +
-                '<div class="center small">' +
-                    'Regulamin &bull; Pomoc' +
-                '</div>';
+        let logo_wrapper = document.createElement('div');
+        logo_wrapper.classList.add('about-logo-wrapper');
+        logo_wrapper.innerHTML = '<img src="images/logo/testina.svg" />';
+        card.AppendChild(logo_wrapper);
+
+        card.GetContentElement().innerHTML +=
+            '<h2 class="center">Testina</h2>' +
+            '<p class="secondary center">Copyright &copy; 2020, Marcin Szwarc</p>' +
+            '<div class="center small">' +
+            'Regulamin &bull; Pomoc' +
+            '</div>';
         this.AppendChild(card.GetElement());
     }
 

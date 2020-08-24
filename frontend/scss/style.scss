@@ -58,6 +58,12 @@ h2 {font-size:1.5em;}
 a {color:var(--link-color);}
 a:hover {color:var(--link-hover-color);}
 
+div.about-logo-wrapper {
+    display:grid; grid-template-columns:1fr 80px 1fr; margin-bottom:24px;
+
+    img {grid-column:2; width:100%;}
+}
+
 @import 'navbar';
 @import 'components/card';
 @import 'components/forms';
