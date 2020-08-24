@@ -1,5 +1,6 @@
 import Page from '../components/basic/page';
 import Card from '../components/basic/card';
+import TestinaCard from '../components/about/testina_card';
 
 export default class AboutPage extends Page {
 
@@ -10,21 +11,7 @@ export default class AboutPage extends Page {
         header.textContent = 'Informacje';
         this.AppendChild(header);
 
-        let card = new Card('auto-width');
-        card.GetElement().style.marginTop = '60px';
-
-        let logo_wrapper = document.createElement('div');
-        logo_wrapper.classList.add('about-logo-wrapper');
-        logo_wrapper.innerHTML = '<div class="logo-backplate"><img class="logo" src="images/logo/testina.svg" /></div>';
-        card.AppendChild(logo_wrapper);
-
-        card.GetContentElement().innerHTML +=
-            '<h2 class="center">Testina</h2>' +
-            '<p class="secondary center">Copyright &copy; 2020, Marcin Szwarc</p>' +
-            '<div class="center small">' +
-            'Regulamin &bull; Pomoc' +
-            '</div>';
-        this.AppendChild(card.GetElement());
+        this.AppendChild(new TestinaCard());
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
