@@ -9,7 +9,7 @@ export default class NoTests extends Component {
         if(hidden) this.Element.style.display = 'none';
 
         let img = document.createElement('img');
-        img.src = 'images/file_not_found.svg';
+        img.src = 'images/empty_box.svg';
         this.AppendChild(img);
 
         let em = document.createElement('em');
