@@ -1,7 +1,7 @@
 import Navbar from './navbar';
 
 import * as PageManager from './1page/pagemanager';
-import LoadingIndicator from './1page/loadingindicator';
+import SplashScreen from './1page/splash_screen';
 import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
@@ -18,7 +18,7 @@ try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
     let root = document.getElementById('content-container');
     if(root === null) throw 'Błąd ładowania';
-    let loading_wrapper = new LoadingIndicator('loading-wrapper');
+    let splash_screen = new SplashScreen('loading-wrapper');
 
     // Inicjalizacja paska nawigacji
     Navbar.AppNavbar = new Navbar('main-nav');
@@ -33,7 +33,7 @@ try {
     })();
 
     // Inicjalizacja menedżera stron
-    PageManager.Initialize(root, loading_wrapper);
+    PageManager.Initialize(root, splash_screen);
     PageManager.AddPage('home', new HomePage(), false);
     PageManager.AddPage('informacje', new AboutPage(), false);
     PageManager.AddPage('testy/biblioteka', new LibraryPage(), false);

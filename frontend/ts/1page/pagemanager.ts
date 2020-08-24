@@ -1,5 +1,5 @@
 import Page from '../components/basic/page';
-import LoadingIndicator from './loadingindicator';
+import SplashScreen from './splash_screen';
 import PageParams, { SimpleObjectRepresentation } from './pageparams';
 import NavigationPrevention from './navigationprevention';
 import TestLoader from '../entities/loaders/testloader';
@@ -15,7 +15,7 @@ let CurrentPageId: (string | null) = null;
 /** Element, w którym wyświetlane są strony */
 let ContentRoot: HTMLElement;
 /** Wskaźnik ładowania */
-let LoadingWrapper: (LoadingIndicator | null) = null;
+let Splash: (SplashScreen | null) = null;
 /** Treść mobilnego nagłówka */
 let MobileHeader: HTMLElement | null;
 
@@ -40,9 +40,9 @@ type StateDescriptor = {
  * @param root Element HTML, do którego będą ładowane strony
  * @param loading_indicator Wskaźnik ładowania strony
  */
-export function Initialize(root: HTMLElement, loading_indicator?: LoadingIndicator) {
+export function Initialize(root: HTMLElement, loading_indicator?: SplashScreen) {
     ContentRoot = root;
-    LoadingWrapper = loading_indicator ?? null;
+    Splash = loading_indicator ?? null;
     window.onpopstate = PopStateHandler;
 
     MobileHeader = document.getElementById('mobile-header-title');
@@ -118,7 +118,6 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     if(bare_page_id === undefined) return Promise.reject(page_id + ' nie istnieje.');
     if(CurrentPageId == page_id) return;
 
-    LoadingWrapper?.Display();
     CurrentPage?.UnloadFrom(ContentRoot);
 
     CurrentPage = Pages[bare_page_id].page;
@@ -144,7 +143,7 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     }
 
     await CurrentPage.LoadInto(ContentRoot, params_or_id);
-    window.requestAnimationFrame(() => LoadingWrapper?.Hide());
+    if(Splash?.IsVisible()) window.requestAnimationFrame(() => Splash?.Hide());
 }
 
 /**
