@@ -4,6 +4,7 @@ namespace Api\Resources;
 use Api\Exceptions;
 use Api\Schemas;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class Assignment extends Resource implements Schemas\Assignment{
     protected $Assignment;
@@ -12,6 +13,7 @@ class Assignment extends Resource implements Schemas\Assignment{
         TypeValidator::AssertIsObject($source);
         TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
         TypeValidator::AssertIsDateTimeString($source->time_limit, 'time_limit');
+        ValueValidator::AssertIsNonNegative($source->attempt_limit, 'attempt_limit');
 
         $this->Assignment->Update($source->attempt_limit, new \DateTime($source->time_limit));
     }

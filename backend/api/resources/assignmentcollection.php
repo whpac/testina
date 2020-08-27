@@ -2,6 +2,7 @@
 namespace Api\Resources;
 
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class AssignmentCollection extends Collection {
 
@@ -28,6 +29,8 @@ class AssignmentCollection extends Collection {
         TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
         TypeValidator::AssertIsInt($source->test_id, 'test_id');
         TypeValidator::AssertIsDateTimeString($source->time_limit, 'time_limit');
+        ValueValidator::AssertIsNonNegative($source->attempt_limit, 'attempt_limit');
+        ValueValidator::AssertIsNonNegative($source->test_id, 'test_id');
 
         $current_user = $this->GetContext()->GetUser();
         $test = new \Entities\Test($source->test_id);

@@ -3,6 +3,7 @@ namespace Api\Resources;
 
 use Api\Schemas;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class Test extends Resource implements Schemas\Test{
     protected $Test;
@@ -12,6 +13,8 @@ class Test extends Resource implements Schemas\Test{
         TypeValidator::AssertIsString($data->name, 'name');
         TypeValidator::AssertIsNumeric($data->question_multiplier, 'question_multiplier');
         TypeValidator::AssertIsInt($data->time_limit, 'time_limit');
+        ValueValidator::AssertIsNonNegative($data->question_multiplier, 'question_multiplier');
+        ValueValidator::AssertIsNonNegative($data->time_limit, 'time_limit');
 
         $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit);
 

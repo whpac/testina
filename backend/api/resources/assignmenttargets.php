@@ -3,6 +3,7 @@ namespace Api\Resources;
 
 use Api\Schemas;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     protected $Users;
@@ -21,6 +22,8 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
             foreach($source->targets as $target){
                 TypeValidator::AssertIsInt($target->id, 'id');
                 TypeValidator::AssertIsInt($target->type, 'type');
+                ValueValidator::AssertIsNonNegative($target->id, 'id');
+                ValueValidator::AssertIsInRange($target->type, 0, 1, 'type');
 
                 $target_type = $target->type;
                 $target_id = $target->id;

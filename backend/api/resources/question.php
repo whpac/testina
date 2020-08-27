@@ -3,17 +3,22 @@ namespace Api\Resources;
 
 use Api\Schemas;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class Question extends Resource implements Schemas\Question{
     protected $Question;
 
     public function Update(/* mixed */ $data){
         TypeValidator::AssertIsObject($data);
-        TypeValidator::AssertIsString($data->text, 'text');
-        TypeValidator::AssertIsInt($data->type, 'type');
+        TypeValidator::AssertIsInt($data->max_typos, 'max_typos');
         TypeValidator::AssertIsNumeric($data->points, 'points');
         TypeValidator::AssertIsInt($data->points_counting, 'points_counting');
-        TypeValidator::AssertIsInt($data->max_typos, 'max_typos');
+        TypeValidator::AssertIsString($data->text, 'text');
+        TypeValidator::AssertIsInt($data->type, 'type');
+        ValueValidator::AssertIsNonNegative($data->max_typos, 'max_typos');
+        ValueValidator::AssertIsNonNegative($data->points, 'points');
+        ValueValidator::AssertIsInRange($data->points_counting, 0, 2, 'points_counting');
+        ValueValidator::AssertIsInRange($data->type, 0, 2, 'type');
 
         $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
 
