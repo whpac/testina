@@ -11,7 +11,7 @@ class Assignment extends Resource implements Schemas\Assignment{
     public function Update($source){
         TypeValidator::AssertIsObject($source);
         TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
-        // TODO: is date string: $source->time_limit #35
+        TypeValidator::AssertIsDateTimeString($source->time_limit, 'time_limit');
 
         $this->Assignment->Update($source->attempt_limit, new \DateTime($source->time_limit));
     }

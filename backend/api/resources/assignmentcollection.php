@@ -27,7 +27,7 @@ class AssignmentCollection extends Collection {
         TypeValidator::AssertIsObject($source);
         TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
         TypeValidator::AssertIsInt($source->test_id, 'test_id');
-        // TODO: is date string: $source->time_limit #35
+        TypeValidator::AssertIsDateTimeString($source->time_limit, 'time_limit');
 
         $current_user = $this->GetContext()->GetUser();
         $test = new \Entities\Test($source->test_id);

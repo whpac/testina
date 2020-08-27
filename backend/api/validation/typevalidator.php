@@ -16,7 +16,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsArray(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsArray($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_array($value)) return;
         }
@@ -36,7 +36,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsBool(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsBool($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_bool($value)) return;
             if(is_string($value)){
@@ -52,6 +52,32 @@ class TypeValidator {
     }
 
     /**
+     * Sprawdza, czy wartość jest typu string i zawiera pełną datę i godzinę.
+     * 
+     * Jeśli typy się nie zgadzają, zgłaszany jest wyjątek BadRequest.
+     * 
+     * @param $value Wartość do sprawdzenia
+     * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
+     */
+    public static function AssertIsDateTimeString($value, ?string $parameter_name = null): void{
+        self::AssertIsString($value, $parameter_name);
+
+        // Wyrażenia regularne, dopasowujące datę
+        // Jeśli żadne nie zostanie dopasowane, zgłaszany jest wyjątek
+        $accepted_formats = [
+            '/^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$/'
+        ];
+
+        foreach($accepted_formats as $format){
+            if(preg_match($format, $value) === 1) return;
+        }
+
+        $message = 'Podana wartość nie jest typu datetime_string.';
+        if(!is_null($parameter_name)) $message = 'Parametr "'.$parameter_name.'" nie jest typu datetime_string.';
+        throw new BadRequest($message);
+    }
+
+    /**
      * Sprawdza, czy wartość jest liczbą całkowitą (int).
      * Liczba całkowita jako tekst (np. '0' ale nie '1.5') jest tolerowana.
      * 
@@ -60,7 +86,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsInt(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsInt($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_int($value)) return;
             if(is_numeric($value)){
@@ -82,7 +108,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsNumeric(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsNumeric($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_int($value)) return;
             if(is_float($value)) return;
@@ -102,7 +128,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsObject(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsObject($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_object($value)) return;
         }
@@ -120,7 +146,7 @@ class TypeValidator {
      * @param $value Wartość do sprawdzenia
      * @param $parameter_name Nazwa parametru, która zostanie zawarta w wyjątku
      */
-    public static function AssertIsString(mixed $value, string $parameter_name = null): void{
+    public static function AssertIsString($value, ?string $parameter_name = null): void{
         if(isset($value)){
             if(is_string($value)) return;
         }
