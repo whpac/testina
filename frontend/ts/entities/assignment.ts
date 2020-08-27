@@ -2,7 +2,7 @@ import Entity, { Collection } from './entity';
 
 import * as XHR from '../utils/xhr';
 import Test from './test';
-import PageParams from '../1page/pageparams';
+import PageParams from '../1page/page_params';
 import Group from './group';
 import User from './user';
 

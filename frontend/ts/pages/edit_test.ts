@@ -3,18 +3,18 @@ import Card from '../components/basic/card';
 import QuestionsTable from '../components/test_editing/questions_table';
 import TestSettings from '../components/test_editing/test_settings';
 import Test from '../entities/test';
-import PageParams from '../1page/pageparams';
+import PageParams from '../1page/page_params';
 
-import * as PageManager from '../1page/pagemanager';
+import * as PageManager from '../1page/page_manager';
 import TestLoader from '../entities/loaders/testloader';
 
 export default class EditTestPage extends Page {
     QuestionsTable: QuestionsTable;
-    TestNameHeading: Text
+    TestNameHeading: Text;
     TestSettingsCard: TestSettings;
     Test: Test | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         let page_heading = document.createElement('h1');
@@ -42,14 +42,14 @@ export default class EditTestPage extends Page {
         this.Element.appendChild(this.TestSettingsCard.GetElement());
     }
 
-    async LoadInto(container: HTMLElement, params?: PageParams){
+    async LoadInto(container: HTMLElement, params?: PageParams) {
         if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
         else this.Test = params as Test;
 
         this.QuestionsTable.LoadQuestions(this.Test);
         this.TestSettingsCard.Populate(this.Test);
         container.appendChild(this.Element);
-        
+
         this.TestNameHeading.textContent = this.Test.Name;
         this.Test.AddEventListener('change', (async () => {
             let new_name = this.Test?.Name ?? '';
@@ -58,15 +58,15 @@ export default class EditTestPage extends Page {
         }).bind(this));
     }
 
-    UnloadFrom(container: HTMLElement){
+    UnloadFrom(container: HTMLElement) {
         container.removeChild(this.Element);
     }
 
-    GetUrlPath(){
+    GetUrlPath() {
         return 'testy/edytuj/' + (this.Test?.Id ?? 0);
     }
 
-    async GetTitle(){
+    async GetTitle() {
         return 'Edycja: ' + this.Test?.Name;
     }
 }

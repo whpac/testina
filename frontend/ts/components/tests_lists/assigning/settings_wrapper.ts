@@ -1,5 +1,5 @@
 import Component from '../../basic/component';
-import NavigationPrevention from '../../../1page/navigationprevention';
+import NavigationPrevention from '../../../1page/navigation_prevention';
 import DateTimeInput from '../../basic/compat/datetimeinput';
 import HelpLink from '../../help_link';
 

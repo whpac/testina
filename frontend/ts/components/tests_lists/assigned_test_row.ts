@@ -2,7 +2,7 @@ import Component from '../basic/component';
 import Assignment from '../../entities/assignment';
 
 import * as DateUtils from '../../utils/dateutils';
-import { HandleLinkClick } from '../../1page/pagemanager';
+import { HandleLinkClick } from '../../1page/page_manager';
 import ScoreDetailsDialog from './score_details_dialog';
 import AssignmentDetailsDialog from './assignment_details_dialog';
 

@@ -1,5 +1,5 @@
 import UserLoader from './entities/loaders/userloader';
-import { HandleLinkClick } from './1page/pagemanager';
+import { HandleLinkClick } from './1page/page_manager';
 import AuthManager from './auth/auth_manager';
 
 /**

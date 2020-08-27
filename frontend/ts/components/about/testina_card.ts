@@ -1,6 +1,6 @@
 import Card from '../basic/card';
 import CreditsDialog from './credits_dialog';
-import { GoToPage } from '../../1page/pagemanager';
+import { GoToPage } from '../../1page/page_manager';
 
 export default class TestinaCard extends Card {
 

@@ -1,6 +1,6 @@
 import Page from '../components/basic/page';
 import Assignment from '../entities/assignment';
-import PageParams from '../1page/pageparams';
+import PageParams from '../1page/page_params';
 import TestInvitationCard from '../components/solving/test_invitation_card';
 import QuestionCard from '../components/solving/question_card';
 import Attempt from '../entities/attempt';
@@ -8,14 +8,14 @@ import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import TestSummary from '../components/solving/test_summary';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 
-export default class SolveTestPage extends Page{
+export default class SolveTestPage extends Page {
     HeadingTestName: Text;
     Invitation: TestInvitationCard;
     QuestionCard: QuestionCard;
     TestSummary: TestSummary;
     Assignment: Assignment | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         let heading = document.createElement('h1');
@@ -40,25 +40,25 @@ export default class SolveTestPage extends Page{
         this.Element.appendChild(this.TestSummary.GetElement());
     }
 
-    protected OnTestLoaded(attempt: Attempt){
+    protected OnTestLoaded(attempt: Attempt) {
         this.Invitation.GetElement().style.display = 'none';
         this.QuestionCard.GetElement().style.display = '';
         this.QuestionCard.OnTestFinished = this.OnTestFinished.bind(this);
         this.QuestionCard.StartTest(attempt);
     }
 
-    protected OnTestFinished(questions: QuestionWithUserAnswers[]){
-        if(this.Assignment === undefined){
+    protected OnTestFinished(questions: QuestionWithUserAnswers[]) {
+        if(this.Assignment === undefined) {
             alert('Nie udało się wyświetlić strony z podsumowaniem.\nPomimo tego, wyniki zostały zapisane.');
             throw 'SolveTest.Assignment === undefined';
         }
-        
+
         this.QuestionCard.GetElement().style.display = 'none';
         this.TestSummary.GetElement().style.display = '';
         this.TestSummary.Populate(questions, this.Assignment);
     }
 
-    async LoadInto(container: HTMLElement, params?: PageParams){
+    async LoadInto(container: HTMLElement, params?: PageParams) {
         if(params === undefined) throw 'Nie podano testu do rozwiązania';
         if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
         else this.Assignment = params as Assignment;
@@ -72,15 +72,15 @@ export default class SolveTestPage extends Page{
         this.Invitation.Populate(this.Assignment);
     }
 
-    UnloadFrom(container: HTMLElement){
+    UnloadFrom(container: HTMLElement) {
         container.removeChild(this.Element);
     }
 
-    GetUrlPath(){
+    GetUrlPath() {
         return 'testy/rozwiąż/' + (this.Assignment?.Id.toString() ?? '');
     }
 
-    async GetTitle(){
+    async GetTitle() {
         if(this.Assignment === undefined) return 'Rozwiąż test';
         return 'Rozwiąż: ' + this.Assignment?.Test.Name;
     }

@@ -5,7 +5,7 @@ import UsersTable from './users_table';
 import GroupsTable from './groups_table';
 
 import { n } from '../../../utils/textutils';
-import NavigationPrevention from '../../../1page/navigationprevention';
+import NavigationPrevention from '../../../1page/navigation_prevention';
 import User from '../../../entities/user';
 import Group from '../../../entities/group';
 import { AssignmentTargets } from '../../../entities/assignment';
@@ -23,7 +23,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
     public IsValid: boolean = true;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('section');
@@ -77,7 +77,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.AppendChild(this.NothingSelectedError);
     }
 
-    async Populate(preselected_targets?: AssignmentTargets){
+    async Populate(preselected_targets?: AssignmentTargets) {
         this.SearchField.value = '';
         this.UsersTab.Select();
         this.SwitchTargetType('user');
@@ -90,7 +90,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
         this.UsersTable.DeselectAll();
         this.GroupsTable.DeselectAll();
-        
+
         this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
         this.Validate();
@@ -98,21 +98,21 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.FilterTable();
     }
 
-    GetSelectedTargets(){
+    GetSelectedTargets() {
         let targets: (User | Group)[] = [];
         targets = this.UsersTable.GetSelected();
         targets = targets.concat(this.GroupsTable.GetSelected());
         return targets;
     }
 
-    GetDeselectedTargets(){
+    GetDeselectedTargets() {
         let targets: (User | Group)[] = [];
         targets = this.UsersTable.GetDeselected();
         targets = targets.concat(this.GroupsTable.GetDeselected());
         return targets;
     }
 
-    protected Validate(){
+    protected Validate() {
         let old_validity = this.IsValid;
         this.IsValid = true;
 
@@ -123,12 +123,12 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         if(this.IsValid != old_validity) this.FireEvent('validationchanged');
     }
 
-    protected SwitchTargetType(new_target: TargetType){
+    protected SwitchTargetType(new_target: TargetType) {
         this.UsersTable.GetElement().style.display = 'none';
         this.GroupsTable.GetElement().style.display = 'none';
 
         this.CurrentlyDisplayedTargetType = new_target;
-        switch(new_target){
+        switch(new_target) {
             case 'user':
                 this.UsersTable.GetElement().style.display = '';
                 break;
@@ -139,10 +139,10 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.FilterTable();
     }
 
-    protected FilterTable(){
+    protected FilterTable() {
         let search_query = this.SearchField.value.toLowerCase();
 
-        switch(this.CurrentlyDisplayedTargetType){
+        switch(this.CurrentlyDisplayedTargetType) {
             case 'user':
                 this.UsersTable.Filter(search_query);
                 break;
@@ -152,7 +152,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         }
     }
 
-    protected OnSelectionChanged(){
+    protected OnSelectionChanged() {
         this.PrintNumberOfSelectedEntities(
             this.UsersTable.GetSelectedCount(),
             this.GroupsTable.GetSelectedCount());
@@ -160,17 +160,17 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         NavigationPrevention.Prevent('assign-test-dialog');
     }
 
-    protected PrintNumberOfSelectedEntities(users: number, groups: number){
-        if(users > 0 || groups > 0){
+    protected PrintNumberOfSelectedEntities(users: number, groups: number) {
+        if(users > 0 || groups > 0) {
             let text = 'Wybrano';
 
             if(users > 0) text += ' ' + users + ' os' + n(users, 'obę', 'oby', 'ób');
             if(users > 0 && groups > 0) text += ' i';
             if(groups > 0) text += ' ' + groups + ' grup' + n(groups, 'ę', 'y', '');
 
-            text += '.'
+            text += '.';
             this.SelectedEntitiesCountText.textContent = text;
-        }else{
+        } else {
             this.SelectedEntitiesCountText.textContent = '';
         }
     }

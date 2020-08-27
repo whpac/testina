@@ -5,7 +5,7 @@ import AnswersTable from './answers_table';
 import Test from '../../entities/test';
 
 import Toast from '../basic/toast';
-import NavigationPrevention from '../../1page/navigationprevention';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;

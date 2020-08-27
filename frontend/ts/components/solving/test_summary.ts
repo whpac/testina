@@ -1,5 +1,5 @@
 import Card from '../basic/card';
-import { HandleLinkClick } from '../../1page/pagemanager';
+import { HandleLinkClick } from '../../1page/page_manager';
 import QuestionWithUserAnswers from '../../entities/question_with_user_answers';
 import Assignment from '../../entities/assignment';
 import ScoreDetailsDialog from '../tests_lists/score_details_dialog';
@@ -13,7 +13,7 @@ export default class TestSummary extends Card {
     ResultsTBody: HTMLTableSectionElement;
     Assignment: Assignment | undefined;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element.classList.add('semi-wide');
@@ -66,34 +66,34 @@ export default class TestSummary extends Card {
         this.ResultsTBody = result_table.createTBody();
     }
 
-    async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment){
+    async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment) {
         // Przypisanie jest wczytywane ponownie, by odświeżyć wynik
         let assignment_awaiter = AssignmentLoader.LoadById(assignment.Id);
         this.Assignment = assignment;
 
         this.DisplayParticularScores(questions);
-        
+
         assignment.Score = (await assignment_awaiter).Score;
         let score = assignment.Score;
         this.AverageScoreNode.textContent = score?.toString() ?? '0';
         this.AverageScoreSubtitle.style.display = '';
     }
 
-    DisplayScoreDetailsDialog(){
+    DisplayScoreDetailsDialog() {
         if(this.Assignment === undefined) return;
-        
+
         let dialog = new ScoreDetailsDialog();
         dialog.Populate(this.Assignment);
         dialog.Show();
     }
 
-    async DisplayParticularScores(questions: QuestionWithUserAnswers[]){
+    async DisplayParticularScores(questions: QuestionWithUserAnswers[]) {
         let total_got = 0;
         let total_max = 0;
 
         let question_data = [];
 
-        for(let question of questions){
+        for(let question of questions) {
             let q_got = await question.CountPoints();
             let q_max = question.GetQuestion().Points;
 
@@ -101,12 +101,12 @@ export default class TestSummary extends Card {
             total_max += q_max;
 
             let q_id = question.GetQuestion().Id;
-            if(question_data[q_id] === undefined){
+            if(question_data[q_id] === undefined) {
                 question_data[q_id] = {
                     text: question.GetQuestion().Text,
                     got: 0,
                     max: 0
-                }
+                };
             }
 
             question_data[q_id].got += q_got;
@@ -114,7 +114,7 @@ export default class TestSummary extends Card {
         }
 
         this.ResultsTBody.textContent = '';
-        for(let question of question_data){
+        for(let question of question_data) {
             if(question === undefined) continue;
             let row = this.ResultsTBody.insertRow(-1);
             row.insertCell(-1).textContent = question.text;

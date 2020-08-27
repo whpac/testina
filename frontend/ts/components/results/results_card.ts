@@ -2,14 +2,14 @@ import Card from '../basic/card';
 import Assignment from '../../entities/assignment';
 import ResultsTable from './results_table';
 import { n } from '../../utils/textutils';
-import { GoToPage } from '../../1page/pagemanager';
+import { GoToPage } from '../../1page/page_manager';
 
-export default class ResultsCard extends Card{
+export default class ResultsCard extends Card {
     protected AttemptLimitText: Text;
     protected ResultsTable: ResultsTable;
     protected Assignment: Assignment | undefined;
 
-    constructor(){
+    constructor() {
         super('semi-wide');
 
         let close_button = document.createElement('button');
@@ -32,11 +32,11 @@ export default class ResultsCard extends Card{
         this.AppendChild(this.ResultsTable);
     }
 
-    public async Populate(assignment: Assignment){
+    public async Populate(assignment: Assignment) {
         this.Assignment = assignment;
-        if(assignment.AreAttemptsUnlimited()){
+        if(assignment.AreAttemptsUnlimited()) {
             this.AttemptLimitText.textContent = ' Dla tego testu nie ustanowiono limitu podejść.';
-        }else{
+        } else {
             let limit = assignment.AttemptLimit;
             this.AttemptLimitText.textContent = ' Dla tego testu ustanowiono limit ' + limit + ' podejś' + n(limit, 'cia', 'ć') + '.';
         }

@@ -1,7 +1,7 @@
 import * as XHR from '../utils/xhr';
 import Entity, { Collection } from './entity';
 import User from './user';
-import PageParams from '../1page/pageparams';
+import PageParams from '../1page/page_params';
 
 import Question from './question';
 import Assignment from './assignment';

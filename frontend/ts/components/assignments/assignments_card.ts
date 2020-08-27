@@ -1,12 +1,12 @@
 import Card from '../basic/card';
 import Test from '../../entities/test';
 import AssignmentsTable from './assignments_table';
-import { GoToPage } from '../../1page/pagemanager';
+import { GoToPage } from '../../1page/page_manager';
 
 export default class AssignmentsCard extends Card {
     protected Table: AssignmentsTable;
 
-    constructor(){
+    constructor() {
         super('semi-wide');
 
         let close_button = document.createElement('button');
@@ -28,7 +28,7 @@ export default class AssignmentsCard extends Card {
         this.AppendChild(this.Table);
     }
 
-    async Populate(test: Test){
+    async Populate(test: Test) {
         let assignments = await test.GetAssignments();
         this.Table.Populate(assignments);
     }

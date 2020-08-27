@@ -1,7 +1,7 @@
 import Page from '../components/basic/page';
 import SplashScreen from './splash_screen';
-import PageParams, { SimpleObjectRepresentation } from './pageparams';
-import NavigationPrevention from './navigationprevention';
+import PageParams, { SimpleObjectRepresentation } from './page_params';
+import NavigationPrevention from './navigation_prevention';
 import TestLoader from '../entities/loaders/testloader';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import CacheManager, { CacheStorages } from '../cache/cache_manager';

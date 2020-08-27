@@ -2,7 +2,7 @@ import Dialog from '../../basic/dialog';
 import Test from '../../../entities/test';
 import TargetsWrapper from './targets_wrapper';
 import SettingsWrapper from './settings_wrapper';
-import NavigationPrevention from '../../../1page/navigationprevention';
+import NavigationPrevention from '../../../1page/navigation_prevention';
 import Assignment, { AssignmentTargets } from '../../../entities/assignment';
 import Toast from '../../basic/toast';
 

@@ -1,6 +1,6 @@
 import Navbar from './navbar';
 
-import * as PageManager from './1page/pagemanager';
+import * as PageManager from './1page/page_manager';
 import SplashScreen from './1page/splash_screen';
 import HomePage from './pages/home';
 import LibraryPage from './pages/library';

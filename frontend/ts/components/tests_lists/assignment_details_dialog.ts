@@ -2,7 +2,7 @@ import Dialog from '../basic/dialog';
 import Assignment from '../../entities/assignment';
 import ScoreDetailsDialog from './score_details_dialog';
 import * as DateUtils from '../../utils/dateutils';
-import * as PageManager from '../../1page/pagemanager';
+import * as PageManager from '../../1page/page_manager';
 
 export default class AssignmentDetailsDialog extends Dialog {
     protected DeadlineCell: HTMLTableCellElement;

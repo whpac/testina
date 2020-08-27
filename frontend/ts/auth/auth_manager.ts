@@ -1,6 +1,6 @@
 import UserLoader from '../entities/loaders/userloader';
 import * as XHR from '../utils/xhr';
-import NavigationPrevention from '../1page/navigationprevention';
+import NavigationPrevention from '../1page/navigation_prevention';
 
 export type AuthResult = {
     is_success: boolean;

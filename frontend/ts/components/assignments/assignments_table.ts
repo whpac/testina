@@ -2,7 +2,7 @@ import Component from '../basic/component';
 import Assignment, { AssignmentTargets } from '../../entities/assignment';
 import * as DateUtils from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
-import { HandleLinkClick } from '../../1page/pagemanager';
+import { HandleLinkClick } from '../../1page/page_manager';
 import Icon from '../basic/icon';
 import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 

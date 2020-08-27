@@ -6,7 +6,7 @@ import * as DateUtils from '../../utils/dateutils';
 
 import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
-import NavigationPrevention from '../../1page/navigationprevention';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;

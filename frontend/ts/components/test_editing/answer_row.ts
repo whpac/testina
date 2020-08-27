@@ -2,7 +2,7 @@ import Component from '../basic/component';
 import Answer from '../../entities/answer';
 import Question from '../../entities/question';
 
-import NavigationPrevention from '../../1page/navigationprevention';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class AnswerRow extends Component {
     protected RowNumberCell: HTMLTableCellElement;

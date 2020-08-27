@@ -1,9 +1,9 @@
-import * as PageManager from '../../1page/pagemanager';
+import * as PageManager from '../../1page/page_manager';
 
 import Test from '../../entities/test';
 import Card from '../basic/card';
 import Toast from '../basic/toast';
-import NavigationPrevention from '../../1page/navigationprevention';
+import NavigationPrevention from '../../1page/navigation_prevention';
 import TestSaver from '../../entities/savers/testsaver';
 
 export default class TestSettings extends Card {
@@ -22,7 +22,7 @@ export default class TestSettings extends Card {
     /**
      * Creates the element and prepares HTML to be displayed
      */
-    constructor(){
+    constructor() {
         super();
 
         this.GetContentElement().classList.add('grid-form');
@@ -72,7 +72,7 @@ export default class TestSettings extends Card {
         // Komentarz do mnożnika pytań
         let question_multiplier_desc = document.createElement('p');
         question_multiplier_desc.classList.add('description', 'secondary');
-        question_multiplier_desc.innerHTML = 
+        question_multiplier_desc.innerHTML =
             'Ta wartość oznacza, ile razy każde pytanie zostanie wyświetlone użytkownikowi. ' +
             'Szczegółowy opis znajduje się w <a href="pomoc" class="todo" target="_blank">artykule pomocy</a>.';
         this.AppendChild(question_multiplier_desc);
@@ -80,7 +80,7 @@ export default class TestSettings extends Card {
         // Wybór limitu czasu
         let time_limit_fieldset = document.createElement('div');
         time_limit_fieldset.classList.add('fieldset');
-        time_limit_fieldset.innerHTML = 
+        time_limit_fieldset.innerHTML =
             'Limit czasu na podejście <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a><br />';
 
         // Pole radio - limit obecny
@@ -145,16 +145,16 @@ export default class TestSettings extends Card {
      * Populates the fields with appropriate data
      * @param test Source of data to display
      */
-    async Populate(test: Test){
+    async Populate(test: Test) {
         this.IgnoreChange = true;
         this.Test = test;
         this.TestNameInput.value = test.Name;
         this.QuestionMultiplierInput.value = test.QuestionMultiplier.toString();
 
-        if(await test.HasTimeLimit()){
+        if(await test.HasTimeLimit()) {
             this.TimeLimitPresentRadio.checked = true;
             this.TimeLimitInput.value = (test.TimeLimit / 60).toString();
-        }else{
+        } else {
             this.NoTimeLimitRadio.checked = true;
             this.TimeLimitInput.value = '15';
         }
@@ -165,7 +165,7 @@ export default class TestSettings extends Card {
     /**
      * Used to track changes and prevent from closing the browser window
      */
-    protected StateChanged(){
+    protected StateChanged() {
         if(this.IgnoreChange) return;
         NavigationPrevention.Prevent('test-settings');
     }
@@ -173,7 +173,7 @@ export default class TestSettings extends Card {
     /**
      * Enables or disables the time limit input field according to checked radio button
      */
-    protected UpdateTimeLimitInputEnabledState(){
+    protected UpdateTimeLimitInputEnabledState() {
         this.StateChanged();
         this.TimeLimitInput.disabled = !this.TimeLimitPresentRadio.checked;
     }
@@ -181,7 +181,7 @@ export default class TestSettings extends Card {
     /**
      * Removes current test and navigates to tests list
      */
-    protected async RemoveTest(){
+    protected async RemoveTest() {
         let result = window.confirm('Usunięcia testu nie da się cofnąć.\nKontynuować?');
         if(!result) return;
 
@@ -189,14 +189,14 @@ export default class TestSettings extends Card {
 
         let removing_toast = new Toast('Usuwanie testu „' + test_name + '”...');
         removing_toast.Show();
-        try{
+        try {
             await (this.Test as Test).Remove();
             new Toast('Test „' + test_name + '” został usunięty.').Show(0);
             PageManager.GoToPage('testy/biblioteka');
 
-        }catch(e){
+        } catch(e) {
             new Toast('Nie udało się usunąć testu „' + test_name + '”.').Show(0);
-        }finally{
+        } finally {
             removing_toast.Hide();
         }
     }
@@ -204,13 +204,13 @@ export default class TestSettings extends Card {
     /**
      * Saves the settings
      */
-    protected async SaveTestSettings(){
+    protected async SaveTestSettings() {
         if(!this.Validate()) return;
 
         let saving_toast = new Toast('Zapisywanie zmian...');
         saving_toast.Show();
 
-        try{
+        try {
             let test = this.Test as Test;
             test.Name = this.TestNameInput.value;
             test.QuestionMultiplier = parseFloat(this.QuestionMultiplierInput.value);
@@ -219,40 +219,40 @@ export default class TestSettings extends Card {
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
             NavigationPrevention.Unprevent('test-settings');
-            
-        }catch(e){
+
+        } catch(e) {
             new Toast('Nie udało się zapisać zmian w ustawieniach testu.').Show(0);
-        }finally{
+        } finally {
             saving_toast.Hide();
         }
     }
 
-    protected Validate(){
+    protected Validate() {
         let errors = [];
 
-        if(this.TestNameInput.value == ''){
+        if(this.TestNameInput.value == '') {
             errors.push('Nazwa testu nie może być pusta.');
             this.TestNameInput.classList.add('error');
-        }else{
+        } else {
             this.TestNameInput.classList.remove('error');
         }
 
-        if(parseFloat(this.QuestionMultiplierInput.value) <= 0){
+        if(parseFloat(this.QuestionMultiplierInput.value) <= 0) {
             errors.push('Mnożnik pytań musi być dodatni.');
             this.QuestionMultiplierInput.classList.add('error');
-        }else{
+        } else {
             this.QuestionMultiplierInput.classList.remove('error');
         }
 
-        if(parseFloat(this.TimeLimitInput.value) <= 0 && this.TimeLimitPresentRadio.checked){
+        if(parseFloat(this.TimeLimitInput.value) <= 0 && this.TimeLimitPresentRadio.checked) {
             errors.push('Limit czasu musi być liczbą dodatnią.');
             this.TimeLimitInput.classList.add('error');
-        }else{
+        } else {
             this.TimeLimitInput.classList.remove('error');
         }
 
         let errors_html = '';
-        for(let i = 0; i < errors.length; i++){
+        for(let i = 0; i < errors.length; i++) {
             if(i > 0) errors_html += '<br/>';
             errors_html += errors[i];
         }
