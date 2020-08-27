@@ -2,14 +2,23 @@
 namespace Api\Resources;
 
 use Api\Exceptions;
+use Api\Validation\TypeValidator;
 
 class AttemptAnswers extends Resource {
+    protected $Attempt;
+
+    public function __construct($attempt){
+        parent::__construct();
+
+        $this->Attempt = $attempt;
+    }
 
     public function CreateSubResource(/* object */ $source){
-        $attempt = $this->GetConstructorArgument();
+        TypeValidator::AssertIsObject($source);
+        TypeValidator::AssertIsArray($source->questions, 'questions');
 
         // Sprawdź, czy użytkownik nie wysłał wcześniej odpowiedzi
-        if($attempt->GetUserAnswers()->Count() > 0){
+        if($this->Attempt->GetUserAnswers()->Count() > 0){
             throw new Exceptions\BadRequest('W każdym podejściu można wysłać tylko jeden zestaw odpowiedzi.');
         }
 
@@ -18,7 +27,7 @@ class AttemptAnswers extends Resource {
          * Pierwszeństwo ma termin określony w przypisaniu
          * Użytkownik ma dodatkowy 60-sekundowy bufor na nadesłanie rozwiązań
          */
-        $assignment = $attempt->GetAssignment();
+        $assignment = $this->Attempt->GetAssignment();
         if($assignment->GetTimeLimit() < (new \DateTime('-60 seconds'))){
             throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
         }
@@ -36,30 +45,40 @@ class AttemptAnswers extends Resource {
 
         $errors = 0;
         foreach($source->questions as $question_index => $question){
+            TypeValidator::AssertIsBool($question->done, 'done');
+
             if($question->done){
+                TypeValidator::AssertIsArray($question->answers, 'answers');
+                TypeValidator::AssertIsInt($question->id, 'id');
+                TypeValidator::AssertIsBool($question->is_open, 'is_open');
+
                 foreach($question->answers as $answer){
+                    TypeValidator::AssertIsInt($answer->id, 'id');
+
                     try{
                         if($question->is_open){
-                            \Entities\UserAnswer::CreateOpenAnswer($attempt, $question_index, new \Entities\Question($question->id), $answer->text);
+                            TypeValidator::AssertIsString($answer->text, 'text');
+                            
+                            \Entities\UserAnswer::CreateOpenAnswer($this->Attempt, $question_index, new \Entities\Question($question->id), $answer->text);
                         }else{
-                            \Entities\UserAnswer::Create($attempt, new \Entities\Answer($answer->id), $question_index);
+                            \Entities\UserAnswer::Create($this->Attempt, new \Entities\Answer($answer->id), $question_index);
                         }
                     }catch(Exception $e){
                         $errors++;
                     }
                 }
             }else{
-                \Entities\UserAnswer::CreateNoAnswer($attempt, $question_index, new \Entities\Question($question->id));
+                \Entities\UserAnswer::CreateNoAnswer($this->Attempt, $question_index, new \Entities\Question($question->id));
             }
         }
 
         if($errors > 0){
-            $attempt->Remove();
+            $this->Attempt->Remove();
             throw new \Exception('Wystąpił błąd podczas zapisywania odpowiedzi do bazy danych.');
         }
 
         // Count score
-        $user_answers = $attempt->GetUserAnswers();
+        $user_answers = $this->Attempt->GetUserAnswers();
         $answered_questions = $user_answers->GetAnsweredQuestions();
 
         $score_got = 0;
@@ -75,7 +94,7 @@ class AttemptAnswers extends Resource {
         }
 
         // Update attempt to reflect the score
-        $attempt->UpdateScore($score_got, $score_max);
+        $this->Attempt->UpdateScore($score_got, $score_max);
     }
 }
 ?>

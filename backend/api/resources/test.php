@@ -2,24 +2,29 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Api\Validation\TypeValidator;
 
 class Test extends Resource implements Schemas\Test{
     protected $Test;
 
     public function Update(/* mixed */ $data){
-        $test = $this->GetConstructorArgument();
-        $res = $test->Update($data->name, $data->question_multiplier, $data->time_limit);
+        TypeValidator::AssertIsObject($data);
+        TypeValidator::AssertIsString($data->name, 'name');
+        TypeValidator::AssertIsNumeric($data->question_multiplier, 'question_multiplier');
+        TypeValidator::AssertIsInt($data->time_limit, 'time_limit');
+
+        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
 
     public function Delete($source){
-        $test = $this->GetConstructorArgument();
-        $test->Remove();
+        $this->Test->Remove();
     }
 
     public function __construct($test){
-        parent::__construct($test);
+        parent::__construct();
+
         if(is_null($test)) throw new \Exception('$test nie może być null');
         $this->Test = $test;
     }

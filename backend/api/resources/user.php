@@ -7,7 +7,8 @@ class User extends Resource implements Schemas\User{
     protected $User;
 
     public function __construct($user){
-        parent::__construct($user);
+        parent::__construct();
+
         if(is_null($user)) throw new \Exception('$user nie może być null');
         $this->User = $user;
     }

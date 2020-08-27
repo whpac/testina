@@ -11,7 +11,8 @@ class AttemptWithTest extends Resource implements Schemas\Attempt {
     protected $Path;
 
     public function __construct($assignment){
-        parent::__construct($assignment);
+        parent::__construct();
+
         if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');
         $this->Assignment = $assignment;
         $this->Attempt = null;

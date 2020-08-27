@@ -9,20 +9,10 @@ use Api\Exceptions;
  */
 abstract class Resource {
     private $Context;
-    private $CreationArg;
     protected $Filters;
 
-    public function __construct($arg = null){
-        $this->CreationArg = $arg;
+    public function __construct(){
         $this->Filters = [];
-    }
-
-    /**
-     * Zwraca argument przekazany do konstruktora
-     * @deprecated
-     */
-    protected function GetConstructorArgument(){
-        return $this->CreationArg;
     }
 
     /**

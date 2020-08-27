@@ -3,16 +3,22 @@ namespace Api\Resources;
 
 use Api\Exceptions;
 use Api\Schemas;
+use Api\Validation\TypeValidator;
 
 class Assignment extends Resource implements Schemas\Assignment{
     protected $Assignment;
 
     public function Update($source){
+        TypeValidator::AssertIsObject($source);
+        TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
+        // TODO: is date string: $source->time_limit #35
+
         $this->Assignment->Update($source->attempt_limit, new \DateTime($source->time_limit));
     }
 
     public function __construct($assignment){
-        parent::__construct($assignment);
+        parent::__construct();
+
         if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');
         $this->Assignment = $assignment;
     }

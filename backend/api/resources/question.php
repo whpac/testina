@@ -2,26 +2,33 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Api\Validation\TypeValidator;
 
 class Question extends Resource implements Schemas\Question{
     protected $Question;
 
     public function Update(/* mixed */ $data){
-        $question = $this->GetConstructorArgument();
-        $res = $question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
+        TypeValidator::AssertIsObject($data);
+        TypeValidator::AssertIsString($data->text, 'text');
+        TypeValidator::AssertIsInt($data->type, 'type');
+        TypeValidator::AssertIsNumeric($data->points, 'points');
+        TypeValidator::AssertIsInt($data->points_counting, 'points_counting');
+        TypeValidator::AssertIsInt($data->max_typos, 'max_typos');
+
+        $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
 
     public function Delete($source){
-        $question = $this->GetConstructorArgument();
-        $res = $question->Remove();
+        $res = $this->Question->Remove();
 
         if(!$res) throw new \Exception('Nie udało się usunąć pytania.');
     }
 
     public function __construct($question){
-        parent::__construct($question);
+        parent::__construct();
+
         if(is_null($question)) throw new \Exception('$question nie może być null.');
         $this->Question = $question;
     }

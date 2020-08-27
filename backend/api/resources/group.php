@@ -7,7 +7,8 @@ class Group extends Resource implements Schemas\Group{
     protected $Group;
 
     public function __construct($group){
-        parent::__construct($group);
+        parent::__construct();
+
         if(is_null($group)) throw new \Exception('$group nie może być null.');
         $this->Group = $group;
     }

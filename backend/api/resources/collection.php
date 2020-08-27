@@ -8,6 +8,8 @@ class Collection extends Resource implements Schemas\Collection{
     protected $Parent;
 
     public function __construct($items, $parent = null){
+        parent::__construct();
+
         $this->Items = $items;
         $this->Parent = $parent;
     }

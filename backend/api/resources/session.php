@@ -2,6 +2,8 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Api\Validation\TypeValidator;
+use Auth\AuthManager;
 use Log\Logger;
 use Log\LogChannels;
 
@@ -11,10 +13,14 @@ class Session extends Resource implements Schemas\Session{
      * Tworzy sesję, czyli loguje użytkownika
      */
     public function CreateSubResource($source){
+        TypeValidator::AssertIsObject($source);
+        TypeValidator::AssertIsString($source->login, 'login');
+        TypeValidator::AssertIsString($source->password, 'password');
+
         $login = $source->login;
         $password = $source->password;
 
-        $result = \Auth\AuthManager::TryToLogIn($login, $password);
+        $result = AuthManager::TryToLogIn($login, $password);
         if($result->IsSuccess()){
             Logger::Log('Zalogowano: '.$login, LogChannels::AUTHORIZATION_SUCCESS);
         }else{
@@ -27,7 +33,7 @@ class Session extends Resource implements Schemas\Session{
      * Niszczy sesję, czyli wylogowuje
      */
     public function Delete($source){
-        \Auth\AuthManager::LogOut();
+        AuthManager::LogOut();
         Logger::Log('Wylogowano użytkownika', LogChannels::AUTHORIZATION_LOG_OUT);
     }
 
@@ -38,7 +44,7 @@ class Session extends Resource implements Schemas\Session{
     }
 
     public function is_authorized(): bool{
-        return \Auth\AuthManager::IsAuthorized();
+        return AuthManager::IsAuthorized();
     }
 }
 
@@ -47,6 +53,8 @@ class LoginResponse extends Resource {
     protected $Reason;
 
     public function __construct(bool $is_success, ?int $reason){
+        parent::__construct();
+
         $this->IsSuccess = $is_success;
         $this->Reason = $reason;
     }

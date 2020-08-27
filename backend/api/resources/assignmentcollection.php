@@ -1,6 +1,8 @@
 <?php
 namespace Api\Resources;
 
+use Api\Validation\TypeValidator;
+
 class AssignmentCollection extends Collection {
 
     public function GetKeys(): array{
@@ -22,6 +24,11 @@ class AssignmentCollection extends Collection {
     }
 
     public function CreateSubResource(/* mixed */ $source){
+        TypeValidator::AssertIsObject($source);
+        TypeValidator::AssertIsInt($source->attempt_limit, 'attempt_limit');
+        TypeValidator::AssertIsInt($source->test_id, 'test_id');
+        // TODO: is date string: $source->time_limit #35
+
         $current_user = $this->GetContext()->GetUser();
         $test = new \Entities\Test($source->test_id);
 

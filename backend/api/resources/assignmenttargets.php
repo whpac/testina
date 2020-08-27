@@ -2,6 +2,7 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Api\Validation\TypeValidator;
 
 class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     protected $Users;
@@ -10,12 +11,17 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     protected $Assignment;
 
     public function CreateSubResource(/* object */ $source){
+        TypeValidator::AssertIsObject($source);
+
         $current_user = $this->GetContext()->GetUser();
         if($this->Assignment->GetAssigningUser()->GetId() != $current_user->GetId())
             throw new Exceptions\MethodNotAllowed('POST');
 
         if(is_array($source->targets)){
             foreach($source->targets as $target){
+                TypeValidator::AssertIsInt($target->id, 'id');
+                TypeValidator::AssertIsInt($target->type, 'type');
+
                 $target_type = $target->type;
                 $target_id = $target->id;
                 $this->Assignment->AddTarget($target_type, $target_id);
@@ -24,12 +30,17 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     }
 
     public function Delete(/* object */ $source){
+        TypeValidator::AssertIsObject($source);
+
         $current_user = $this->GetContext()->GetUser();
         if($this->Assignment->GetAssigningUser()->GetId() != $current_user->GetId())
             throw new Exceptions\MethodNotAllowed('DELETE');
 
         if(is_array($source->targets)){
             foreach($source->targets as $target){
+                TypeValidator::AssertIsInt($target->id, 'id');
+                TypeValidator::AssertIsInt($target->type, 'type');
+
                 $target_type = $target->type;
                 $target_id = $target->id;
                 $this->Assignment->RemoveTarget($target_type, $target_id);
@@ -38,6 +49,8 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     }
 
     public function __construct($assignment){
+        parent::__construct();
+
         $this->Users = [];
         $this->Groups = [];
         $this->AllUsers = [];

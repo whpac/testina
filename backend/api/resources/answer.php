@@ -2,26 +2,30 @@
 namespace Api\Resources;
 
 use Api\Schemas;
+use Api\Validation\TypeValidator;
 
 class Answer extends Resource implements Schemas\Answer{
     protected $Answer;
 
     public function Update(/* mixed */ $data){
-        $answer = $this->GetConstructorArgument();
-        $res = $answer->Update($data->text, ['correct' => $data->correct]);
+        TypeValidator::AssertIsObject($data);
+        TypeValidator::AssertIsBool($data->correct, 'correct');
+        TypeValidator::AssertIsString($data->text, 'text');
+
+        $res = $this->Answer->Update($data->text, ['correct' => $data->correct]);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować odpowiedzi');
     }
 
     public function Delete($source){
-        $answer = $this->GetConstructorArgument();
-        $res = $answer->Remove();
+        $res = $this->Answer->Remove();
 
         if(!$res) throw new \Exception('Nie udało się usunąć odpowiedzi');
     }
 
     public function __construct($answer){
-        parent::__construct($answer);
+        parent::__construct();
+
         if(is_null($answer)) throw new \Exception('$answer nie może być null.');
         $this->Answer = $answer;
     }

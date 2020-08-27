@@ -8,7 +8,8 @@ class AssignmentResults extends Resource implements Schemas\AssignmentResults{
     protected $User;
 
     public function __construct($assignment, $user){
-        parent::__construct($assignment);
+        parent::__construct();
+
         if(is_null($assignment)) throw new \Exception('$assignment nie może być null.');
         if(is_null($user)) throw new \Exception('$user nie może być null.');
 

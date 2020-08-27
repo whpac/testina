@@ -7,7 +7,8 @@ class Attempt extends Resource implements Schemas\Attempt {
     protected $Attempt;
 
     public function __construct($attempt){
-        parent::__construct($attempt);
+        parent::__construct();
+
         if(is_null($attempt)) throw new \Exception('$attempt nie może być null.');
         $this->Attempt = $attempt;
     }
