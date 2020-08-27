@@ -13,6 +13,7 @@ import ResultsPage from './pages/results';
 import LoginPage from './pages/login';
 import AuthManager from './auth/auth_manager';
 import CacheManager, { CacheStorages } from './cache/cache_manager';
+import HelpPage from './pages/help';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -36,6 +37,7 @@ try {
     PageManager.Initialize(root, splash_screen);
     PageManager.AddPage('home', new HomePage(), false);
     PageManager.AddPage('informacje', new AboutPage(), false);
+    PageManager.AddPage('pomoc', new HelpPage(), false);
     PageManager.AddPage('testy/biblioteka', new LibraryPage(), false);
     PageManager.AddPage('testy/edytuj', new EditTestPage(), true);
     PageManager.AddPage('testy/lista', new AssignedTestsListPage(), false);
