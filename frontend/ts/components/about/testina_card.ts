@@ -1,5 +1,6 @@
 import Card from '../basic/card';
 import CreditsDialog from './credits_dialog';
+import { GoToPage } from '../../1page/pagemanager';
 
 export default class TestinaCard extends Card {
 
@@ -38,7 +39,7 @@ export default class TestinaCard extends Card {
         let links: [string, () => void][] = [
             ['Regulamin', () => void 0],
             ['Wykorzystane\xa0biblioteki', this.DisplayCredits],
-            ['Pomoc', () => void 0]
+            ['Pomoc', () => GoToPage('pomoc')]
         ];
 
         for(let i = 0; i < links.length; i++) {
