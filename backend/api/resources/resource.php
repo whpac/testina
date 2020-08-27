@@ -50,7 +50,9 @@ abstract class Resource {
      * @param $key_name Nazwa pola
      */
     public function KeyExists($key_name): bool{
-        return method_exists($this, $key_name);
+        if(!method_exists($this, $key_name)) return false;
+        if(!in_array($key_name, $this->GetKeys())) return false;
+        return true;
     }
 
     /**
