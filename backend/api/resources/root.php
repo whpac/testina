@@ -11,6 +11,7 @@ class Root extends Resource implements Schemas\Root {
             'assignments',
             'groups',
             'session',
+            'surveys',
             'tests',
             'users'
         ];
@@ -62,6 +63,24 @@ class Root extends Resource implements Schemas\Root {
         $session = new Session();
         $session->SetContext($this->GetContext());
         return $session;
+    }
+
+    public function surveys(): Schemas\Collection{
+        if(!$this->GetContext()->IsAuthorized()){
+            throw new Exceptions\AuthorizationRequired('surveys');
+        }
+        $current_user = $this->GetContext()->GetUser();
+        $surveys = \Entities\Survey::GetCreatedByUser($current_user);
+
+        $out_surveys = [];
+
+        foreach($surveys as $survey){
+            $out_surveys[$survey->GetId()] = new Survey($survey);
+        }
+
+        $collection = new Collection($out_surveys);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 
     public function tests(): Schemas\Collection{
