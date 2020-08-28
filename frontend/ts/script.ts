@@ -14,6 +14,8 @@ import LoginPage from './pages/login';
 import AuthManager from './auth/auth_manager';
 import CacheManager, { CacheStorages } from './cache/cache_manager';
 import HelpPage from './pages/help';
+import PageStorage from './1page/page_storage';
+import ChromeManager from './1page/chrome_manager';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -34,17 +36,20 @@ try {
     })();
 
     // Inicjalizacja menedżera stron
+    ChromeManager.SetMobileHeaderElement(document.getElementById('mobile-header-title'));
     PageManager.Initialize(root, splash_screen);
-    PageManager.AddPage('home', new HomePage(), false);
-    PageManager.AddPage('informacje', new AboutPage(), false);
-    PageManager.AddPage('pomoc', new HelpPage(), false);
-    PageManager.AddPage('testy/biblioteka', new LibraryPage(), false);
-    PageManager.AddPage('testy/edytuj', new EditTestPage(), true);
-    PageManager.AddPage('testy/lista', new AssignedTestsListPage(), false);
-    PageManager.AddPage('testy/rozwiąż', new SolveTestPage(), true);
-    PageManager.AddPage('testy/przypisane', new AssignmentsPage(), true);
-    PageManager.AddPage('testy/wyniki', new ResultsPage(), true);
-    PageManager.AddPage('zaloguj', new LoginPage(), false);
+
+    let pages = PageStorage.GetStorage();
+    pages.RegisterPage('home', { AcceptsArgument: false, CreatePage: () => new HomePage() });
+    pages.RegisterPage('informacje', { AcceptsArgument: false, CreatePage: () => new AboutPage() });
+    pages.RegisterPage('pomoc', { AcceptsArgument: false, CreatePage: () => new HelpPage() });
+    pages.RegisterPage('testy/biblioteka', { AcceptsArgument: false, CreatePage: () => new LibraryPage() });
+    pages.RegisterPage('testy/edytuj', { AcceptsArgument: true, CreatePage: () => new EditTestPage() });
+    pages.RegisterPage('testy/lista', { AcceptsArgument: false, CreatePage: () => new AssignedTestsListPage() });
+    pages.RegisterPage('testy/rozwiąż', { AcceptsArgument: true, CreatePage: () => new SolveTestPage() });
+    pages.RegisterPage('testy/przypisane', { AcceptsArgument: true, CreatePage: () => new AssignmentsPage() });
+    pages.RegisterPage('testy/wyniki', { AcceptsArgument: true, CreatePage: () => new ResultsPage() });
+    pages.RegisterPage('zaloguj', { AcceptsArgument: false, CreatePage: () => new LoginPage() });
 
     PageManager.RegisterHomePage(new HomePage());
     PageManager.RegisterLoginPage(new LoginPage());

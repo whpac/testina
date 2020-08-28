@@ -7,6 +7,7 @@ import PageParams from '../1page/page_params';
 
 import * as PageManager from '../1page/page_manager';
 import TestLoader from '../entities/loaders/testloader';
+import ChromeManager from '../1page/chrome_manager';
 
 export default class EditTestPage extends Page {
     QuestionsTable: QuestionsTable;
@@ -54,7 +55,7 @@ export default class EditTestPage extends Page {
         this.Test.AddEventListener('change', (async () => {
             let new_name = this.Test?.Name ?? '';
             this.TestNameHeading.textContent = new_name;
-            PageManager.SetTitle('Edycja: ' + new_name);
+            ChromeManager.SetTitle('Edycja: ' + new_name);
         }).bind(this));
     }
 

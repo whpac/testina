@@ -1,33 +1,25 @@
-import Page from '../components/basic/page';
 import SplashScreen from './splash_screen';
-import PageParams, { SimpleObjectRepresentation } from './page_params';
+import PageParams, { SimpleObjectRepresentation, UnserializeParams } from './page_params';
 import NavigationPrevention from './navigation_prevention';
-import TestLoader from '../entities/loaders/testloader';
-import AssignmentLoader from '../entities/loaders/assignmentloader';
 import CacheManager, { CacheStorages } from '../cache/cache_manager';
+import PageStorage from './page_storage';
+import PageRequest from './page_request';
+import IPage from './ipage';
+import ChromeManager from './chrome_manager';
 
-/** Lista zarejestrowanych stron */
-let Pages: PageList = {};
 /** Aktualnie wyświetlana strona */
-let CurrentPage: (Page | null) = null;
+let CurrentPage: (IPage | null) = null;
 /** Adres aktualnie wyświetlanej strony */
 let CurrentPageId: (string | null) = null;
 /** Element, w którym wyświetlane są strony */
 let ContentRoot: HTMLElement;
 /** Wskaźnik ładowania */
 let Splash: (SplashScreen | null) = null;
-/** Treść mobilnego nagłówka */
-let MobileHeader: HTMLElement | null;
 
 /** Strona główna */
-let HomePage: (Page | null) = null;
+let HomePage: (IPage | null) = null;
 /** Strona logowania */
-let LoginPage: (Page | null) = null;
-
-/** Typ opisujący zbiór stron */
-type PageList = {
-    [url: string]: { page: Page, accepts_argument: boolean; };
-};
+let LoginPage: (IPage | null) = null;
 
 /** Typ opisujący deskryptor stanu, zapisywany w historii przeglądarki */
 type StateDescriptor = {
@@ -45,8 +37,6 @@ export function Initialize(root: HTMLElement, loading_indicator?: SplashScreen) 
     Splash = loading_indicator ?? null;
     window.onpopstate = PopStateHandler;
 
-    MobileHeader = document.getElementById('mobile-header-title');
-
     window.addEventListener('beforeunload', (event) => {
         // Wyczyść pamięć podręczną
         (async () => (await CacheManager.Open(CacheStorages.Entities)).Purge())();
@@ -59,16 +49,6 @@ export function Initialize(root: HTMLElement, loading_indicator?: SplashScreen) 
             return '';
         }
     });
-}
-
-/**
- * Dodaje stronę do rejestru
- * @param page_id Adres strony
- * @param page Strona
- * @param accepts_argument Czy strona przyjmuje argument
- */
-export function AddPage(page_id: string, page: Page, accepts_argument: boolean) {
-    Pages[page_id] = { page: page, accepts_argument: accepts_argument };
 }
 
 /**
@@ -98,11 +78,11 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
 
     try {
         await DisplayPage(page_id, params);
-        SetTitle(await CurrentPage?.GetTitle() ?? '');
+        ChromeManager.SetTitle(await CurrentPage?.GetTitle() ?? '');
 
         let url = CurrentPage?.GetUrlPath();
         if(url !== null && url !== undefined)
-            AlterCurrentUrl(url, page_id, params, is_first_page);
+            ChromeManager.SetUrlAddress(url, page_id, params, is_first_page);
     } catch(e) {
         alert('Nie udało się załadować strony: ' + e);
     }
@@ -114,13 +94,13 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
  * @param params Parametr, przekazywany do nowej strony
  */
 async function DisplayPage(page_id: string, params?: PageParams): Promise<void> {
-    let bare_page_id = GetPageId(page_id, params !== undefined);
-    if(bare_page_id === undefined) return Promise.reject(page_id + ' nie istnieje.');
     if(CurrentPageId == page_id) return;
+    let request = new PageRequest(page_id, params);
+    let new_page = PageStorage.GetStorage().GetPage(request);
 
     CurrentPage?.UnloadFrom(ContentRoot);
 
-    CurrentPage = Pages[bare_page_id].page;
+    CurrentPage = new_page;
     CurrentPageId = page_id;
 
     if(!(await CurrentPage.IsAccessible())) {
@@ -138,28 +118,13 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     }
 
     let params_or_id: (PageParams | number | undefined) = params;
-    if(bare_page_id != page_id && params === undefined) {
-        params_or_id = parseInt(page_id.substr(bare_page_id.length + 1));
+    let last_slash = page_id.lastIndexOf('/');
+    if(last_slash != -1 && params === undefined) {
+        params_or_id = parseInt(page_id.substr(last_slash + 1));
     }
 
     await CurrentPage.LoadInto(ContentRoot, params_or_id);
     if(Splash?.IsVisible()) window.requestAnimationFrame(() => Splash?.Hide());
-}
-
-/**
- * Zwraca adres strony bez argumentów
- * @param page_id_with_args Adres strony z opcjonalnymi argumentami
- * @param object_argument_passed Czy przekazano obiekt z argumentem
- */
-function GetPageId(page_id_with_args: string, object_argument_passed: boolean) {
-    if(Pages[page_id_with_args] !== undefined && (!Pages[page_id_with_args].accepts_argument || object_argument_passed))
-        return page_id_with_args;
-
-    let shorter_name = page_id_with_args.substr(0, page_id_with_args.lastIndexOf('/'));
-    if(Pages[shorter_name] !== undefined && Pages[shorter_name].accepts_argument)
-        return shorter_name;
-
-    return undefined;
 }
 
 /**
@@ -176,50 +141,10 @@ async function PopStateHandler(e: PopStateEvent) {
     if(page_id != null) DisplayPage(page_id, await UnserializeParams(params));
 }
 
-/**
- * Zmienia aktualny adres wyświetlany na pasku adresu
- * @param new_url Nowy adres URL (względny)
- * @param page_id Adres strony skojarzony z adresem URL
- * @param params Parametr strony, do zapisania w historii przeglądarki
- */
-function AlterCurrentUrl(new_url: string, page_id: string, params?: PageParams, replace: boolean = false) {
-    if(replace) {
-        history.replaceState({ page_id: page_id, params: params?.GetSimpleRepresentation() }, '', new_url);
-    } else {
-        history.pushState({ page_id: page_id, params: params?.GetSimpleRepresentation() }, '', new_url);
-    }
-}
-
-/**
- * Ustawia tekst widoczny na pasku tytułu w przeglądarce
- * @param new_title Nowy tytuł
- */
-export function SetTitle(new_title: string) {
-    if(new_title == '') {
-        document.title = 'Lorem Ipsum';
-        if(MobileHeader !== null) MobileHeader.textContent = document.title;
-    } else {
-        document.title = new_title + ' – Lorem Ipsum';
-        if(MobileHeader !== null) MobileHeader.textContent = new_title;
-    }
-}
-
-/**
- * Tworzy obiekt z prostej reprezentacji
- * @param params Prosta reprezentacja obiektu
- */
-async function UnserializeParams(params?: SimpleObjectRepresentation): Promise<(PageParams | undefined)> {
-    switch(params?.type) {
-        case 'test': return await TestLoader.LoadById(params.id);
-        case 'assignment': return await AssignmentLoader.LoadById(params.id);
-    }
-    return undefined;
-}
-
-export function RegisterHomePage(page: Page) {
+export function RegisterHomePage(page: IPage) {
     HomePage = page;
 }
 
-export function RegisterLoginPage(page: Page) {
+export function RegisterLoginPage(page: IPage) {
     LoginPage = page;
 }

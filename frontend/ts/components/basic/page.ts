@@ -1,10 +1,11 @@
 import Component from './component';
 import AuthManager from '../../auth/auth_manager';
+import IPage from '../../1page/ipage';
 
 /**
  * Klasa bazowa dla wszystkich stron
  */
-export default abstract class Page extends Component {
+export default abstract class Page extends Component implements IPage {
 
     constructor() {
         super();
