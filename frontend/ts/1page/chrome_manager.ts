@@ -41,10 +41,10 @@ export default class ChromeManager {
      */
     public static SetTitle(new_title: string) {
         if(new_title == '') {
-            document.title = 'Lorem Ipsum';
+            document.title = 'Testina';
             if(this.MobileHeader) this.MobileHeader.textContent = document.title;
         } else {
-            document.title = new_title + ' – Lorem Ipsum';
+            document.title = new_title + ' – Testina';
             if(this.MobileHeader) this.MobileHeader.textContent = new_title;
         }
     }
