@@ -27,6 +27,9 @@ export default class Navbar {
     public async Draw() {
         this.NavbarRoot.style.display = '';
 
+        let hamburger_button = document.getElementById('mobile-nav-toggle');
+        if(hamburger_button) hamburger_button.style.display = '';
+
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
 
@@ -67,8 +70,12 @@ export default class Navbar {
      * Niszczy panel nawigacji
      */
     public Destroy() {
+        this.Hide();
         this.NavbarRoot.textContent = '';
         this.NavbarRoot.style.display = 'none';
+
+        let hamburger_button = document.getElementById('mobile-nav-toggle');
+        if(hamburger_button) hamburger_button.style.display = 'none';
     }
 
     /**
@@ -154,12 +161,16 @@ export default class Navbar {
     protected AttachEventHandlers() {
         let navbar_toggles = document.querySelectorAll('.nav-toggle');
         for(let element of navbar_toggles) {
+            if((element as HTMLElement).dataset.hasClickHandler == 'true') continue;
             element.addEventListener('click', this.ToggleVisibility.bind(this));
+            (element as HTMLElement).dataset.hasClickHandler = 'true';
         }
 
         let navbar_backdrops = document.querySelectorAll('.nav-backdrop');
         for(let element of navbar_backdrops) {
+            if((element as HTMLElement).dataset.hasClickHandler == 'true') continue;
             element.addEventListener('click', this.Hide.bind(this));
+            (element as HTMLElement).dataset.hasClickHandler = 'true';
         }
     }
 }

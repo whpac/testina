@@ -58,7 +58,7 @@ define('DEFAULT_TITLE', 'Lorem Ipsum');
 
         <!-- Nagłówek dla urządzeń mobilnych -->
         <aside class="mobile-header">
-            <a class="nav-toggle nav-icon"><i class="icon fa fa-fw fa-bars"></i></a>
+            <a class="nav-toggle nav-icon" id="mobile-nav-toggle"><i class="icon fa fa-fw fa-bars"></i></a>
             <h1 id="mobile-header-title"><?php echo(DEFAULT_TITLE); ?></h1>
         </aside>
 
