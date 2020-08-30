@@ -16,6 +16,8 @@ import CacheManager, { CacheStorages } from './cache/cache_manager';
 import HelpPage from './pages/help';
 import PageStorage from './1page/page_storage';
 import ChromeManager from './1page/chrome_manager';
+import SurveysPage from './pages/surveys';
+import FillSurveyPage from './pages/fill_survey';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -40,6 +42,8 @@ try {
     PageManager.Initialize(root, splash_screen);
 
     let pages = PageStorage.GetStorage();
+    pages.RegisterPage('ankiety', { AcceptsArgument: false, CreatePage: () => new SurveysPage() });
+    pages.RegisterPage('ankiety/wypełnij', { AcceptsArgument: false, CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { AcceptsArgument: false, CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { AcceptsArgument: false, CreatePage: () => new AboutPage() });
     pages.RegisterPage('pomoc', { AcceptsArgument: false, CreatePage: () => new HelpPage() });
