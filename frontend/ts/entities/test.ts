@@ -11,6 +11,11 @@ import AssignmentLoader, { AssignmentDescriptor } from './loaders/assignmentload
 
 /** Klasa reprezentująca test */
 export default class Test extends Entity implements PageParams {
+    /** Test */
+    public static TYPE_TEST = 0;
+    /** Ankieta */
+    public static TYPE_SURVEY = 1;
+
     /** Unikatowy identyfikator testu */
     public readonly Id: number;
     /** Nazwa testu */
@@ -27,6 +32,10 @@ export default class Test extends Entity implements PageParams {
     protected _QuestionCount: number | undefined;
     /** Ile razy test został przypisany */
     public readonly AssignmentCount: number | undefined;
+    /** Typ testu (test/ankieta) */
+    public readonly Type: number;
+    /** Opis testu */
+    public readonly Description: string | null;
 
     /** Nazwa testu */
     public get Name() {
@@ -83,7 +92,7 @@ export default class Test extends Entity implements PageParams {
      */
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
-        assignment_loader: () => Promise<Assignment[]>) {
+        assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null) {
 
         super();
 
@@ -95,6 +104,8 @@ export default class Test extends Entity implements PageParams {
         this._QuestionMultiplier = question_multiplier;
         this._QuestionCount = question_loader.QuestionCount;
         this.AssignmentCount = assignment_count;
+        this.Type = type;
+        this.Description = description;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;

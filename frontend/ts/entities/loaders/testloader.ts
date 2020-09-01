@@ -13,6 +13,8 @@ export interface TestDescriptor {
     author_id: number,
     creation_date: string,
     time_limit: number,
+    type: number,
+    description: string | null;
     question_multiplier: number,
     question_count: number,
     questions: Collection<QuestionDescriptor>,
@@ -38,7 +40,6 @@ export default class TestLoader {
      */
     public static async CreateFromDescriptor(test_descriptor: TestDescriptor) {
         let question_loader = new QuestionLoader(test_descriptor.question_count);
-        //let assignment_loader = new AssignmentLoader(test_descriptor.assignment_count);
 
         let assignment_loader = () => new AssignmentLoader().LoadById(test_descriptor.assignment_ids);
 
@@ -51,11 +52,12 @@ export default class TestLoader {
             test_descriptor.question_multiplier,
             question_loader,
             test_descriptor.assignment_count,
-            assignment_loader
+            assignment_loader,
+            test_descriptor.type,
+            test_descriptor.description
         );
 
         question_loader.SetTest(test);
-        //assignment_loader.SetTest(test);
 
         if(!Collection.IsEmpty(test_descriptor.questions))
             question_loader.SaveDescriptors(test_descriptor.questions);
