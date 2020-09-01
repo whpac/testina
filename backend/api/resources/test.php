@@ -39,6 +39,8 @@ class Test extends Resource implements Schemas\Test{
             'author_id',
             'creation_date',
             'time_limit',
+            'description',
+            'type',
             'question_multiplier',
             'question_count'
         ];
@@ -70,6 +72,14 @@ class Test extends Resource implements Schemas\Test{
 
     public function time_limit(): int{
         return $this->Test->GetTimeLimit();
+    }
+
+    public function description(): ?string{
+        return $this->Test->GetDescription();
+    }
+
+    public function type(): int{
+        return $this->Test->GetType();
     }
 
     public function question_multiplier(): float{

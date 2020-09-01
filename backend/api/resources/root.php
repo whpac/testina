@@ -70,12 +70,12 @@ class Root extends Resource implements Schemas\Root {
             throw new Exceptions\AuthorizationRequired('surveys');
         }
         $current_user = $this->GetContext()->GetUser();
-        $surveys = \Entities\Survey::GetCreatedByUser($current_user);
+        $surveys = \Entities\Test::GetSurveysCreatedByUser($current_user);
 
         $out_surveys = [];
 
         foreach($surveys as $survey){
-            $out_surveys[$survey->GetId()] = new Survey($survey);
+            $out_surveys[$survey->GetId()] = new Test($survey);
         }
 
         $collection = new Collection($out_surveys);

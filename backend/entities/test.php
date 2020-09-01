@@ -14,6 +14,12 @@ class Test extends Entity{
     protected /* DateTime */ $creation_date;
     protected /* int */ $time_limit;
     protected /* float */ $question_multiplier;
+    protected /* ?string */ $description;
+    protected /* ?string */ $access_key;
+    protected /* int */ $type;
+
+    const TYPE_TEST = 0;
+    const TYPE_SURVEY = 1;
 
     protected static /* string */ function GetTableName(){
         return TABLE_TESTS;
@@ -28,6 +34,7 @@ class Test extends Entity{
         settype($this->author_id, 'int');
         settype($this->question_multiplier, 'float');
         settype($this->time_limit, 'int');
+        settype($this->type, 'int');
 
         $this->creation_date = \DateTime::createFromFormat('Y-m-d H:i:s', $this->creation_date);
     }
@@ -66,6 +73,21 @@ class Test extends Entity{
         return $this->question_multiplier;
     }
 
+    public /* ?string */ function GetDescription(){
+        $this->FetchIfNeeded();
+        return $this->description;
+    }
+
+    public /* ?string */ function GetAccessKey(){
+        $this->FetchIfNeeded();
+        return $this->access_key;
+    }
+
+    public /* int */ function GetType(){
+        $this->FetchIfNeeded();
+        return $this->type;
+    }
+
     public /* Question[] */ function GetQuestions(){
         return Question::GetQuestionsForTest($this);
     }
@@ -87,11 +109,20 @@ class Test extends Entity{
     }
 
     public static /* Test[] */ function GetTestsCreatedByUser(User $user){
+        return self::GetCreatedByUser($user, self::TYPE_TEST);
+    }
+
+    public static /* Test[] */ function GetSurveysCreatedByUser(User $user){
+        return self::GetCreatedByUser($user, self::TYPE_SURVEY);
+    }
+
+    public static /* Test[] */ function GetCreatedByUser(User $user, int $type){
         $tests = [];
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Select()
                 ->Where('author_id', '=', $user->GetId())
+                ->AndWhere('type', '=', $type)
                 ->Run();
 
         for($i=0; $i<$result->num_rows; $i++){
@@ -138,6 +169,7 @@ class Test extends Entity{
                 ->Value('creation_date', (new \DateTime())->format('Y-m-d H:i:s'))
                 ->Value('time_limit', $time_limit)
                 ->Value('question_multiplier', $question_multiplier)
+                ->Value('type', self::TYPE_TEST)
                 ->Run();
             
         if($result === false){

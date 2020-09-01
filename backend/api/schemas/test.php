@@ -7,6 +7,8 @@ interface Test{
     public function author_id(): int;
     public function creation_date(): \DateTime;
     public function time_limit(): int;
+    public function description(): ?string;
+    public function type(): int;
     public function question_multiplier(): float;
 
     public function question_count(): int;
