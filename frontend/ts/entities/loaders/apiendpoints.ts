@@ -8,25 +8,25 @@ import User from '../user';
 import Group from '../group';
 
 export default class ApiEndpoints {
-    
-    public static GetEntityUrl(entity: Entity){
-        if(entity instanceof Assignment){
+
+    public static GetEntityUrl(entity: Entity) {
+        if(entity instanceof Assignment) {
             return this.GetAssignmentUrl(entity);
-        }else if(entity instanceof Attempt){
+        } else if(entity instanceof Attempt) {
             return this.GetAttemptUrl(entity);
         }
 
-        if(entity instanceof Test){
+        if(entity instanceof Test) {
             return this.GetTestUrl(entity);
-        }else if(entity instanceof Question){
+        } else if(entity instanceof Question) {
             return this.GetQuestionUrl(entity);
-        }else if(entity instanceof Answer){
+        } else if(entity instanceof Answer) {
             return this.GetAnswerUrl(entity);
         }
 
-        if(entity instanceof User){
+        if(entity instanceof User) {
             return this.GetUserUrl(entity);
-        }else if(entity instanceof Group){
+        } else if(entity instanceof Group) {
             return this.GetGroupUrl(entity);
         }
 
@@ -34,31 +34,32 @@ export default class ApiEndpoints {
         throw `Obiekt ${name} nie ma reprezentacji w API.`;
     }
 
-    protected static GetAssignmentUrl(assignment: Assignment){
+    protected static GetAssignmentUrl(assignment: Assignment) {
         return `api/assignments/${assignment.Id}`;
     }
 
-    protected static GetAttemptUrl(attempt: Attempt){
+    protected static GetAttemptUrl(attempt: Attempt) {
         return this.GetAssignmentUrl(attempt.Assignment) + `/attempts/${attempt.Id}`;
     }
 
-    protected static GetTestUrl(test: Test){
+    protected static GetTestUrl(test: Test) {
+        if(test.Type == Test.TYPE_SURVEY) return `api/surveys/${test.Id}`;
         return `api/tests/${test.Id}`;
     }
 
-    protected static GetQuestionUrl(question: Question){
+    protected static GetQuestionUrl(question: Question) {
         return this.GetTestUrl(question.Test) + `/questions/${question.Id}`;
     }
 
-    protected static GetAnswerUrl(answer: Answer){
+    protected static GetAnswerUrl(answer: Answer) {
         return this.GetQuestionUrl(answer.Question) + `/answers/${answer.Id}`;
     }
 
-    protected static GetUserUrl(user: User){
+    protected static GetUserUrl(user: User) {
         return `api/users/${user.Id}`;
     }
 
-    protected static GetGroupUrl(group: Group){
+    protected static GetGroupUrl(group: Group) {
         return `api/groups/${group.Id}`;
     }
 }
