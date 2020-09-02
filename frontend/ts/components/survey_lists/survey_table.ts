@@ -1,6 +1,7 @@
 import Component from '../basic/component';
 import Test from '../../entities/test';
 import { ToMediumFormat } from '../../utils/dateutils';
+import { HandleLinkClick } from '../../1page/page_manager';
 
 export default class SurveyTable extends Component {
     protected Element: HTMLTableElement;
@@ -61,10 +62,12 @@ export default class SurveyTable extends Component {
             btn_results.textContent = 'Wyniki';
 
             let td_edit = tr.insertCell(-1);
-            let btn_edit = document.createElement('button');
+            let btn_edit = document.createElement('a');
             td_edit.appendChild(btn_edit);
-            btn_edit.classList.add('compact', 'todo');
+            btn_edit.classList.add('button', 'compact', 'todo');
             btn_edit.textContent = 'Edytuj';
+            btn_edit.href = 'ankiety/edytuj/' + survey.Id.toString();
+            btn_edit.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/edytuj', survey));
         }
     }
 }
