@@ -2,7 +2,7 @@
  * Zwraca datę w formacie YYYY-MM-DD HH:MM:SS
  * @param date 
  */
-export function ToLongFormat(date: Date){
+export function ToLongFormat(date: Date) {
     let month = '0' + (date.getMonth() + 1).toString();
     month = month.substr(month.length - 2, 2);
     let day = '0' + date.getDate().toString();
@@ -28,15 +28,15 @@ export function ToLongFormat(date: Date){
  * Zwraca datę w formacie HH:MM (jeśli w ciągu ostatnich 24h) albo DD-MM-YYYY, HH:MM
  * @param date Data do sformatowania
  */
-export function ToMediumFormat(date: Date){
+export function ToMediumFormat(date: Date, always_display_date: boolean = false) {
     let diff = new Date().getTime() - date.getTime();
 
-    if(Math.abs(diff) < 86400000){
+    if(Math.abs(diff) < 86400000 && !always_display_date) {
         return date.toLocaleString(undefined, {
             hour: '2-digit',
             minute: '2-digit'
         });
-    }else{
+    } else {
         return date.toLocaleString(undefined, {
             year: 'numeric',
             month: '2-digit',
@@ -51,7 +51,7 @@ export function ToMediumFormat(date: Date){
  * Formatuje datę jako DD-MM, HH:MM
  * @param date Data do sformatowania
  */
-export function ToDayHourFormat(date: Date){
+export function ToDayHourFormat(date: Date) {
     return date.toLocaleString(undefined, {
         month: '2-digit',
         day: 'numeric',
@@ -64,15 +64,15 @@ export function ToDayHourFormat(date: Date){
  * Formatuje datę jako DD-MM (jeśli w bieżącym roku) lub DD-MM-YYYY
  * @param date Data do sformatowania
  */
-export function ToDayFormat(date: Date){
+export function ToDayFormat(date: Date) {
     let same_year = new Date().getFullYear() == date.getFullYear();
 
-    if(same_year){
+    if(same_year) {
         return date.toLocaleString(undefined, {
             month: '2-digit',
             day: 'numeric'
         });
-    }else{
+    } else {
         return date.toLocaleString(undefined, {
             year: 'numeric',
             month: '2-digit',
@@ -85,7 +85,7 @@ export function ToDayFormat(date: Date){
  * Przelicza interwał czasowy na ciąg [HH:]MM:SS
  * @param seconds Ilość sekund
  */
-export function SecondsToTime(seconds: number){
+export function SecondsToTime(seconds: number) {
     let secs = seconds % 60;
     seconds = (seconds - secs) / 60;
 
@@ -105,7 +105,7 @@ export function SecondsToTime(seconds: number){
  * @param date Data
  * @param ref_date Data referencyjna (domyślnie teraz)
  */
-export function DiffInSeconds(date: Date, ref_date?: Date){
+export function DiffInSeconds(date: Date, ref_date?: Date) {
     ref_date = ref_date ?? new Date();
     return (date.getTime() - ref_date.getTime()) / 1000;
 }
