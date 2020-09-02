@@ -18,6 +18,7 @@ import PageStorage from './1page/page_storage';
 import ChromeManager from './1page/chrome_manager';
 import SurveysPage from './pages/surveys';
 import FillSurveyPage from './pages/fill_survey';
+import EditSurveyPage from './pages/edit_survey';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -43,6 +44,7 @@ try {
 
     let pages = PageStorage.GetStorage();
     pages.RegisterPage('ankiety', { AcceptsArgument: false, CreatePage: () => new SurveysPage() });
+    pages.RegisterPage('ankiety/edytuj', { AcceptsArgument: true, CreatePage: () => new EditSurveyPage() });
     pages.RegisterPage('ankiety/wypełnij', { AcceptsArgument: false, CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { AcceptsArgument: false, CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { AcceptsArgument: false, CreatePage: () => new AboutPage() });
