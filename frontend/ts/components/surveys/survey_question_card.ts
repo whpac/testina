@@ -1,6 +1,7 @@
 import Card from '../basic/card';
 import Question from '../../entities/question';
 import { AutoGrow } from '../../utils/elementutils';
+import AnswerWrapper from './answer_wrapper';
 
 export default class SurveyQuestionCard extends Card {
     protected Question: Question | undefined;
@@ -8,6 +9,7 @@ export default class SurveyQuestionCard extends Card {
     protected QuestionTypeSelect: HTMLSelectElement | undefined;
     protected HeadingField: HTMLTextAreaElement | HTMLHeadingElement;
     protected FooterField: HTMLTextAreaElement | HTMLParagraphElement;
+    protected AnswerWrapper: AnswerWrapper;
 
     public constructor(edit_mode: boolean = false) {
         super();
@@ -21,15 +23,26 @@ export default class SurveyQuestionCard extends Card {
             question_number.appendChild(document.createTextNode(': '));
             this.QuestionTypeSelect = document.createElement('select');
             question_number.appendChild(this.QuestionTypeSelect);
-            this.QuestionTypeSelect.addEventListener('change', this.ChangeQuestionType);
+            this.QuestionTypeSelect.addEventListener('change', this.ChangeQuestionType.bind(this));
 
-            let option1 = document.createElement('option');
-            option1.textContent = 'Jednokrotnego wyboru';
-            this.QuestionTypeSelect.appendChild(option1);
+            let types: [number, string][] = [
+                [Question.TYPE_SINGLE_CHOICE, 'Jednokrotnego wyboru'],
+                [Question.TYPE_MULTI_CHOICE, 'Wielokrotnego wyboru'],
+                [Question.TYPE_OPEN_ANSWER, 'Otwarte']
+            ];
+
+            for(let type of types) {
+                let option = document.createElement('option');
+                option.value = type[0].toString();
+                option.textContent = type[1];
+                this.QuestionTypeSelect.appendChild(option);
+            }
         } else {
             question_number.classList.add('secondary');
             question_number.appendChild(document.createTextNode('.'));
         }
+
+        this.AnswerWrapper = new AnswerWrapper(true);
 
         if(edit_mode) {
             let heading = document.createElement('textarea');
@@ -48,20 +61,26 @@ export default class SurveyQuestionCard extends Card {
             this.FooterField = document.createElement('p');
         }
         this.AppendChild(this.HeadingField);
+        this.AppendChild(this.AnswerWrapper);
         this.AppendChild(this.FooterField);
     }
 
-    public Populate(survey: Question, question_number: number) {
+    public Populate(question: Question, question_number: number) {
         this.QuestionNumberText.textContent = question_number.toString();
 
         if(this.HeadingField instanceof HTMLInputElement) {
-            this.HeadingField.value = survey.Text;
+            this.HeadingField.value = question.Text;
         } else {
-            this.HeadingField.textContent = survey.Text;
+            this.HeadingField.textContent = question.Text;
         }
+
+        if(this.QuestionTypeSelect !== undefined)
+            this.QuestionTypeSelect.value = question.Type.toString();
+        this.AnswerWrapper.Populate(question);
     }
 
     protected ChangeQuestionType() {
         if(this.QuestionTypeSelect === undefined) return;
+        this.AnswerWrapper.ChangeType(parseInt(this.QuestionTypeSelect.value));
     }
 }
