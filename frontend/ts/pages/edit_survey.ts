@@ -33,9 +33,13 @@ export default class EditSurveyPage extends Page {
         this.SurveyNameHeading.textContent = this.Survey.Name;
         this.IntroductionCard.Populate(this.Survey);
 
-        let q = new SurveyQuestionCard(true);
-        this.AppendChild(q);
-        //q.Populate((await this.Survey.GetQuestions())[0]);
+        let questions = await this.Survey.GetQuestions();
+        for(let i = 0; i < questions.length; i++) {
+            let question = questions[i];
+            let question_card = new SurveyQuestionCard(true);
+            this.AppendChild(question_card);
+            question_card.Populate(question, i + 1);
+        }
 
         container.appendChild(this.Element);
     }
