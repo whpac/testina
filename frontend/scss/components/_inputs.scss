@@ -27,7 +27,7 @@ textarea {
     &.one-line {min-height:0.9em; height:calc(1.2em + 8px);}
 }
 
-input[type=radio] {margin-left:15px;}
+input[type=radio], input[type=checkbox] {margin-left:15px;}
 input[type=number] {width:6ch;}
 
 @include media-large-xlarge {

@@ -1,0 +1,15 @@
+.survey-answer-wrapper {
+    margin-top:0; padding-left:0; list-style:none;
+
+    input[type=text] {width:60%;}
+    li {
+        border-bottom:1px solid transparent;
+
+        &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}
+    }
+
+    .control-button {display:none; padding:3px 9px; margin-right:6px;}
+    li:hover .control-button {display:inline-block;}
+}
+
+.survey-add-answer-button {display:block; margin-top:-1em; margin-bottom:0.8em;}
