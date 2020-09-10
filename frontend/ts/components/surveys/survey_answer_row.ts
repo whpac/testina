@@ -3,6 +3,7 @@ import Answer from '../../entities/answer';
 import Icon from '../basic/icon';
 import { Hash } from '../../utils/textutils';
 import Question from '../../entities/question';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
     protected QuestionType: number | undefined;
@@ -56,6 +57,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
             input.classList.add('discreet');
             input.type = 'text';
             input.placeholder = 'Podaj treść odpowiedzi';
+            input.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             this.AppendChild(input);
             this.AnswerTextElement = input;
 

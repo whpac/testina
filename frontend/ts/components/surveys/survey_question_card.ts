@@ -3,6 +3,7 @@ import Question from '../../entities/question';
 import { AutoGrow } from '../../utils/elementutils';
 import AnswerWrapper from './answer_wrapper';
 import Icon from '../basic/icon';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     protected EditMode: boolean;
@@ -105,12 +106,14 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
             let heading = document.createElement('textarea');
             heading.classList.add('heading', 'discreet', 'no-resize', 'one-line');
             heading.placeholder = 'Podaj treść pytania';
+            heading.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             AutoGrow(heading);
             this.HeadingField = heading;
 
             let footer = document.createElement('textarea');
             footer.classList.add('small', 'secondary', 'discreet', 'no-resize', 'full-width');
             footer.placeholder = 'Tekst wyświetlany w stopce pod pytaniem (opcjonalnie)';
+            footer.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             AutoGrow(footer);
             this.FooterField = footer;
         } else {
@@ -143,6 +146,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     protected ChangeQuestionType() {
         if(this.QuestionTypeSelect === undefined) return;
         this.AnswerWrapper.ChangeType(parseInt(this.QuestionTypeSelect.value));
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected MoveUp() {

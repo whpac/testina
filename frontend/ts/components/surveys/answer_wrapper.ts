@@ -3,6 +3,7 @@ import Question from '../../entities/question';
 import Answer from '../../entities/answer';
 import SurveyAnswerRow from './survey_answer_row';
 import { MoveElement } from '../../utils/arrayutils';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class AnswerWrapper extends Component {
     protected ListElement: HTMLUListElement;
@@ -152,6 +153,7 @@ export default class AnswerWrapper extends Component {
                 break;
             }
         }
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected OnAnswerMovedDown(answer_row: SurveyAnswerRow) {
@@ -179,10 +181,12 @@ export default class AnswerWrapper extends Component {
                 break;
             }
         }
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected AddNewAnswer() {
         this.RenderClosedAnswer(undefined);
         this.RefreshAnswerOrder();
+        NavigationPrevention.Prevent('survey-editor');
     }
 }
