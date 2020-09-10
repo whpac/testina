@@ -47,4 +47,18 @@ export function Hash(str: string, seed: number = 0) {
     h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
     h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
-};
+}
+
+/**
+ * Generuje pseudolosowy ciąg znaków o podanej długości. Ciąg wynikowy składa się z zakresu [a-zA-Z0-9].
+ * @param length Długość wynikowego ciągu znaków
+ */
+/*export function RandomString(length: number) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for(var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}*/
