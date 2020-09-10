@@ -3,14 +3,14 @@ import Component, { ComponentState } from './component';
 /**
  * Panel interfejsu użytkownika, z miejscem na przyciski
  */
-export default class Card extends Component {
+export default class Card<T extends string = ""> extends Component<T> {
     /** Element, w którym znajdzie się zawrtość karty */
     ContentWrapper: HTMLElement;
 
     /** Element, w którym znajdą się przyciski */
     ButtonsWrapper: HTMLElement;
 
-    constructor(...classes: string[]){
+    constructor(...classes: string[]) {
         super();
 
         this.Element = document.createElement('div');
@@ -23,23 +23,23 @@ export default class Card extends Component {
         this.ButtonsWrapper = document.createElement('div');
         this.ButtonsWrapper.classList.add('card-buttons');
         this.Element.appendChild(this.ButtonsWrapper);
-        
+
         this.SetState(ComponentState.LOADED);
     }
 
     /**
      * Zwraca element z zawartością karty
      */
-    GetContentElement(){
+    GetContentElement() {
         return this.ContentWrapper;
     }
 
-    AppendChild(child: Node | Component<string> | string){
-        if(child instanceof Node){
+    AppendChild(child: Node | Component<string> | string) {
+        if(child instanceof Node) {
             this.ContentWrapper.appendChild(child);
-        }else if(child instanceof Component){
+        } else if(child instanceof Component) {
             this.ContentWrapper.appendChild(child.GetElement());
-        }else if(typeof child === 'string'){
+        } else if(typeof child === 'string') {
             this.ContentWrapper.appendChild(document.createTextNode(child));
         }
     }
@@ -48,7 +48,7 @@ export default class Card extends Component {
      * Dodaje przycisk do panelu
      * @param button Przycisk
      */
-    AddButton(button: HTMLButtonElement){
+    AddButton(button: HTMLButtonElement) {
         this.ButtonsWrapper.appendChild(button);
     }
 }
