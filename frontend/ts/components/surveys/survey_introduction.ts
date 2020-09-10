@@ -1,6 +1,7 @@
 import Card from '../basic/card';
 import Test from '../../entities/test';
 import { AutoGrow } from '../../utils/elementutils';
+import NavigationPrevention from '../../1page/navigation_prevention';
 
 export default class SurveyIntroduction extends Card {
     protected HeadingField: HTMLInputElement | HTMLHeadingElement;
@@ -14,11 +15,13 @@ export default class SurveyIntroduction extends Card {
             heading.type = 'text';
             heading.classList.add('heading', 'discreet');
             heading.placeholder = 'Podaj nazwę ankiety';
+            heading.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             this.HeadingField = heading;
 
             let description = document.createElement('textarea');
             description.classList.add('full-width', 'discreet', 'no-resize');
             description.placeholder = 'Tutaj możesz wpisać tekst, który zostanie wyświetlony na początku ankiety (opcjonalnie).';
+            description.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             AutoGrow(description);
             this.DescriptionField = description;
         } else {
