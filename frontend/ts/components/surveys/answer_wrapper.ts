@@ -30,10 +30,13 @@ export default class AnswerWrapper extends Component {
         this.ListElement.appendChild(this.AnswerPlaceholderWrapper);
     }
 
-    public async Populate(question: Question) {
+    public async Populate(question: Question | undefined) {
         this.Question = question;
-        this.QuestionType = question.Type;
-        this.Answers = (await question.GetAnswers()).slice();
+        this.QuestionType = question?.Type ?? Question.TYPE_SINGLE_CHOICE;
+
+        if(question !== undefined) this.Answers = (await question.GetAnswers()).slice();
+        else this.Answers = [];
+
         this.RenderAnswers();
     }
 
@@ -56,7 +59,7 @@ export default class AnswerWrapper extends Component {
                 }
             } else {
                 for(let answer_row of this.AnswerRows) {
-                    answer_row.SetQuestionType(this.QuestionType ?? 0);
+                    answer_row.SetQuestionType(this.QuestionType ?? Question.TYPE_SINGLE_CHOICE);
                 }
             }
         }
@@ -84,10 +87,8 @@ export default class AnswerWrapper extends Component {
     }
 
     protected RenderClosedAnswer(answer: Answer | undefined) {
-        if(this.Question === undefined) return;
-
         let answer_row = new SurveyAnswerRow(this.EditMode);
-        answer_row.Populate(this.Question, this.QuestionType ?? 0, answer);
+        answer_row.Populate(this.Question, this.QuestionType ?? Question.TYPE_SINGLE_CHOICE, answer);
         answer_row.AddEventListener('moveup', (() => this.OnAnswerMovedUp(answer_row)).bind(this));
         answer_row.AddEventListener('movedown', (() => this.OnAnswerMovedDown(answer_row)).bind(this));
         this.ListElement.appendChild(answer_row.GetElement());

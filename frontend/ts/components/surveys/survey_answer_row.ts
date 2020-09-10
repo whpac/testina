@@ -90,7 +90,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
         }
     }
 
-    public Populate(question: Question, question_type: number, answer: Answer | undefined) {
+    public Populate(question: Question | undefined, question_type: number, answer: Answer | undefined) {
         this.QuestionType = question_type;
         this.Answer = answer;
 
@@ -101,7 +101,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
         }
 
         this.CheckboxElement.type = this.QuestionType == Question.TYPE_SINGLE_CHOICE ? 'radio' : 'checkbox';
-        this.CheckboxElement.name = Hash(question.Text ?? '', question.Id ?? 0).toString(16);
+        this.CheckboxElement.name = Hash(question?.Text ?? '', question?.Id ?? 0).toString(16);
     }
 
     public SetQuestionType(question_type: number) {

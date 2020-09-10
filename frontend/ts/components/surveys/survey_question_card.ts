@@ -122,17 +122,17 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         this.AppendChild(this.FooterField);
     }
 
-    public Populate(question: Question, question_number: number) {
+    public Populate(question: Question | undefined, question_number: number) {
         this.SetNumber(question_number);
 
-        if(this.HeadingField instanceof HTMLInputElement) {
-            this.HeadingField.value = question.Text;
+        if(this.HeadingField instanceof HTMLTextAreaElement) {
+            this.HeadingField.value = question?.Text ?? '';
         } else {
-            this.HeadingField.textContent = question.Text;
+            this.HeadingField.textContent = question?.Text ?? '[Nie podano treści pytania]';
         }
 
         if(this.QuestionTypeSelect !== undefined)
-            this.QuestionTypeSelect.value = question.Type.toString();
+            this.QuestionTypeSelect.value = (question?.Type ?? Question.TYPE_SINGLE_CHOICE).toString();
         this.AnswerWrapper.Populate(question);
     }
 

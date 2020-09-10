@@ -6,11 +6,13 @@ import SurveyQuestionCard from '../components/surveys/survey_question_card';
 import Icon from '../components/basic/icon';
 import { MoveElement } from '../utils/arrayutils';
 import Question from '../entities/question';
+import NavigationPrevention from '../1page/navigation_prevention';
 
 export default class EditSurveyPage extends Page {
     protected Survey: Test | undefined;
     protected SurveyNameHeading: Text;
     protected IntroductionCard: SurveyIntroduction;
+    protected QuestionWrapper: HTMLElement;
     protected QuestionCards: SurveyQuestionCard[];
 
     public constructor() {
@@ -30,11 +32,27 @@ export default class EditSurveyPage extends Page {
 
         this.IntroductionCard = new SurveyIntroduction(true);
         this.AppendChild(this.IntroductionCard);
+
+        this.QuestionWrapper = document.createElement('div');
+        this.AppendChild(this.QuestionWrapper);
+
+        let new_question_btn_wrapper = document.createElement('div');
+        new_question_btn_wrapper.classList.add('center');
+        this.AppendChild(new_question_btn_wrapper);
+
+        let new_question_btn = document.createElement('button');
+        new_question_btn.appendChild(new Icon('plus').GetElement());
+        new_question_btn.appendChild(document.createTextNode(' Dodaj pytanie'));
+        new_question_btn.addEventListener('click', this.OnAddQuestionClick.bind(this));
+        new_question_btn_wrapper.appendChild(new_question_btn);
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
         if(typeof params === 'number') this.Survey = await SurveyLoader.LoadById(params);
         else this.Survey = params as Test;
+
+        this.QuestionCards = [];
+        this.QuestionWrapper.textContent = '';
 
         this.SurveyNameHeading.textContent = this.Survey.Name;
         this.IntroductionCard.Populate(this.Survey);
@@ -44,15 +62,6 @@ export default class EditSurveyPage extends Page {
             this.RenderQuestion(questions[i], i + 1);
         }
         this.RefreshQuestionOrder();
-
-        let new_question_btn_wrapper = document.createElement('div');
-        new_question_btn_wrapper.classList.add('center');
-        this.AppendChild(new_question_btn_wrapper);
-
-        let new_question_btn = document.createElement('button');
-        new_question_btn.appendChild(new Icon('plus').GetElement());
-        new_question_btn.appendChild(document.createTextNode(' Dodaj pytanie'));
-        new_question_btn_wrapper.appendChild(new_question_btn);
 
         container.appendChild(this.Element);
     }
@@ -69,9 +78,9 @@ export default class EditSurveyPage extends Page {
         return 'Edytuj: ' + this.Survey?.Name;
     }
 
-    protected RenderQuestion(question: Question, question_number: number) {
+    protected RenderQuestion(question: Question | undefined, question_number: number) {
         let question_card = new SurveyQuestionCard(true);
-        this.AppendChild(question_card);
+        this.QuestionWrapper.appendChild(question_card.GetElement());
         question_card.Populate(question, question_number);
         this.QuestionCards.push(question_card);
         question_card.AddEventListener('moveup', (() => this.OnQuestionMovedUp(question_card)).bind(this));
@@ -90,6 +99,12 @@ export default class EditSurveyPage extends Page {
             this.QuestionCards[i].IsLast = (i == this.QuestionCards.length - 1);
             this.QuestionCards[i].SetNumber(i + 1);
         }
+    }
+
+    protected OnAddQuestionClick() {
+        this.RenderQuestion(undefined, this.QuestionCards.length + 1);
+        this.RefreshQuestionOrder();
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected OnQuestionMovedUp(question_card: SurveyQuestionCard) {
@@ -114,6 +129,7 @@ export default class EditSurveyPage extends Page {
         }
 
         this.RefreshQuestionOrder();
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected OnQuestionMovedDown(question_card: SurveyQuestionCard) {
@@ -138,5 +154,6 @@ export default class EditSurveyPage extends Page {
         }
 
         this.RefreshQuestionOrder();
+        NavigationPrevention.Prevent('survey-editor');
     }
 }
