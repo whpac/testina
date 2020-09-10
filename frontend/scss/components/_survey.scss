@@ -1,15 +1,37 @@
 .survey-answer-wrapper {
     margin-top:0; padding-left:0; list-style:none;
 
-    input[type=text] {width:60%;}
     li {
-        border-bottom:1px solid transparent;
+        border-bottom:1px solid transparent; display:grid;
+        grid-template-columns:auto 1fr auto;
 
-        &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}
+        input[type=checkbox], input[type=radio] {grid-column:1;}
+        input[type=text], .text {grid-column:2;}
+        .control-buttons {grid-column:3;}
+
+        @include media-large-xlarge{
+            &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}
+        }
     }
 
-    .control-button {display:none; padding:3px 9px; margin-right:6px;}
-    li:hover .control-button {display:inline-block;}
+    .control-button {padding:3px 9px; margin-right:6px;}
+    @include media-large-xlarge {
+        .control-buttons {opacity:0;}
+        li:hover .control-buttons {opacity:1;}
+    }
 }
 
 .survey-add-answer-button {display:block; margin-top:-1em; margin-bottom:0.8em;}
+
+.survey-question-header {
+    .buttons {
+        float:right;
+
+        button {padding:3px 12px;}
+    }
+
+    @include media-large-xlarge {
+        .buttons {display:none;}
+        &:hover .buttons {display:block;}
+    }
+}
