@@ -38,3 +38,12 @@ a.button, button {
         &.compact-on-wide-screen {padding:3px 10px; margin:-1px 0;}
     }
 }
+
+.fixed-buttons-wrapper {
+    position:fixed; box-shadow:0 0 1px 3px var(--background-empty-color); border-radius:calc(0.5em + 8px);
+    right:calc(10px + var(--nav-panel-width)); background:var(--background-empty-color);
+
+    @include media-small {
+        display:none;
+    }
+}
