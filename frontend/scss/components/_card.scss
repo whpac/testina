@@ -8,14 +8,6 @@
     &.semi-wide {margin-left:3px; margin-right:3px;}
     &.wide {margin-left:3px; margin-right:3px;}
 
-    .header-button {
-        float:right; color:var(--text-primary-color); font-size:0.98em; padding:7px 12px;
-        border-radius:calc(0.5em + 8px); border:1px solid var(--button-border-color);
-
-        > .icon {color:var(--button-colored-text-color);}
-        > span {margin-left:1ch;}
-    }
-
     @include media-small {
         &, &.semi-wide, &.wide, &.auto-width {margin-left:0; margin-right:0; width:auto;}
         .header-button {
