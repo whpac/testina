@@ -1,6 +1,6 @@
 <?php
 // Określa początkowy tytuł strony
-define('DEFAULT_TITLE', 'Lorem Ipsum');
+define('DEFAULT_TITLE', 'Testina');
 ?>
 
 <!DOCTYPE html>
