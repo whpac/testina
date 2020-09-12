@@ -35,3 +35,9 @@
         &:hover .buttons {display:block;}
     }
 }
+
+.survey-question-card.deleted {
+    opacity:0.5;
+    
+    .heading, .survey-question-header {text-decoration:line-through;}
+}
