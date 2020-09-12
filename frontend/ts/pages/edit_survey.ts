@@ -104,6 +104,8 @@ export default class EditSurveyPage extends Page {
         this.QuestionCards.push(question_card);
         question_card.AddEventListener('moveup', (() => this.OnQuestionMovedUp(question_card)).bind(this));
         question_card.AddEventListener('movedown', (() => this.OnQuestionMovedDown(question_card)).bind(this));
+        question_card.AddEventListener('markasdeleted', this.RefreshQuestionOrder.bind(this));
+        question_card.AddEventListener('markasundeleted', this.RefreshQuestionOrder.bind(this));
 
         if(this.QuestionCards.length >= 2) {
             let prev = this.QuestionCards[this.QuestionCards.length - 2];
@@ -113,10 +115,24 @@ export default class EditSurveyPage extends Page {
     }
 
     protected RefreshQuestionOrder() {
+        let q_number = 1;
+        for(let card of this.QuestionCards) {
+            card.IsFirst = card.IsLast = false;
+            if(card.IsDeleted) continue;
+            card.SetNumber(q_number);
+            q_number++;
+        }
+
         for(let i = 0; i < this.QuestionCards.length; i++) {
-            this.QuestionCards[i].IsFirst = (i == 0);
-            this.QuestionCards[i].IsLast = (i == this.QuestionCards.length - 1);
-            this.QuestionCards[i].SetNumber(i + 1);
+            if(this.QuestionCards[i].IsDeleted) continue;
+            this.QuestionCards[i].IsFirst = true;
+            break;
+        }
+
+        for(let i = this.QuestionCards.length - 1; i >= 0; i--) {
+            if(this.QuestionCards[i].IsDeleted) continue;
+            this.QuestionCards[i].IsLast = true;
+            break;
         }
     }
 
