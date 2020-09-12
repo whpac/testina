@@ -180,14 +180,23 @@ export default class EditSurveyPage extends Page {
         saving_toast.Show();
         let order = 0;
 
-        this.IntroductionCard.Save();
+        try {
+            this.IntroductionCard.Save();
 
-        for(let question_card of this.QuestionCards) {
-            if(!question_card.IsDeleted) order++;
-            question_card.Save(order);
+            for(let question_card of this.QuestionCards) {
+                if(!question_card.IsDeleted) order++;
+                question_card.Save(order);
+            }
+
+            saving_toast.Hide();
+            new Toast('Zapisano.').Show(0);
+            NavigationPrevention.Unprevent('survey-editor');
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            saving_toast.Hide();
+            new Toast('Nie udało się zapisać' + message).Show(0);
         }
-
-        saving_toast.Hide();
-        new Toast('Zapisano.').Show(0);
     }
 }
