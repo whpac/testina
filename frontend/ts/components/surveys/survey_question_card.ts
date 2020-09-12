@@ -144,10 +144,13 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         this.SetNumber(question_number);
         this.Question = question;
 
-        if(this.HeadingField instanceof HTMLTextAreaElement) {
+        if(this.HeadingField instanceof HTMLTextAreaElement && this.FooterField instanceof HTMLTextAreaElement) {
             this.HeadingField.value = question?.Text ?? '';
+            this.FooterField.value = question?.Footer ?? '';
         } else {
             this.HeadingField.textContent = question?.Text ?? '[Nie podano treści pytania]';
+            this.FooterField.textContent = question?.Footer ?? '';
+            this.FooterField.style.display = question?.Footer === null ? 'none' : '';
         }
 
         if(this.QuestionTypeSelect !== undefined)
@@ -225,6 +228,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     public async Save(order: number) {
         if(this.Survey === undefined) return;
         if(!('value' in this.HeadingField)) return;
+        if(!('value' in this.FooterField)) return;
         if(this.QuestionTypeSelect === undefined) return;
 
         if(this.Question !== undefined) {
@@ -235,8 +239,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     parseInt(this.QuestionTypeSelect.value),
                     0,
                     0,
-                    0/*,
-                    order */
+                    0,
+                    this.FooterField.value,
+                    order
                 );
                 await this.SaveAnswers();
                 await update_awaiter;
@@ -254,8 +259,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     parseInt(this.QuestionTypeSelect.value),
                     0,
                     0,
-                    0/*,
-                    order */
+                    0,
+                    this.FooterField.value,
+                    order
                 );
                 await this.SaveAnswers();
                 this.Question = await question_creator;
