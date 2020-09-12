@@ -1,6 +1,6 @@
 import Card from '../basic/card';
 import CreditsDialog from './credits_dialog';
-import { GoToPage } from '../../1page/page_manager';
+import { HandleLinkClick } from '../../1page/page_manager';
 
 export default class TestinaCard extends Card {
 
@@ -36,13 +36,14 @@ export default class TestinaCard extends Card {
         this.AppendChild(bottom_links);
         bottom_links.classList.add('center', 'small');
 
-        let links: [string, () => void][] = [
+        let links: [string, (() => void) | string][] = [
             ['Regulamin', () => void 0],
             ['Wykorzystane\xa0biblioteki', this.DisplayCredits],
-            ['Pomoc', () => GoToPage('pomoc')]
+            ['Pomoc', 'pomoc']
         ];
 
         for(let i = 0; i < links.length; i++) {
+            let link = links[i];
             if(i > 0) {
                 let separator = document.createTextNode(' • ');
                 bottom_links.appendChild(separator);
@@ -51,9 +52,14 @@ export default class TestinaCard extends Card {
             let a = document.createElement('a');
             bottom_links.appendChild(a);
             a.classList.add('no-color');
-            a.href = 'javascript:void(0)';
-            a.textContent = links[i][0];
-            a.addEventListener('click', links[i][1].bind(this));
+            a.textContent = link[0];
+            if(typeof link[1] == 'string') {
+                a.href = link[1];
+                a.addEventListener('click', (e) => HandleLinkClick(e, link[1] as string));
+            } else {
+                a.href = 'javascript:void(0)';
+                a.addEventListener('click', link[1].bind(this));
+            }
         }
     }
 
