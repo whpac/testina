@@ -64,6 +64,9 @@ export default class SurveyIntroduction extends Card {
         } catch(e) {
             this.Survey.Name = old_name;
             this.Survey.Description = old_description;
+
+            // Przekazywanie wyjątku dalej, po przywróceniu stanu początkowego
+            throw e;
         }
     }
 }
