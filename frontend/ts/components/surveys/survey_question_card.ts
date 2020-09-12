@@ -10,6 +10,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     protected Question: Question | undefined;
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
+    protected _IsDeleted: boolean = false;
 
     protected QuestionNumberText: Text;
     protected QuestionTypeSelect: HTMLSelectElement | undefined;
@@ -38,6 +39,10 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         this._IsLast = value;
         if(this.MoveDownButton !== undefined)
             this.MoveDownButton.disabled = value;
+    }
+
+    public get IsDeleted() {
+        return this._IsDeleted;
     }
 
     public constructor(edit_mode: boolean = false) {
@@ -163,5 +168,32 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         let parent = this.Element.parentElement;
         parent?.insertBefore(next_question, this.Element);
         this.FireEvent('movedown');
+    }
+
+    protected Delete() {
+        this._IsDeleted = true;
+    }
+
+    protected Undelete() {
+        this._IsDeleted = false;
+    }
+
+    /**
+     * Zapisuje zmiany w pytaniu. Jeśli pytanie jest oznaczone jako
+     * do usunięcia (IsDeleted = true), usuwa je.
+     * @param order Numer kolejny pytania. Nie ma wpływu na pytania do usunięcia
+     */
+    public Save(order: number) {
+        if(this.Question !== undefined) {
+            if(!this.IsDeleted) {
+                // Zaktualizuj pytanie
+            } else {
+                // Usuń pytanie
+            }
+        } else {
+            if(!this.IsDeleted) {
+                // Utwórz pytanie
+            }
+        }
     }
 }
