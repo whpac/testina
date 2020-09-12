@@ -143,6 +143,7 @@ class Question extends Entity {
                 ->Value('points', $points)
                 ->Value('points_counting', $points_counting)
                 ->Value('max_typos', $max_typos)
+                ->Value('order', 0)
                 ->Run();
         
         if($result === false){
