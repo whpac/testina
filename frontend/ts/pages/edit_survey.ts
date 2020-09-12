@@ -71,6 +71,7 @@ export default class EditSurveyPage extends Page {
         this.IntroductionCard.Populate(this.Survey);
 
         let questions = await this.Survey.GetQuestions();
+        questions.sort((a, b) => a.Order - b.Order);
         for(let i = 0; i < questions.length; i++) {
             this.RenderQuestion(questions[i], i + 1);
         }
