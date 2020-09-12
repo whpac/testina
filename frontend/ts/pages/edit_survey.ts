@@ -100,6 +100,7 @@ export default class EditSurveyPage extends Page {
         let question_card = new SurveyQuestionCard(true);
         this.QuestionWrapper.appendChild(question_card.GetElement());
         question_card.Populate(question, question_number);
+        if(this.Survey !== undefined) question_card.SetSurvey(this.Survey);
         this.QuestionCards.push(question_card);
         question_card.AddEventListener('moveup', (() => this.OnQuestionMovedUp(question_card)).bind(this));
         question_card.AddEventListener('movedown', (() => this.OnQuestionMovedDown(question_card)).bind(this));
@@ -175,7 +176,7 @@ export default class EditSurveyPage extends Page {
         NavigationPrevention.Prevent('survey-editor');
     }
 
-    protected Save() {
+    protected async Save() {
         let saving_toast = new Toast('Zapisywanie...');
         saving_toast.Show();
         let order = 0;
@@ -183,10 +184,12 @@ export default class EditSurveyPage extends Page {
         try {
             this.IntroductionCard.Save();
 
+            let question_awaiters: Promise<void>[] = [];
             for(let question_card of this.QuestionCards) {
                 if(!question_card.IsDeleted) order++;
-                question_card.Save(order);
+                question_awaiters.push(question_card.Save(order));
             }
+            for(let awaiter of question_awaiters) await awaiter;
 
             saving_toast.Hide();
             new Toast('Zapisano.').Show(0);
