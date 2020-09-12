@@ -4,10 +4,12 @@ import { AutoGrow } from '../../utils/elementutils';
 import AnswerWrapper from './answer_wrapper';
 import Icon from '../basic/icon';
 import NavigationPrevention from '../../1page/navigation_prevention';
+import Test from '../../entities/test';
 
 export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     protected EditMode: boolean;
     protected Question: Question | undefined;
+    protected Survey: Test | undefined;
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
     protected _IsDeleted: boolean = false;
@@ -132,6 +134,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
 
     public Populate(question: Question | undefined, question_number: number) {
         this.SetNumber(question_number);
+        this.Question = question;
 
         if(this.HeadingField instanceof HTMLTextAreaElement) {
             this.HeadingField.value = question?.Text ?? '';
@@ -142,6 +145,10 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         if(this.QuestionTypeSelect !== undefined)
             this.QuestionTypeSelect.value = (question?.Type ?? Question.TYPE_SINGLE_CHOICE).toString();
         this.AnswerWrapper.Populate(question);
+    }
+
+    public SetSurvey(survey: Test) {
+        this.Survey = survey;
     }
 
     public SetNumber(question_number: number) {
@@ -183,17 +190,47 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
      * do usunięcia (IsDeleted = true), usuwa je.
      * @param order Numer kolejny pytania. Nie ma wpływu na pytania do usunięcia
      */
-    public Save(order: number) {
+    public async Save(order: number) {
+        if(this.Survey === undefined) return;
+        if(!('value' in this.HeadingField)) return;
+        if(this.QuestionTypeSelect === undefined) return;
+
         if(this.Question !== undefined) {
             if(!this.IsDeleted) {
                 // Zaktualizuj pytanie
+                let update_awaiter = this.Question.Update(
+                    this.HeadingField.value,
+                    parseInt(this.QuestionTypeSelect.value),
+                    0,
+                    0,
+                    0/*,
+                    order */
+                );
+                await this.SaveAnswers();
+                await update_awaiter;
             } else {
                 // Usuń pytanie
+                return this.Question.Remove();
             }
         } else {
             if(!this.IsDeleted) {
                 // Utwórz pytanie
+                let question_creator = Question.Create(
+                    this.Survey,
+                    this.HeadingField.value,
+                    parseInt(this.QuestionTypeSelect.value),
+                    0,
+                    0,
+                    0/*,
+                    order */
+                );
+                await this.SaveAnswers();
+                this.Question = await question_creator;
             }
         }
+    }
+
+    protected async SaveAnswers() {
+
     }
 }
