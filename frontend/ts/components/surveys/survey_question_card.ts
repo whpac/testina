@@ -6,7 +6,7 @@ import Icon from '../basic/icon';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import Test from '../../entities/test';
 
-export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
+export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "markasdeleted" | "markasundeleted"> {
     protected EditMode: boolean;
     protected Question: Question | undefined;
     protected Survey: Test | undefined;
@@ -18,6 +18,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     protected QuestionTypeSelect: HTMLSelectElement | undefined;
     protected MoveUpButton: HTMLButtonElement | undefined;
     protected MoveDownButton: HTMLButtonElement | undefined;
+    protected RemoveButton: HTMLButtonElement | undefined;
+    protected RestoreButton: HTMLButtonElement | undefined;
     protected HeadingField: HTMLTextAreaElement | HTMLHeadingElement;
     protected FooterField: HTMLTextAreaElement | HTMLParagraphElement;
     protected AnswerWrapper: AnswerWrapper;
@@ -30,8 +32,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     }
     public set IsFirst(value: boolean) {
         this._IsFirst = value;
-        if(this.MoveUpButton !== undefined)
-            this.MoveUpButton.disabled = value;
+        this.UpdateMoveButtonsState();
     }
 
     public get IsLast() {
@@ -39,8 +40,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     }
     public set IsLast(value: boolean) {
         this._IsLast = value;
-        if(this.MoveDownButton !== undefined)
-            this.MoveDownButton.disabled = value;
+        this.UpdateMoveButtonsState();
     }
 
     public get IsDeleted() {
@@ -48,7 +48,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     }
 
     public constructor(edit_mode: boolean = false) {
-        super();
+        super('survey-question-card');
         this.EditMode = edit_mode;
 
         this.PreviousCard = null;
@@ -58,8 +58,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         question_header.classList.add('survey-question-header');
         this.AppendChild(question_header);
         question_header.style.marginBottom = '3px';
-        question_header.textContent = 'Pytanie ';
-        question_header.appendChild(this.QuestionNumberText = document.createTextNode('0'));
+        question_header.textContent = 'Pytanie';
+        question_header.appendChild(this.QuestionNumberText = document.createTextNode(' 0'));
         if(edit_mode) {
             question_header.appendChild(document.createTextNode(': '));
             this.QuestionTypeSelect = document.createElement('select');
@@ -85,23 +85,31 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
 
             this.MoveUpButton = document.createElement('button');
             buttons.appendChild(this.MoveUpButton);
-            this.MoveUpButton.classList.add('secondary', 'control-button');
-            this.MoveUpButton.appendChild(new Icon('arrow-up').GetElement());
+            this.MoveUpButton.classList.add('secondary');
+            this.MoveUpButton.appendChild(new Icon('arrow-up', 'fa-fw').GetElement());
             this.MoveUpButton.addEventListener('click', this.MoveUp.bind(this));
             this.MoveUpButton.title = 'Przenieś pytanie wcześniej';
 
             this.MoveDownButton = document.createElement('button');
             buttons.appendChild(this.MoveDownButton);
-            this.MoveDownButton.classList.add('secondary', 'control-button');
-            this.MoveDownButton.appendChild(new Icon('arrow-down').GetElement());
+            this.MoveDownButton.classList.add('secondary');
+            this.MoveDownButton.appendChild(new Icon('arrow-down', 'fa-fw').GetElement());
             this.MoveDownButton.addEventListener('click', this.MoveDown.bind(this));
             this.MoveDownButton.title = 'Przenieś pytanie dalej';
 
-            let remove_btn = document.createElement('button');
-            buttons.appendChild(remove_btn);
-            remove_btn.classList.add('error');
-            remove_btn.appendChild(new Icon('trash').GetElement());
-            remove_btn.title = 'Usuń pytanie';
+            this.RemoveButton = document.createElement('button');
+            buttons.appendChild(this.RemoveButton);
+            this.RemoveButton.classList.add('error');
+            this.RemoveButton.appendChild(new Icon('trash', 'fa-fw').GetElement());
+            this.RemoveButton.addEventListener('click', this.Delete.bind(this));
+            this.RemoveButton.title = 'Usuń pytanie';
+
+            this.RestoreButton = document.createElement('button');
+            buttons.appendChild(this.RestoreButton);
+            this.RestoreButton.appendChild(new Icon('undo', 'fa-fw').GetElement());
+            this.RestoreButton.addEventListener('click', this.Undelete.bind(this));
+            this.RestoreButton.title = 'Przywróć pytanie';
+            this.RestoreButton.style.display = 'none';
         } else {
             question_header.classList.add('secondary');
             question_header.appendChild(document.createTextNode('.'));
@@ -151,14 +159,25 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
         this.Survey = survey;
     }
 
-    public SetNumber(question_number: number) {
-        this.QuestionNumberText.textContent = question_number.toString();
+    public SetNumber(question_number: number | null) {
+        if(question_number === null) this.QuestionNumberText.textContent = '';
+        else this.QuestionNumberText.textContent = ' ' + question_number.toString();
     }
 
     protected ChangeQuestionType() {
         if(this.QuestionTypeSelect === undefined) return;
         this.AnswerWrapper.ChangeType(parseInt(this.QuestionTypeSelect.value));
         NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected UpdateMoveButtonsState() {
+        if(this.MoveDownButton === undefined || this.MoveUpButton === undefined) return;
+
+        this.MoveDownButton.disabled = this.IsLast;
+        this.MoveUpButton.disabled = this.IsFirst;
+
+        this.MoveDownButton.style.display = this.IsDeleted ? 'none' : '';
+        this.MoveUpButton.style.display = this.IsDeleted ? 'none' : '';
     }
 
     protected MoveUp() {
@@ -178,11 +197,24 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
     }
 
     protected Delete() {
+        if(this.RemoveButton === undefined || this.RestoreButton === undefined) return;
         this._IsDeleted = true;
+        this.RemoveButton.style.display = 'none';
+        this.RestoreButton.style.display = '';
+        this.Element.classList.add('deleted');
+        this.SetNumber(null);
+        this.UpdateMoveButtonsState();
+        this.FireEvent('markasdeleted');
     }
 
     protected Undelete() {
+        if(this.RemoveButton === undefined || this.RestoreButton === undefined) return;
         this._IsDeleted = false;
+        this.RemoveButton.style.display = '';
+        this.RestoreButton.style.display = 'none';
+        this.Element.classList.remove('deleted');
+        this.UpdateMoveButtonsState();
+        this.FireEvent('markasundeleted');
     }
 
     /**
@@ -211,6 +243,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
             } else {
                 // Usuń pytanie
                 return this.Question.Remove();
+                // Zniszczyć tę kartę
             }
         } else {
             if(!this.IsDeleted) {
@@ -226,6 +259,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown"> {
                 );
                 await this.SaveAnswers();
                 this.Question = await question_creator;
+            } else {
+                // Zniszczyć tę kartę
             }
         }
     }
