@@ -7,6 +7,8 @@ import Icon from '../components/basic/icon';
 import { MoveElement } from '../utils/arrayutils';
 import Question from '../entities/question';
 import NavigationPrevention from '../1page/navigation_prevention';
+import Toast from '../components/basic/toast';
+import ChromeManager from '../1page/chrome_manager';
 
 export default class EditSurveyPage extends Page {
     protected Survey: Test | undefined;
@@ -19,6 +21,17 @@ export default class EditSurveyPage extends Page {
         super();
 
         this.QuestionCards = [];
+
+        let btn_wrapper = document.createElement('div');
+        btn_wrapper.classList.add('fixed-buttons-wrapper');
+        this.AppendChild(btn_wrapper);
+
+        let save_btn = document.createElement('button');
+        save_btn.classList.add('header-button', 'fixed');
+        save_btn.appendChild(new Icon('save').GetElement());
+        save_btn.appendChild(document.createTextNode(' Zapisz'));
+        save_btn.addEventListener('click', this.Save.bind(this));
+        btn_wrapper.appendChild(save_btn);
 
         let heading = document.createElement('h1');
         this.AppendChild(heading);
@@ -64,6 +77,11 @@ export default class EditSurveyPage extends Page {
         this.RefreshQuestionOrder();
 
         container.appendChild(this.Element);
+
+        this.Survey.AddEventListener('change', () => {
+            this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';
+            ChromeManager.SetTitle(this.Survey?.Name ?? '');
+        });
     }
 
     UnloadFrom(container: HTMLElement) {
@@ -155,5 +173,21 @@ export default class EditSurveyPage extends Page {
 
         this.RefreshQuestionOrder();
         NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected Save() {
+        let saving_toast = new Toast('Zapisywanie...');
+        saving_toast.Show();
+        let order = 0;
+
+        this.IntroductionCard.Save();
+
+        for(let question_card of this.QuestionCards) {
+            if(!question_card.IsDeleted) order++;
+            question_card.Save(order);
+        }
+
+        saving_toast.Hide();
+        new Toast('Zapisano.').Show(0);
     }
 }
