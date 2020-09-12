@@ -143,10 +143,11 @@ class Test extends Entity{
         return ($result->num_rows == 1);
     }
 
-    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
+        if(is_null($description)) $description = $this->GetDescription();
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -154,6 +155,7 @@ class Test extends Entity{
                 ->Set('name', $name)
                 ->Set('question_multiplier', $question_multiplier)
                 ->Set('time_limit', $time_limit)
+                ->Set('description', $description)
                 ->Where('id', '=', $this->id)
                 ->Run();
         

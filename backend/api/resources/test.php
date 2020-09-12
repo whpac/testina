@@ -16,7 +16,13 @@ class Test extends Resource implements Schemas\Test{
         ValueValidator::AssertIsNonNegative($data->question_multiplier, 'question_multiplier');
         ValueValidator::AssertIsNonNegative($data->time_limit, 'time_limit');
 
-        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit);
+        $description = null;
+        if(isset($data->description)){
+            TypeValidator::AssertIsString($data->description, 'description');
+            $description = $data->description;
+        }
+
+        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
