@@ -20,7 +20,19 @@ class Question extends Resource implements Schemas\Question{
         ValueValidator::AssertIsInRange($data->points_counting, 0, 2, 'points_counting');
         ValueValidator::AssertIsInRange($data->type, 0, 2, 'type');
 
-        $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos);
+        $footer = null;
+        if(isset($data->footer)){
+            TypeValidator::AssertIsString($data->footer, 'footer');
+            $footer = $data->footer;
+        }
+        $order = null;
+        if(isset($data->order)){
+            TypeValidator::AssertIsInt($data->order, 'order');
+            ValueValidator::AssertIsNonNegative($data->order, 'order');
+            $order = $data->order;
+        }
+
+        $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos, $footer, $order);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
@@ -46,6 +58,8 @@ class Question extends Resource implements Schemas\Question{
             'points',
             'points_counting',
             'max_typos',
+            'footer',
+            'order',
             'answer_count',
             'answers'
         ];
@@ -73,6 +87,14 @@ class Question extends Resource implements Schemas\Question{
 
     public function max_typos(): int{
         return $this->Question->GetMaxNumberOfTypos();
+    }
+
+    public function footer(): ?string{
+        return $this->Question->GetFooter();
+    }
+
+    public function order(): int{
+        return $this->Question->GetOrder();
     }
 
     public function answer_count(): int{

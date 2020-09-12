@@ -19,6 +19,18 @@ class QuestionCollection extends Collection {
         ValueValidator::AssertIsInRange($source->points_counting, 0, 2, 'points_counting');
         ValueValidator::AssertIsInRange($source->type, 0, 2, 'type');
 
+        $footer = '';
+        if(isset($source->footer)){
+            TypeValidator::AssertIsString($source->footer, 'footer');
+            $footer = $source->footer;
+        }
+        $order = 0;
+        if(isset($source->order)){
+            TypeValidator::AssertIsInt($source->order, 'order');
+            ValueValidator::AssertIsNonNegative($source->order, 'order');
+            $order = $source->order;
+        }
+
         $test = $this->Parent;
         if(is_array($test)) throw new Exceptions\MethodNotAllowed('POST');
 
@@ -28,7 +40,9 @@ class QuestionCollection extends Collection {
             $source->type,
             $source->points,
             $source->points_counting,
-            $source->max_typos
+            $source->max_typos,
+            $footer,
+            $order
         );
 
         header('Content-Location: '.$question->GetId());

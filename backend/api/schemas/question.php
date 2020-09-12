@@ -8,6 +8,8 @@ interface Question{
     public function points(): float;
     public function points_counting(): int;
     public function max_typos(): int;
+    public function footer(): ?string;
+    public function order(): int;
 
     public function answer_count(): int;
     public function answers(): Collection; // <Answer>
