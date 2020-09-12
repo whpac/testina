@@ -4,6 +4,7 @@ import Entity from './entity';
 import Answer from './answer';
 import QuestionLoader from './loaders/questionloader';
 import AnswerLoader from './loaders/answerloader';
+import ApiEndpoints from './loaders/apiendpoints';
 
 /** Klasa reprezentująca pytanie */
 export default class Question extends Entity {
@@ -139,7 +140,7 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.PerformRequest('api/tests/' + test.Id.toString() + '/questions', 'POST', request_data);
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(test) + '/questions', 'POST', request_data);
 
         if(result.Status != 201) throw result;
 
@@ -164,7 +165,7 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos
         };
-        let result = await XHR.PerformRequest('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'PUT', request_data);
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204) {
             this.Text = text;
             this.Type = type;
@@ -177,7 +178,7 @@ export default class Question extends Entity {
 
     /** Usuwa pytanie */
     async Remove() {
-        let result = await XHR.PerformRequest('api/tests/' + this.Test.Id.toString() + '/questions/' + this.Id.toString(), 'DELETE');
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this), 'DELETE');
         if(result.Status == 204) {
             this.FireEvent('remove');
             this.Test.OnQuestionRemoved();
