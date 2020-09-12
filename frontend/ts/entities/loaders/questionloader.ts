@@ -15,6 +15,8 @@ export interface QuestionDescriptor {
     max_typos: number,
     answer_count: number,
     answers: Collection<AnswerDescriptor>;
+    footer: string | null;
+    order: number;
 }
 
 export default class QuestionLoader {
@@ -88,7 +90,9 @@ export default class QuestionLoader {
             question_descriptor.points,
             question_descriptor.points_counting,
             question_descriptor.max_typos,
-            answer_loader
+            answer_loader,
+            question_descriptor.footer,
+            question_descriptor.order
         );
 
         answer_loader.SetQuestion(question);

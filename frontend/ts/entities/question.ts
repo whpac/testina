@@ -36,6 +36,10 @@ export default class Question extends Entity {
     protected _PointsCounting: number;
     /** Maksymalna dozwolona liczba literówek */
     protected _MaxTypos: number;
+    /** Tekst w stopce pod pytaniem */
+    protected _Footer: string | null;
+    /** Numer kolejny pytania */
+    public readonly Order: number;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
 
@@ -84,6 +88,11 @@ export default class Question extends Entity {
         this.FireEvent('change');
     }
 
+    /** Treść w stopce pod pytaniem */
+    public get Footer() {
+        return this._Footer;
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie odpowiedzi dla tego pytania */
     protected AnswerLoader: AnswerLoader;
 
@@ -97,9 +106,12 @@ export default class Question extends Entity {
      * @param points_counting Sposób liczenia punktów
      * @param max_typos Maksymalna dopuszczalna ilość literówek
      * @param answer_loader Obiekt wczytujący odpowiedzi
+     * @param footer Treść w stopce pod pytaniem
+     * @param oreder Numer kolejny pytania
      */
     constructor(id: number, test: Test, text: string, type: number, points: number,
-        points_counting: number, max_typos: number, answer_loader: AnswerLoader) {
+        points_counting: number, max_typos: number, answer_loader: AnswerLoader,
+        footer: string | null, order: number) {
         super();
 
         this.Id = id;
@@ -109,6 +121,8 @@ export default class Question extends Entity {
         this._Points = points;
         this._PointsCounting = points_counting;
         this._MaxTypos = max_typos;
+        this._Footer = footer;
+        this.Order = order;
         this.AnswerCount = answer_loader.AnswerCount;
 
         this.AnswerLoader = answer_loader;
@@ -131,14 +145,19 @@ export default class Question extends Entity {
      * @param points Liczba punktów do zdobycia
      * @param points_counting Sposób liczenia punktów
      * @param max_typos Maksymalna liczba literówek
+     * @param footer Tekst w stopce
+     * @param order Numer kolejny pytania w teście
      */
-    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number) {
+    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number) {
+        if(footer == '') footer = undefined;
         let request_data = {
             text: text,
             type: type,
             points: points,
             points_counting: points_counting,
-            max_typos: max_typos
+            max_typos: max_typos,
+            footer: footer ?? null,
+            order: order
         };
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(test) + '/questions', 'POST', request_data);
 
@@ -156,14 +175,19 @@ export default class Question extends Entity {
      * @param points Nowa ilość punktów do zdobycia
      * @param points_counting Nowy sposób liczenia punktów
      * @param max_typos Nowa maksymalna ilość literówek
+     * @param footer Tekst w stopce
+     * @param order Numer kolejny pytania w teście
      */
-    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number) {
+    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number) {
+        if(footer == '') footer = undefined;
         let request_data = {
             text: text,
             type: type,
             points: points,
             points_counting: points_counting,
-            max_typos: max_typos
+            max_typos: max_typos,
+            footer: footer ?? null,
+            order: order
         };
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204) {
@@ -172,7 +196,8 @@ export default class Question extends Entity {
             this.Points = points;
             this.PointsCounting = points_counting;
             this.MaxTypos = max_typos;
-            //this.FireEvent('change');
+            this._Footer = footer ?? null;
+            this.FireEvent('change');
         } else throw result;
     }
 
