@@ -35,7 +35,7 @@ export default class Test extends Entity implements PageParams {
     /** Typ testu (test/ankieta) */
     public readonly Type: number;
     /** Opis testu */
-    public readonly Description: string | null;
+    protected _Description: string | null;
 
     /** Nazwa testu */
     public get Name() {
@@ -43,6 +43,15 @@ export default class Test extends Entity implements PageParams {
     }
     public set Name(new_name: string) {
         this._Name = new_name;
+        this.FireEvent('change');
+    }
+
+    /** Nazwa testu */
+    public get Description() {
+        return this._Description;
+    }
+    public set Description(new_description: string | null) {
+        this._Description = new_description;
         this.FireEvent('change');
     }
 
@@ -105,7 +114,7 @@ export default class Test extends Entity implements PageParams {
         this._QuestionCount = question_loader.QuestionCount;
         this.AssignmentCount = assignment_count;
         this.Type = type;
-        this.Description = description;
+        this._Description = description;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;
