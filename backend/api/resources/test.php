@@ -103,7 +103,7 @@ class Test extends Resource implements Schemas\Test{
         $out_questions = [];
 
         foreach($questions as $question){
-            $out_questions[$question->GetId()] = new Question($question);;
+            $out_questions[$question->GetId()] = new Question($question);
         }
 
         $collection = new QuestionCollection($out_questions, $this->Test);
