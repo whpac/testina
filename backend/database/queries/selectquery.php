@@ -72,7 +72,7 @@ class SelectQuery implements Query {
     }
 
     public function OrderBy($column, $order = 'ASC'){
-        $this->order_by[] = $column.' '.$order;
+        $this->order_by[] = '`'.$column.'` '.$order;
         return $this;
     }
 
