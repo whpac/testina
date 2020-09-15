@@ -16,9 +16,7 @@ export default class PageStorage {
     protected static _PageStorage: PageStorage | undefined;
 
     /** Przechowuje dane o niezainicjalizowanych jeszcze stronach */
-    protected RawPages: Map<PageKey, PageDescriptor>;
-    /** Przechowuje już zainicjalizowane strony */
-    protected Pages: Map<PageKey, IPage>;
+    protected Pages: Map<PageKey, PageDescriptor>;
 
     public static GetStorage() {
         if(this._PageStorage === undefined) {
@@ -28,25 +26,16 @@ export default class PageStorage {
     }
 
     public constructor() {
-        this.RawPages = new Map<PageKey, PageDescriptor>();
-        this.Pages = new Map<PageKey, IPage>();
+        this.Pages = new Map<PageKey, PageDescriptor>();
     }
 
     public RegisterPage(page_id: PageKey, descriptor: PageDescriptor) {
-        this.RawPages.set(page_id, descriptor);
+        this.Pages.set(page_id, descriptor);
     }
 
     /**
-     * Funkcja zwraca stronę na podstawie żądania. Jednocześnie interpretuje adres
-     * w poszukiwaniu parametrów. Istnieją trzy możliwe sytuacje:
-     * 
-     * 1. Strona nie oczekuje parametru - wtedy poszukuje się strony o dokładnie takim id,
-     * jak podany.
-     * 
-     * 2. Strona oczekuje parametru i przekazano go jako obiekt - analogicznie jak w 1.
-     * 
-     * 3. Strona oczekuje parametru, ale nie przekazano obiektu - odcina się ostatnią część
-     * adresu i sprawdza, czy strona o takim id istnieje.
+     * Funkcja zwraca stronę na podstawie żądania, dopasowując wskazany adres
+     * do identyfikatorów stron i wyrażeń regularnych
      * 
      * @param request Żądanie
      */
@@ -56,7 +45,7 @@ export default class PageStorage {
         // Usuń ukośniki z końca adresu
         while(url.endsWith('/')) url = url.substr(0, url.length - 1);
 
-        for(let key of this.RawPages.keys()) {
+        for(let key of this.Pages.keys()) {
             if(typeof key === 'string') {
                 if(key !== url) continue;
 
@@ -74,7 +63,7 @@ export default class PageStorage {
     }
 
     protected GetPageByKey(key: string | RegExp) {
-        let descriptor = this.RawPages.get(key);
+        let descriptor = this.Pages.get(key);
         if(descriptor === undefined) throw 'Strona ' + key + ' nie istnieje.';
         if(descriptor.Page === undefined) descriptor.Page = descriptor?.CreatePage();
         return descriptor.Page;
