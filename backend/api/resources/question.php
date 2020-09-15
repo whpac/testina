@@ -21,12 +21,12 @@ class Question extends Resource implements Schemas\Question{
         ValueValidator::AssertIsInRange($data->type, 0, 2, 'type');
 
         $footer = null;
-        if(isset($data->footer)){
+        if(isset($data->footer) && !is_null($data->footer)){
             TypeValidator::AssertIsString($data->footer, 'footer');
             $footer = $data->footer;
         }
         $order = null;
-        if(isset($data->order)){
+        if(isset($data->order) && !is_null($data->order)){
             TypeValidator::AssertIsInt($data->order, 'order');
             ValueValidator::AssertIsNonNegative($data->order, 'order');
             $order = $data->order;

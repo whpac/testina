@@ -20,12 +20,12 @@ class QuestionCollection extends Collection {
         ValueValidator::AssertIsInRange($source->type, 0, 2, 'type');
 
         $footer = '';
-        if(isset($source->footer)){
+        if(isset($source->footer) && !is_null($source->footer)){
             TypeValidator::AssertIsString($source->footer, 'footer');
             $footer = $source->footer;
         }
         $order = 0;
-        if(isset($source->order)){
+        if(isset($source->order) && !is_null($source->order)){
             TypeValidator::AssertIsInt($source->order, 'order');
             ValueValidator::AssertIsNonNegative($source->order, 'order');
             $order = $source->order;
