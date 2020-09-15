@@ -120,5 +120,5 @@ div.about-logo-wrapper {
 @include media-small{
     body {--nav-panel-width:0;}
     body > main {padding:70px 5px 15px 5px;}
-    main > .page > h1:first-child {display:none;}
+    main > .page > h1:first-of-type {display:none;}
 }
