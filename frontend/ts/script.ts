@@ -43,24 +43,19 @@ try {
     PageManager.Initialize(root, splash_screen);
 
     let pages = PageStorage.GetStorage();
-    pages.RegisterPage('ankiety', { AcceptsArgument: false, CreatePage: () => new SurveysPage() });
-    pages.RegisterPage('ankiety/edytuj', { AcceptsArgument: true, CreatePage: () => new EditSurveyPage() });
-    pages.RegisterPage(/ankiety\/edytuj\/[0-9]+/, { AcceptsArgument: true, CreatePage: () => new EditSurveyPage() });
-    pages.RegisterPage('ankiety/wypełnij', { AcceptsArgument: false, CreatePage: () => new FillSurveyPage() });
-    pages.RegisterPage('home', { AcceptsArgument: false, CreatePage: () => new HomePage() });
-    pages.RegisterPage('informacje', { AcceptsArgument: false, CreatePage: () => new AboutPage() });
-    pages.RegisterPage('pomoc', { AcceptsArgument: false, CreatePage: () => new HelpPage() });
-    pages.RegisterPage('testy/biblioteka', { AcceptsArgument: false, CreatePage: () => new LibraryPage() });
-    pages.RegisterPage('testy/edytuj', { AcceptsArgument: true, CreatePage: () => new EditTestPage() });
-    pages.RegisterPage(/testy\/edytuj\/[0-9]+/, { AcceptsArgument: true, CreatePage: () => new EditTestPage() });
-    pages.RegisterPage('testy/lista', { AcceptsArgument: false, CreatePage: () => new AssignedTestsListPage() });
-    pages.RegisterPage('testy/rozwiąż', { AcceptsArgument: true, CreatePage: () => new SolveTestPage() });
-    pages.RegisterPage(/testy\/rozwiąż\/[0-9]+/, { AcceptsArgument: true, CreatePage: () => new SolveTestPage() });
-    pages.RegisterPage('testy/przypisane', { AcceptsArgument: true, CreatePage: () => new AssignmentsPage() });
-    pages.RegisterPage(/testy\/przypisane\/[0-9]+/, { AcceptsArgument: true, CreatePage: () => new AssignmentsPage() });
-    pages.RegisterPage('testy/wyniki', { AcceptsArgument: true, CreatePage: () => new ResultsPage() });
-    pages.RegisterPage(/testy\/wyniki\/[0-9]+/, { AcceptsArgument: true, CreatePage: () => new ResultsPage() });
-    pages.RegisterPage('zaloguj', { AcceptsArgument: false, CreatePage: () => new LoginPage() });
+    pages.RegisterPage('ankiety', { CreatePage: () => new SurveysPage() });
+    pages.RegisterPage(/ankiety\/edytuj(\/[0-9]+)?/, { CreatePage: () => new EditSurveyPage() });
+    pages.RegisterPage('ankiety/wypełnij', { CreatePage: () => new FillSurveyPage() });
+    pages.RegisterPage('home', { CreatePage: () => new HomePage() });
+    pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
+    pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
+    pages.RegisterPage('testy/biblioteka', { CreatePage: () => new LibraryPage() });
+    pages.RegisterPage(/testy\/edytuj(\/[0-9]+)?/, { CreatePage: () => new EditTestPage() });
+    pages.RegisterPage('testy/lista', { CreatePage: () => new AssignedTestsListPage() });
+    pages.RegisterPage(/testy\/rozwiąż(\/[0-9]+)?/, { CreatePage: () => new SolveTestPage() });
+    pages.RegisterPage(/testy\/przypisane(\/[0-9]+)?/, { CreatePage: () => new AssignmentsPage() });
+    pages.RegisterPage(/testy\/wyniki(\/[0-9]+)?/, { CreatePage: () => new ResultsPage() });
+    pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
 
     PageManager.RegisterHomePage(new HomePage());
     PageManager.RegisterLoginPage(new LoginPage());
