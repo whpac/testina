@@ -1,5 +1,7 @@
 import * as XHR from '../utils/xhr';
 import Entity from './entity';
+import AnswerLoader from './loaders/answerloader';
+import ApiEndpoints from './loaders/apiendpoints';
 import Question from './question';
 
 /** Klasa reprezentująca odpowiedź */
@@ -12,6 +14,8 @@ export default class Answer extends Entity {
     protected _Text: string;
     /** Czy odpowiedź jest poprawna */
     protected _Correct: boolean;
+    /** Numer kolejny odpowiedzi */
+    protected _Order: number;
 
     /** Treść odpowiedzi */
     public get Text() {
@@ -31,6 +35,11 @@ export default class Answer extends Entity {
         this.FireEvent('change');
     }
 
+    /** Numer kolejny odpowiedzi */
+    public get Order() {
+        return this._Order;
+    }
+
     /**
      * Klasa reprezentująca odpowiedź
      * @param id Identyfikator odpowiedzi
@@ -38,13 +47,14 @@ export default class Answer extends Entity {
      * @param text Treść odpowiedzi
      * @param correct Czy odpowiedź jest prawidłowa
      */
-    constructor(id: number, question: Question, text: string, correct: boolean) {
+    constructor(id: number, question: Question, text: string, correct: boolean, order: number) {
         super();
 
         this.Id = id;
         this.Question = question;
         this._Text = text;
         this._Correct = correct;
+        this._Order = order;
     }
 
     /**
@@ -53,14 +63,17 @@ export default class Answer extends Entity {
      * @param text Treść odpowiedzi
      * @param correct Czy odpowiedź jest poprawna
      */
-    static async Create(question: Question, text: string, correct: boolean) {
+    static async Create(question: Question, text: string, correct: boolean, order?: number) {
         let request_data = {
             text: text,
-            correct: correct
+            correct: correct,
+            order: order ?? null
         };
-        let result = await XHR.PerformRequest('api/tests/' + question.Test.Id.toString() + '/questions/' + question.Id.toString() + '/answers', 'POST', request_data);
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(question) + '/answers', 'POST', request_data);
 
         if(result.Status != 201) throw result;
+
+        return new AnswerLoader().LoadById(parseInt(result.ContentLocation));
     }
 
     /**
@@ -68,22 +81,24 @@ export default class Answer extends Entity {
      * @param text Nowa treść odpowiedzi
      * @param correct Czy odpowiedź jest poprawna
      */
-    async Update(text: string, correct: boolean) {
+    async Update(text: string, correct: boolean, order?: number) {
         let request_data = {
             text: text,
-            correct: correct
+            correct: correct,
+            order: order ?? null
         };
-        let result = await XHR.PerformRequest('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'PUT', request_data);
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this), 'PUT', request_data);
         if(result.Status == 204) {
             this.Text = text;
             this.Correct = correct;
+            this._Order = order ?? 0;
             //this.FireEvent('change');
         } else throw result;
     }
 
     /** Usuwa odpowiedź */
     async Remove() {
-        let result = await XHR.PerformRequest('api/tests/' + this.Question.Test.Id.toString() + '/questions/' + this.Question.Id.toString() + '/answers/' + this.Id.toString(), 'DELETE');
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this), 'DELETE');
         if(result.Status == 204) {
             this.FireEvent('remove');
         } else throw result;

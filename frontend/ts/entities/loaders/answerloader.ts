@@ -6,9 +6,10 @@ import ApiEndpoints from './apiendpoints';
 
 /** Deskryptor odpowiedzi w odpowiedzi z API */
 export interface AnswerDescriptor {
-    id: number,
-    text: string,
+    id: number;
+    text: string;
     correct: boolean;
+    order: number;
 }
 
 export default class AnswerLoader {
@@ -64,7 +65,8 @@ export default class AnswerLoader {
             answer_descriptor.id,
             this.Question,
             answer_descriptor.text,
-            answer_descriptor.correct
+            answer_descriptor.correct,
+            answer_descriptor.order
         );
     }
 
