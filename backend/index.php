@@ -1,15 +1,10 @@
-<?php
-// Określa początkowy tytuł strony
-define('DEFAULT_TITLE', 'Testina');
-?>
-
 <!DOCTYPE html>
 <html lang="pl">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <base href="/p/" />
-        <title><?php echo(DEFAULT_TITLE); ?></title>
+        <title>Testina</title>
 
         <!-- Arkusze stylów CSS -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400&display=fallback" />
@@ -57,10 +52,7 @@ define('DEFAULT_TITLE', 'Testina');
         <div class="nav-backdrop"></div>
 
         <!-- Nagłówek dla urządzeń mobilnych -->
-        <aside class="mobile-header">
-            <a class="nav-toggle nav-icon" id="mobile-nav-toggle"><i class="icon fa fa-fw fa-bars"></i></a>
-            <h1 id="mobile-header-title"><?php echo(DEFAULT_TITLE); ?></h1>
-        </aside>
+        <div class="mobile-header" id="mobile-header"></div>
 
         <!-- Główna zawartość strony -->
         <main id="content-container"></main>
