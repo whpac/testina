@@ -39,7 +39,7 @@ export default class Question extends Entity {
     /** Tekst w stopce pod pytaniem */
     protected _Footer: string | null;
     /** Numer kolejny pytania */
-    public readonly Order: number;
+    protected _Order: number;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
 
@@ -93,6 +93,11 @@ export default class Question extends Entity {
         return this._Footer;
     }
 
+    /** Numer kolejny pytania */
+    public get Order() {
+        return this._Order;
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie odpowiedzi dla tego pytania */
     protected AnswerLoader: AnswerLoader;
 
@@ -122,7 +127,7 @@ export default class Question extends Entity {
         this._PointsCounting = points_counting;
         this._MaxTypos = max_typos;
         this._Footer = footer;
-        this.Order = order;
+        this._Order = order;
         this.AnswerCount = answer_loader.AnswerCount;
 
         this.AnswerLoader = answer_loader;
@@ -197,6 +202,7 @@ export default class Question extends Entity {
             this.PointsCounting = points_counting;
             this.MaxTypos = max_typos;
             this._Footer = footer ?? null;
+            this._Order = order ?? 0;
             this.FireEvent('change');
         } else throw result;
     }
