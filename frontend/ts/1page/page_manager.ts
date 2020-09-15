@@ -81,8 +81,14 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
         ChromeManager.SetTitle(await CurrentPage?.GetTitle() ?? '');
 
         let url = CurrentPage?.GetUrlPath();
-        if(url !== null && url !== undefined)
-            ChromeManager.SetUrlAddress(url, page_id, params, is_first_page);
+        if(url !== null && url !== undefined) {
+            let fragment = GetFragment(page_id);
+            ChromeManager.SetUrlAddress(url + fragment, page_id, params, is_first_page);
+
+            // Fragment należy zresetować ustawiając go na pustą wartość
+            window.location.hash = '';
+            window.location.hash = fragment;
+        }
     } catch(e) {
         alert('Nie udało się załadować strony: ' + e);
     }
@@ -147,4 +153,15 @@ export function RegisterHomePage(page: IPage) {
 
 export function RegisterLoginPage(page: IPage) {
     LoginPage = page;
+}
+
+/**
+ * Zwraca element "fragment" z adresu URL, razem ze znakiem #
+ * lub pusty ciąg, jeśli fragment nie jest określony
+ * @param url Adres URL
+ */
+function GetFragment(url: string) {
+    let hash_pos = url.indexOf('#');
+    if(hash_pos == -1) return '';
+    return url.substr(hash_pos);
 }

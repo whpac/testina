@@ -43,19 +43,19 @@ try {
     PageManager.Initialize(root, splash_screen);
 
     let pages = PageStorage.GetStorage();
-    pages.RegisterPage('ankiety', { AcceptsArgument: false, CreatePage: () => new SurveysPage() });
-    pages.RegisterPage('ankiety/edytuj', { AcceptsArgument: true, CreatePage: () => new EditSurveyPage() });
-    pages.RegisterPage('ankiety/wypełnij', { AcceptsArgument: false, CreatePage: () => new FillSurveyPage() });
-    pages.RegisterPage('home', { AcceptsArgument: false, CreatePage: () => new HomePage() });
-    pages.RegisterPage('informacje', { AcceptsArgument: false, CreatePage: () => new AboutPage() });
-    pages.RegisterPage('pomoc', { AcceptsArgument: false, CreatePage: () => new HelpPage() });
-    pages.RegisterPage('testy/biblioteka', { AcceptsArgument: false, CreatePage: () => new LibraryPage() });
-    pages.RegisterPage('testy/edytuj', { AcceptsArgument: true, CreatePage: () => new EditTestPage() });
-    pages.RegisterPage('testy/lista', { AcceptsArgument: false, CreatePage: () => new AssignedTestsListPage() });
-    pages.RegisterPage('testy/rozwiąż', { AcceptsArgument: true, CreatePage: () => new SolveTestPage() });
-    pages.RegisterPage('testy/przypisane', { AcceptsArgument: true, CreatePage: () => new AssignmentsPage() });
-    pages.RegisterPage('testy/wyniki', { AcceptsArgument: true, CreatePage: () => new ResultsPage() });
-    pages.RegisterPage('zaloguj', { AcceptsArgument: false, CreatePage: () => new LoginPage() });
+    pages.RegisterPage('ankiety', { CreatePage: () => new SurveysPage() });
+    pages.RegisterPage(/^ankiety\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditSurveyPage() });
+    pages.RegisterPage('ankiety/wypełnij', { CreatePage: () => new FillSurveyPage() });
+    pages.RegisterPage('home', { CreatePage: () => new HomePage() });
+    pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
+    pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
+    pages.RegisterPage('testy/biblioteka', { CreatePage: () => new LibraryPage() });
+    pages.RegisterPage(/^testy\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditTestPage() });
+    pages.RegisterPage('testy/lista', { CreatePage: () => new AssignedTestsListPage() });
+    pages.RegisterPage(/^testy\/rozwiąż(\/[0-9]+)?$/, { CreatePage: () => new SolveTestPage() });
+    pages.RegisterPage(/^testy\/przypisane(\/[0-9]+)?$/, { CreatePage: () => new AssignmentsPage() });
+    pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
+    pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
 
     PageManager.RegisterHomePage(new HomePage());
     PageManager.RegisterLoginPage(new LoginPage());
@@ -107,24 +107,9 @@ function ReadPageFromURL() {
         let url_path = window.location.href;
         if(url_path.startsWith(base_path)) {
             // Zwraca ścieżkę, ale bez części danej przez <base>
-            // Ucina część po ? i #
-            return StripQueryAndFragment(url_path.substr(base_path.length ?? 0));
+            return url_path.substr(base_path.length ?? 0);
         } else {
             return window.location.pathname.substr(1);
         }
     }
-}
-
-/**
- * Ucina z adresu URL części: zapytanie i fragment
- * @param url Adres URL
- */
-function StripQueryAndFragment(url: string) {
-    let question_pos = url.indexOf('?');
-    if(question_pos != -1) return url.substr(0, question_pos);
-
-    let hash_pos = url.indexOf('#');
-    if(hash_pos != -1) return url.substr(0, hash_pos);
-
-    return url;
 }
