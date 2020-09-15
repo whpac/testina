@@ -107,24 +107,9 @@ function ReadPageFromURL() {
         let url_path = window.location.href;
         if(url_path.startsWith(base_path)) {
             // Zwraca ścieżkę, ale bez części danej przez <base>
-            // Ucina część po ? i #
-            return StripQueryAndFragment(url_path.substr(base_path.length ?? 0));
+            return url_path.substr(base_path.length ?? 0);
         } else {
             return window.location.pathname.substr(1);
         }
     }
-}
-
-/**
- * Ucina z adresu URL części: zapytanie i fragment
- * @param url Adres URL
- */
-function StripQueryAndFragment(url: string) {
-    let question_pos = url.indexOf('?');
-    if(question_pos != -1) return url.substr(0, question_pos);
-
-    let hash_pos = url.indexOf('#');
-    if(hash_pos != -1) return url.substr(0, hash_pos);
-
-    return url;
 }
