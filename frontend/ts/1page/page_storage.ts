@@ -4,7 +4,6 @@ import PageRequest from './page_request';
 type PageFactory = () => IPage;
 type PageKey = string | RegExp;
 type PageDescriptor = {
-    AcceptsArgument: boolean;
     CreatePage: PageFactory;
     Page?: IPage;
 };
@@ -53,6 +52,9 @@ export default class PageStorage {
      */
     public GetPage(request: PageRequest) {
         let url = request.PageId;
+
+        // Usuń ukośniki z końca adresu
+        while(url.endsWith('/')) url = url.substr(0, url.length - 1);
 
         for(let key of this.RawPages.keys()) {
             if(typeof key === 'string') {
