@@ -96,7 +96,7 @@ div.nav-backdrop {
     background:rgba(0,0,0,0); transition:background-color 0.3s, width 0s linear 0.3s;
 }
 
-aside.mobile-header{
+.mobile-header{
     display:none; grid-area:main; position:fixed; background:var(--mobile-header-background);
     z-index:20; top:0; left:0; right:0; height:24px; padding:16px; border-bottom:var(--mobile-header-border);
     color:var(--mobile-header-text-color); box-shadow:var(--mobile-header-box-shadow); white-space:nowrap;
