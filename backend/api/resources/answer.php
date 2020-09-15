@@ -3,6 +3,7 @@ namespace Api\Resources;
 
 use Api\Schemas;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class Answer extends Resource implements Schemas\Answer{
     protected $Answer;
@@ -12,7 +13,14 @@ class Answer extends Resource implements Schemas\Answer{
         TypeValidator::AssertIsBool($data->correct, 'correct');
         TypeValidator::AssertIsString($data->text, 'text');
 
-        $res = $this->Answer->Update($data->text, ['correct' => $data->correct]);
+        $order = 0;
+        if(isset($data->order) && !is_null($data->order)){
+            TypeValidator::AssertIsInt($data->order, 'order');
+            ValueValidator::AssertIsNonNegative($data->order, 'order');
+            $order = $data->order;
+        }
+
+        $res = $this->Answer->Update($data->text, ['correct' => $data->correct], $order);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować odpowiedzi');
     }
@@ -34,7 +42,8 @@ class Answer extends Resource implements Schemas\Answer{
         return [
             'id',
             'text',
-            'correct'
+            'correct',
+            'order'
         ];
     }
 
@@ -48,6 +57,10 @@ class Answer extends Resource implements Schemas\Answer{
 
     public function correct(): bool{
         return $this->Answer->IsCorrect();
+    }
+
+    public function order(): int{
+        return $this->Answer->GetOrder();
     }
 }
 ?>

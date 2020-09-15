@@ -13,6 +13,7 @@ class Answer extends Entity {
     protected /* string */ $text;
     protected /* int */ $flags;       // flags & 1 = correct
     protected static /* array */ $flag_map = ['correct' => 1];
+    protected /* int */ $order;
 
     protected static /* string */ function GetTableName(){
         return TABLE_ANSWERS;
@@ -26,6 +27,7 @@ class Answer extends Entity {
         settype($this->id, 'int');
         settype($this->question_id, 'int');
         settype($this->flags, 'int');
+        settype($this->order, 'int');
     }
 
     public /* int */ function GetId(){
@@ -46,6 +48,11 @@ class Answer extends Entity {
     protected /* int */ function GetFlags(){
         $this->FetchIfNeeded();
         return $this->flags;
+    }
+
+    public /* int */ function GetOrder(){
+        $this->FetchIfNeeded();
+        return $this->order;
     }
 
     public /* int */ function GetFlagValue($flag_name){
@@ -82,7 +89,7 @@ class Answer extends Entity {
         return $answers;
     }
 
-    public static /* Answer */ function Create(/* Question */ $question, /* string */ $text, array $flags = []){
+    public static /* Answer */ function Create(/* Question */ $question, /* string */ $text, array $flags = [], /* int */ $order = 0){
         $flags_int = self::ConvertFlagsToInt($flags);
 
         $result = DatabaseManager::GetProvider()
@@ -91,6 +98,7 @@ class Answer extends Entity {
                 ->Value('question_id', $question->GetId())
                 ->Value('text', $text)
                 ->Value('flags', $flags_int)
+                ->Value('order', 0)
                 ->Run();
         
         if($result === false){
@@ -108,8 +116,9 @@ class Answer extends Entity {
         return new Answer($result->fetch_assoc());
     }
 
-    public /* bool */ function Update(/* string? */ $text = null, array $flags = []){
+    public /* bool */ function Update(/* string? */ $text = null, array $flags = [], /* int? */ $order = null){
         if(is_null($text)) $text = $this->GetText();
+        if(is_null($order)) $order = $this->GetOrder();
         
         $flags_int = $this->GetFlags();
         $flags_int = self::ConvertFlagsToInt($flags, $flags_int);
@@ -119,6 +128,7 @@ class Answer extends Entity {
                 ->Update()
                 ->Set('text', $text)
                 ->Set('flags', $flags_int)
+                ->Set('order', $order)
                 ->Where('id', '=', $this->GetId())
                 ->Run();
         
