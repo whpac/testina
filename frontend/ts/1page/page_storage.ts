@@ -41,7 +41,7 @@ export default class PageStorage {
      */
     public GetPage(request: PageRequest) {
         let url = request.PageId;
-        url = PageStorage.StripFragment(url);
+        url = PageStorage.StripQueryAndFragment(url);
 
         // Usuń ukośniki z końca adresu
         while(url.endsWith('/')) url = url.substr(0, url.length - 1);
@@ -76,14 +76,16 @@ export default class PageStorage {
     }
 
     /**
-     * Usuwa z adresu URL ciąg oznaczający fragment
+     * Ucina z adresu URL części: zapytanie i fragment
      * @param url Adres URL
      */
-    protected static StripFragment(url: string) {
-        let hash_location = url.indexOf('#');
+    protected static StripQueryAndFragment(url: string) {
+        let question_pos = url.indexOf('?');
+        if(question_pos != -1) return url.substr(0, question_pos);
 
-        if(hash_location < 0) return url;
+        let hash_pos = url.indexOf('#');
+        if(hash_pos != -1) return url.substr(0, hash_pos);
 
-        return url.substr(0, hash_location);
+        return url;
     }
 }
