@@ -1,3 +1,4 @@
+import MobileHeader from '../components/chrome/mobile_header';
 import PageParams from './page_params';
 
 /**
@@ -5,15 +6,7 @@ import PageParams from './page_params';
  */
 export default class ChromeManager {
     /** Element stanowiący nagłówek mobilnej wersji strony */
-    protected static MobileHeader: HTMLElement | null;
-
-    /**
-     * Ustawia element, który jest nagłówkiem strony na urządzeniach mobilnych
-     * @param header Element mobilnego nagłówka
-     */
-    public static SetMobileHeaderElement(header: HTMLElement | null) {
-        this.MobileHeader = header;
-    }
+    public static MobileHeader: MobileHeader;
 
     /**
      * Ustawia adres wyświetlany na pasku adresu
@@ -42,10 +35,10 @@ export default class ChromeManager {
     public static SetTitle(new_title: string) {
         if(new_title == '') {
             document.title = 'Testina';
-            if(this.MobileHeader) this.MobileHeader.textContent = document.title;
+            if(this.MobileHeader) this.MobileHeader.SetTitle(document.title);
         } else {
             document.title = new_title + ' – Testina';
-            if(this.MobileHeader) this.MobileHeader.textContent = new_title;
+            if(this.MobileHeader) this.MobileHeader.SetTitle(new_title);
         }
     }
 }

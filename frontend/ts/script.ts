@@ -19,6 +19,7 @@ import ChromeManager from './1page/chrome_manager';
 import SurveysPage from './pages/surveys';
 import FillSurveyPage from './pages/fill_survey';
 import EditSurveyPage from './pages/edit_survey';
+import MobileHeader from './components/chrome/mobile_header';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -39,7 +40,11 @@ try {
     })();
 
     // Inicjalizacja menedżera stron
-    ChromeManager.SetMobileHeaderElement(document.getElementById('mobile-header-title'));
+    let mobile_header = document.getElementById('mobile-header');
+    if(mobile_header === null) throw 'Nie można odnaleźć nagłówka strony.';
+
+    let header = new MobileHeader(mobile_header);
+    ChromeManager.MobileHeader = header;
     PageManager.Initialize(root, splash_screen);
 
     let pages = PageStorage.GetStorage();
