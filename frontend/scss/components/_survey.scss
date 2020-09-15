@@ -12,6 +12,11 @@
         @include media-large-xlarge{
             &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}
         }
+
+        &.deleted {
+            input[type=checkbox], input[type=radio] {opacity:0;}
+            input[type=text], .text {text-decoration:line-through;}
+        }
     }
 
     .control-button {padding:3px 9px; margin-right:6px;}
