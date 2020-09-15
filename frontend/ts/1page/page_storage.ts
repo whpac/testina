@@ -15,7 +15,7 @@ export default class PageStorage {
     /** Przechowuje instancję PageStorage */
     protected static _PageStorage: PageStorage | undefined;
 
-    /** Przechowuje dane o niezainicjalizowanych jeszcze stronach */
+    /** Przechowuje dane o stronach */
     protected Pages: Map<PageKey, PageDescriptor>;
 
     public static GetStorage() {
@@ -41,6 +41,7 @@ export default class PageStorage {
      */
     public GetPage(request: PageRequest) {
         let url = request.PageId;
+        url = PageStorage.StripFragment(url);
 
         // Usuń ukośniki z końca adresu
         while(url.endsWith('/')) url = url.substr(0, url.length - 1);
@@ -62,10 +63,27 @@ export default class PageStorage {
         throw 'Strona ' + url + ' nie istnieje.';
     }
 
+    /**
+     * Zwraca stronę, odpowiadającą danemu kluczowi. Jeśli jej instancja nie istnieje,
+     * jest tworzona.
+     * @param key Klucz strony
+     */
     protected GetPageByKey(key: string | RegExp) {
         let descriptor = this.Pages.get(key);
         if(descriptor === undefined) throw 'Strona ' + key + ' nie istnieje.';
         if(descriptor.Page === undefined) descriptor.Page = descriptor?.CreatePage();
         return descriptor.Page;
+    }
+
+    /**
+     * Usuwa z adresu URL ciąg oznaczający fragment
+     * @param url Adres URL
+     */
+    protected static StripFragment(url: string) {
+        let hash_location = url.indexOf('#');
+
+        if(hash_location < 0) return url;
+
+        return url.substr(0, hash_location);
     }
 }
