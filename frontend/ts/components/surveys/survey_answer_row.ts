@@ -5,17 +5,21 @@ import { Hash } from '../../utils/textutils';
 import Question from '../../entities/question';
 import NavigationPrevention from '../../1page/navigation_prevention';
 
-export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
+export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "markasdeleted" | "markasundeleted"> {
     protected QuestionType: number | undefined;
+    protected Question: Question | undefined;
     protected Answer: Answer | undefined;
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
+    protected _IsDeleted: boolean = false;
 
     protected Element: HTMLLIElement;
     protected CheckboxElement: HTMLInputElement;
     protected AnswerTextElement: HTMLLabelElement | HTMLInputElement;
     protected MoveUpButton: HTMLButtonElement | undefined;
     protected MoveDownButton: HTMLButtonElement | undefined;
+    protected RemoveButton: HTMLButtonElement | undefined;
+    protected RestoreButton: HTMLButtonElement | undefined;
 
     public PreviousRow: SurveyAnswerRow | null;
     public NextRow: SurveyAnswerRow | null;
@@ -25,8 +29,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
     }
     public set IsFirst(value: boolean) {
         this._IsFirst = value;
-        if(this.MoveUpButton !== undefined)
-            this.MoveUpButton.disabled = value;
+        this.UpdateMoveButtonsState();
     }
 
     public get IsLast() {
@@ -34,8 +37,11 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
     }
     public set IsLast(value: boolean) {
         this._IsLast = value;
-        if(this.MoveDownButton !== undefined)
-            this.MoveDownButton.disabled = value;
+        this.UpdateMoveButtonsState();
+    }
+
+    public get IsDeleted() {
+        return this._IsDeleted;
     }
 
     public constructor(edit_mode: boolean = false) {
@@ -67,23 +73,32 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
 
             this.MoveUpButton = document.createElement('button');
             this.MoveUpButton.classList.add('secondary', 'control-button');
-            this.MoveUpButton.appendChild(new Icon('arrow-up').GetElement());
+            this.MoveUpButton.appendChild(new Icon('arrow-up', 'fa-fw').GetElement());
             this.MoveUpButton.title = 'Przenieś wyżej';
             this.MoveUpButton.addEventListener('click', this.MoveUp.bind(this));
             control_buttons.appendChild(this.MoveUpButton);
 
             this.MoveDownButton = document.createElement('button');
             this.MoveDownButton.classList.add('secondary', 'control-button');
-            this.MoveDownButton.appendChild(new Icon('arrow-down').GetElement());
+            this.MoveDownButton.appendChild(new Icon('arrow-down', 'fa-fw').GetElement());
             this.MoveDownButton.title = 'Przenieś niżej';
             this.MoveDownButton.addEventListener('click', this.MoveDown.bind(this));
             control_buttons.appendChild(this.MoveDownButton);
 
-            let btn_remove = document.createElement('button');
-            btn_remove.classList.add('error', 'control-button');
-            btn_remove.appendChild(new Icon('trash').GetElement());
-            btn_remove.title = 'Usuń odpowiedź';
-            control_buttons.appendChild(btn_remove);
+            this.RemoveButton = document.createElement('button');
+            this.RemoveButton.classList.add('error', 'control-button');
+            this.RemoveButton.appendChild(new Icon('trash', 'fa-fw').GetElement());
+            this.RemoveButton.title = 'Usuń odpowiedź';
+            this.RemoveButton.addEventListener('click', this.Delete.bind(this));
+            control_buttons.appendChild(this.RemoveButton);
+
+            this.RestoreButton = document.createElement('button');
+            this.RestoreButton.classList.add('control-button');
+            this.RestoreButton.appendChild(new Icon('undo', 'fa-fw').GetElement());
+            this.RestoreButton.title = 'Przywróć odpowiedź';
+            this.RestoreButton.style.display = 'none';
+            this.RestoreButton.addEventListener('click', this.Undelete.bind(this));
+            control_buttons.appendChild(this.RestoreButton);
         } else {
             this.AnswerTextElement = document.createElement('label');
             this.AnswerTextElement.htmlFor = this.CheckboxElement.id;
@@ -106,12 +121,26 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
         this.CheckboxElement.name = Hash(question?.Text ?? '', question?.Id ?? 0).toString(16);
     }
 
+    public SetQuestion(question: Question) {
+        this.Question = question;
+    }
+
     public SetQuestionType(question_type: number) {
         this.QuestionType = question_type;
         this.CheckboxElement.type = this.QuestionType == Question.TYPE_SINGLE_CHOICE ? 'radio' : 'checkbox';
 
         let visible_for_types = [Question.TYPE_SINGLE_CHOICE, Question.TYPE_MULTI_CHOICE];
         this.Element.style.display = visible_for_types.includes(this.QuestionType) ? '' : 'none';
+    }
+
+    protected UpdateMoveButtonsState() {
+        if(this.MoveDownButton === undefined || this.MoveUpButton === undefined) return;
+
+        this.MoveDownButton.disabled = this.IsLast || this.IsDeleted;
+        this.MoveUpButton.disabled = this.IsFirst || this.IsDeleted;
+
+        this.MoveDownButton.style.opacity = this.IsDeleted ? '0' : '';
+        this.MoveUpButton.style.opacity = this.IsDeleted ? '0' : '';
     }
 
     protected MoveUp() {
@@ -134,5 +163,61 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown"> {
         let ul = this.Element.parentElement;
         ul?.insertBefore(next_answer, this.Element);
         this.FireEvent('movedown');
+    }
+
+    protected Delete() {
+        if(this.RemoveButton === undefined || this.RestoreButton === undefined) return;
+        this._IsDeleted = true;
+        this.RemoveButton.style.display = 'none';
+        this.RestoreButton.style.display = '';
+        this.Element.classList.add('deleted');
+        this.UpdateMoveButtonsState();
+        this.FireEvent('markasdeleted');
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected Undelete() {
+        if(this.RemoveButton === undefined || this.RestoreButton === undefined) return;
+        this._IsDeleted = false;
+        this.RemoveButton.style.display = '';
+        this.RestoreButton.style.display = 'none';
+        this.Element.classList.remove('deleted');
+        this.UpdateMoveButtonsState();
+        this.FireEvent('markasundeleted');
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
+    public async Save(order: number) {
+        if(this.Question === undefined) return;
+        if(!('value' in this.AnswerTextElement)) return;
+
+        if(this.Answer !== undefined) {
+            if(!this.IsDeleted) {
+                // Zaktualizuj pytanie
+                let update_awaiter = this.Answer.Update(
+                    this.AnswerTextElement.value,
+                    false,
+                    order
+                );
+                await update_awaiter;
+            } else {
+                // Usuń pytanie
+                return this.Answer.Remove();
+                // Zniszczyć ten wiersz
+            }
+        } else {
+            if(!this.IsDeleted) {
+                // Utwórz pytanie
+                let answer_creator = Answer.Create(
+                    this.Question,
+                    this.AnswerTextElement.value,
+                    false,
+                    order
+                );
+                this.Answer = await answer_creator;
+            } else {
+                // Zniszczyć ten wiersz
+            }
+        }
     }
 }

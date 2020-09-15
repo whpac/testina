@@ -38,6 +38,8 @@ export default class AnswerWrapper extends Component {
         if(question !== undefined) this.Answers = (await question.GetAnswers()).slice();
         else this.Answers = [];
 
+        this.Answers.sort((a, b) => a.Order - b.Order);
+
         this.RenderAnswers();
     }
 
@@ -46,9 +48,11 @@ export default class AnswerWrapper extends Component {
         this.RenderAnswers();
     }
 
-    protected RenderAnswers() {
-        //this.ListElement.textContent = '';
+    public SetQuestion(question: Question) {
+        this.Question = question;
+    }
 
+    protected RenderAnswers() {
         if(this.Answers !== undefined) {
             if(this.AnswerRows.length == 0) {
                 for(let i = 0; i < this.Answers.length; i++) {
@@ -85,6 +89,22 @@ export default class AnswerWrapper extends Component {
             this.AnswerRows[i].IsFirst = (i == 0);
             this.AnswerRows[i].IsLast = (i == this.AnswerRows.length - 1);
         }
+
+        for(let card of this.AnswerRows) {
+            card.IsFirst = card.IsLast = false;
+        }
+
+        for(let i = 0; i < this.AnswerRows.length; i++) {
+            if(this.AnswerRows[i].IsDeleted) continue;
+            this.AnswerRows[i].IsFirst = true;
+            break;
+        }
+
+        for(let i = this.AnswerRows.length - 1; i >= 0; i--) {
+            if(this.AnswerRows[i].IsDeleted) continue;
+            this.AnswerRows[i].IsLast = true;
+            break;
+        }
     }
 
     protected RenderClosedAnswer(answer: Answer | undefined) {
@@ -92,6 +112,8 @@ export default class AnswerWrapper extends Component {
         answer_row.Populate(this.Question, this.QuestionType ?? Question.TYPE_SINGLE_CHOICE, answer);
         answer_row.AddEventListener('moveup', (() => this.OnAnswerMovedUp(answer_row)).bind(this));
         answer_row.AddEventListener('movedown', (() => this.OnAnswerMovedDown(answer_row)).bind(this));
+        answer_row.AddEventListener('markasdeleted', this.RefreshAnswerOrder.bind(this));
+        answer_row.AddEventListener('markasundeleted', this.RefreshAnswerOrder.bind(this));
         this.ListElement.appendChild(answer_row.GetElement());
         this.AnswerRows.push(answer_row);
 
@@ -142,17 +164,14 @@ export default class AnswerWrapper extends Component {
         answer_row.NextRow = former_prev;
         if(former_next !== null) former_next.PreviousRow = former_prev;
 
-        answer_row.IsFirst = (answer_row.PreviousRow === null);
-        answer_row.IsLast = false;
-        former_prev.IsFirst = false;
-        former_prev.IsLast = (former_next === null);
-
         for(let i = 0; i < this.AnswerRows.length; i++) {
             if(answer_row == this.AnswerRows[i]) {
                 MoveElement(this.AnswerRows, i, i - 1);
                 break;
             }
         }
+
+        this.RefreshAnswerOrder();
         NavigationPrevention.Prevent('survey-editor');
     }
 
@@ -170,17 +189,14 @@ export default class AnswerWrapper extends Component {
         former_next.NextRow = answer_row;
         if(new_next !== null) new_next.PreviousRow = answer_row;
 
-        answer_row.IsFirst = false;
-        answer_row.IsLast = (answer_row.NextRow === null);
-        former_next.IsFirst = (former_prev === null);
-        former_next.IsLast = false;
-
         for(let i = 0; i < this.AnswerRows.length; i++) {
             if(answer_row == this.AnswerRows[i]) {
                 MoveElement(this.AnswerRows, i, i + 1);
                 break;
             }
         }
+
+        this.RefreshAnswerOrder();
         NavigationPrevention.Prevent('survey-editor');
     }
 
@@ -188,5 +204,17 @@ export default class AnswerWrapper extends Component {
         this.RenderClosedAnswer(undefined);
         this.RefreshAnswerOrder();
         NavigationPrevention.Prevent('survey-editor');
+    }
+
+    public async Save() {
+        let order = 0;
+        let save_awaiters: Promise<void>[] = [];
+
+        for(let answer_row of this.AnswerRows) {
+            if(!answer_row.IsDeleted) order++;
+            if(this.Question !== undefined) answer_row.SetQuestion(this.Question);
+            save_awaiters.push(answer_row.Save(order));
+        }
+        for(let awaiter of save_awaiters) await awaiter;
     }
 }

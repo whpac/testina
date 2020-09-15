@@ -208,6 +208,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         this.SetNumber(null);
         this.UpdateMoveButtonsState();
         this.FireEvent('markasdeleted');
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     protected Undelete() {
@@ -218,6 +219,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         this.Element.classList.remove('deleted');
         this.UpdateMoveButtonsState();
         this.FireEvent('markasundeleted');
+        NavigationPrevention.Prevent('survey-editor');
     }
 
     /**
@@ -253,7 +255,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         } else {
             if(!this.IsDeleted) {
                 // Utwórz pytanie
-                let question_creator = Question.Create(
+                this.Question = await Question.Create(
                     this.Survey,
                     this.HeadingField.value,
                     parseInt(this.QuestionTypeSelect.value),
@@ -264,7 +266,6 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     order
                 );
                 await this.SaveAnswers();
-                this.Question = await question_creator;
             } else {
                 // Zniszczyć tę kartę
             }
@@ -272,6 +273,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     }
 
     protected async SaveAnswers() {
-
+        if(this.Question !== undefined) this.AnswerWrapper.SetQuestion(this.Question);
+        return this.AnswerWrapper.Save();
     }
 }
