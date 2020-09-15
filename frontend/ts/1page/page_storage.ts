@@ -2,9 +2,11 @@ import IPage from './ipage';
 import PageRequest from './page_request';
 
 type PageFactory = () => IPage;
+type PageKey = string | RegExp;
 type PageDescriptor = {
     AcceptsArgument: boolean;
     CreatePage: PageFactory;
+    Page?: IPage;
 };
 
 /**
@@ -15,9 +17,9 @@ export default class PageStorage {
     protected static _PageStorage: PageStorage | undefined;
 
     /** Przechowuje dane o niezainicjalizowanych jeszcze stronach */
-    protected RawPages: Map<string, PageDescriptor>;
+    protected RawPages: Map<PageKey, PageDescriptor>;
     /** Przechowuje już zainicjalizowane strony */
-    protected Pages: Map<string, IPage>;
+    protected Pages: Map<PageKey, IPage>;
 
     public static GetStorage() {
         if(this._PageStorage === undefined) {
@@ -26,16 +28,12 @@ export default class PageStorage {
         return this._PageStorage;
     }
 
-    protected static StripArguments(page_id_with_arguments: string) {
-        return page_id_with_arguments.substr(0, page_id_with_arguments.lastIndexOf('/'));
-    }
-
     public constructor() {
-        this.RawPages = new Map<string, PageDescriptor>();
-        this.Pages = new Map<string, IPage>();
+        this.RawPages = new Map<PageKey, PageDescriptor>();
+        this.Pages = new Map<PageKey, IPage>();
     }
 
-    public RegisterPage(page_id: string, descriptor: PageDescriptor) {
+    public RegisterPage(page_id: PageKey, descriptor: PageDescriptor) {
         this.RawPages.set(page_id, descriptor);
     }
 
@@ -55,62 +53,28 @@ export default class PageStorage {
      */
     public GetPage(request: PageRequest) {
         let url = request.PageId;
-        let params_exist = request.Params !== undefined;
 
-        // Jeżeli strona o danym id istnieje i odpowiada warunkowi params_exist, zwróć ją
-        let page = this.GetPageConditional(url, params_exist);
-        if(page !== undefined) return page;
+        for(let key of this.RawPages.keys()) {
+            if(typeof key === 'string') {
+                if(key !== url) continue;
 
-        let stripped_page_id = PageStorage.StripArguments(url);
-        if(!params_exist) {
-            // Jeśli strona, która przyjmuje arugment istnieje, zwróć ją
-            page = this.GetPageConditional(stripped_page_id, true);
-            if(page !== undefined) return page;
-        }
-
-        let descriptor: PageDescriptor | undefined;
-        let new_page: IPage;
-
-        descriptor = this.GetPageDescriptorConditional(url, params_exist);
-        if(descriptor !== undefined) {
-            new_page = descriptor.CreatePage();
-            this.Pages.set(url, new_page);
-        } else {
-            if(!params_exist) {
-                descriptor = this.GetPageDescriptorConditional(stripped_page_id, true);
-                if(descriptor !== undefined) {
-                    new_page = descriptor.CreatePage();
-                    this.Pages.set(url, new_page);
-                } else {
-                    throw 'Strona ' + url + ' nie istnieje.';
-                }
+                // Stronę znaleziono
+                return this.GetPageByKey(key);
             } else {
-                throw 'Strona ' + url + ' nie istnieje.';
+                if(!key.test(url)) continue;
+
+                // Stronę znaleziono
+                return this.GetPageByKey(key);
             }
         }
 
-        return new_page;
+        throw 'Strona ' + url + ' nie istnieje.';
     }
 
-    protected GetPageDescriptorConditional(page_id: string, accepts_argument: boolean) {
-        // Jeśli strona nie istnieje, zwróć undefined
-        if(!this.RawPages.has(page_id)) return undefined;
-
-        let page_descriptor = this.RawPages.get(page_id) as PageDescriptor;
-
-        // Jeśli strona istnieje, sprawdź, czy spełnia warunek
-        if(page_descriptor.AcceptsArgument == accepts_argument) return page_descriptor;
-
-        return undefined;
-    }
-
-    protected GetPageConditional(page_id: string, accepts_argument: boolean): IPage | undefined {
-        // Sprawdź, czy strona o podanym id pasuje do zapytania, jeśli nie - zwróć undefined
-        let descriptor = this.GetPageDescriptorConditional(page_id, accepts_argument);
-        if(descriptor === undefined) return undefined;
-
-        // Jeśli strona nie istnieje, zwróć undefined
-        if(!this.Pages.has(page_id)) return undefined;
-        return this.Pages.get(page_id) as IPage;
+    protected GetPageByKey(key: string | RegExp) {
+        let descriptor = this.RawPages.get(key);
+        if(descriptor === undefined) throw 'Strona ' + key + ' nie istnieje.';
+        if(descriptor.Page === undefined) descriptor.Page = descriptor?.CreatePage();
+        return descriptor.Page;
     }
 }
