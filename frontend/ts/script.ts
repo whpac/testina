@@ -1,4 +1,4 @@
-import Navbar from './navbar';
+import Navbar from './components/chrome/navbar';
 
 import * as PageManager from './1page/page_manager';
 import SplashScreen from './1page/splash_screen';
@@ -28,13 +28,13 @@ try {
     let splash_screen = new SplashScreen('loading-wrapper');
 
     // Inicjalizacja paska nawigacji
-    Navbar.AppNavbar = new Navbar('main-nav');
+    ChromeManager.ApplicationNavbar = new Navbar('main-nav');
     (async () => {
         if(await AuthManager.IsAuthorized()) {
-            Navbar.AppNavbar.Draw();
+            ChromeManager.ApplicationNavbar.Draw();
             root.classList.remove('login');
         } else {
-            Navbar.AppNavbar.Destroy();
+            ChromeManager.ApplicationNavbar.Destroy();
             root.classList.add('login');
         }
     })();
@@ -68,12 +68,12 @@ try {
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
     AuthManager.AddEventListener('login', async () => {
         (await CacheManager.Open(CacheStorages.Entities)).Purge();
-        Navbar.AppNavbar.Draw();
+        ChromeManager.ApplicationNavbar.Draw();
         root?.classList.remove('login');
     });
     AuthManager.AddEventListener('logout', async () => {
         (await CacheManager.Open(CacheStorages.Entities)).Purge();
-        Navbar.AppNavbar.Destroy();
+        ChromeManager.ApplicationNavbar.Destroy();
         root?.classList.add('login');
         PageManager.GoToPage('zaloguj');
     });

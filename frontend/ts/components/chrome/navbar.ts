@@ -1,12 +1,11 @@
-import UserLoader from './entities/loaders/userloader';
-import { HandleLinkClick } from './1page/page_manager';
-import AuthManager from './auth/auth_manager';
+import UserLoader from '../../entities/loaders/userloader';
+import { HandleLinkClick } from '../../1page/page_manager';
+import AuthManager from '../../auth/auth_manager';
 
 /**
  * Klasa reprezentująca panel nawigacji
  */
 export default class Navbar {
-    public static AppNavbar: Navbar;
     protected NavbarRoot: HTMLElement;
 
     /**
@@ -36,6 +35,7 @@ export default class Navbar {
         let li = document.createElement('li');
         ul.appendChild(li);
         li.classList.add('link', 'nav-toggle');
+        li.addEventListener('click', this.ToggleVisibility.bind(this));
         li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
         ul.appendChild(this.CreateNavHeader((await UserLoader.GetCurrent())?.GetFullName() ?? 'Niezalogowany'));
@@ -144,7 +144,7 @@ export default class Navbar {
     /**
      * Przełącza widoczność panelu nawigacji
      */
-    protected ToggleVisibility() {
+    public ToggleVisibility() {
         this.NavbarRoot.classList.toggle('shown');
     }
 
@@ -159,13 +159,6 @@ export default class Navbar {
      * Dołącza procedury obsługi zdarzeń do obiektów związanych z panelem nawigacji
      */
     protected AttachEventHandlers() {
-        let navbar_toggles = document.querySelectorAll('.nav-toggle');
-        for(let element of navbar_toggles) {
-            if((element as HTMLElement).dataset.hasClickHandler == 'true') continue;
-            element.addEventListener('click', this.ToggleVisibility.bind(this));
-            (element as HTMLElement).dataset.hasClickHandler = 'true';
-        }
-
         let navbar_backdrops = document.querySelectorAll('.nav-backdrop');
         for(let element of navbar_backdrops) {
             if((element as HTMLElement).dataset.hasClickHandler == 'true') continue;

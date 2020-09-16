@@ -1,12 +1,15 @@
 import MobileHeader from '../components/chrome/mobile_header';
+import Navbar from '../components/chrome/navbar';
 import PageParams from './page_params';
 
 /**
  * Klasa zarządzająca elementami interfejsu przeglądarki
  */
 export default class ChromeManager {
-    /** Element stanowiący nagłówek mobilnej wersji strony */
+    /** Nagłówek mobilnej wersji strony */
     public static MobileHeader: MobileHeader;
+    /** Panel nawigacji */
+    public static ApplicationNavbar: Navbar;
 
     /**
      * Ustawia adres wyświetlany na pasku adresu

@@ -1,3 +1,4 @@
+import ChromeManager from '../../1page/chrome_manager';
 import Icon from '../basic/icon';
 
 export default class MobileHeader {
@@ -8,6 +9,7 @@ export default class MobileHeader {
         let hamburger_btn = document.createElement('a');
         hamburger_btn.classList.add('nav-toggle', 'nav-icon');
         hamburger_btn.appendChild(new Icon('bars', 'fa-fw').GetElement());
+        hamburger_btn.addEventListener('click', () => ChromeManager.ApplicationNavbar.ToggleVisibility());
         element.appendChild(hamburger_btn);
 
         this.Header = document.createElement('h1');
