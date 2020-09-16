@@ -100,20 +100,31 @@ div.nav-backdrop {
     display:none; grid-area:main; position:fixed; background:var(--mobile-header-background);
     z-index:20; top:0; left:0; right:0; height:24px; padding:16px; border-bottom:var(--mobile-header-border);
     color:var(--mobile-header-text-color); box-shadow:var(--mobile-header-box-shadow); white-space:nowrap;
+    grid-template-columns:auto 1fr auto;
 
     .nav-icon {
         display:inline-block; vertical-align:middle; color:var(--mobile-header-text-color);
-        line-height:24px; font-size:18px; width:24px; margin:-4px; padding:4px; border-radius:50%;
-        text-align:center; transition:background-color 0.3s; cursor:pointer;
+        line-height:24px; font-size:18px; width:24px; margin:-4px -4px 0 -4px; padding:4px 4px 0 4px;
+        border-radius:50%; text-align:center; transition:background-color 0.3s; cursor:pointer;
+        grid-column:1;
 
         &:active {background:rgba(255,255,255,0.3);}
     }
     h1 {
         display:inline-block;vertical-align:middle; margin:0 0 0 20px; line-height:24px; font-size:20px;
         font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100vw - 84px);
+        grid-column:2;
+    }
+    .mobile-header-buttons {
+        grid-column:3;
+
+        button {
+                color:var(--mobile-header-text-color); padding:5px; font-size:18px;
+                vertical-align:middle; margin-top:-4px;
+        }
     }
 
     @include media-small{
-        display:block;
+        display:grid;
     }
 }

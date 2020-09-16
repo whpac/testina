@@ -105,6 +105,7 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     let new_page = PageStorage.GetStorage().GetPage(request);
 
     CurrentPage?.UnloadFrom(ContentRoot);
+    ChromeManager.MobileHeader.RemoveButtons();
 
     CurrentPage = new_page;
     CurrentPageId = page_id;
