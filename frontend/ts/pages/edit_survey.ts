@@ -9,6 +9,7 @@ import Question from '../entities/question';
 import NavigationPrevention from '../1page/navigation_prevention';
 import Toast from '../components/basic/toast';
 import ChromeManager from '../1page/chrome_manager';
+import { HandleLinkClick } from '../1page/page_manager';
 
 export default class EditSurveyPage extends Page {
     protected Survey: Test | undefined;
@@ -26,8 +27,15 @@ export default class EditSurveyPage extends Page {
         btn_wrapper.classList.add('fixed-buttons-wrapper');
         this.AppendChild(btn_wrapper);
 
+        let close_btn = document.createElement('button');
+        close_btn.classList.add('header-button');
+        close_btn.appendChild(new Icon('times').GetElement());
+        close_btn.appendChild(document.createTextNode('Zamknij'));
+        close_btn.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety'));
+        btn_wrapper.appendChild(close_btn);
+
         let save_btn = document.createElement('button');
-        save_btn.classList.add('header-button', 'fixed');
+        save_btn.classList.add('header-button');
         save_btn.appendChild(new Icon('save').GetElement());
         save_btn.appendChild(document.createTextNode(' Zapisz'));
         save_btn.addEventListener('click', this.Save.bind(this));
