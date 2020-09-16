@@ -89,8 +89,10 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
             window.location.hash = '';
             window.location.hash = fragment;
         }
+        return true;
     } catch(e) {
         alert('Nie udało się załadować strony: ' + e);
+        return false;
     }
 }
 

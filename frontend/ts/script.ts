@@ -96,7 +96,11 @@ export async function LoadInitialPage() {
     if(url_path != '') initial_page = url_path;
 
     // Załaduj stronę
-    PageManager.GoToPage(initial_page, undefined, true);
+    let is_success = await PageManager.GoToPage(initial_page, undefined, true);
+
+    if(!is_success) {
+        PageManager.GoToPage('home', undefined, true);
+    }
 }
 
 /**
