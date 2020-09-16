@@ -40,9 +40,10 @@ export default class LoginWithOfficeCard extends Card {
         link.href = `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?
 client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
 &response_type=code
-&redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Fzaloguj%2Foffice
+&redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Foffice_login
 &response_mode=query
-&scope=user.read`;
+&scope=user.read
+&state=12345`;
         link.textContent = 'Zaloguj';
         link_wrapper.appendChild(link);
 
