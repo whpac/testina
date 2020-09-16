@@ -48,19 +48,19 @@ class AttemptAnswers extends Resource {
             TypeValidator::AssertIsBool($question->done, 'done');
 
             if($question->done){
-                TypeValidator::AssertIsArray($question->answers, 'answers');
-                TypeValidator::AssertIsInt($question->id, 'id');
-                TypeValidator::AssertIsBool($question->is_open, 'is_open');
+                TypeValidator::AssertIsArray($question->answers, 'question.answers');
+                TypeValidator::AssertIsInt($question->id, 'question.id');
+                TypeValidator::AssertIsBool($question->is_open, 'question.is_open');
 
                 foreach($question->answers as $answer){
-                    TypeValidator::AssertIsInt($answer->id, 'id');
-
                     try{
                         if($question->is_open){
-                            TypeValidator::AssertIsString($answer->text, 'text');
+                            TypeValidator::AssertIsString($answer->text, 'answer.text');
                             
                             \Entities\UserAnswer::CreateOpenAnswer($this->Attempt, $question_index, new \Entities\Question($question->id), $answer->text);
                         }else{
+                            TypeValidator::AssertIsInt($answer->id, 'answer.id');
+
                             \Entities\UserAnswer::Create($this->Attempt, new \Entities\Answer($answer->id), $question_index);
                         }
                     }catch(Exception $e){
