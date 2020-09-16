@@ -22,7 +22,7 @@ export default class FillSurveyPage extends Page {
         return 'ankiety/wypełnij';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Wypełnij ankietę';
     }
 

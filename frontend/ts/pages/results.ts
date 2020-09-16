@@ -3,12 +3,12 @@ import Assignment from '../entities/assignment';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import ResultsCard from '../components/results/results_card';
 
-export default class ResultsPage extends Page{
+export default class ResultsPage extends Page {
     protected Assignment: Assignment | undefined;
     protected TestNameHeading: Text;
     protected ResultsCard: ResultsCard;
 
-    constructor(){
+    constructor() {
         super();
 
         let page_heading = document.createElement('h1');
@@ -42,8 +42,8 @@ export default class ResultsPage extends Page{
         return 'testy/wyniki/' + this.Assignment?.Id.toString() ?? '0';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return this.Assignment?.Test.Name + ' – wyniki';
     }
-    
+
 }

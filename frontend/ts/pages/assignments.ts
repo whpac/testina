@@ -8,7 +8,7 @@ export default class AssignmentsPage extends Page {
     protected TestNameHeading: Text;
     protected AssignmentsCard: AssignmentsCard;
 
-    constructor(){
+    constructor() {
         super();
 
         let page_heading = document.createElement('h1');
@@ -24,7 +24,7 @@ export default class AssignmentsPage extends Page {
         this.AppendChild(this.AssignmentsCard);
     }
 
-    async LoadInto(container: HTMLElement, params?: any){
+    async LoadInto(container: HTMLElement, params?: any) {
         if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
         else this.Test = params as Test;
         this.TestNameHeading.textContent = this.Test.Name;
@@ -34,15 +34,15 @@ export default class AssignmentsPage extends Page {
         container.appendChild(this.Element);
     }
 
-    UnloadFrom(container: HTMLElement){
+    UnloadFrom(container: HTMLElement) {
         container.removeChild(this.Element);
     }
 
-    GetUrlPath(){
+    GetUrlPath() {
         return 'testy/przypisane/' + this.Test?.Id.toString() ?? '0';
     }
 
-    async GetTitle(){
+    GetTitle() {
         return (this.Test?.Name ?? '') + ' – przypisania';
     }
 }

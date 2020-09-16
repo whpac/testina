@@ -33,7 +33,7 @@ export default class HelpPage extends Page {
         return 'pomoc';
     }
 
-    async GetTitle(): Promise<string> {
+    GetTitle(): string {
         return 'Pomoc';
     }
 

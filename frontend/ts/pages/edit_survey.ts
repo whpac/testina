@@ -82,7 +82,7 @@ export default class EditSurveyPage extends Page {
 
         this.Survey.AddEventListener('change', () => {
             this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';
-            ChromeManager.SetTitle('Edytuj: ' + this.Survey?.Name ?? '');
+            ChromeManager.SetTitle(this.GetTitle());
         });
     }
 
@@ -94,8 +94,8 @@ export default class EditSurveyPage extends Page {
         return 'ankiety/edytuj/' + (this.Survey?.Id ?? 0);
     }
 
-    async GetTitle() {
-        return 'Edytuj: ' + this.Survey?.Name;
+    GetTitle() {
+        return 'Edytuj: ' + (this.Survey?.Name ?? '');
     }
 
     protected RenderQuestion(question: Question | undefined, question_number: number) {

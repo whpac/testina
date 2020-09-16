@@ -67,7 +67,7 @@ export default class EditTestPage extends Page {
         return 'testy/edytuj/' + (this.Test?.Id ?? 0);
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Edycja: ' + this.Test?.Name;
     }
 }

@@ -10,5 +10,5 @@ export default interface IPage {
     /** Zwraca ścieżkę do wyświetlenia na pasku adresu */
     GetUrlPath(): string | null;
     /** Zwraca tytuł strony do wyświetlenia w przeglądarce */
-    GetTitle(): Promise<string>;
+    GetTitle(): string;
 }

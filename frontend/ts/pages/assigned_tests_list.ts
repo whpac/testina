@@ -70,7 +70,7 @@ export default class AssignedTestsListPage extends Page {
         return 'testy/lista';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Testy';
     }
 }

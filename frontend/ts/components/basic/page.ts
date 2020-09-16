@@ -26,5 +26,5 @@ export default abstract class Page extends Component implements IPage {
     /** Zwraca ścieżkę do wyświetlenia na pasku adresu */
     abstract GetUrlPath(): string | null;
     /** Zwraca tytuł strony do wyświetlenia w przeglądarce */
-    abstract async GetTitle(): Promise<string>;
+    abstract GetTitle(): string;
 }

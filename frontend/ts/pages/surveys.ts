@@ -31,7 +31,7 @@ export default class SurveysPage extends Page {
         return 'ankiety';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Twoje ankiety';
     }
 }

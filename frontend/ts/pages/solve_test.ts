@@ -80,7 +80,7 @@ export default class SolveTestPage extends Page {
         return 'testy/rozwiąż/' + (this.Assignment?.Id.toString() ?? '');
     }
 
-    async GetTitle() {
+    GetTitle() {
         if(this.Assignment === undefined) return 'Rozwiąż test';
         return 'Rozwiąż: ' + this.Assignment?.Test.Name;
     }

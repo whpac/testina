@@ -31,7 +31,7 @@ export default class LoginPage extends Page {
         return null;
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Logowanie';
     }
 

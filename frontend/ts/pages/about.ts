@@ -26,7 +26,7 @@ export default class AboutPage extends Page {
         return 'informacje';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Informacje';
     }
 

@@ -64,7 +64,7 @@ export default class LibraryPage extends Page {
         return 'testy/biblioteka';
     }
 
-    async GetTitle() {
+    GetTitle() {
         return 'Biblioteka testów';
     }
 }

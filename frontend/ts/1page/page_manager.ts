@@ -78,7 +78,7 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
 
     try {
         await DisplayPage(page_id, params);
-        ChromeManager.SetTitle(await CurrentPage?.GetTitle() ?? '');
+        ChromeManager.SetTitle(CurrentPage?.GetTitle() ?? '');
 
         let url = CurrentPage?.GetUrlPath();
         if(url !== null && url !== undefined) {
