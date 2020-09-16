@@ -5,6 +5,9 @@ RewriteBase "/p/"
 # Przekierowanie zapytań API do api_endpoint.php
 RewriteRule "^api/(.*)$" "backend/api_endpoint.php?target=$1" [END,QSA]
 
+# Obsługa żądań logowania przychodzących z serwera Office 365
+RewriteRule "^office_login$" "backend/office_login.php" [END,QSA]
+
 # Przekierowanie zapytań o zasoby do resource_handler.php
 # Jako zasoby są traktowane pliki o określonych rozszerzeniach,
 # a także pliki w folderze /js/, bez kropki w nazwie (domyślnie ładuje się je bez rozszerzenia)
