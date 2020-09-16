@@ -32,6 +32,13 @@ a.button, button {
         border-radius:calc(0.5em + 8px); border:1px solid var(--button-border-color);
 
         > .icon {color:var(--button-colored-text-color); margin-right:1ch;}
+
+        &:not(:first-child) {
+            border-top-right-radius:0; border-bottom-right-radius:0; margin-right:-1px; border-right:none;
+        }
+        &:not(:last-child) {
+            border-top-left-radius:0; border-bottom-left-radius:0;
+        }
     }
 
     @include media-large-xlarge {
@@ -41,7 +48,7 @@ a.button, button {
 
 .fixed-buttons-wrapper {
     position:fixed; box-shadow:0 0 1px 3px var(--background-empty-color); border-radius:calc(0.5em + 8px);
-    right:calc(10px + var(--nav-panel-width)); background:var(--background-empty-color);
+    right:calc(10px + var(--nav-panel-width)); background:var(--background-empty-color); z-index:1;
 
     @include media-small {
         display:none;
