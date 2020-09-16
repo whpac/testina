@@ -2,7 +2,6 @@ import Card from '../basic/card';
 import Assignment from '../../entities/assignment';
 import ResultsTable from './results_table';
 import { n } from '../../utils/textutils';
-import { GoToPage } from '../../1page/page_manager';
 
 export default class ResultsCard extends Card {
     protected AttemptLimitText: Text;
@@ -11,12 +10,6 @@ export default class ResultsCard extends Card {
 
     constructor() {
         super('semi-wide');
-
-        let close_button = document.createElement('button');
-        close_button.classList.add('button', 'header-button');
-        close_button.innerHTML = '<i class="fa fa-times icon"></i><span>Zamknij</span>';
-        close_button.addEventListener('click', () => GoToPage('testy/przypisane', this.Assignment?.Test));
-        this.AppendChild(close_button);
 
         let heading = document.createElement('h2');
         this.AppendChild(heading);

@@ -15,11 +15,15 @@ export default class LibraryPage extends Page {
 
         this.LibraryCard = new Card('semi-wide');
 
+        let buttons_wrapper = document.createElement('div');
+        buttons_wrapper.classList.add('header-buttons');
+        this.LibraryCard.AppendChild(buttons_wrapper);
+
         let create_button = document.createElement('button');
         create_button.classList.add('button', 'header-button');
         create_button.innerHTML = '<i class="fa fa-plus icon"></i><span>Utwórz nowy</span>';
         create_button.addEventListener('click', this.CreateTest.bind(this));
-        this.LibraryCard.AppendChild(create_button);
+        buttons_wrapper.appendChild(create_button);
 
         let header = document.createElement('h2');
         header.textContent = 'Moje testy';

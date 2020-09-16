@@ -2,6 +2,7 @@ import Page from '../components/basic/page';
 import Assignment from '../entities/assignment';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import ResultsCard from '../components/results/results_card';
+import { GoToPage } from '../1page/page_manager';
 
 export default class ResultsPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -10,6 +11,16 @@ export default class ResultsPage extends Page {
 
     constructor() {
         super();
+
+        let buttons_wrapper = document.createElement('div');
+        buttons_wrapper.classList.add('fixed-buttons-wrapper');
+        this.AppendChild(buttons_wrapper);
+
+        let close_button = document.createElement('button');
+        close_button.classList.add('button', 'header-button');
+        close_button.innerHTML = '<i class="fa fa-times icon"></i><span>Zamknij</span>';
+        close_button.addEventListener('click', () => GoToPage('testy/przypisane', this.Assignment?.Test));
+        buttons_wrapper.appendChild(close_button);
 
         let page_heading = document.createElement('h1');
         this.AppendChild(page_heading);

@@ -8,6 +8,8 @@
     &.semi-wide {margin-left:3px; margin-right:3px;}
     &.wide {margin-left:3px; margin-right:3px;}
 
+    .header-buttons {float:right;}
+
     @include media-small {
         &, &.semi-wide, &.wide, &.auto-width {margin-left:0; margin-right:0; width:auto;}
         .header-button {

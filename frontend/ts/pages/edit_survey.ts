@@ -9,7 +9,7 @@ import Question from '../entities/question';
 import NavigationPrevention from '../1page/navigation_prevention';
 import Toast from '../components/basic/toast';
 import ChromeManager from '../1page/chrome_manager';
-import { HandleLinkClick } from '../1page/page_manager';
+import { GoToPage } from '../1page/page_manager';
 
 export default class EditSurveyPage extends Page {
     protected Survey: Test | undefined;
@@ -31,7 +31,7 @@ export default class EditSurveyPage extends Page {
         close_btn.classList.add('header-button');
         close_btn.appendChild(new Icon('times').GetElement());
         close_btn.appendChild(document.createTextNode('Zamknij'));
-        close_btn.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety'));
+        close_btn.addEventListener('click', () => GoToPage('ankiety'));
         btn_wrapper.appendChild(close_btn);
 
         let save_btn = document.createElement('button');

@@ -28,7 +28,7 @@ a.button, button {
     }
 
     &.header-button {
-        float:right; color:var(--text-primary-color); font-size:0.98em; padding:7px 12px;
+        color:var(--text-primary-color); font-size:0.98em; padding:7px 12px;
         border-radius:calc(0.5em + 8px); border:1px solid var(--button-border-color);
 
         > .icon {color:var(--button-colored-text-color); margin-right:1ch;}

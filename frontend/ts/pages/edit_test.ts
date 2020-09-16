@@ -8,6 +8,7 @@ import PageParams from '../1page/page_params';
 import * as PageManager from '../1page/page_manager';
 import TestLoader from '../entities/loaders/testloader';
 import ChromeManager from '../1page/chrome_manager';
+import Icon from '../components/basic/icon';
 
 export default class EditTestPage extends Page {
     QuestionsTable: QuestionsTable;
@@ -18,18 +19,23 @@ export default class EditTestPage extends Page {
     constructor() {
         super();
 
+        let btn_wrapper = document.createElement('div');
+        btn_wrapper.classList.add('fixed-buttons-wrapper');
+        this.AppendChild(btn_wrapper);
+
+        let close_btn = document.createElement('button');
+        close_btn.classList.add('header-button');
+        close_btn.appendChild(new Icon('times').GetElement());
+        close_btn.appendChild(document.createTextNode('Zamknij'));
+        close_btn.addEventListener('click', (e) => PageManager.GoToPage('testy/biblioteka'));
+        btn_wrapper.appendChild(close_btn);
+
         let page_heading = document.createElement('h1');
         page_heading.innerHTML = '<span class="secondary">Edycja: </span>';
         page_heading.appendChild(this.TestNameHeading = document.createTextNode(''));
         this.Element.appendChild(page_heading);
 
         let question_list_card = new Card();
-        let close_button = document.createElement('button');
-        close_button.classList.add('button', 'header-button');
-        close_button.innerHTML = '<i class="fa fa-times icon"></i><span>Zamknij</span>';
-        close_button.addEventListener('click', () => PageManager.GoToPage('testy/biblioteka'));
-        question_list_card.AppendChild(close_button);
-
         let card_heading = document.createElement('h2');
         card_heading.textContent = 'Pytania';
         question_list_card.AppendChild(card_heading);
