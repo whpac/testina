@@ -20,6 +20,10 @@ import SurveysPage from './pages/surveys';
 import FillSurveyPage from './pages/fill_survey';
 import EditSurveyPage from './pages/edit_survey';
 import MobileHeader from './components/chrome/mobile_header';
+import LoginWithOfficePage from './pages/login_office';
+
+// @ts-ignore
+window._debug = true;
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -61,6 +65,7 @@ try {
     pages.RegisterPage(/^testy\/przypisane(\/[0-9]+)?$/, { CreatePage: () => new AssignmentsPage() });
     pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
     pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
+    pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
     PageManager.RegisterHomePage(new HomePage());
     PageManager.RegisterLoginPage(new LoginPage());
