@@ -38,7 +38,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
     LoadById(entity_ids: number[]): Promise<Assignment[]>;
     public async LoadById(assignment_id: number | number[]): Promise<Assignment | Assignment[]> {
         if(typeof assignment_id == 'number') {
-            let response = await XHR.PerformRequest('api/assignments/' + assignment_id.toString() + '?depth=3', 'GET');
+            let response = await XHR.PerformRequest('api/assignments/' + assignment_id.toString() + '?depth=3', 'GET', undefined, true);
             let descriptor = response.Response as AssignmentDescriptor;
             return AssignmentLoader.CreateFromDescriptor(descriptor);
         } else {
