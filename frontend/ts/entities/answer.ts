@@ -73,7 +73,7 @@ export default class Answer extends Entity {
 
         if(result.Status != 201) throw result;
 
-        return new AnswerLoader().LoadById(parseInt(result.ContentLocation));
+        return AnswerLoader.LoadById(question, parseInt(result.ContentLocation));
     }
 
     /**

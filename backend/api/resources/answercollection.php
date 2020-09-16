@@ -19,9 +19,10 @@ class AnswerCollection extends Collection {
         }
 
         $question = $this->Parent;
-        $res = \Entities\Answer::Create($question, $source->text, ['correct' => $source->correct], $order);
+        $answer = \Entities\Answer::Create($question, $source->text, ['correct' => $source->correct], $order);
 
-        if(!$res) throw new \Exception('Nie udało się utworzyć odpowiedzi.');
+        if(!$answer) throw new \Exception('Nie udało się utworzyć odpowiedzi.');
+        header('Content-Location: '.$answer->GetId());
         return null;
     }
 }

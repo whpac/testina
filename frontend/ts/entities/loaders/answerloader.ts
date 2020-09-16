@@ -54,6 +54,12 @@ export default class AnswerLoader {
         return this.CreateFromDescriptor(descriptor);
     }
 
+    public static async LoadById(question: Question, answer_id: number) {
+        let loader = new AnswerLoader();
+        loader.SetQuestion(question);
+        return loader.LoadById(answer_id);
+    }
+
     /**
      * Tworzy odpowiedź na podstawie deskryptora
      * @param answer_descriptor Deskryptor odpowiedzi
