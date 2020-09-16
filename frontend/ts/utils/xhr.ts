@@ -16,13 +16,14 @@ type RejectFunction = (reason?: any) => void;
  * @param url URL, do którego należy wysłać zapytanie
  * @param method Metoda zapytania (domyślnie GET)
  * @param request_data Dane przesyłane razem z zapytaniem, zostaną zserializowane jako JSON
+ * @param skip_cache Czy pominąć odczyt odpowiedzi z pamięci podręcznej (dotyczy tylko zapytań GET)
  */
-export function PerformRequest(url: string, method?: string, request_data?: any) {
+export function PerformRequest(url: string, method?: string, request_data?: any, skip_cache: boolean = false) {
     return new Promise<XHRResult>(async (resolve, reject) => {
         method = (method ?? 'GET').toUpperCase();
         let request = new Request(url, { method: method });
 
-        if(method == 'GET') {
+        if(method == 'GET' && !skip_cache) {
             let cache = await CacheManager.Open(CacheStorages.Entities);
             let resource = await cache.GetResource(request);
             if(resource !== undefined) {
