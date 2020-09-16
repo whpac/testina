@@ -13,6 +13,7 @@
         .header-button {
             padding:7px 10px; border-radius:calc(0.5em + 9px);
 
+            > .icon {margin-right:0;}
             > span {display:none;}
         }
     }
