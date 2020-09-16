@@ -89,7 +89,8 @@ try {
  */
 export async function LoadInitialPage() {
     // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
-    let initial_page = 'home';
+    let default_page = 'home';
+    let initial_page = default_page;
     let url_path = decodeURI(ReadPageFromURL());
 
     // Jeżeli strona do załadowania nie jest pustym ciągiem - załaduj ją
@@ -99,7 +100,7 @@ export async function LoadInitialPage() {
     let is_success = await PageManager.GoToPage(initial_page, undefined, true);
 
     if(!is_success) {
-        PageManager.GoToPage('home', undefined, true);
+        PageManager.GoToPage(default_page, undefined, true);
     }
 }
 
