@@ -1,6 +1,7 @@
 import UserLoader from '../../entities/loaders/userloader';
 import { HandleLinkClick } from '../../1page/page_manager';
 import AuthManager from '../../auth/auth_manager';
+import ChromeManager from '../../1page/chrome_manager';
 
 /**
  * Klasa reprezentująca panel nawigacji
@@ -26,8 +27,7 @@ export default class Navbar {
     public async Draw() {
         this.NavbarRoot.style.display = '';
 
-        let hamburger_button = document.getElementById('mobile-nav-toggle');
-        if(hamburger_button) hamburger_button.style.display = '';
+        ChromeManager.MobileHeader.SetHamburgerButtonVisibility(true);
 
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
@@ -74,8 +74,7 @@ export default class Navbar {
         this.NavbarRoot.textContent = '';
         this.NavbarRoot.style.display = 'none';
 
-        let hamburger_button = document.getElementById('mobile-nav-toggle');
-        if(hamburger_button) hamburger_button.style.display = 'none';
+        ChromeManager.MobileHeader.SetHamburgerButtonVisibility(false);
     }
 
     /**
