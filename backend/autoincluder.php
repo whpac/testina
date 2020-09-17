@@ -1,4 +1,7 @@
 <?php
+// Dołącza plik z poświadczeniami, używanymi np. do dostępu do bazy danych albo API Office 365
+require('credentials.php');
+
 /**
  * Funkcja odpowiedzialna za automatyczne ładowanie klas aplikacji Testina
  * Ładowane są tylko klasy w określonych przestrzeniach nazw
@@ -9,7 +12,7 @@ function TestinaClassLoader($name){
     $name = str_replace('\\', '/', $name);
 
     // Wczytaj automatycznie tylko te przestrzenie nazw
-    $namespaces = ['api', 'auth', 'database', 'entities', 'log', 'session', 'utils'];
+    $namespaces = ['api', 'auth', 'database', 'entities', 'externallogin', 'log', 'session', 'utils'];
     $is_found = false;
 
     foreach($namespaces as $ns){
