@@ -17,7 +17,7 @@ use Session\SessionManager;
 require('autoincluder.php');
 
 // Inicjalizacja dostawcy bazy danych oraz sesji
-$db = new MySQL('localhost', 'user', 'passwd', 'p');
+$db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, CRED_DATABASE_BASE);
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
