@@ -42,17 +42,25 @@ client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
 &response_type=code
 &redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Foffice_login
 &response_mode=query
-&scope=user.read
+&scope=offline_access%20user.read
 &state=12345`;
         link.textContent = 'Zaloguj';
         link_wrapper.appendChild(link);
 
-        let description = document.createElement('p');
-        description.classList.add('secondary', 'small', 'center');
-        this.AppendChild(description);
+        let description1 = document.createElement('p');
+        description1.classList.add('secondary', 'small', 'center');
+        this.AppendChild(description1);
 
-        description.appendChild(document.createTextNode('Po kliknieciu Zaloguj, zostaniesz'));
-        description.appendChild(document.createElement('br'));
-        description.appendChild(document.createTextNode('przeniesiony(-a) do strony logowania Office 365.'));
+        description1.appendChild(document.createTextNode('Po kliknieciu Zaloguj, zostaniesz'));
+        description1.appendChild(document.createElement('br'));
+        description1.appendChild(document.createTextNode('przeniesiony(-a) do strony logowania Office 365.'));
+
+        let description2 = document.createElement('p');
+        description2.classList.add('secondary', 'small', 'center');
+        this.AppendChild(description2);
+
+        description2.appendChild(document.createTextNode('Jeżeli jesteś już zalogowany(-a) do Office,'));
+        description2.appendChild(document.createElement('br'));
+        description2.appendChild(document.createTextNode('formularz logowania może zostać pominięty.'));
     }
 }
