@@ -14,6 +14,7 @@ class LogChannels{
     public const AUTHORIZATION_SUCCESS = 10;
     public const AUTHORIZATION_FAILED = 11;
     public const AUTHORIZATION_LOG_OUT = 12;
+    public const AUTHORIZATION_EXTERNAL_ERROR = 13;
 
     // Kanały związane z kontrolą dostępu
     public const SESSION_FAILURE = 20;
