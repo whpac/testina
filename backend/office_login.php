@@ -34,6 +34,7 @@ TokenManager::RegisterAccessToken($response->AccessToken, $response->ExpiresIn);
 TokenManager::RegisterRefreshToken($response->RefreshToken);
 
 // Krok 3. Pobranie informacji o aktualnie zalogowanym użytkowniku
+// Auth\AuthManager::LogInExternalUser('user_id');
 // Krok 4. Przekierowanie do strony głównej (w zamierzeniu - do strony, którą chciał wyświetlić użytkownik)
 
 echo('<pre>');

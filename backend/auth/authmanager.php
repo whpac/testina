@@ -94,5 +94,9 @@ class AuthManager {
     public static function RegisterUserFactory(Users\UserFactory $factory){
         self::$user_factory = $factory;
     }
+
+    public static function LogInExternalUser($user_id){
+        self::ChangeUser($user_id);
+    }
 }
 ?>
