@@ -52,6 +52,9 @@ export default class SurveyTable extends Component {
     public Populate(surveys: Test[]) {
         this.TBody.textContent = '';
 
+        // Posortuj ankiety od najnowszych
+        surveys.sort((a, b) => b.CreationDate.valueOf() - a.CreationDate.valueOf());
+
         for(let survey of surveys) {
             let tr = this.TBody.insertRow();
 
