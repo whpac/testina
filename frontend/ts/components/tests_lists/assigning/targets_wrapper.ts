@@ -81,7 +81,6 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.SearchField.value = '';
         this.UsersTab.Select();
         this.SwitchTargetType('user');
-        this.PrintNumberOfSelectedEntities(0, 0);
 
         let users_awaiter = this.UsersTable.Populate();
         let groups_awaiter = this.GroupsTable.Populate();
@@ -93,6 +92,8 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
         this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
+
+        this.PrintNumberOfSelectedEntities();
         this.Validate();
 
         this.FilterTable();
@@ -153,14 +154,15 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     }
 
     protected OnSelectionChanged() {
-        this.PrintNumberOfSelectedEntities(
-            this.UsersTable.GetSelectedCount(),
-            this.GroupsTable.GetSelectedCount());
+        this.PrintNumberOfSelectedEntities();
         this.Validate();
         NavigationPrevention.Prevent('assign-test-dialog');
     }
 
-    protected PrintNumberOfSelectedEntities(users: number, groups: number) {
+    protected PrintNumberOfSelectedEntities() {
+        let users = this.UsersTable.GetSelectedCount();
+        let groups = this.GroupsTable.GetSelectedCount();
+
         if(users > 0 || groups > 0) {
             let text = 'Wybrano';
 
