@@ -98,7 +98,7 @@ export default class UserLoader implements Loader<User> {
     public static async GetCurrent(force: boolean = false) {
         if(this.CurrentUser === undefined || force) {
             try {
-                let response = await XHR.PerformRequest('api/users/current?depth=2', 'GET');
+                let response = await XHR.PerformRequest('api/users/current?depth=2', 'GET', undefined, force);
                 let json = response.Response as UserDescriptor;
                 this.CurrentUser = this.CreateFromDescriptor(json);
             } catch(e) {

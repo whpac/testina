@@ -38,7 +38,7 @@ export default class Navbar {
         li.addEventListener('click', this.ToggleVisibility.bind(this));
         li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
-        ul.appendChild(this.CreateNavHeader((await UserLoader.GetCurrent())?.GetFullName() ?? 'Niezalogowany'));
+        ul.appendChild(this.CreateNavHeader((await UserLoader.GetCurrent(true))?.GetFullName() ?? 'Niezalogowany'));
         ul.appendChild(this.CreateNavLink('Strona główna', 'home', 'fa-home'));
         ul.appendChild(this.CreateNavLink('Testy', 'testy/lista', 'fa-pencil-square-o'));
         ul.appendChild(this.CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'));
