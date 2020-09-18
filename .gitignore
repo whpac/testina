@@ -1,15 +1,15 @@
-# Ignore FontAwesome font files
+# Ignoruj czcionkę FontAwesome
 frontend/fonts
 
-#Ignore compiled SCSS files
+# Ignoruj skompilowane pliki SCSS
 frontend/css
 
-# Ignore compiled TS
+# Ignoruj skompilowane pliki TypeScript
 frontend/js/
 
-# Ignore node modules
+# Ignoruj moduły node.js
 node_modules/
 package-lock.json
 
-# Ignore test page
-backend/pages/_dev.php
+# Ignoruj plik z poświadczeniami
+backend/credentials.php
