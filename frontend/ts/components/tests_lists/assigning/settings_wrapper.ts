@@ -2,14 +2,18 @@ import Component from '../../basic/component';
 import NavigationPrevention from '../../../1page/navigation_prevention';
 import DateTimeInput from '../../basic/compat/datetimeinput';
 import HelpLink from '../../help_link';
+import Test from '../../../entities/test';
 
 export default class SettingsWrapper extends Component<'validationchanged'> {
+    protected SettingsDescription: HTMLParagraphElement;
     protected DeadlineInput: DateTimeInput;
     protected ShortDeadlineWarning: HTMLParagraphElement;
     protected DeadlineInPastError: HTMLParagraphElement;
     protected AttemptLimitFieldset: HTMLElement;
+    protected AttemptLimitDesciption: Text;
     protected AttemptsUnlimitedRadio: HTMLInputElement;
     protected AttemptsLimitedRadio: HTMLInputElement;
+    protected AttemptsLimitedLabel: HTMLLabelElement;
     protected AttemptsLimitedCountInput: HTMLInputElement;
     protected WrongAttemptLimitError: HTMLParagraphElement;
 
@@ -21,10 +25,9 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         this.Element = document.createElement('section');
         this.Element.classList.add('no-margin');
 
-        let description = document.createElement('p');
-        description.classList.add('secondary');
-        description.textContent = 'Ustaw termin na rozwiązanie testu oraz limit podejść';
-        this.AppendChild(description);
+        this.SettingsDescription = document.createElement('p');
+        this.SettingsDescription.classList.add('secondary');
+        this.AppendChild(this.SettingsDescription);
 
         let deadline_label = document.createElement('label');
         deadline_label.textContent = 'Termin: ';
@@ -52,7 +55,7 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         // Pola dotyczące limitu liczby podejść
         this.AttemptLimitFieldset = document.createElement('div');
         this.AttemptLimitFieldset.classList.add('fieldset');
-        this.AttemptLimitFieldset.appendChild(document.createTextNode('Maksymalna liczba podejść:'));
+        this.AttemptLimitFieldset.appendChild(this.AttemptLimitDesciption = document.createTextNode(''));
         this.AttemptLimitFieldset.appendChild(document.createElement('br'));
         this.AppendChild(this.AttemptLimitFieldset);
 
@@ -77,14 +80,13 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         this.AttemptsLimitedRadio.addEventListener('change', this.UpdateAttemptCountEnableState.bind(this));
         this.AttemptLimitFieldset.appendChild(this.AttemptsLimitedRadio);
 
-        let attempts_limited_label = document.createElement('label');
-        attempts_limited_label.htmlFor = 'attempts-limit-input';
-        attempts_limited_label.textContent = 'Maksymalnie tyle podejść: ';
-        this.AttemptLimitFieldset.appendChild(attempts_limited_label);
+        this.AttemptsLimitedLabel = document.createElement('label');
+        this.AttemptsLimitedLabel.htmlFor = 'attempts-limit-input';
+        this.AttemptLimitFieldset.appendChild(this.AttemptsLimitedLabel);
 
         this.AttemptsLimitedCountInput = document.createElement('input');
         this.AttemptsLimitedCountInput.type = 'number';
-        this.AttemptsLimitedCountInput.id = attempts_limited_label.htmlFor;
+        this.AttemptsLimitedCountInput.id = this.AttemptsLimitedLabel.htmlFor;
         this.AttemptsLimitedCountInput.step = '1';
         this.AttemptsLimitedCountInput.min = '1';
         this.AttemptsLimitedCountInput.addEventListener('change', this.StateChanged.bind(this));
@@ -92,8 +94,9 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
         this.WrongAttemptLimitError = document.createElement('p');
         this.WrongAttemptLimitError.classList.add('error-message', 'specific');
-        this.WrongAttemptLimitError.textContent = 'Limit ilości podejść musi być liczbą całkowitą większą od zera.';
         this.AppendChild(this.WrongAttemptLimitError);
+
+        this.DisplayAppropriateSettingsDescription(Test.TYPE_TEST);
     }
 
     Clear() {
@@ -124,6 +127,23 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
     GetDeadline() {
         return new Date(this.DeadlineInput.GetValue());
+    }
+
+    public DisplayAppropriateSettingsDescription(test_type: number) {
+        switch(test_type) {
+            case Test.TYPE_SURVEY:
+                this.SettingsDescription.textContent = 'Ustaw termin na wypełnienie ankiety oraz dopuszczalną ilość wypełnień przez jedną osobę.';
+                this.AttemptLimitDesciption.textContent = 'Maksymalna liczba wypełnień:';
+                this.AttemptsLimitedLabel.textContent = 'Maksymalnie tyle wypełnień: ';
+                this.WrongAttemptLimitError.textContent = 'Limit ilości wypełnień musi być liczbą całkowitą większą od zera.';
+                break;
+            default:
+                this.SettingsDescription.textContent = 'Ustaw termin na rozwiązanie testu oraz limit podejść.';
+                this.AttemptLimitDesciption.textContent = 'Maksymalna liczba podejść:';
+                this.AttemptsLimitedLabel.textContent = 'Maksymalnie tyle podejść: ';
+                this.WrongAttemptLimitError.textContent = 'Limit ilości podejść musi być liczbą całkowitą większą od zera.';
+                break;
+        }
     }
 
     protected UpdateAttemptCountEnableState() {

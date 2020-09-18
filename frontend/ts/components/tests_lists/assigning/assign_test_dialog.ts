@@ -71,12 +71,17 @@ export default class AssignTestDialog extends Dialog {
         this.SettingsWrapper.GetElement().style.display = 'none';
 
         if(existing_assignment === undefined) {
-            this.SetHeader('Przypisz: ' + test.Name);
+            if(test.Type == Test.TYPE_SURVEY) this.SetHeader('Udostępnij: ' + test.Name);
+            else this.SetHeader('Przypisz: ' + test.Name);
         } else {
-            this.SetHeader('Edytuj przypisanie: ' + test.Name);
+            if(test.Type == Test.TYPE_SURVEY) this.SetHeader('Udostępnij: ' + test.Name);
+            else this.SetHeader('Edytuj przypisanie: ' + test.Name);
             this.SettingsWrapper.SetAttemptLimit(existing_assignment.AttemptLimit);
             this.SettingsWrapper.SetDeadline(existing_assignment.Deadline);
         }
+
+        this.TargetsWrapper.DisplayAppropriateTargetsDescription(test.Type);
+        this.SettingsWrapper.DisplayAppropriateSettingsDescription(test.Type);
     }
 
     protected OnNextButtonClick() {

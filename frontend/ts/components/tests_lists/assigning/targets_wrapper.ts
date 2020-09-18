@@ -9,10 +9,12 @@ import NavigationPrevention from '../../../1page/navigation_prevention';
 import User from '../../../entities/user';
 import Group from '../../../entities/group';
 import { AssignmentTargets } from '../../../entities/assignment';
+import Test from '../../../entities/test';
 
 type TargetType = 'user' | 'group';
 
 export default class TargetsWrapper extends Component<'validationchanged'> {
+    protected TargetsDescription: HTMLParagraphElement;
     protected SearchField: HTMLInputElement;
     protected UsersTab: Tab;
     protected UsersTable: UsersTable;
@@ -29,10 +31,10 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.Element = document.createElement('section');
         this.Element.classList.add('no-margin');
 
-        let targets_description = document.createElement('p');
-        targets_description.classList.add('secondary');
-        targets_description.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
-        this.AppendChild(targets_description);
+        this.TargetsDescription = document.createElement('p');
+        this.TargetsDescription.classList.add('secondary');
+        this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+        this.AppendChild(this.TargetsDescription);
 
         let search_tabs = document.createElement('div');
         search_tabs.classList.add('search-and-tabs');
@@ -111,6 +113,17 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         targets = this.UsersTable.GetDeselected();
         targets = targets.concat(this.GroupsTable.GetDeselected());
         return targets;
+    }
+
+    public DisplayAppropriateTargetsDescription(test_type: number) {
+        switch(test_type) {
+            case Test.TYPE_SURVEY:
+                this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym ankieta ma zostać udostępniona.';
+                break;
+            default:
+                this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+                break;
+        }
     }
 
     protected Validate() {
