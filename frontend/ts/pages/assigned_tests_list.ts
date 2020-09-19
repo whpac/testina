@@ -4,6 +4,7 @@ import TestsSolvedTable from '../components/tests_lists/tests_solved_table';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import AllTestsSolved from '../components/tests_lists/empty_states/all_tests_solved';
 import NoTests from '../components/tests_lists/empty_states/no_tests';
+import Test from '../entities/test';
 
 export default class AssignedTestsListPage extends Page {
     ToSolveTable: TestsToSolveTable;
@@ -39,6 +40,7 @@ export default class AssignedTestsListPage extends Page {
             this.AllTestsSolved.GetElement().style.display = 'none';
             this.NoTests.GetElement().style.display = 'none';
             let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
+            assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_TEST);
             this.ToSolveTable.Populate(assignments);
             this.SolvedTable.Populate(assignments);
             if(this.ToSolveTable.RowCount == 0) {

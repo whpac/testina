@@ -7,6 +7,7 @@ import Attempt from '../entities/attempt';
 import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import TestSummary from '../components/solving/test_summary';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
+import Test from '../entities/test';
 
 export default class SolveTestPage extends Page {
     HeadingTestName: Text;
@@ -62,6 +63,8 @@ export default class SolveTestPage extends Page {
         if(params === undefined) throw 'Nie podano testu do rozwiązania';
         if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
         else this.Assignment = params as Assignment;
+
+        if(this.Assignment.Test.Type != Test.TYPE_TEST) throw 'Oczekiwano testu, a otrzymano coś innego';
 
         this.Invitation.GetElement().style.display = '';
         this.QuestionCard.GetElement().style.display = 'none';
