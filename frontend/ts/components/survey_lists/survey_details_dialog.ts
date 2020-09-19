@@ -76,12 +76,19 @@ export default class SurveyDetailsDialog extends Dialog {
         this.AddButton(btn_edit);
         btn_edit.classList.add('secondary');
         btn_edit.textContent = 'Edytuj';
-        btn_edit.addEventListener('click', (() => GoToPage('ankiety/edytuj', this.Survey)).bind(this));
+        btn_edit.addEventListener('click', (() => {
+            this.Hide();
+            GoToPage('ankiety/edytuj', this.Survey);
+        }).bind(this));
 
         let btn_results = document.createElement('button');
         this.AddButton(btn_results);
         btn_results.classList.add('secondary');
         btn_results.textContent = 'Wyniki';
+        btn_results.addEventListener('click', (() => {
+            this.Hide();
+            // GoToPage(..., this.Survey);
+        }).bind(this));
     }
 
     public async Populate(survey: Test) {
