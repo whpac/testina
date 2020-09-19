@@ -15,9 +15,10 @@ import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 
 type AssignmentTargetEntity = User | Group;
 export type AssignmentTargets = {
-    Groups: Group[],
-    Users: User[],
+    Groups: Group[];
+    Users: User[];
     AllUsers: User[];
+    LinkIds: string[];
 };
 
 export type AssignmentResult = {
