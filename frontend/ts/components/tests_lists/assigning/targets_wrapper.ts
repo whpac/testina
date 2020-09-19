@@ -22,7 +22,11 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     protected CurrentlyDisplayedTargetType!: TargetType;
     protected SelectedEntitiesCountText: HTMLElement;
     protected NothingSelectedError: HTMLParagraphElement;
+    protected ShareByLinkWrapper: HTMLElement;
+    protected ShareByLinkCheckbox: HTMLInputElement;
+    protected LinkPresenterElement: HTMLInputElement;
 
+    protected TestType: number = Test.TYPE_TEST;
     public IsValid: boolean = true;
 
     constructor() {
@@ -77,6 +81,32 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.NothingSelectedError.classList.add('error-message', 'specific');
         this.NothingSelectedError.textContent = 'Nie wybrano żadnej osoby ani grupy.';
         this.AppendChild(this.NothingSelectedError);
+
+        this.ShareByLinkWrapper = document.createElement('div');
+        this.AppendChild(this.ShareByLinkWrapper);
+
+        let share_by_link_description = document.createElement('p');
+        this.ShareByLinkWrapper.appendChild(share_by_link_description);
+        share_by_link_description.classList.add('secondary');
+        share_by_link_description.textContent = 'Możesz także udostępnić tę ankietę wszystkim, którym przekażesz link do niej.';
+
+        this.ShareByLinkCheckbox = document.createElement('input');
+        this.ShareByLinkCheckbox.type = 'checkbox';
+        this.ShareByLinkCheckbox.id = 'share-by-link';
+        this.ShareByLinkCheckbox.addEventListener('change', this.ChangeSurveyLinkVisibility.bind(this));
+        this.ShareByLinkWrapper.appendChild(this.ShareByLinkCheckbox);
+
+        let share_by_link_label = document.createElement('label');
+        this.ShareByLinkWrapper.appendChild(share_by_link_label);
+        share_by_link_label.htmlFor = this.ShareByLinkCheckbox.id;
+        share_by_link_label.appendChild(document.createTextNode(' Udostępnij wszystkim, którzy dostaną link'));
+
+        this.LinkPresenterElement = document.createElement('input');
+        this.ShareByLinkWrapper.appendChild(this.LinkPresenterElement);
+        this.LinkPresenterElement.classList.add('link-presenter-input');
+        this.LinkPresenterElement.readOnly = true;
+        this.LinkPresenterElement.type = 'text';
+        this.LinkPresenterElement.value = 'Generowanie linku... Proszę czekać...';
     }
 
     async Populate(preselected_targets?: AssignmentTargets) {
@@ -99,6 +129,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.Validate();
 
         this.FilterTable();
+        this.ChangeSurveyLinkVisibility();
     }
 
     GetSelectedTargets() {
@@ -116,12 +147,16 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     }
 
     public DisplayAppropriateTargetsDescription(test_type: number) {
+        this.TestType = test_type;
+        this.Validate();
         switch(test_type) {
             case Test.TYPE_SURVEY:
                 this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym ankieta ma zostać udostępniona.';
+                this.ShareByLinkWrapper.style.display = '';
                 break;
             default:
                 this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+                this.ShareByLinkWrapper.style.display = 'none';
                 break;
         }
     }
@@ -130,9 +165,17 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         let old_validity = this.IsValid;
         this.IsValid = true;
 
-        let is_anything_selected = this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
-        this.NothingSelectedError.style.display = is_anything_selected ? 'none' : '';
-        if(!is_anything_selected) this.IsValid = false;
+        switch(this.TestType) {
+            case Test.TYPE_SURVEY:
+                this.IsValid = true;
+                this.NothingSelectedError.style.display = 'none';
+                break;
+            default:
+                let is_anyone_selected = this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
+                this.NothingSelectedError.style.display = is_anyone_selected ? 'none' : '';
+                if(!is_anyone_selected) this.IsValid = false;
+                break;
+        }
 
         if(this.IsValid != old_validity) this.FireEvent('validationchanged');
     }
@@ -188,5 +231,9 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         } else {
             this.SelectedEntitiesCountText.textContent = '';
         }
+    }
+
+    protected ChangeSurveyLinkVisibility() {
+        this.LinkPresenterElement.style.display = this.ShareByLinkCheckbox.checked ? '' : 'none';
     }
 }
