@@ -33,8 +33,46 @@ export default class SurveyDetailsDialog extends Dialog {
         this.SurveyFillsCountElement = row[2].insertCell(-1);
 
         row[3] = content_table.insertRow(-1);
+        row[3].style.display = 'none';
         this.SeeShareesElement = row[3].insertCell(-1);
         this.SeeShareesElement.colSpan = 2;
+
+        row[4] = content_table.insertRow(-1);
+        let share_cell = row[4].insertCell(-1);
+        share_cell.colSpan = 2;
+
+        let share_heading = document.createElement('span');
+        share_heading.classList.add('inline-header');
+        share_heading.textContent = 'Udostępnij';
+        share_cell.appendChild(share_heading);
+
+        let share_element = document.createElement('div');
+        share_element.style.textAlign = 'left';
+        share_cell.appendChild(share_element);
+
+        let share_to_users_wrapper = document.createElement('div');
+        share_element.appendChild(share_to_users_wrapper);
+
+        let share_to_users_checkbox = document.createElement('input');
+        share_to_users_checkbox.type = 'checkbox';
+
+        let share_to_users_label = document.createElement('label');
+        share_to_users_wrapper.appendChild(share_to_users_label);
+        share_to_users_label.appendChild(share_to_users_checkbox);
+        share_to_users_label.classList.add('secondary', 'with-checkbox');
+        share_to_users_label.appendChild(document.createTextNode(' Udostępnij wybranym osobom'));
+
+        let share_by_link_wrapper = document.createElement('div');
+        share_element.appendChild(share_by_link_wrapper);
+
+        let share_by_link_checkbox = document.createElement('input');
+        share_by_link_checkbox.type = 'checkbox';
+
+        let share_by_link_label = document.createElement('label');
+        share_by_link_wrapper.appendChild(share_by_link_label);
+        share_by_link_label.appendChild(share_by_link_checkbox);
+        share_by_link_label.classList.add('secondary', 'with-checkbox');
+        share_by_link_label.appendChild(document.createTextNode(' Udostępnij wszystkim, którzy dostaną link'));
 
         this.AddContent(content_table);
 
