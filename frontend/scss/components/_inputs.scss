@@ -61,3 +61,9 @@ input.deleted {opacity:0.5; text-decoration:line-through;}
 }
 
 select.hide-arrow {-webkit-appearance:none; -moz-appearance:none; appearance:none;}
+
+label.with-checkbox {
+    padding-left:20px; display:block;
+
+    input[type=radio], input[type=checkbox] {margin-left:-20px;}
+}
