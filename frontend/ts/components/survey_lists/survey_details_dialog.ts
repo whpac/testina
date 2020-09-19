@@ -8,7 +8,9 @@ import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 export default class SurveyDetailsDialog extends Dialog {
     protected SurveyCreationDateElement: HTMLTableDataCellElement;
     protected SurveyFillsCountElement: HTMLTableDataCellElement;
-    protected SeeShareesElement: HTMLTableDataCellElement;
+    protected ShareStatusElement: HTMLElement;
+    protected LinkPresenterElement: HTMLInputElement;
+    protected ShareLink: HTMLAnchorElement;
 
     protected Survey: Test | undefined;
     protected Assignments: Assignment[] | undefined;
@@ -33,46 +35,35 @@ export default class SurveyDetailsDialog extends Dialog {
         this.SurveyFillsCountElement = row[2].insertCell(-1);
 
         row[3] = content_table.insertRow(-1);
-        row[3].style.display = 'none';
-        this.SeeShareesElement = row[3].insertCell(-1);
-        this.SeeShareesElement.colSpan = 2;
-
-        row[4] = content_table.insertRow(-1);
-        let share_cell = row[4].insertCell(-1);
+        let share_cell = row[3].insertCell(-1);
         share_cell.colSpan = 2;
 
         let share_heading = document.createElement('span');
         share_heading.classList.add('inline-header');
-        share_heading.textContent = 'Udostępnij';
+        share_heading.textContent = 'Udostępnianie';
         share_cell.appendChild(share_heading);
 
         let share_element = document.createElement('div');
-        share_element.style.textAlign = 'left';
         share_cell.appendChild(share_element);
 
-        let share_to_users_wrapper = document.createElement('div');
-        share_element.appendChild(share_to_users_wrapper);
+        this.ShareStatusElement = document.createElement('p');
+        share_element.appendChild(this.ShareStatusElement);
+        this.ShareStatusElement.classList.add('small-margin', 'secondary');
+        this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
 
-        let share_to_users_checkbox = document.createElement('input');
-        share_to_users_checkbox.type = 'checkbox';
+        this.LinkPresenterElement = document.createElement('input');
+        share_element.appendChild(this.LinkPresenterElement);
+        this.LinkPresenterElement.classList.add('link-presenter-input');
+        this.LinkPresenterElement.readOnly = true;
+        this.LinkPresenterElement.type = 'text';
+        this.LinkPresenterElement.value = 'http://localhost/p';
+        this.LinkPresenterElement.style.display = 'none';
 
-        let share_to_users_label = document.createElement('label');
-        share_to_users_wrapper.appendChild(share_to_users_label);
-        share_to_users_label.appendChild(share_to_users_checkbox);
-        share_to_users_label.classList.add('secondary', 'with-checkbox');
-        share_to_users_label.appendChild(document.createTextNode(' Udostępnij wybranym osobom'));
-
-        let share_by_link_wrapper = document.createElement('div');
-        share_element.appendChild(share_by_link_wrapper);
-
-        let share_by_link_checkbox = document.createElement('input');
-        share_by_link_checkbox.type = 'checkbox';
-
-        let share_by_link_label = document.createElement('label');
-        share_by_link_wrapper.appendChild(share_by_link_label);
-        share_by_link_label.appendChild(share_by_link_checkbox);
-        share_by_link_label.classList.add('secondary', 'with-checkbox');
-        share_by_link_label.appendChild(document.createTextNode(' Udostępnij wszystkim, którzy dostaną link'));
+        this.ShareLink = document.createElement('a');
+        share_element.appendChild(this.ShareLink);
+        this.ShareLink.href = 'javascript:void(0)';
+        this.ShareLink.textContent = 'Zarządzaj...';
+        this.ShareLink.addEventListener('click', this.DisplayAssignDialog.bind(this));
 
         this.AddContent(content_table);
 
@@ -98,26 +89,14 @@ export default class SurveyDetailsDialog extends Dialog {
         this.SetHeader(survey.Name);
 
         this.SurveyCreationDateElement.textContent = ToMediumFormat(survey.CreationDate, true);
-        this.SeeShareesElement.textContent = '';
 
         this.Assignments = await this.Survey.GetAssignments();
 
         if(this.Assignments.length > 0) {
-            let see_sharees = document.createElement('a');
-            see_sharees.textContent = 'Ankieta została udostępniona';
-            see_sharees.href = 'javascript:void(0)';
-            see_sharees.addEventListener('click', this.DisplayAssignDialog.bind(this));
-            this.SeeShareesElement.appendChild(see_sharees);
-            this.SeeShareesElement.classList.remove('secondary');
+            this.ShareStatusElement.textContent = 'Ankieta została udostępniona (komu?)';
         } else {
-            this.SeeShareesElement.appendChild(document.createTextNode('Ankieta jeszcze nie została udostępniona. '));
-
-            let share = document.createElement('a');
-            share.textContent = 'Udostępnij';
-            share.href = 'javascript:void(0)';
-            share.addEventListener('click', this.DisplayAssignDialog.bind(this));
-            this.SeeShareesElement.appendChild(share);
-            this.SeeShareesElement.classList.add('secondary');
+            this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
+            this.ShareLink.textContent = 'Udostępnij...';
         }
     }
 
@@ -131,7 +110,6 @@ export default class SurveyDetailsDialog extends Dialog {
             let assignment = this.Assignments[0];
             assign_dialog.Populate(this.Survey, await assignment.GetTargets(), assignment);
         }
-        this.Hide();
         assign_dialog.Show();
     }
 }
