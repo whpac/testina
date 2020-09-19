@@ -1,7 +1,8 @@
 import { GoToPage } from '../../1page/page_manager';
-import Assignment from '../../entities/assignment';
+import Assignment, { AssignmentTargets } from '../../entities/assignment';
 import Test from '../../entities/test';
 import { ToMediumFormat } from '../../utils/dateutils';
+import { n } from '../../utils/textutils';
 import Dialog from '../basic/dialog';
 import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 
@@ -48,8 +49,8 @@ export default class SurveyDetailsDialog extends Dialog {
 
         this.ShareStatusElement = document.createElement('p');
         share_element.appendChild(this.ShareStatusElement);
-        this.ShareStatusElement.classList.add('small-margin', 'secondary');
-        this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
+        this.ShareStatusElement.classList.add('small-margin', 'secondary', 'center');
+        this.ShareStatusElement.textContent = 'Wczytywanie danych...';
 
         this.LinkPresenterElement = document.createElement('input');
         share_element.appendChild(this.LinkPresenterElement);
@@ -100,11 +101,58 @@ export default class SurveyDetailsDialog extends Dialog {
         this.Assignments = await this.Survey.GetAssignments();
 
         if(this.Assignments.length > 0) {
-            this.ShareStatusElement.textContent = 'Ankieta została udostępniona (komu?)';
+            this.ShareStatusElement.textContent = 'Ankieta została udostępniona';
+            let assignment_targets = await this.Assignments[0].GetTargets();
+            this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
+            this.LinkPresenterElement.style.display = assignment_targets.LinkIds.length > 0 ? '' : 'none';
         } else {
             this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
             this.ShareLink.textContent = 'Udostępnij...';
+            this.LinkPresenterElement.style.display = 'none';
         }
+    }
+
+    protected MakeTargetsText(targets: AssignmentTargets) {
+        let groups_count = targets.Groups.length;
+        let users_count = targets.Users.length;
+        let links_count = targets.LinkIds.length;
+
+        if(users_count == 1 && groups_count == 0) {
+            return targets.Users[0].GetFullName();
+        }
+        if(users_count == 0 && groups_count == 1) {
+            return targets.Groups[0].Name;
+        }
+
+        let targets_parts = [];
+        if(groups_count > 0) {
+            targets_parts.push(groups_count.toString() + '\xa0grup' + n(groups_count, 'ie', 'om'));
+        }
+        if(users_count > 0) {
+            targets_parts.push(users_count.toString() + '\xa0osob' + n(users_count, 'ie', 'om'));
+        }
+        if(links_count > 0) {
+            targets_parts.push('tym,\xa0którzy dostali\xa0link');
+        }
+
+        if(targets_parts.length == 0) return 'nikomu';
+
+        let targets_text = '';
+        for(let i = 0; i < targets_parts.length; i++) {
+            targets_text += targets_parts[i];
+            switch(targets_parts.length - i) {
+                case 1:
+                    break;
+                case 2:
+                    targets_text += ' i\xa0';
+                    break;
+                default:
+                    targets_text += ', ';
+                    break;
+            }
+        }
+
+        return targets_text;
     }
 
     protected async DisplayAssignDialog() {
