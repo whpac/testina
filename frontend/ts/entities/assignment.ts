@@ -222,7 +222,7 @@ export default class Assignment extends Entity implements PageParams {
         this.FireEvent('change');
     }
 
-    async AddTargets(targets: AssignmentTargetEntity[]) {
+    async AddTargets(targets: AssignmentTargetEntity[], fire_event: boolean = true) {
         let payload_targets: { type: number, id: number; }[] = [];
 
         for(let target of targets) {
@@ -253,10 +253,10 @@ export default class Assignment extends Entity implements PageParams {
 
         this._Targets = undefined;
         this.TargetsLoader.SaveDescriptor(undefined);
-        this.FireEvent('change');
+        if(fire_event) this.FireEvent('change');
     }
 
-    async RemoveTargets(targets: AssignmentTargetEntity[]) {
+    async RemoveTargets(targets: AssignmentTargetEntity[], fire_event: boolean = true) {
         let payload_targets: { type: number, id: number; }[] = [];
 
         for(let target of targets) {
@@ -289,6 +289,6 @@ export default class Assignment extends Entity implements PageParams {
 
         this._Targets = undefined;
         this.TargetsLoader.SaveDescriptor(undefined);
-        this.FireEvent('change');
+        if(fire_event) this.FireEvent('change');
     }
 }

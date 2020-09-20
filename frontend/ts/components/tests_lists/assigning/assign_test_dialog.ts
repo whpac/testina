@@ -137,8 +137,8 @@ export default class AssignTestDialog extends Dialog {
                 assignment = this.ExistingAssignment;
                 await assignment.Update(attempt_limit, deadline);
             }
+            await assignment.RemoveTargets(deselected_targets, false);
             await assignment.AddTargets(selected_targets);
-            await assignment.RemoveTargets(deselected_targets);
             this.Hide();
 
             let test_words = ['Test', '', 'przypisany'];
