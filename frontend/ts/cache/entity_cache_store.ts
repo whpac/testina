@@ -1,3 +1,4 @@
+import { StripQueryAndFragment } from '../utils/urlutils';
 import CacheStore from './cache_store';
 
 export default class EntityCacheStore implements CacheStore {
@@ -42,6 +43,23 @@ export default class EntityCacheStore implements CacheStore {
             return undefined;
         }
         return this.Cache.put(request, response);
+    }
+
+    public async InvalidateUrl(url: string, applies_to_children: boolean): Promise<void> {
+        // Zasoby są unieważniane, bez względu, jakie parametry przekazano
+        url = StripQueryAndFragment(url);
+
+        let cache_keys = await this.Cache.keys();
+        let awaiters = [];
+
+        for(let key of cache_keys) {
+            let cached_url = StripQueryAndFragment(key.url);
+            if(cached_url == url) awaiters.push(this.Cache.delete(key));
+            else if(cached_url.startsWith(url) && applies_to_children) awaiters.push(this.Cache.delete(key));
+        }
+        for(let awaiter of awaiters) {
+            await awaiter;
+        }
     }
 
     /**

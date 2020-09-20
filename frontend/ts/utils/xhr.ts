@@ -38,6 +38,11 @@ export function PerformRequest(url: string, method?: string, request_data?: any,
             }
         }
 
+        if(method != 'GET') {
+            let cache = await CacheManager.Open(CacheStorages.Entities);
+            await cache.InvalidateUrl(url, method == 'DELETE');
+        }
+
         let xhr = new XMLHttpRequest();
         xhr.open(method, url, true);
         xhr.setRequestHeader('Accept', 'application/json');

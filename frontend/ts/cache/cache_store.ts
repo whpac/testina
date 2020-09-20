@@ -14,6 +14,13 @@ export default interface CacheStore {
     SaveResponse(request: Request, response: Response): Promise<void>;
 
     /**
+     * Unieważnia zasoby pod podanym adresem URL
+     * @param url Adres do unieważnienia
+     * @param applies_to_children Czy unieważnić też zasoby potomne
+     */
+    InvalidateUrl(url: string, applies_to_children: boolean): Promise<void>;
+
+    /**
      * Czyści magazyn plików podręcznych
      */
     Purge(): Promise<void>;
