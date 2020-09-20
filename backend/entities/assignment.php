@@ -192,6 +192,10 @@ class Assignment extends Entity {
     }
 
     public /* void */ function AddTarget($target_type, $target_id){
+        if($target_type == self::TARGET_TYPE_LINK){
+            $target_id = self::GenerateLinkId();
+        }
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENT_TARGETS)
                 ->Insert()
@@ -304,6 +308,27 @@ class Assignment extends Entity {
         }
 
         return $assignments;
+    }
+
+    protected static function GenerateLinkId(){
+        $is_unique = false;
+        $number = 0;
+
+        while(!$is_unique){
+            // Wylosuj identyfikator z zakresu 1e9 - 2e9
+            $number = random_int(1000000000, 2000000000);
+    
+            $result = DatabaseManager::GetProvider()
+                    ->Table(TABLE_ASSIGNMENT_TARGETS)
+                    ->Select()
+                    ->Where('target_type', '=', self::TARGET_TYPE_LINK)
+                    ->AndWhere('target_id', '=', $number)
+                    ->Run();
+
+            $is_unique = $result->num_rows == 0;
+        }
+
+        return $number;
     }
 }
 ?>
