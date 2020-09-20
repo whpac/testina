@@ -9,7 +9,7 @@ export default class SurveysPage extends Page {
         super();
 
         let heading = document.createElement('h1');
-        heading.textContent = 'Twoje ankiety';
+        heading.textContent = 'Ankiety';
         this.Element.appendChild(heading);
 
         this.SurveyListCard = new SurveyListCard();
@@ -32,6 +32,6 @@ export default class SurveysPage extends Page {
     }
 
     GetTitle() {
-        return 'Twoje ankiety';
+        return 'Ankiety';
     }
 }
