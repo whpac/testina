@@ -18,6 +18,7 @@ class Assignment extends Entity {
 
     const TARGET_TYPE_USER = 0;
     const TARGET_TYPE_GROUP = 1;
+    const TARGET_TYPE_LINK = 2;
 
     protected static /* string */ function GetTableName(){
         return TABLE_ASSIGNMENTS;
@@ -122,6 +123,9 @@ class Assignment extends Entity {
                 break;
                 case self::TARGET_TYPE_GROUP:
                     $targets[] = new Group($target[0]);
+                break;
+                case self::TARGET_TYPE_LINK:
+                    $targets[] = $target[0];
                 break;
             }
         }
