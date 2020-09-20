@@ -73,7 +73,7 @@ export default class AssignmentTargetsLoader {
             Groups: await group_awaiter,
             Users: await user_awaiter,
             AllUsers: await all_user_awaiter,
-            LinkIds: []
+            LinkIds: targets_descriptor.link_ids
         };
     }
 }

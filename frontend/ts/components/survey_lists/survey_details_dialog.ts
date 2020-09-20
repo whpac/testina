@@ -12,6 +12,7 @@ export default class SurveyDetailsDialog extends Dialog {
     protected ShareStatusElement: HTMLElement;
     protected LinkPresenterElement: HTMLInputElement;
     protected ShareLink: HTMLAnchorElement;
+    protected readonly LinkBeginning: string = 'http://localhost/p/ankiety/wypełnij/';
 
     protected Survey: Test | undefined;
     protected Assignments: Assignment[] | undefined;
@@ -57,7 +58,7 @@ export default class SurveyDetailsDialog extends Dialog {
         this.LinkPresenterElement.classList.add('link-presenter-input');
         this.LinkPresenterElement.readOnly = true;
         this.LinkPresenterElement.type = 'text';
-        this.LinkPresenterElement.value = 'http://localhost/p';
+        this.LinkPresenterElement.value = 'Wczytywanie linku...';
         this.LinkPresenterElement.style.display = 'none';
 
         this.ShareLink = document.createElement('a');
@@ -104,11 +105,18 @@ export default class SurveyDetailsDialog extends Dialog {
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona';
             let assignment_targets = await this.Assignments[0].GetTargets();
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
-            this.LinkPresenterElement.style.display = assignment_targets.LinkIds.length > 0 ? '' : 'none';
+            if(assignment_targets.LinkIds.length > 0) {
+                this.LinkPresenterElement.style.display = '';
+                this.LinkPresenterElement.value = this.LinkBeginning + assignment_targets.LinkIds[0];
+            } else {
+                this.LinkPresenterElement.style.display = 'none';
+                this.LinkPresenterElement.nodeValue = 'Wczytywanie linku...';
+            }
         } else {
             this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
             this.ShareLink.textContent = 'Udostępnij...';
             this.LinkPresenterElement.style.display = 'none';
+            this.LinkPresenterElement.value = 'Wczytywanie linku...';
         }
     }
 
