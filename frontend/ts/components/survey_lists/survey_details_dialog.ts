@@ -96,22 +96,21 @@ export default class SurveyDetailsDialog extends Dialog {
     public async Populate(survey: Test) {
         this.Survey = survey;
         this.SetHeader(survey.Name);
+        survey.AddEventListener('change', (() => this.PopulateValues(survey)).bind(this));
 
+        this.PopulateValues(survey);
+    }
+
+    protected async PopulateValues(survey: Test) {
         this.SurveyCreationDateElement.textContent = ToMediumFormat(survey.CreationDate, true);
 
-        this.Assignments = await this.Survey.GetAssignments();
+        this.Assignments = await survey.GetAssignments();
 
         if(this.Assignments.length > 0) {
+            let assignment = this.Assignments[0];
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona';
-            let assignment_targets = await this.Assignments[0].GetTargets();
-            this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
-            if(assignment_targets.LinkIds.length > 0) {
-                this.LinkPresenterElement.style.display = '';
-                this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + assignment_targets.LinkIds[0];
-            } else {
-                this.LinkPresenterElement.style.display = 'none';
-                this.LinkPresenterElement.nodeValue = 'Wczytywanie linku...';
-            }
+            this.FillSharingField(assignment);
+            assignment.AddEventListener('change', (() => this.FillSharingField(assignment)).bind(this));
         } else {
             this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
             this.ShareLink.textContent = 'Udostępnij...';
@@ -120,24 +119,39 @@ export default class SurveyDetailsDialog extends Dialog {
         }
     }
 
+    protected async FillSharingField(assignment: Assignment) {
+        if(assignment === undefined) return;
+
+        let assignment_targets = await assignment.GetTargets();
+        this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
+        if(assignment_targets.LinkIds.length > 0) {
+            this.LinkPresenterElement.style.display = '';
+            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + assignment_targets.LinkIds[0];
+        } else {
+            this.LinkPresenterElement.style.display = 'none';
+            this.LinkPresenterElement.nodeValue = 'Wczytywanie linku...';
+        }
+    }
+
     protected MakeTargetsText(targets: AssignmentTargets) {
         let groups_count = targets.Groups.length;
         let users_count = targets.Users.length;
         let links_count = targets.LinkIds.length;
 
-        if(users_count == 1 && groups_count == 0) {
-            return targets.Users[0].GetFullName();
-        }
-        if(users_count == 0 && groups_count == 1) {
-            return targets.Groups[0].Name;
-        }
-
         let targets_parts = [];
         if(groups_count > 0) {
-            targets_parts.push(groups_count.toString() + '\xa0grup' + n(groups_count, 'ie', 'om'));
+            if(groups_count == 1) {
+                targets_parts.push(targets.Groups[0].Name);
+            } else {
+                targets_parts.push(groups_count.toString() + '\xa0grup' + n(groups_count, 'ie', 'om'));
+            }
         }
         if(users_count > 0) {
-            targets_parts.push(users_count.toString() + '\xa0osob' + n(users_count, 'ie', 'om'));
+            if(users_count == 1) {
+                targets_parts.push(targets.Users[0].GetFullName());
+            } else {
+                targets_parts.push(users_count.toString() + '\xa0osob' + n(users_count, 'ie', 'om'));
+            }
         }
         if(links_count > 0) {
             targets_parts.push('tym,\xa0którzy dostali\xa0link');

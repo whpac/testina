@@ -130,12 +130,19 @@ export default class Test extends Entity implements PageParams {
     }
 
     protected _Assignments: Assignment[] | undefined;
-    /** Zwraca pytania do tego testu */
+    /** Zwraca przypisania do tego testu */
     public async GetAssignments() {
         if(this._Assignments === undefined) {
             this._Assignments = await this.AssignmentLoader();
         }
         return this._Assignments;
+    }
+
+    /** Dodaje przypisanie do testu, lokalnie */
+    public AddAssignment(assignment: Assignment) {
+        if(this._Assignments === undefined) this._Assignments = [];
+        this._Assignments.push(assignment);
+        this.FireEvent('change');
     }
 
     /** Czy test ma limit czasu na rozwiązanie */

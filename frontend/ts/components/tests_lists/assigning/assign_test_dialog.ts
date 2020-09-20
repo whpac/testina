@@ -124,7 +124,10 @@ export default class AssignTestDialog extends Dialog {
         let attempt_limit = this.SettingsWrapper.GetAttemptLimit();
         let deadline = this.SettingsWrapper.GetDeadline();
 
-        let assigning_toast = new Toast('Przypisywanie testu „' + this.Test.Name + '”...');
+        let test_words = ['Przypisywanie', 'przypisać', 'testu'];
+        if(this.Test.Type == Test.TYPE_SURVEY) test_words = ['Udostępnianie', 'udostępnić', 'ankiety'];
+
+        let assigning_toast = new Toast(test_words[0] + ' ' + test_words[2] + ' „' + this.Test.Name + '”...');
         try {
             assigning_toast.Show();
             let assignment;
@@ -137,9 +140,13 @@ export default class AssignTestDialog extends Dialog {
             await assignment.AddTargets(selected_targets);
             await assignment.RemoveTargets(deselected_targets);
             this.Hide();
-            new Toast('Test „' + this.Test.Name + '” został przypisany.').Show(0);
+
+            let test_words = ['Test', '', 'przypisany'];
+            if(this.Test.Type == Test.TYPE_SURVEY) test_words = ['Ankieta', 'a', 'udostępniona'];
+
+            new Toast(test_words[0] + ' „' + this.Test.Name + '” został' + test_words[1] + ' ' + test_words[2] + '.').Show(0);
         } catch(e) {
-            new Toast('Nie udało się przypisać testu').Show(0);
+            new Toast('Nie udało się ' + test_words[0] + ' ' + test_words[1] + '.').Show(0);
         } finally {
             assigning_toast.Hide();
         }

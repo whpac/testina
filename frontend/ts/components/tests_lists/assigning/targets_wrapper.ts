@@ -28,6 +28,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     protected LinkPresenterElement: HTMLInputElement;
 
     protected TestType: number = Test.TYPE_TEST;
+    protected WasShareByLinkOriginallySelected: boolean = false;
     public IsValid: boolean = true;
 
     constructor() {
@@ -127,9 +128,11 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
         if((preselected_targets?.LinkIds ?? []).length > 0) {
             this.ShareByLinkCheckbox.checked = true;
+            this.WasShareByLinkOriginallySelected = true;
             this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
         } else {
             this.ShareByLinkCheckbox.checked = false;
+            this.WasShareByLinkOriginallySelected = false;
             this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
         }
 
@@ -141,16 +144,22 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     }
 
     GetSelectedTargets() {
-        let targets: (User | Group)[] = [];
+        let targets: (User | Group | string)[] = [];
         targets = this.UsersTable.GetSelected();
         targets = targets.concat(this.GroupsTable.GetSelected());
+
+        if(!this.WasShareByLinkOriginallySelected && this.ShareByLinkCheckbox.checked) targets = targets.concat(['link']);
+
         return targets;
     }
 
     GetDeselectedTargets() {
-        let targets: (User | Group)[] = [];
+        let targets: (User | Group | string)[] = [];
         targets = this.UsersTable.GetDeselected();
         targets = targets.concat(this.GroupsTable.GetDeselected());
+
+        if(this.WasShareByLinkOriginallySelected && !this.ShareByLinkCheckbox.checked) targets = targets.concat(['link']);
+
         return targets;
     }
 

@@ -13,7 +13,7 @@ import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 
-type AssignmentTargetEntity = User | Group;
+type AssignmentTargetEntity = User | Group | string;
 export type AssignmentTargets = {
     Groups: Group[];
     Users: User[];
@@ -200,7 +200,9 @@ export default class Assignment extends Entity implements PageParams {
 
         if(result.Status != 201) throw result;
 
-        return AssignmentLoader.LoadById(parseInt(result.ContentLocation));
+        let assignment = await AssignmentLoader.LoadById(parseInt(result.ContentLocation));
+        test.AddAssignment(assignment);
+        return assignment;
     }
 
     async Update(attempt_limit: number, deadline: Date) {
@@ -224,13 +226,20 @@ export default class Assignment extends Entity implements PageParams {
         let payload_targets: { type: number, id: number; }[] = [];
 
         for(let target of targets) {
-            let type = 0;
+            let type = -1;
+            let id = 0;
             if(target instanceof User) type = 0;
             if(target instanceof Group) type = 1;
 
+            if(typeof target == 'string') {
+                type = 2;
+            } else {
+                id = target.Id;
+            }
+
             payload_targets.push({
                 type: type,
-                id: target.Id
+                id: id
             });
         }
 
@@ -251,13 +260,22 @@ export default class Assignment extends Entity implements PageParams {
         let payload_targets: { type: number, id: number; }[] = [];
 
         for(let target of targets) {
-            let type = 0;
+            let type = -1;
+            let id = 0;
             if(target instanceof User) type = 0;
             if(target instanceof Group) type = 1;
 
+            if(typeof target == 'string') {
+                type = 2;
+                id = parseInt(target);
+                if(isNaN(id)) id = 0;
+            } else {
+                id = target.Id;
+            }
+
             payload_targets.push({
                 type: type,
-                id: target.Id
+                id: id
             });
         }
 
