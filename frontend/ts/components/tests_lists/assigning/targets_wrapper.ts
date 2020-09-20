@@ -10,6 +10,7 @@ import User from '../../../entities/user';
 import Group from '../../../entities/group';
 import { AssignmentTargets } from '../../../entities/assignment';
 import Test from '../../../entities/test';
+import ApiEndpoints from '../../../entities/loaders/apiendpoints';
 
 type TargetType = 'user' | 'group';
 
@@ -106,7 +107,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.LinkPresenterElement.classList.add('link-presenter-input');
         this.LinkPresenterElement.readOnly = true;
         this.LinkPresenterElement.type = 'text';
-        this.LinkPresenterElement.value = 'Generowanie linku... Proszę czekać...';
+        this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
     }
 
     async Populate(preselected_targets?: AssignmentTargets) {
@@ -124,6 +125,13 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
         this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
+        if((preselected_targets?.LinkIds ?? []).length > 0) {
+            this.ShareByLinkCheckbox.checked = true;
+            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
+        } else {
+            this.ShareByLinkCheckbox.checked = false;
+            this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
+        }
 
         this.PrintNumberOfSelectedEntities();
         this.Validate();
