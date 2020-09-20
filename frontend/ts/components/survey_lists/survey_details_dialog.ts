@@ -1,5 +1,6 @@
 import { GoToPage } from '../../1page/page_manager';
 import Assignment, { AssignmentTargets } from '../../entities/assignment';
+import ApiEndpoints from '../../entities/loaders/apiendpoints';
 import Test from '../../entities/test';
 import { ToMediumFormat } from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
@@ -12,7 +13,6 @@ export default class SurveyDetailsDialog extends Dialog {
     protected ShareStatusElement: HTMLElement;
     protected LinkPresenterElement: HTMLInputElement;
     protected ShareLink: HTMLAnchorElement;
-    protected readonly LinkBeginning: string = 'http://localhost/p/ankiety/wypełnij/';
 
     protected Survey: Test | undefined;
     protected Assignments: Assignment[] | undefined;
@@ -107,7 +107,7 @@ export default class SurveyDetailsDialog extends Dialog {
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
             if(assignment_targets.LinkIds.length > 0) {
                 this.LinkPresenterElement.style.display = '';
-                this.LinkPresenterElement.value = this.LinkBeginning + assignment_targets.LinkIds[0];
+                this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + assignment_targets.LinkIds[0];
             } else {
                 this.LinkPresenterElement.style.display = 'none';
                 this.LinkPresenterElement.nodeValue = 'Wczytywanie linku...';
