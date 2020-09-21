@@ -16,7 +16,7 @@ export default class AssignedSurveysCard extends Card {
         let description = document.createElement('p');
         this.AppendChild(description);
         description.classList.add('secondary');
-        description.textContent = 'Tutaj przedstawione są wszystkie ankiety, które Tobie udostępniono.';
+        description.textContent = 'Tutaj przedstawione są wszystkie ankiety, które udostępniono Ci do wypełnienia.';
 
         this.AssignedSurveysTable = new AssignedSurveysTable();
         this.AppendChild(this.AssignedSurveysTable);
