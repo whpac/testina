@@ -6,7 +6,7 @@ export default class SurveyListCard extends Card {
     protected SurveyTable: SurveyTable;
 
     public constructor() {
-        super();
+        super('semi-wide');
 
         let heading = document.createElement('h2');
         this.AppendChild(heading);
