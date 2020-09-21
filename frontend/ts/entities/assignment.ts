@@ -177,7 +177,19 @@ export default class Assignment extends Entity implements PageParams {
      */
     async CountUsersAttempts(user: User): Promise<number> {
         let results = await this.GetResults();
-        return results[user.Id].AttemptCount;
+        return results[user.Id]?.AttemptCount ?? 0;
+    }
+
+    /**
+     * Zwraca całkowitą ilość podejść, wykonanych przez wszystkich użytkowników
+     */
+    async CountAllAttempts(): Promise<number> {
+        let results = await this.GetResults();
+        let total_attempts = 0;
+        for(let user_id in results) {
+            total_attempts += results[user_id].AttemptCount;
+        }
+        return total_attempts;
     }
 
     GetSimpleRepresentation() {
