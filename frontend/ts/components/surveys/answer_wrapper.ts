@@ -34,8 +34,9 @@ export default class AnswerWrapper extends Component {
     public async Populate(question: Question | undefined) {
         this.Question = question;
         this.QuestionType = question?.Type ?? Question.TYPE_SINGLE_CHOICE;
+        let questions_with_provided_answers = [Question.TYPE_SINGLE_CHOICE, Question.TYPE_MULTI_CHOICE];
 
-        if(question !== undefined) this.Answers = (await question.GetAnswers()).slice();
+        if(question !== undefined && this.QuestionType in questions_with_provided_answers) this.Answers = (await question.GetAnswers()).slice();
         else this.Answers = [];
 
         this.Answers.sort((a, b) => a.Order - b.Order);
