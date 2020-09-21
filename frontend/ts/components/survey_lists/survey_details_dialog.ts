@@ -5,6 +5,7 @@ import Test from '../../entities/test';
 import { ToMediumFormat } from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
 import Dialog from '../basic/dialog';
+import Icon from '../basic/icon';
 import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 
 export default class SurveyDetailsDialog extends Dialog {
@@ -35,6 +36,7 @@ export default class SurveyDetailsDialog extends Dialog {
         row[2] = content_table.insertRow(-1);
         row[2].insertCell(-1).textContent = 'Wypełnień:';
         this.SurveyFillsCountElement = row[2].insertCell(-1);
+        this.SurveyFillsCountElement.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
 
         row[3] = content_table.insertRow(-1);
         let share_cell = row[3].insertCell(-1);
@@ -111,11 +113,13 @@ export default class SurveyDetailsDialog extends Dialog {
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona';
             this.FillSharingField(assignment);
             assignment.AddEventListener('change', (() => this.FillSharingField(assignment)).bind(this));
+            this.SurveyFillsCountElement.textContent = (await assignment.CountAllAttempts()).toString();
         } else {
             this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
             this.ShareLink.textContent = 'Udostępnij...';
             this.LinkPresenterElement.style.display = 'none';
             this.LinkPresenterElement.value = 'Wczytywanie linku...';
+            this.SurveyFillsCountElement.textContent = '0';
         }
     }
 

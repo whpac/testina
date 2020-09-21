@@ -63,7 +63,16 @@ export default class SurveyTable extends Component {
 
             let td_fills = tr.insertCell(-1);
             td_fills.classList.add('center', 'todo');
-            td_fills.textContent = '??';
+            td_fills.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
+            // Policz ilość wypełnień, asynchronicznie, aby nie blokować ładowania
+            (async () => {
+                let assignments = await survey.GetAssignments();
+                if(assignments.length > 0) {
+                    td_fills.textContent = (await assignments[0].CountAllAttempts()).toString();
+                } else {
+                    td_fills.textContent = '0';
+                }
+            })();
 
             let td_created = tr.insertCell(-1);
             td_created.classList.add('center', 'xlarge-screen-only');
