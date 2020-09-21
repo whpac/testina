@@ -78,7 +78,7 @@ class User extends Entity implements \Auth\Users\User {
     }
 
     public /* Group[] */ function GetGroups(){
-        return [];
+        return Group::GetGroupsForUser($this);
     }
 
     public /* bool */ function IsFemale(){

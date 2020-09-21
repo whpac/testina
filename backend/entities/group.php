@@ -62,5 +62,23 @@ class Group extends Entity{
 
         return $groups;
     }
+
+    public static /* Group[] */ function GetGroupsForUser(User $user){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_GROUP_MEMBERS)
+                ->Select()
+                ->Where('user_id', '=', $user->GetId())
+                ->Run();
+        
+        if($result === false) throw new \Exception('Nie udało się pobrać grup, do których należy użytkownik');
+
+        $groups = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $groups[] = new Group($row['group_id']);
+        }
+
+        return $groups;
+    }
 }
 ?>
