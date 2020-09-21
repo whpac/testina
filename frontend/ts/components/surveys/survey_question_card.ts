@@ -134,6 +134,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         } else {
             this.HeadingField = document.createElement('h2');
             this.FooterField = document.createElement('p');
+            this.FooterField.classList.add('small-margin', 'secondary');
         }
         this.AppendChild(this.HeadingField);
         this.AppendChild(this.AnswerWrapper);
