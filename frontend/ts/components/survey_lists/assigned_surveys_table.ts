@@ -75,10 +75,12 @@ export default class AssignedSurveysTable extends Component {
             td_assigned.textContent = ToMediumFormat(assignment.AssignmentDate, true);
 
             let td_fill = tr.insertCell(-1);
-            let btn_fill = document.createElement('button');
+            let btn_fill = document.createElement('a');
             td_fill.appendChild(btn_fill);
-            btn_fill.classList.add('compact', 'todo');
+            btn_fill.classList.add('button', 'compact');
             btn_fill.appendChild(new Icon('pencil-square-o', 'narrow-screen-only').GetElement());
+            btn_fill.href = 'ankiety/wypełnij/' + survey.Id;
+            btn_fill.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wypełnij', survey));
 
             let fill_caption = document.createElement('span');
             btn_fill.appendChild(fill_caption);
