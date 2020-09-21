@@ -1,14 +1,14 @@
 import Page from '../components/basic/page';
-import Test from '../entities/test';
-import SurveyLoader from '../entities/loaders/surveyloader';
 import SurveyIntroduction from '../components/surveys/survey_introduction';
 import SurveyQuestionCard from '../components/surveys/survey_question_card';
 import Icon from '../components/basic/icon';
 import Question from '../entities/question';
 import ChromeManager from '../1page/chrome_manager';
+import AssignmentLoader from '../entities/loaders/assignmentloader';
+import Assignment from '../entities/assignment';
 
 export default class FillSurveyPage extends Page {
-    protected Survey: Test | undefined;
+    protected Assignment: Assignment | undefined;
     protected SurveyNameHeading: Text;
     protected IntroductionCard: SurveyIntroduction;
     protected QuestionWrapper: HTMLElement;
@@ -46,16 +46,16 @@ export default class FillSurveyPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
-        if(typeof params === 'number') this.Survey = await SurveyLoader.LoadById(params);
-        else this.Survey = params as Test;
+        if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+        else this.Assignment = params as Assignment;
 
         this.QuestionCards = [];
         this.QuestionWrapper.textContent = '';
 
-        this.SurveyNameHeading.textContent = this.Survey.Name;
-        this.IntroductionCard.Populate(this.Survey);
+        this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
+        this.IntroductionCard.Populate(this.Assignment.Test);
 
-        let questions = await this.Survey.GetQuestions();
+        let questions = await this.Assignment.Test.GetQuestions();
         questions.sort((a, b) => a.Order - b.Order);
         for(let i = 0; i < questions.length; i++) {
             this.RenderQuestion(questions[i], i + 1);
@@ -64,8 +64,8 @@ export default class FillSurveyPage extends Page {
 
         container.appendChild(this.Element);
 
-        this.Survey.AddEventListener('change', () => {
-            this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';
+        this.Assignment.AddEventListener('change', () => {
+            this.SurveyNameHeading.textContent = this.Assignment?.Test?.Name ?? '';
             ChromeManager.SetTitle(this.GetTitle());
         });
     }
@@ -75,18 +75,18 @@ export default class FillSurveyPage extends Page {
     }
 
     GetUrlPath() {
-        return 'ankiety/wypełnij/' + (this.Survey?.Id ?? 0);
+        return 'ankiety/wypełnij/' + (this.Assignment?.Id ?? 0);
     }
 
     GetTitle() {
-        return 'Wypełnij: ' + (this.Survey?.Name ?? '');
+        return 'Wypełnij: ' + (this.Assignment?.Test?.Name ?? '');
     }
 
     protected RenderQuestion(question: Question | undefined, question_number: number) {
         let question_card = new SurveyQuestionCard(false);
         this.QuestionWrapper.appendChild(question_card.GetElement());
         question_card.Populate(question, question_number);
-        if(this.Survey !== undefined) question_card.SetSurvey(this.Survey);
+        if(this.Assignment !== undefined) question_card.SetSurvey(this.Assignment.Test);
         this.QuestionCards.push(question_card);
 
         if(this.QuestionCards.length >= 2) {

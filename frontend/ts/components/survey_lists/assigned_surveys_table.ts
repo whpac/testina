@@ -79,8 +79,8 @@ export default class AssignedSurveysTable extends Component {
             td_fill.appendChild(btn_fill);
             btn_fill.classList.add('button', 'compact');
             btn_fill.appendChild(new Icon('pencil-square-o', 'narrow-screen-only').GetElement());
-            btn_fill.href = 'ankiety/wypełnij/' + survey.Id;
-            btn_fill.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wypełnij', survey));
+            btn_fill.href = 'ankiety/wypełnij/' + assignment.Id;
+            btn_fill.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wypełnij', assignment));
 
             let fill_caption = document.createElement('span');
             btn_fill.appendChild(fill_caption);
