@@ -15,7 +15,7 @@ export default class User extends Entity {
      * @param first_name Imię użytkownika
      * @param last_name Nazwisko użytkownika
      */
-    constructor(id: number, first_name: string, last_name: string){
+    constructor(id: number, first_name: string, last_name: string) {
         super();
 
         if(id === undefined || first_name === undefined || last_name === undefined)
@@ -27,12 +27,17 @@ export default class User extends Entity {
     }
 
     /** Zwraca imię i nazwisko użytkownika */
-    GetFullName(){
+    GetFullName() {
         return this.FirstName + ' ' + this.LastName;
     }
 
+    /** Zwraca inicjał imienia i nazwisko użytkownika */
+    GetInitial() {
+        return this.FirstName.charAt(0) + '. ' + this.LastName;
+    }
+
     /** Czy użytkownik jest kobietą? (Na podstawie ostatniej litery imienia) */
-    IsFemale(){
+    IsFemale() {
         return this.FirstName.endsWith('a');
     }
 }
