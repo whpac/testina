@@ -14,6 +14,7 @@ class Attempt extends Entity {
     protected /* float */ $score;
     protected /* float */ $max_score;
     protected /* DateTime */ $begin_time;
+    protected /* int */ $is_finished;
 
     protected static /* string */ function GetTableName(){
         return TABLE_ATTEMPTS;
@@ -31,6 +32,7 @@ class Attempt extends Entity {
         settype($this->assignment_id, 'int');
         settype($this->score, 'float');
         settype($this->max_score, 'float');
+        settype($this->is_finished, 'int');
     }
 
     public /* int */ function GetId(){
@@ -79,6 +81,7 @@ class Attempt extends Entity {
                 ->Value('score', $score)
                 ->Value('max_score', $max_score)
                 ->Value('begin_time', $begin_time->format('Y-m-d H:i:s'))
+                ->Value('is_finished', 0)
                 ->Run();
         
         if($result === false){
@@ -97,13 +100,16 @@ class Attempt extends Entity {
     }
 
     public static /* Attempt */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment){
+        $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)
                 ->Select()
                 ->Where('user_id', '=', $user->GetId())
-                ->AndWhere('assignment_id', '=', $assignment->GetId())
-                ->Run();
-                
+                ->AndWhere('assignment_id', '=', $assignment->GetId());
+        if($is_survey) $result = $result->AndWhere('is_finished', '=', 1);
+        $result = $result->Run();
+
         $attempts = [];
         for($i=0; $i<$result->num_rows; $i++){
             $attempts[] = new Attempt($result->fetch_assoc());
@@ -113,12 +119,15 @@ class Attempt extends Entity {
     }
 
     public static /* int */ function CountAttemptsByUserAndAssignment(User $user, Assignment $assignment){
+        $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)
                 ->Select()
                 ->Where('user_id', '=', $user->GetId())
-                ->AndWhere('assignment_id', '=', $assignment->GetId())
-                ->Run();
+                ->AndWhere('assignment_id', '=', $assignment->GetId());
+        if($is_survey) $result = $result->AndWhere('is_finished', '=', 1);
+        $result = $result->Run();
                 
         return $result->num_rows;
     }
@@ -141,13 +150,46 @@ class Attempt extends Entity {
     }
 
     public /* void */ function UpdateScore($got, $max){
-        DatabaseManager::GetProvider()
-                ->Query('UPDATE '.TABLE_ATTEMPTS.' SET score='.$got.', max_score='.$max.' WHERE id='.$this->GetId());
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Update()
+                ->Set('score', $got)
+                ->Set('max_score', $max)
+                ->Where('id', '=', $this->GetId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się zaktualizować wyniku w podejściu: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się zaktualizować wyniku w podejściu.');
+        }
+
     }
 
     public /* void */ function Remove(){
-        DatabaseManager::GetProvider()
-                ->Query('DELETE FROM '.TABLE_ATTEMPTS.' WHERE id='.$this->GetId());
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Delete()
+                ->Where('id', '=', $this->GetId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się usunąć podejścia: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się usunąć podejścia.');
+        }
+    }
+
+    public /* void */ function MarkAsFinished(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Update()
+                ->Set('is_finished', 1)
+                ->Where('id', '=', $this->GetId())
+                ->Run();
+        
+        if($result === false){
+            Logger::Log('Nie udało się oznaczyć podejścia jako ukończonego: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się oznaczyć podejścia jako ukończonego.');
+        }
     }
 }
 ?>

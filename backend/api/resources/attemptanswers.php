@@ -95,6 +95,7 @@ class AttemptAnswers extends Resource {
 
         // Update attempt to reflect the score
         $this->Attempt->UpdateScore($score_got, $score_max);
+        $this->Attempt->MarkAsFinished();
     }
 }
 ?>
