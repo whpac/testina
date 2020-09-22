@@ -70,7 +70,10 @@ class Group extends Entity{
                 ->Where('user_id', '=', $user->GetId())
                 ->Run();
         
-        if($result === false) throw new \Exception('Nie udało się pobrać grup, do których należy użytkownik');
+        if($result === false){
+            Logger::Log('Nie udało się pobrać grup użytkownika: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się pobrać grup, do których należy użytkownik');
+        }
 
         $groups = [];
         for($i = 0; $i < $result->num_rows; $i++){
