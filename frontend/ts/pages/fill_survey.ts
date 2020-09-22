@@ -6,6 +6,7 @@ import Question from '../entities/question';
 import ChromeManager from '../1page/chrome_manager';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import Assignment from '../entities/assignment';
+import Attempt from '../entities/attempt';
 
 export default class FillSurveyPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -55,7 +56,10 @@ export default class FillSurveyPage extends Page {
         this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
         this.IntroductionCard.Populate(this.Assignment.Test);
 
-        let questions = await this.Assignment.Test.GetQuestions();
+        // Utwórz podejście
+        let attempt = await Attempt.Create(this.Assignment);
+        let questions = await attempt.GetQuestions();
+
         questions.sort((a, b) => a.Order - b.Order);
         for(let i = 0; i < questions.length; i++) {
             this.RenderQuestion(questions[i], i + 1);
