@@ -5,6 +5,7 @@ import { HandleLinkClick } from '../../1page/page_manager';
 import Icon from '../basic/icon';
 import SurveyDetailsDialog from './survey_details_dialog';
 import Assignment from '../../entities/assignment';
+import UserLoader from '../../entities/loaders/userloader';
 
 export default class AssignedSurveysTable extends Component {
     protected Element: HTMLTableElement;
@@ -42,6 +43,16 @@ export default class AssignedSurveysTable extends Component {
         ths[2].classList.add('xlarge-screen-only');
 
         this.TBody = this.Element.createTBody();
+
+        let loading_text = document.createElement('i');
+        loading_text.classList.add('secondary');
+        loading_text.textContent = 'Wczytywanie...';
+
+        let loading_tr = this.TBody.insertRow(-1);
+        loading_tr.insertCell(-1).appendChild(loading_text);
+        loading_tr.insertCell(-1);
+        loading_tr.insertCell(-1).classList.add('xlarge-screen-only');
+        loading_tr.insertCell(-1);
     }
 
     public Populate(assignments: Assignment[]) {
@@ -75,17 +86,33 @@ export default class AssignedSurveysTable extends Component {
             td_assigned.textContent = ToMediumFormat(assignment.AssignmentDate, true);
 
             let td_fill = tr.insertCell(-1);
-            let btn_fill = document.createElement('a');
-            td_fill.appendChild(btn_fill);
-            btn_fill.classList.add('button', 'compact');
-            btn_fill.appendChild(new Icon('pencil-square-o', 'narrow-screen-only').GetElement());
-            btn_fill.href = 'ankiety/wypełnij/' + assignment.Id;
-            btn_fill.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wypełnij', assignment));
+            td_fill.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
 
-            let fill_caption = document.createElement('span');
-            btn_fill.appendChild(fill_caption);
-            fill_caption.classList.add('wide-screen-only');
-            fill_caption.textContent = 'Wypełnij';
+            (async () => {
+                let current_user = await UserLoader.GetCurrent();
+                if(current_user === undefined) return;
+
+                let btn_fill: HTMLAnchorElement | HTMLButtonElement;
+                if(assignment.GetRemainingAttemptsCount() > 0) {
+                    btn_fill = document.createElement('a');
+                    btn_fill.classList.add('button', 'compact');
+                    btn_fill.href = 'ankiety/wypełnij/' + assignment.Id;
+                } else {
+                    btn_fill = document.createElement('button');
+                    btn_fill.classList.add('compact', 'wide-screen-only');
+                    btn_fill.disabled = true;
+                    btn_fill.title = 'Wypełnił' + (current_user.IsFemale() ? 'a' : 'e') + 'ś tę ankietę maksymalną możliwą ilość razy.';
+                }
+                td_fill.textContent = '';
+                td_fill.appendChild(btn_fill);
+                btn_fill.appendChild(new Icon('pencil-square-o', 'narrow-screen-only').GetElement());
+                btn_fill.addEventListener('click', (e) => HandleLinkClick(e as MouseEvent, 'ankiety/wypełnij', assignment));
+
+                let fill_caption = document.createElement('span');
+                btn_fill.appendChild(fill_caption);
+                fill_caption.classList.add('wide-screen-only');
+                fill_caption.textContent = 'Wypełnij';
+            })();
         }
     }
 
