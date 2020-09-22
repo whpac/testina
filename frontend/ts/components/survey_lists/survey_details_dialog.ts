@@ -57,7 +57,7 @@ export default class SurveyDetailsDialog extends Dialog {
 
         this.LinkPresenterElement = document.createElement('input');
         share_element.appendChild(this.LinkPresenterElement);
-        this.LinkPresenterElement.classList.add('link-presenter-input');
+        this.LinkPresenterElement.classList.add('link-presenter-input', 'todo');
         this.LinkPresenterElement.readOnly = true;
         this.LinkPresenterElement.type = 'text';
         this.LinkPresenterElement.value = 'Wczytywanie linku...';
