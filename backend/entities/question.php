@@ -237,7 +237,11 @@ class Question extends Entity {
         }
 
         $points = $this->GetPoints();
-        $points *= 1 - ($wrong_answers / count($correct_ids));
+        $correct_answers = count($correct_ids);
+
+        if($correct_answers != 0) $points *= 1 - ($wrong_answers / $correct_answers);
+        else $points = 0;
+
         if($points < 0) $points = 0;
         return $points;
     }
