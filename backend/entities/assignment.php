@@ -179,8 +179,8 @@ class Assignment extends Entity {
         return $result->num_rows;
     }
 
-    public /* Attempt[] */ function GetUserAttempts(User $user){
-        return Attempt::GetAttemptsByUserAndAssignment($user, $this);
+    public /* Attempt[] */ function GetUserAttempts(User $user, bool $include_unfinished = false){
+        return Attempt::GetAttemptsByUserAndAssignment($user, $this, $include_unfinished);
     }
 
     public /* int */ function CountUserAttempts(User $user){

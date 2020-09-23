@@ -99,7 +99,7 @@ class Attempt extends Entity {
         return new Attempt($result->fetch_assoc());
     }
 
-    public static /* Attempt */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment){
+    public static /* Attempt */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment, bool $include_unfinished = false){
         $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
 
         $result = DatabaseManager::GetProvider()
@@ -107,7 +107,7 @@ class Attempt extends Entity {
                 ->Select()
                 ->Where('user_id', '=', $user->GetId())
                 ->AndWhere('assignment_id', '=', $assignment->GetId());
-        if($is_survey) $result = $result->AndWhere('is_finished', '=', 1);
+        if($is_survey && !$include_unfinished) $result = $result->AndWhere('is_finished', '=', 1);
         $result = $result->Run();
 
         $attempts = [];
