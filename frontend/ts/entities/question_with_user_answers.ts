@@ -87,7 +87,7 @@ export default class QuestionWithUserAnswers {
      * @param id Identyfikator odpowiedzi
      * @param is_selected Czy wskazana odpowiedź ma być zaznaczona
      */
-    public SetAnswerSelection(id: number, is_selected: boolean) {
+    public SetAnswerSelection(id: string, is_selected: boolean) {
         this.IsAnswerSelected[id] = is_selected;
     }
 
@@ -95,7 +95,7 @@ export default class QuestionWithUserAnswers {
      * Zwraca, czy dana odpowiedź jest zaznaczona
      * @param id Identyfikator odpowiedzi
      */
-    public GetAnswerSelection(id: number) {
+    public GetAnswerSelection(id: string) {
         return this.IsAnswerSelected[id] ?? false;
     }
 
@@ -103,7 +103,7 @@ export default class QuestionWithUserAnswers {
      * Zmienia zaznaczenie odpowiedzi
      * @param id Identyfikator odpowiedzi
      */
-    public ToggleAnswerSelection(id: number) {
+    public ToggleAnswerSelection(id: string) {
         this.IsAnswerSelected[id] = !this.IsAnswerSelected[id];
     }
 

@@ -164,7 +164,7 @@ export default class QuestionCard extends Card {
                     answer_button.textContent = answer.Text;
                     answer_button.dataset.id = answer.Id.toString();
                     answer_button.addEventListener('click', ((e: MouseEvent) => {
-                        this.OnAnswerButtonClick(e, answer.Id);
+                        this.OnAnswerButtonClick(e, answer.Id.toString());
                     }).bind(this));
                     this.AnswerWrapper.appendChild(answer_button);
                 }
@@ -189,7 +189,7 @@ export default class QuestionCard extends Card {
         this.DisableAnswers = false;
     }
 
-    protected async OnAnswerButtonClick(e: MouseEvent, answer_id: number) {
+    protected async OnAnswerButtonClick(e: MouseEvent, answer_id: string) {
         if(this.DisableAnswers) return;
 
         switch(this.CurrentQuestion?.GetQuestion().Type) {
@@ -238,7 +238,7 @@ export default class QuestionCard extends Card {
                 // Zaznacz odpowiedzi
                 let answers_buttons = document.querySelectorAll('.answer-button');
                 for(let button of answers_buttons) {
-                    let id = parseInt((button as HTMLElement).dataset.id ?? '0');
+                    let id = (button as HTMLElement).dataset.id ?? '0';
                     if(this.CurrentQuestion.GetAnswers()[id].Correct) {
                         button.classList.add('correct');
                     } else {
