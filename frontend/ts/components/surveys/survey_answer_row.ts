@@ -220,4 +220,12 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
             }
         }
     }
+
+    public IsSelected() {
+        return this.CheckboxElement.checked;
+    }
+
+    public GetAnswerId() {
+        return this.Answer?.Id ?? -1;
+    }
 }

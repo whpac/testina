@@ -7,6 +7,8 @@ import ChromeManager from '../1page/chrome_manager';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import Assignment from '../entities/assignment';
 import Attempt from '../entities/attempt';
+import QuestionWithUserAnswers from '../entities/question_with_user_answers';
+import Toast from '../components/basic/toast';
 
 export default class FillSurveyPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -14,6 +16,10 @@ export default class FillSurveyPage extends Page {
     protected IntroductionCard: SurveyIntroduction;
     protected QuestionWrapper: HTMLElement;
     protected QuestionCards: SurveyQuestionCard[];
+    protected SubmitButton: HTMLButtonElement;
+
+    protected Questions: QuestionWithUserAnswers[];
+    protected Attempt: Attempt | undefined;
 
     public constructor() {
         super();
@@ -40,10 +46,13 @@ export default class FillSurveyPage extends Page {
         sumbit_btn_wrapper.classList.add('center');
         this.AppendChild(sumbit_btn_wrapper);
 
-        let submit_btn = document.createElement('button');
-        submit_btn.appendChild(new Icon('paper-plane-o').GetElement());
-        submit_btn.appendChild(document.createTextNode(' Wyślij'));
-        sumbit_btn_wrapper.appendChild(submit_btn);
+        this.SubmitButton = document.createElement('button');
+        this.SubmitButton.appendChild(new Icon('paper-plane-o').GetElement());
+        this.SubmitButton.appendChild(document.createTextNode(' Wyślij'));
+        this.SubmitButton.addEventListener('click', this.Submit.bind(this));
+        sumbit_btn_wrapper.appendChild(this.SubmitButton);
+
+        this.Questions = [];
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
@@ -57,12 +66,14 @@ export default class FillSurveyPage extends Page {
         this.IntroductionCard.Populate(this.Assignment.Test);
 
         // Utwórz podejście
-        let attempt = await Attempt.Create(this.Assignment);
-        let questions = await attempt.GetQuestions();
+        this.Attempt = await Attempt.Create(this.Assignment);
+        let questions = await this.Attempt.GetQuestions();
 
         questions.sort((a, b) => a.Order - b.Order);
-        for(let i = 0; i < questions.length; i++) {
-            this.RenderQuestion(questions[i], i + 1);
+        this.Questions = QuestionWithUserAnswers.FromArray(questions);
+
+        for(let i = 0; i < this.Questions.length; i++) {
+            await this.RenderQuestion(this.Questions[i], i + 1);
         }
         this.RefreshQuestionOrder();
 
@@ -86,7 +97,14 @@ export default class FillSurveyPage extends Page {
         return 'Wypełnij: ' + (this.Assignment?.Test?.Name ?? '');
     }
 
-    protected RenderQuestion(question: Question | undefined, question_number: number) {
+    protected async RenderQuestion(question_with_answers: QuestionWithUserAnswers, question_number: number) {
+        let question = question_with_answers.GetQuestion();
+        if(question.Type != Question.TYPE_OPEN_ANSWER) {
+            let answers = await question.GetAnswers();
+            answers.sort((a, b) => a.Order - b.Order);
+            question_with_answers.SetAnswers(answers);
+        }
+
         let question_card = new SurveyQuestionCard(false);
         this.QuestionWrapper.appendChild(question_card.GetElement());
         question_card.Populate(question, question_number);
@@ -107,6 +125,35 @@ export default class FillSurveyPage extends Page {
             card.IsFirst = card.IsLast = true;
             card.SetNumber(q_number);
             q_number++;
+        }
+    }
+
+    protected async Submit() {
+        this.SubmitButton.disabled = true;
+        let saving_toast = new Toast('Wysyłanie odpowiedzi...');
+        saving_toast.Show();
+
+        for(let i = 0; i < this.QuestionCards.length; i++) {
+            let user_answers = this.QuestionCards[i].GetUserAnswers();
+            if(typeof user_answers == 'string') {
+                this.Questions[i].UserSuppliedAnswer = user_answers;
+            } else {
+                for(let id in user_answers) {
+                    this.Questions[i].SetAnswerSelection(id, user_answers[id]);
+                }
+            }
+            this.Questions[i].MarkAsDone();
+        }
+        console.log(this.Questions);
+
+        try {
+            await this.Attempt?.SaveUserAnswers(this.Questions);
+            saving_toast.Hide();
+            new Toast('Wysłano odpowiedzi.').Show(0);
+        } catch(e) {
+            saving_toast.Hide();
+            new Toast('Nie udało się wysłać odpowiedzi.').Show(0);
+            this.SubmitButton.disabled = false;
         }
     }
 }

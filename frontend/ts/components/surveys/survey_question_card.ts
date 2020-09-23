@@ -277,4 +277,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         if(this.Question !== undefined) this.AnswerWrapper.SetQuestion(this.Question);
         return this.AnswerWrapper.Save();
     }
+
+    public GetUserAnswers() {
+        return this.AnswerWrapper.GetUserAnswers();
+    }
 }

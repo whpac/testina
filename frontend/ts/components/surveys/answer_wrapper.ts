@@ -9,6 +9,7 @@ export default class AnswerWrapper extends Component {
     protected ListElement: HTMLUListElement;
     protected AddAnswerButton: HTMLButtonElement | undefined;
     protected AnswerPlaceholderWrapper: HTMLElement;
+    protected OpenAnswerInput: HTMLInputElement | undefined;
 
     protected Question: Question | undefined;
     protected QuestionType: number | undefined;
@@ -74,6 +75,7 @@ export default class AnswerWrapper extends Component {
             || this.QuestionType == Question.TYPE_MULTI_CHOICE)
             && this.EditMode) {
             this.AnswerPlaceholderWrapper.textContent = '';
+            this.OpenAnswerInput = undefined;
             this.RenderAddAnswerButton();
             this.RefreshAnswerOrder();
         } else {
@@ -126,12 +128,12 @@ export default class AnswerWrapper extends Component {
     }
 
     protected RenderOpenAnswer() {
-        let input = document.createElement('input');
-        input.type = 'text';
-        if(!this.EditMode) input.placeholder = 'Wpisz odpowiedź';
-        else input.placeholder = 'Tu użytkownik wpisze odpowiedź';
-        input.disabled = this.EditMode;
-        this.AnswerPlaceholderWrapper.appendChild(input);
+        this.OpenAnswerInput = document.createElement('input');
+        this.OpenAnswerInput.type = 'text';
+        if(!this.EditMode) this.OpenAnswerInput.placeholder = 'Wpisz odpowiedź';
+        else this.OpenAnswerInput.placeholder = 'Tu użytkownik wpisze odpowiedź';
+        this.OpenAnswerInput.disabled = this.EditMode;
+        this.AnswerPlaceholderWrapper.appendChild(this.OpenAnswerInput);
     }
 
     protected RenderAddAnswerButton() {
@@ -217,5 +219,17 @@ export default class AnswerWrapper extends Component {
             save_awaiters.push(answer_row.Save(order));
         }
         for(let awaiter of save_awaiters) await awaiter;
+    }
+
+    public GetUserAnswers() {
+        if(this.OpenAnswerInput !== undefined) {
+            return this.OpenAnswerInput.value;
+        }
+
+        let answers = [];
+        for(let answer of this.AnswerRows) {
+            answers[answer.GetAnswerId()] = answer.IsSelected();
+        }
+        return answers;
     }
 }
