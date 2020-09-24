@@ -80,7 +80,7 @@ export default class AssignmentDetailsDialog extends Dialog {
         this.AssignmentDateCell.textContent = DateUtils.ToDayHourFormat(assignment.AssignmentDate);
 
         let avg_score = assignment.Score;
-        if(avg_score === null) {
+        if(avg_score === undefined) {
             this.ScoreCell.textContent = '—';
         } else {
             let score_link = document.createElement('a');
