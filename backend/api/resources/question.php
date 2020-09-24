@@ -60,6 +60,9 @@ class Question extends Resource implements Schemas\Question{
             'max_typos',
             'footer',
             'order',
+            'is_optional',
+            'has_na',
+            'has_other',
             'answer_count',
             'answers'
         ];
@@ -95,6 +98,18 @@ class Question extends Resource implements Schemas\Question{
 
     public function order(): int{
         return $this->Question->GetOrder();
+    }
+
+    public function is_optional(): bool{
+        return $this->Question->IsOptional();
+    }
+
+    public function has_na(): bool{
+        return $this->Question->HasNonApplicableAnswer();
+    }
+
+    public function has_other(): bool{
+        return $this->Question->HasOtherAnswer();
     }
 
     public function answer_count(): int{

@@ -17,6 +17,8 @@ class Question extends Entity {
     protected /* int8 */ $max_typos;
     protected /* ?string */ $footer;
     protected /* int */ $order;
+    protected /* int */ $flags;       // flags & 1 = optional; flags & 2 = N/A; flags & 4 = other
+    protected static /* array */ $flag_map = ['optional' => 1, 'non-applicable' => 2, 'other' => 4];
 
     const TYPE_SINGLE_CHOICE = 0;
     const TYPE_MULTI_CHOICE = 1;
@@ -89,6 +91,37 @@ class Question extends Entity {
         return $this->order;
     }
 
+    protected /* int */ function GetFlags(){
+        $this->FetchIfNeeded();
+        return $this->flags;
+    }
+    
+    public /* int */ function GetFlagValue($flag_name){
+        if(!isset(self::$flag_map[$flag_name])) return null;
+
+        $bitmask = self::$flag_map[$flag_name];
+        $flags_int = $this->GetFlags();
+
+        while($bitmask & 1 == 0){
+            $bitmask = $bitmask >> 1;
+            $flags_int = $flags_int >> 1;
+        }
+
+        return $flags_int & $bitmask;
+    }
+
+    public /* bool */ function IsOptional(){
+        return ($this->GetFlagValue('optional') == 1);
+    }
+
+    public /* bool */ function HasNonApplicableAnswer(){
+        return ($this->GetFlagValue('non-applicable') == 1);
+    }
+
+    public /* bool */ function HasOtherAnswer(){
+        return ($this->GetFlagValue('other') == 1);
+    }
+
     public /* Answer[] */ function GetAnswers(){
         return Answer::GetAnswersForQuestion($this);
     }
@@ -111,7 +144,7 @@ class Question extends Entity {
         return $questions;
     }
 
-    public /* bool */ function Update(/* string? */ $text = null, /* int? */ $type = null, /* float? */ $points = null, /* int? */ $points_counting = null, /* int? */ $max_typos = null, /* ?string */ $footer = null, /* ?int */ $order = null){
+    public /* bool */ function Update(/* string? */ $text = null, /* int? */ $type = null, /* float? */ $points = null, /* int? */ $points_counting = null, /* int? */ $max_typos = null, /* ?string */ $footer = null, /* ?int */ $order = null, array $flags = []){
         if(is_null($text)) $text = $this->GetText();
         if(is_null($type)) $type = $this->GetType();
         if(is_null($points)) $points = $this->GetPoints();
@@ -119,6 +152,9 @@ class Question extends Entity {
         if(is_null($max_typos)) $max_typos = $this->GetMaxNumberOfTypos();
         if(is_null($footer)) $footer = $this->GetFooter();
         if(is_null($order)) $order = $this->GetOrder();
+
+        $flags_int = $this->GetFlags();
+        $flags_int = self::ConvertFlagsToInt($flags, $flags_int);
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
@@ -130,6 +166,7 @@ class Question extends Entity {
                 ->Set('max_typos', $max_typos)
                 ->Set('footer', $footer)
                 ->Set('order', $order)
+                ->Set('flags', $flags_int)
                 ->Where('id', '=', $this->id)
                 ->Run();
         
@@ -146,12 +183,14 @@ class Question extends Entity {
         return $result;
     }
 
-    public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting, /* int */ $max_typos, /* string */ $footer = '', /* int */ $order = 0){
+    public static /* Question */ function Create(/* Test */ $test, /* string */ $text, /* int */ $type, /* float */ $points, /* int */ $points_counting, /* int */ $max_typos, /* string */ $footer = '', /* int */ $order = 0, array $flags = []){
         if(is_null($text)) throw new \Exception('Treść pytania nie może być null.');
         if(is_null($type)) throw new \Exception('Typ pytania nie może być null.');
         if(is_null($points)) throw new \Exception('Ilość punktów nie może być null.');
         if(is_null($points_counting)) throw new \Exception('Metoda liczenia punktów nie może być null.');
         if(is_null($max_typos)) throw new \Exception('Maksymalna ilość literówek nie może być null.');
+
+        $flags_int = self::ConvertFlagsToInt($flags);
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTIONS)
@@ -164,6 +203,7 @@ class Question extends Entity {
                 ->Value('max_typos', $max_typos)
                 ->Value('footer', $footer)
                 ->Value('order', $order)
+                ->Value('flags', $flags_int)
                 ->Run();
         
         if($result === false){
@@ -294,6 +334,40 @@ class Question extends Entity {
 
         // Kiedy nie znaleziono pasującej odpowiedzi, zwróć wynik 0 punktów
         return 0;
+    }
+
+    protected static /* int */ function ConvertFlagsToInt(array $flags, /* int */ $orig_flags = 0){
+        $flags_int = $orig_flags;
+        foreach($flags as $flag_name => $flag_value){
+            if(!isset(self::$flag_map[$flag_name])) continue;
+
+            // Grab the bitmask for specified flag
+            $flag_bitmask = self::$flag_map[$flag_name];
+
+            // Clear previous flag value
+            $flags_int = $flags_int & ~$flag_bitmask;
+
+            // Calculate position of lowest flag bit
+            $bits_to_shift_val = 0;
+            $bitmask = $flag_bitmask;
+            while($bitmask & 1 == 0){
+                $bitmask = $bitmask >> 1;
+                $bits_to_shift_val++;
+            }
+
+            // Convert bool to number
+            if(is_bool($flag_value)) $flag_value = $flag_value ? 1 : 0;
+            
+            // Align flag value with flag position
+            $flag_value = $flag_value << $bits_to_shift_val;
+
+            // Drop excess bits
+            $flag_value = $flag_value & $flag_bitmask;
+
+            // Put the flag value among others
+            $flags_int = $flags_int | $flag_value;
+        }
+        return $flags_int;
     }
 }
 ?>
