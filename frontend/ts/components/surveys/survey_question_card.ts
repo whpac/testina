@@ -289,7 +289,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     0,
                     this.FooterField.value,
-                    order
+                    order,
+                    this._IsOptional
                 );
                 await this.SaveAnswers();
                 await update_awaiter;
@@ -309,7 +310,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     0,
                     this.FooterField.value,
-                    order
+                    order,
+                    this._IsOptional
                 );
                 await this.SaveAnswers();
             } else {

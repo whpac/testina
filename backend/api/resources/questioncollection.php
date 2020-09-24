@@ -31,6 +31,21 @@ class QuestionCollection extends Collection {
             $order = $source->order;
         }
 
+        $flags = [];
+        if(isset($data->is_optional) && !is_null($data->is_optional)){
+            TypeValidator::AssertIsBool($data->is_optional, 'is_optional');
+            $flags['optional'] = $data->is_optional;
+        }
+        if(isset($data->has_na) && !is_null($data->has_na)){
+            TypeValidator::AssertIsBool($data->has_na, 'has_na');
+            $flags['non-applicable'] = $data->has_na;
+        }
+        if(isset($data->has_other) && !is_null($data->has_other)){
+            TypeValidator::AssertIsBool($data->has_other, 'has_other');
+            $flags['other'] = $data->has_other;
+        }
+
+
         $test = $this->Parent;
         if(is_array($test)) throw new Exceptions\MethodNotAllowed('POST');
 
@@ -42,7 +57,8 @@ class QuestionCollection extends Collection {
             $source->points_counting,
             $source->max_typos,
             $footer,
-            $order
+            $order,
+            $flags
         );
 
         header('Content-Location: '.$question->GetId());
