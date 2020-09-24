@@ -89,20 +89,22 @@ export default class TestsToSolveTable extends Card {
         cell.textContent = 'Nie ma żadnych testów do rozwiązania.';
         cell.classList.add('secondary');
         tr.insertCell();
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell();
+        tr.insertCell().classList.add('not-xlarge-screen');
 
         tr = this.ContentWrapper.insertRow();
         tr.insertCell().textContent = 'Wczytywanie...';
         tr.insertCell();
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell();
+        tr.insertCell().classList.add('not-xlarge-screen');
     }
 
     Populate(assignments: Assignment[]) {

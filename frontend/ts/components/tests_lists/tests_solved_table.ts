@@ -90,21 +90,21 @@ export default class TestsSolvedTable extends Card {
         let cell = tr.insertCell();
         (async () => cell.textContent = 'Nie rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś jeszcze żadnego testu.')();
         cell.classList.add('secondary');
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell();
+        tr.insertCell().classList.add('xlarge-screen-only');
+        tr.insertCell().classList.add('not-xlarge-screen');
 
         tr = this.ContentWrapper.insertRow();
         tr.insertCell().textContent = 'Wczytywanie...';
+        tr.insertCell().classList.add('wide-screen-only');
+        tr.insertCell().classList.add('xlarge-screen-only');
         tr.insertCell();
         tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('wide-screen-only');
-        tr.insertCell().classList.add('narrow-screen-only');
+        tr.insertCell().classList.add('xlarge-screen-only');
+        tr.insertCell().classList.add('not-xlarge-screen');
     }
 
     Populate(assignments: Assignment[]) {
