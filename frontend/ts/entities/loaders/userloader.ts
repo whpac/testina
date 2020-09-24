@@ -111,4 +111,8 @@ export default class UserLoader implements Loader<User> {
         }
         return this.CurrentUser;
     }
+
+    public static ClearCurrentUserCache() {
+        this.CurrentUser = undefined;
+    }
 }

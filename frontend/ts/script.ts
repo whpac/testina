@@ -20,6 +20,7 @@ import SurveysPage from './pages/surveys';
 import FillSurveyPage from './pages/fill_survey';
 import EditSurveyPage from './pages/edit_survey';
 import MobileHeader from './components/chrome/mobile_header';
+import UserLoader from './entities/loaders/userloader';
 
 try {
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
@@ -72,10 +73,11 @@ try {
         root?.classList.remove('login');
     });
     AuthManager.AddEventListener('logout', async () => {
-        (await CacheManager.Open(CacheStorages.Entities)).Purge();
         ChromeManager.ApplicationNavbar.Destroy();
+        UserLoader.ClearCurrentUserCache();
         root?.classList.add('login');
         PageManager.GoToPage('zaloguj');
+        await (await CacheManager.Open(CacheStorages.Entities)).Purge();
     });
 
     // Załaduj stronę początkową
