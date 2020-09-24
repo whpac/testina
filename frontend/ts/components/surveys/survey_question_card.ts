@@ -27,6 +27,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     protected HeadingField: HTMLTextAreaElement | HTMLHeadingElement;
     protected FooterField: HTMLTextAreaElement | HTMLParagraphElement;
     protected AnswerWrapper: AnswerWrapper;
+    protected ErrorNotice: HTMLParagraphElement;
 
     public PreviousCard: SurveyQuestionCard | null;
     public NextCard: SurveyQuestionCard | null;
@@ -139,6 +140,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         }
 
         this.AnswerWrapper = new AnswerWrapper(this.EditMode);
+        this.ErrorNotice = document.createElement('p');
+        this.ErrorNotice.classList.add('error-message');
 
         if(edit_mode) {
             let heading = document.createElement('textarea');
@@ -161,6 +164,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         }
         this.AppendChild(this.HeadingField);
         this.AppendChild(this.AnswerWrapper);
+        this.AppendChild(this.ErrorNotice);
         this.AppendChild(this.FooterField);
     }
 
@@ -327,5 +331,25 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
 
     public GetUserAnswers() {
         return this.AnswerWrapper.GetUserAnswers();
+    }
+
+    public ValidateFill() {
+        this.ErrorNotice.textContent = '';
+        let user_answers = this.GetUserAnswers();
+        if(this._IsOptional) {
+            return true;
+        } else {
+            if(typeof user_answers == 'string') {
+                let is_valid = user_answers != '';
+                if(!is_valid) this.ErrorNotice.textContent = 'Odpowiedź na to pytanie jest obowiązkowa.';
+                return is_valid;
+            } else {
+                let is_valid = false;
+                // Wystarczy, że zaznaczono przynajmniej jedną odpowiedź
+                for(let user_answer of user_answers) is_valid ||= user_answer;
+                if(!is_valid) this.ErrorNotice.textContent = 'Przynajmniej jedna odpowiedź musi zostać zaznaczona.';
+                return is_valid;
+            }
+        }
     }
 }

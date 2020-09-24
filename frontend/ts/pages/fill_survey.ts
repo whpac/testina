@@ -138,10 +138,13 @@ export default class FillSurveyPage extends Page {
 
     protected async Submit() {
         this.SubmitButton.disabled = true;
-        let saving_toast = new Toast('Wysyłanie odpowiedzi...');
-        saving_toast.Show();
+        let is_valid = true;
 
         for(let i = 0; i < this.QuestionCards.length; i++) {
+            if(!this.QuestionCards[i].ValidateFill()) {
+                is_valid = false;
+            }
+
             let user_answers = this.QuestionCards[i].GetUserAnswers();
             if(typeof user_answers == 'string') {
                 this.Questions[i].UserSuppliedAnswer = user_answers;
@@ -150,9 +153,19 @@ export default class FillSurveyPage extends Page {
                     this.Questions[i].SetAnswerSelection(id, user_answers[id]);
                 }
             }
+
+            // W odniesieniu do ankiet oznaczenie jako ukończone nie ma znaczenia
             this.Questions[i].MarkAsDone();
         }
-        console.log(this.Questions);
+
+        if(!is_valid) {
+            this.SubmitButton.disabled = false;
+            new Toast('Sprawdź swoje odpowiedzi.').Show(0);
+            return;
+        }
+
+        let saving_toast = new Toast('Wysyłanie odpowiedzi...');
+        saving_toast.Show();
 
         try {
             await this.Attempt?.SaveUserAnswers(this.Questions);

@@ -223,7 +223,7 @@ export default class AnswerWrapper extends Component {
 
     public GetUserAnswers() {
         if(this.OpenAnswerInput !== undefined) {
-            return this.OpenAnswerInput.value;
+            return this.OpenAnswerInput.value.trim();
         }
 
         let answers = [];
