@@ -40,6 +40,12 @@ export default class Question extends Entity {
     protected _Footer: string | null;
     /** Numer kolejny pytania */
     protected _Order: number;
+    /** Określa, czy pytanie jest opcjonalne */
+    public readonly IsOptional: boolean;
+    /** Określa, czy pytanie ma opcję "nie dotyczy" */
+    public readonly HasNonApplicableAnswer: boolean;
+    /** Określa, czy pytanie ma opcję "inna - jaka?" */
+    public readonly HasOtherAnswer: boolean;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
 
@@ -112,11 +118,15 @@ export default class Question extends Entity {
      * @param max_typos Maksymalna dopuszczalna ilość literówek
      * @param answer_loader Obiekt wczytujący odpowiedzi
      * @param footer Treść w stopce pod pytaniem
-     * @param oreder Numer kolejny pytania
+     * @param order Numer kolejny pytania
+     * @param is_optional Czy pytanie jest opcjonalne
+     * @param has_na Czy pytanie ma odpowiedź "nie dotyczy"
+     * @param has_other Czy pytanie ma odpowiedź "inna - jaka?"
      */
     constructor(id: number, test: Test, text: string, type: number, points: number,
         points_counting: number, max_typos: number, answer_loader: AnswerLoader,
-        footer: string | null, order: number) {
+        footer: string | null, order: number, is_optional: boolean, has_na: boolean,
+        has_other: boolean) {
         super();
 
         this.Id = id;
@@ -128,8 +138,11 @@ export default class Question extends Entity {
         this._MaxTypos = max_typos;
         this._Footer = footer;
         this._Order = order;
-        this.AnswerCount = answer_loader.AnswerCount;
+        this.IsOptional = is_optional;
+        this.HasNonApplicableAnswer = has_na;
+        this.HasOtherAnswer = has_other;
 
+        this.AnswerCount = answer_loader.AnswerCount;
         this.AnswerLoader = answer_loader;
     }
 
