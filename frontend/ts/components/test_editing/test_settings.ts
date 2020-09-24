@@ -5,6 +5,7 @@ import Card from '../basic/card';
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import TestSaver from '../../entities/savers/testsaver';
+import HelpLink from '../help_link';
 
 export default class TestSettings extends Card {
     protected QuestionMultiplierInput: HTMLInputElement;
@@ -61,12 +62,7 @@ export default class TestSettings extends Card {
         question_multiplier_input_span.appendChild(this.QuestionMultiplierInput);
 
         // Link do pomocy
-        let question_multiplier_input_help = document.createElement('a');
-        question_multiplier_input_help.classList.add('get-help', 'todo', 'fa', 'fa-question-circle');
-        question_multiplier_input_help.href = 'pomoc';
-        question_multiplier_input_help.title = 'Pomoc';
-        question_multiplier_input_help.target = '_blank';
-        question_multiplier_input_span.appendChild(question_multiplier_input_help);
+        question_multiplier_input_span.appendChild(new HelpLink().GetElement());
         this.AppendChild(question_multiplier_input_span);
 
         // Komentarz do mnożnika pytań
@@ -80,8 +76,9 @@ export default class TestSettings extends Card {
         // Wybór limitu czasu
         let time_limit_fieldset = document.createElement('div');
         time_limit_fieldset.classList.add('fieldset');
-        time_limit_fieldset.innerHTML =
-            'Limit czasu na podejście <a class="get-help todo fa fa-question-circle" href="pomoc" title="Pomoc" target="_blank"></a><br />';
+        time_limit_fieldset.textContent = 'Limit czasu na podejście';
+        time_limit_fieldset.appendChild(new HelpLink().GetElement());
+        time_limit_fieldset.appendChild(document.createElement('br'));
 
         // Pole radio - limit obecny
         this.TimeLimitPresentRadio = document.createElement('input');
