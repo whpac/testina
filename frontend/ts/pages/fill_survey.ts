@@ -9,6 +9,7 @@ import Assignment from '../entities/assignment';
 import Attempt from '../entities/attempt';
 import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import Toast from '../components/basic/toast';
+import NavigationPrevention from '../1page/navigation_prevention';
 
 export default class FillSurveyPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -66,8 +67,15 @@ export default class FillSurveyPage extends Page {
         this.IntroductionCard.Populate(this.Assignment.Test);
 
         // Utwórz podejście
-        this.Attempt = await Attempt.Create(this.Assignment);
-        let questions = await this.Attempt.GetQuestions();
+        let questions;
+        try {
+            this.Attempt = await Attempt.Create(this.Assignment);
+            questions = await this.Attempt.GetQuestions();
+        } catch(e) {
+            throw 'Nie udało się pobrać pytań w ankiecie. Możliwe, że wypełniłeś(-aś) tę ankietę maksymalną możliwą ilość razy.';
+        }
+
+        NavigationPrevention.Prevent('filling-survey');
 
         questions.sort((a, b) => a.Order - b.Order);
         this.Questions = QuestionWithUserAnswers.FromArray(questions);
@@ -150,6 +158,7 @@ export default class FillSurveyPage extends Page {
             await this.Attempt?.SaveUserAnswers(this.Questions);
             saving_toast.Hide();
             new Toast('Wysłano odpowiedzi.').Show(0);
+            NavigationPrevention.Unprevent('filling-survey');
         } catch(e) {
             saving_toast.Hide();
             new Toast('Nie udało się wysłać odpowiedzi.').Show(0);
