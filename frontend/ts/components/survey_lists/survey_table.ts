@@ -62,7 +62,7 @@ export default class SurveyTable extends Component {
             td_name.textContent = survey.Name;
 
             let td_fills = tr.insertCell(-1);
-            td_fills.classList.add('center', 'todo');
+            td_fills.classList.add('center');
             td_fills.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
             // Policz ilość wypełnień, asynchronicznie, aby nie blokować ładowania
             (async () => {
