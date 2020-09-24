@@ -13,9 +13,13 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
     protected _IsDeleted: boolean = false;
+    protected _IsOptional: boolean = false;
 
     protected QuestionNumberText: Text;
     protected QuestionTypeSelect: HTMLSelectElement | undefined;
+    protected MarkAsOptionalButton: HTMLButtonElement | undefined;
+    protected MarkAsRequiredButton: HTMLButtonElement | undefined;
+    protected RequiredIndicator: HTMLElement | undefined;
     protected MoveUpButton: HTMLButtonElement | undefined;
     protected MoveDownButton: HTMLButtonElement | undefined;
     protected RemoveButton: HTMLButtonElement | undefined;
@@ -79,6 +83,20 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                 this.QuestionTypeSelect.appendChild(option);
             }
 
+            this.MarkAsOptionalButton = document.createElement('button');
+            question_header.appendChild(this.MarkAsOptionalButton);
+            this.MarkAsOptionalButton.classList.add('compact', 'error');
+            this.MarkAsOptionalButton.appendChild(new Icon('asterisk', 'fa-fw').GetElement());
+            this.MarkAsOptionalButton.title = 'Pytanie jest wymagane. Kliknij, by zmienić';
+            this.MarkAsOptionalButton.addEventListener('click', this.MarkAsOptional.bind(this));
+
+            this.MarkAsRequiredButton = document.createElement('button');
+            question_header.appendChild(this.MarkAsRequiredButton);
+            this.MarkAsRequiredButton.classList.add('compact', 'success');
+            this.MarkAsRequiredButton.appendChild(new Icon('dot-circle-o', 'fa-fw').GetElement());
+            this.MarkAsRequiredButton.title = 'Pytanie nie jest wymagane. Kliknij, by zmienić';
+            this.MarkAsRequiredButton.addEventListener('click', this.MarkAsRequired.bind(this));
+
             let buttons = document.createElement('span');
             buttons.classList.add('buttons');
             question_header.appendChild(buttons);
@@ -113,6 +131,11 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         } else {
             question_header.classList.add('secondary');
             question_header.appendChild(document.createTextNode('.'));
+
+            this.RequiredIndicator = document.createElement('span');
+            question_header.appendChild(this.RequiredIndicator);
+            this.RequiredIndicator.classList.add('error');
+            this.RequiredIndicator.textContent = '*';
         }
 
         this.AnswerWrapper = new AnswerWrapper(this.EditMode);
@@ -156,6 +179,12 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
 
         if(this.QuestionTypeSelect !== undefined)
             this.QuestionTypeSelect.value = (question?.Type ?? Question.TYPE_SINGLE_CHOICE).toString();
+        if(this.MarkAsOptionalButton !== undefined)
+            this.MarkAsOptionalButton.style.display = (question?.IsOptional ?? false) ? 'none' : '';
+        if(this.MarkAsRequiredButton !== undefined)
+            this.MarkAsRequiredButton.style.display = (question?.IsOptional ?? false) ? '' : 'none';
+        if(this.RequiredIndicator !== undefined)
+            this.RequiredIndicator.style.display = (question?.IsOptional ?? false) ? 'none' : '';
         this.AnswerWrapper.Populate(question);
     }
 
@@ -220,6 +249,22 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         this.Element.classList.remove('deleted');
         this.UpdateMoveButtonsState();
         this.FireEvent('markasundeleted');
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected MarkAsOptional() {
+        if(this.MarkAsOptionalButton === undefined || this.MarkAsRequiredButton === undefined) return;
+        this._IsOptional = true;
+        this.MarkAsOptionalButton.style.display = 'none';
+        this.MarkAsRequiredButton.style.display = '';
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected MarkAsRequired() {
+        if(this.MarkAsOptionalButton === undefined || this.MarkAsRequiredButton === undefined) return;
+        this._IsOptional = false;
+        this.MarkAsOptionalButton.style.display = '';
+        this.MarkAsRequiredButton.style.display = 'none';
         NavigationPrevention.Prevent('survey-editor');
     }
 
