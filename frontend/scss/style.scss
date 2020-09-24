@@ -111,6 +111,8 @@ div.about-logo-wrapper {
 }
 @include media-xlarge {
     .narrow-screen-only {display:none !important;}
+    .not-xlarge-screen {display:none !important;}
+
     .small-screen-only {display:none !important;}
     .medium-screen-only {display:none !important;}
     .large-screen-only {display:none !important;}

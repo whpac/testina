@@ -32,12 +32,16 @@ export default class TestsSolvedTable extends Card {
         let col_widescreen = document.createElement('col');
         col_widescreen.classList.add('wide-screen-only');
 
+        let col_xlargescreen = document.createElement('col');
+        col_xlargescreen.classList.add('xlarge-screen-only');
+
+        colgroup.appendChild(document.createElement('col'));
+        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_xlargescreen.cloneNode(false));
         colgroup.appendChild(document.createElement('col'));
         colgroup.appendChild(col_widescreen.cloneNode(false));
         colgroup.appendChild(col_widescreen.cloneNode(false));
-        colgroup.appendChild(document.createElement('col'));
-        colgroup.appendChild(col_widescreen.cloneNode(false));
-        colgroup.appendChild(col_widescreen.cloneNode(false));
+        colgroup.appendChild(col_shrink.cloneNode(false));
         colgroup.appendChild(col_shrink.cloneNode(false));
         table.appendChild(colgroup);
 
@@ -54,7 +58,7 @@ export default class TestsSolvedTable extends Card {
         thead_tr.appendChild(th_score);
 
         let th_assigned = document.createElement('th');
-        th_assigned.classList.add('wide-screen-only');
+        th_assigned.classList.add('xlarge-screen-only');
         th_assigned.textContent = 'Przypisano';
         thead_tr.appendChild(th_assigned);
 
@@ -68,13 +72,13 @@ export default class TestsSolvedTable extends Card {
         thead_tr.appendChild(th_author);
 
         let th_attempts = document.createElement('th');
-        th_attempts.classList.add('wide-screen-only');
+        th_attempts.classList.add('xlarge-screen-only');
         th_attempts.textContent = 'Podejść';
         thead_tr.appendChild(th_attempts);
 
-        let th_buttons = document.createElement('th');
-        th_buttons.classList.add('narrow-screen-only');
-        thead_tr.appendChild(th_buttons);
+        let th_details = document.createElement('th');
+        th_details.classList.add('not-xlarge-screen');
+        thead_tr.appendChild(th_details);
 
         this.ContentWrapper = table.createTBody();
         this.ContentWrapper.classList.add('content-tbody');

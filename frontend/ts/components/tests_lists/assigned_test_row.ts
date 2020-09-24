@@ -13,7 +13,9 @@ export default class AssignedTestRow extends Component {
     AuthorCell: HTMLTableCellElement;
     ScoreCell: HTMLTableCellElement;
     AttemptsCell: HTMLTableCellElement;
-    ButtonsCell: HTMLTableCellElement;
+    // ButtonsCell: HTMLTableCellElement;
+    SolveCell: HTMLTableCellElement;
+    DetailsCell: HTMLTableCellElement;
     SolveButton: HTMLAnchorElement;
     DetailsButton: HTMLButtonElement;
 
@@ -26,25 +28,28 @@ export default class AssignedTestRow extends Component {
         this.DeadlineCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.DeadlineCell.classList.add('center');
         this.AssignedCell = (this.Element as HTMLTableRowElement).insertCell(-1);
-        this.AssignedCell.classList.add('wide-screen-only', 'center');
+        this.AssignedCell.classList.add('xlarge-screen-only', 'center');
         this.AuthorCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.AuthorCell.classList.add('wide-screen-only', 'center');
         this.ScoreCell = (this.Element as HTMLTableRowElement).insertCell(-1);
         this.ScoreCell.classList.add('wide-screen-only', 'center');
         this.AttemptsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
-        this.AttemptsCell.classList.add('wide-screen-only', 'center');
+        this.AttemptsCell.classList.add('xlarge-screen-only', 'center');
 
-        this.ButtonsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
-        this.ButtonsCell.classList.add('right');
+        this.SolveCell = (this.Element as HTMLTableRowElement).insertCell(-1);
+        this.SolveCell.classList.add('right', 'wide-screen-only');
 
         this.SolveButton = document.createElement('a');
-        this.SolveButton.classList.add('button', 'compact', 'wide-screen-only');
+        this.SolveButton.classList.add('button', 'compact');
         this.SolveButton.textContent = 'Rozwiąż';
-        this.ButtonsCell.appendChild(this.SolveButton);
+        this.SolveCell.appendChild(this.SolveButton);
+
+        this.DetailsCell = (this.Element as HTMLTableRowElement).insertCell(-1);
+        this.DetailsCell.classList.add('right', 'not-xlarge-screen');
 
         this.DetailsButton = document.createElement('button');
-        this.DetailsButton.classList.add('narrow-screen-only', 'fa', 'fa-ellipsis-h', 'only-child');
-        this.ButtonsCell.appendChild(this.DetailsButton);
+        this.DetailsButton.classList.add('fa', 'fa-ellipsis-h');
+        this.DetailsCell.appendChild(this.DetailsButton);
 
         this.Populate(assignment);
     }
@@ -67,8 +72,7 @@ export default class AssignedTestRow extends Component {
             attempts.toString() + ((attempt_limit > 0) ? ('/' + attempt_limit.toString()) : '');
 
         if(!assignment.IsActive()) {
-            this.SolveButton.remove();
-            this.ButtonsCell.classList.add('narrow-screen-only');
+            this.SolveCell.remove();
 
             this.DeadlineCell.title = this.DeadlineCell.textContent;
             this.DeadlineCell.textContent = DateUtils.ToDayFormat(assignment.Deadline);
