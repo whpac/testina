@@ -61,7 +61,7 @@ class Answer extends Entity {
         $bitmask = self::$flag_map[$flag_name];
         $flags_int = $this->GetFlags();
 
-        while($bitmask & 1 == 0){
+        while(($bitmask & 1) == 0){
             $bitmask = $bitmask >> 1;
             $flags_int = $flags_int >> 1;
         }
