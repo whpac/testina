@@ -159,7 +159,7 @@ class Answer extends Entity {
             // Calculate position of lowest flag bit
             $bits_to_shift_val = 0;
             $bitmask = $flag_bitmask;
-            while($bitmask & 1 == 0){
+            while(($bitmask & 1) == 0){
                 $bitmask = $bitmask >> 1;
                 $bits_to_shift_val++;
             }
