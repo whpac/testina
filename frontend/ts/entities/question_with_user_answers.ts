@@ -2,7 +2,7 @@ import Answer from './answer';
 import Question from './question';
 import Levenshtein from '../utils/levenshtein';
 
-type StringKeyedCollection<T> = {
+export type StringKeyedCollection<T> = {
     [key: string]: T;
 };
 

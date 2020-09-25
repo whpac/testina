@@ -31,7 +31,12 @@ export default class SurveyAnswerRowOther extends SurveyAnswerRow {
 
         if(this.EditMode) {
             this.AnswerTextElement.textContent = ' Wyświetl opcję „Inna – jaka?”';
+            this.CheckboxElement.checked = question?.HasOtherAnswer ?? false;
         } else {
+            if(!(question?.HasOtherAnswer ?? false)) {
+                this.Element.style.display = 'none';
+                return;
+            }
             this.AnswerTextElement.textContent = ' Inna – jaka? ';
 
             this.UserSuppliedAnswerElement = document.createElement('input');

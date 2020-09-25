@@ -6,6 +6,8 @@ import { MoveElement } from '../../utils/arrayutils';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import SurveyAnswerRowNA from './survey_answer_row_na';
 import SurveyAnswerRowOther from './survey_answer_row_other';
+import { Collection } from '../../entities/entity';
+import { StringKeyedCollection } from '../../entities/question_with_user_answers';
 
 type SpecialAnswerRowsDescriptor = {
     NonApplicableRow: SurveyAnswerRow | undefined;
@@ -261,14 +263,23 @@ export default class AnswerWrapper extends Component {
 
     public GetUserAnswers() {
         if(this.OpenAnswerInput !== undefined) {
-            return this.OpenAnswerInput.value.trim();
+            let value = this.OpenAnswerInput.value.trim();
+            if(value != '') return value;
         }
 
-        let answers = [];
+        let answers: StringKeyedCollection<string | boolean> = {};
         for(let answer of this.AnswerRows) {
             let answer_id = answer.GetAnswerId();
             if(answer_id === undefined) continue;
-            answers[answer_id] = answer.GetValue();
+            answers[answer_id.toString()] = answer.GetValue();
+        }
+        let na_row = this.SpecialAnswerRows.NonApplicableRow;
+        if(na_row !== undefined && na_row.GetAnswerId() !== undefined) {
+            answers[na_row.GetAnswerId() as number] = na_row.GetValue();
+        }
+        let other_row = this.SpecialAnswerRows.OtherRow;
+        if(other_row !== undefined && other_row.GetAnswerId() !== undefined) {
+            answers[other_row.GetAnswerId() as number] = other_row.GetValue();
         }
         return answers;
     }
@@ -279,5 +290,13 @@ export default class AnswerWrapper extends Component {
         }
         this.SpecialAnswerRows.NonApplicableRow?.OnSelectionChanged();
         this.SpecialAnswerRows.OtherRow?.OnSelectionChanged();
+    }
+
+    public IsNASelected() {
+        return this.SpecialAnswerRows.NonApplicableRow?.GetValue() == true;
+    }
+
+    public IsOtherSelected() {
+        return (this.SpecialAnswerRows.OtherRow?.GetValue() ?? false) !== false;
     }
 }

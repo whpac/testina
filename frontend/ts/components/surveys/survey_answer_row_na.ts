@@ -30,7 +30,12 @@ export default class SurveyAnswerRowNA extends SurveyAnswerRow {
 
         if(this.EditMode) {
             this.AnswerTextElement.textContent = ' Wyświetl opcję „Nie dotyczy”';
+            this.CheckboxElement.checked = question?.HasNonApplicableAnswer ?? false;
         } else {
+            if(!(question?.HasNonApplicableAnswer ?? false)) {
+                this.Element.style.display = 'none';
+                return;
+            }
             this.AnswerTextElement.textContent = ' Nie dotyczy';
             if(question_type == Question.TYPE_SINGLE_CHOICE) {
                 this.CheckboxElement.type = 'radio';

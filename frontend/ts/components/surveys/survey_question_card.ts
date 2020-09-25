@@ -294,7 +294,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     this.FooterField.value,
                     order,
-                    this._IsOptional
+                    this._IsOptional,
+                    this.AnswerWrapper.IsNASelected(),
+                    this.AnswerWrapper.IsOtherSelected()
                 );
                 await this.SaveAnswers();
                 await update_awaiter;
@@ -315,7 +317,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     this.FooterField.value,
                     order,
-                    this._IsOptional
+                    this._IsOptional,
+                    this.AnswerWrapper.IsNASelected(),
+                    this.AnswerWrapper.IsOtherSelected()
                 );
                 await this.SaveAnswers();
             } else {
@@ -336,6 +340,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     public ValidateFill() {
         this.ErrorNotice.textContent = '';
         let user_answers = this.GetUserAnswers();
+        console.log(user_answers);
         if(this._IsOptional) {
             return true;
         } else {
@@ -346,9 +351,12 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
             } else {
                 let is_valid = false;
                 // Wystarczy, że zaznaczono przynajmniej jedną odpowiedź
-                for(let user_answer of user_answers) {
+                for(let answer_id in user_answers) {
+                    let user_answer = user_answers[answer_id];
+                    if(user_answer === undefined) continue;
+                    console.log(user_answer);
                     if(typeof user_answer == 'boolean') is_valid ||= user_answer;
-                    else is_valid ||= user_answer.length > 0;
+                    else is_valid ||= (user_answer.length > 0);
                 }
                 if(!is_valid) this.ErrorNotice.textContent = 'Przynajmniej jedna odpowiedź musi zostać zaznaczona.';
                 return is_valid;
