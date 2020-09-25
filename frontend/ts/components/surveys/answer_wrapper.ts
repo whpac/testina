@@ -4,18 +4,27 @@ import Answer from '../../entities/answer';
 import SurveyAnswerRow from './survey_answer_row';
 import { MoveElement } from '../../utils/arrayutils';
 import NavigationPrevention from '../../1page/navigation_prevention';
+import SurveyAnswerRowNA from './survey_answer_row_na';
+import SurveyAnswerRowOther from './survey_answer_row_other';
+
+type SpecialAnswerRowsDescriptor = {
+    NonApplicableRow: SurveyAnswerRow | undefined;
+    OtherRow: SurveyAnswerRow | undefined;
+};
 
 export default class AnswerWrapper extends Component {
     protected ListElement: HTMLUListElement;
     protected AddAnswerButton: HTMLButtonElement | undefined;
     protected AnswerPlaceholderWrapper: HTMLElement;
     protected OpenAnswerInput: HTMLInputElement | undefined;
+    protected SpecialAnswersListElement: HTMLUListElement;
 
     protected Question: Question | undefined;
     protected QuestionType: number | undefined;
     protected EditMode: boolean;
     protected Answers: Answer[] | undefined;
     protected AnswerRows: SurveyAnswerRow[];
+    protected SpecialAnswerRows: SpecialAnswerRowsDescriptor;
 
     public constructor(edit_mode: boolean = false) {
         super();
@@ -30,6 +39,15 @@ export default class AnswerWrapper extends Component {
         this.AnswerPlaceholderWrapper = document.createElement('li');
         this.AnswerPlaceholderWrapper.classList.add('no-hover');
         this.ListElement.appendChild(this.AnswerPlaceholderWrapper);
+
+        this.SpecialAnswersListElement = document.createElement('ul');
+        this.AppendChild(this.SpecialAnswersListElement);
+        this.SpecialAnswersListElement.classList.add('survey-answer-wrapper');
+
+        this.SpecialAnswerRows = {
+            NonApplicableRow: undefined,
+            OtherRow: undefined
+        };
     }
 
     public async Populate(question: Question | undefined) {
@@ -48,6 +66,8 @@ export default class AnswerWrapper extends Component {
     public ChangeType(type: number) {
         this.QuestionType = type;
         this.RenderAnswers();
+        this.SpecialAnswerRows.OtherRow?.SetQuestionType(type);
+        this.SpecialAnswerRows.NonApplicableRow?.SetQuestionType(type);
     }
 
     public SetQuestion(question: Question) {
@@ -85,6 +105,8 @@ export default class AnswerWrapper extends Component {
         if(this.QuestionType == Question.TYPE_OPEN_ANSWER) {
             this.RenderOpenAnswer();
         }
+
+        this.RenderSpecialAnswers();
     }
 
     protected RefreshAnswerOrder() {
@@ -117,6 +139,7 @@ export default class AnswerWrapper extends Component {
         answer_row.AddEventListener('movedown', (() => this.OnAnswerMovedDown(answer_row)).bind(this));
         answer_row.AddEventListener('markasdeleted', this.RefreshAnswerOrder.bind(this));
         answer_row.AddEventListener('markasundeleted', this.RefreshAnswerOrder.bind(this));
+        answer_row.AddEventListener('checkedchange', this.OnRowSelectionChanged.bind(this));
         this.ListElement.appendChild(answer_row.GetElement());
         this.AnswerRows.push(answer_row);
 
@@ -134,6 +157,21 @@ export default class AnswerWrapper extends Component {
         else this.OpenAnswerInput.placeholder = 'Tu użytkownik wpisze odpowiedź';
         this.OpenAnswerInput.disabled = this.EditMode;
         this.AnswerPlaceholderWrapper.appendChild(this.OpenAnswerInput);
+    }
+
+    protected RenderSpecialAnswers() {
+        if(this.SpecialAnswerRows.NonApplicableRow === undefined) {
+            this.SpecialAnswerRows.NonApplicableRow = new SurveyAnswerRowNA(this.EditMode);
+            this.SpecialAnswerRows.NonApplicableRow.Populate(this.Question, this.QuestionType ?? Question.TYPE_SINGLE_CHOICE, undefined);
+            this.SpecialAnswerRows.NonApplicableRow.AddEventListener('checkedchange', this.OnRowSelectionChanged.bind(this));
+        }
+        if(this.SpecialAnswerRows.OtherRow === undefined) {
+            this.SpecialAnswerRows.OtherRow = new SurveyAnswerRowOther(this.EditMode);
+            this.SpecialAnswerRows.OtherRow.Populate(this.Question, this.QuestionType ?? Question.TYPE_SINGLE_CHOICE, undefined);
+            this.SpecialAnswerRows.OtherRow.AddEventListener('checkedchange', this.OnRowSelectionChanged.bind(this));
+        }
+        this.SpecialAnswersListElement.appendChild(this.SpecialAnswerRows.OtherRow.GetElement());
+        this.SpecialAnswersListElement.appendChild(this.SpecialAnswerRows.NonApplicableRow.GetElement());
     }
 
     protected RenderAddAnswerButton() {
@@ -228,8 +266,18 @@ export default class AnswerWrapper extends Component {
 
         let answers = [];
         for(let answer of this.AnswerRows) {
-            answers[answer.GetAnswerId()] = answer.IsSelected();
+            let answer_id = answer.GetAnswerId();
+            if(answer_id === undefined) continue;
+            answers[answer_id] = answer.GetValue();
         }
         return answers;
+    }
+
+    protected OnRowSelectionChanged() {
+        for(let answer_row of this.AnswerRows) {
+            answer_row.OnSelectionChanged();
+        }
+        this.SpecialAnswerRows.NonApplicableRow?.OnSelectionChanged();
+        this.SpecialAnswerRows.OtherRow?.OnSelectionChanged();
     }
 }
