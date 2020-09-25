@@ -54,14 +54,18 @@ class AttemptAnswers extends Resource {
 
                 foreach($question->answers as $answer){
                     try{
-                        if($question->is_open){
+                        if(isset($answer->text)){
                             TypeValidator::AssertIsString($answer->text, 'answer.text');
                             
                             \Entities\UserAnswer::CreateOpenAnswer($this->Attempt, $question_index, new \Entities\Question($question->id), $answer->text);
                         }else{
                             TypeValidator::AssertIsInt($answer->id, 'answer.id');
 
-                            \Entities\UserAnswer::Create($this->Attempt, new \Entities\Answer($answer->id), $question_index);
+                            if($answer->id >= 0){
+                                \Entities\UserAnswer::Create($this->Attempt, new \Entities\Answer($answer->id), $question_index);
+                            }else{
+                                \Entities\UserAnswer::CreateSpecialAnswer($this->Attempt, $answer->id, $question_index, new \Entities\Question($question->id));
+                            }
                         }
                     }catch(Exception $e){
                         $errors++;
