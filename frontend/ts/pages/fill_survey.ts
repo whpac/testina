@@ -150,7 +150,9 @@ export default class FillSurveyPage extends Page {
                 this.Questions[i].UserSuppliedAnswer = user_answers;
             } else {
                 for(let id in user_answers) {
-                    this.Questions[i].SetAnswerSelection(id, user_answers[id]);
+                    let user_answer = user_answers[id];
+                    if(typeof user_answer == 'boolean') this.Questions[i].SetAnswerSelection(id, user_answer);
+                    else this.Questions[i].UserSuppliedAnswer = user_answer;
                 }
             }
 

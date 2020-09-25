@@ -18,8 +18,15 @@ export default class QuestionWithUserAnswers {
     protected IsDone: boolean;
     /** Zdobyty wynik punktowy za pytanie */
     protected Score: number | undefined;
+    /** Czy zaznaczono "nie dotyczy" */
+    protected _IsNonApplicableSelected: boolean = false;
     /** Odpowiedź podana przez rozwiązującego */
     public UserSuppliedAnswer: string | undefined;
+
+    /** Czy zaznaczono "nie dotyczy" */
+    public get IsNonApplicableSelected() {
+        return this._IsNonApplicableSelected;
+    }
 
     /**
      * Klasa reprezentująca pytanie z odpowiedziami użytkownika
@@ -80,6 +87,7 @@ export default class QuestionWithUserAnswers {
         for(let id in this.Answers) {
             this.IsAnswerSelected[id] = false;
         }
+        this._IsNonApplicableSelected = false;
     }
 
     /**
@@ -88,7 +96,8 @@ export default class QuestionWithUserAnswers {
      * @param is_selected Czy wskazana odpowiedź ma być zaznaczona
      */
     public SetAnswerSelection(id: string, is_selected: boolean) {
-        this.IsAnswerSelected[id] = is_selected;
+        if(id == '-1') this._IsNonApplicableSelected = is_selected;
+        else this.IsAnswerSelected[id] = is_selected;
     }
 
     /**
@@ -96,6 +105,7 @@ export default class QuestionWithUserAnswers {
      * @param id Identyfikator odpowiedzi
      */
     public GetAnswerSelection(id: string) {
+        if(id == '-1') return this._IsNonApplicableSelected;
         return this.IsAnswerSelected[id] ?? false;
     }
 
@@ -104,6 +114,7 @@ export default class QuestionWithUserAnswers {
      * @param id Identyfikator odpowiedzi
      */
     public ToggleAnswerSelection(id: string) {
+        if(id == '-1') this._IsNonApplicableSelected = !this._IsNonApplicableSelected;
         this.IsAnswerSelected[id] = !this.IsAnswerSelected[id];
     }
 

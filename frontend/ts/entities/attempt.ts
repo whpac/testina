@@ -97,17 +97,22 @@ export default class Attempt extends Entity {
                 answers: answers
             };
 
-            if(question.GetQuestion().Type == Question.TYPE_OPEN_ANSWER) {
+            if(question.UserSuppliedAnswer !== undefined) {
                 q.answers.push({
-                    text: question.UserSuppliedAnswer ?? ''
+                    text: question.UserSuppliedAnswer
                 });
-            } else {
-                let selected_answers = question.GetSelectedAnswers();
-                for(let selected_answer of selected_answers) {
-                    q.answers.push({
-                        id: selected_answer.Id
-                    });
-                }
+            }
+            let selected_answers = question.GetSelectedAnswers();
+            for(let selected_answer of selected_answers) {
+                q.answers.push({
+                    id: selected_answer.Id
+                });
+            }
+
+            if(question.IsNonApplicableSelected) {
+                q.answers.push({
+                    id: -1
+                });
             }
 
             data.questions.push(q);
