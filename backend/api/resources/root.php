@@ -111,7 +111,7 @@ class Root extends Resource implements Schemas\Root {
         $u = new User($current_user);
         $out_users['current'] = $u;
 
-        $all_users = \Entities\User::GetAll();
+        $all_users = \Auth\ExternalLogin\OfficeUser::GetAll();
         foreach($all_users as $user){
             $out_users[$user->GetId()] = new User($user);
         }

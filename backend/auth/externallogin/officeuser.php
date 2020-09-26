@@ -9,8 +9,10 @@ class OfficeUser extends ExternalUser {
     protected $FirstName = null;
     protected $LastName = null;
 
-    public function __construct(?string $id = null){
+    public function __construct(?string $id = null, ?string $first_name = null, ?string $last_name = null){
         $this->Id = $id;
+        $this->FirstName = $first_name;
+        $this->LastName = $last_name;
     }
 
     public function GetId(){
@@ -63,7 +65,7 @@ class OfficeUser extends ExternalUser {
 
         // Wykonaj żądanie
         $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+        $result = @file_get_contents($url, false, $context);
         if ($result === false) {
             Logger::Log('Nie udało się pobrać informacji o użytkowniku z serwera Office 365.', LogChannels::EXTERNAL_API);
             throw new \Exception('Nie udało się pobrać informacji o użytkowniku z serwera Office 365.');
@@ -80,6 +82,34 @@ class OfficeUser extends ExternalUser {
         $this->Id = 0;
         $this->FirstName = 'Użytkownik';
         $this->LastName = 'Anonimowy';
+    }
+
+    public static function GetAll(){
+        $url = 'https://graph.microsoft.com/v1.0/users/';
+
+        // Opcje żądania
+        $options = array(
+            'http' => array(
+                'header'  => "Authorization: Bearer ".TokenManager::GetAccessToken()."\r\n",
+                'method'  => 'GET',
+            )
+        );
+
+        // Wykonaj żądanie
+        $context = stream_context_create($options);
+        $result = @file_get_contents($url, false, $context);
+        if ($result === false) {
+            Logger::Log('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.', LogChannels::EXTERNAL_API);
+            throw new \Exception('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.');
+        }
+
+        $parsed = json_decode($result, true);
+
+        $users = [];
+        foreach($parsed['value'] as $user){
+            $users[] = new self($user['id'], $user['givenName'], $user['surname']);
+        }
+        return $users;
     }
 
     public function __toString(){
