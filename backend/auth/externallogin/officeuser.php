@@ -28,6 +28,18 @@ class OfficeUser extends ExternalUser {
         return $this->LastName;
     }
 
+    public /* string */ function GetFullName(){
+        return $this->GetFirstName().' '.$this->GetLastName();
+    }
+
+    public /* Group[] */ function GetGroups(){
+        return [];
+    }
+
+    public /* bool */ function IsFemale(){
+        return (substr($this->GetFirstName(), -1, 1) == 'a');
+    }
+
     protected function FetchData(){
         $resource = 'me';
         if(!is_null($this->Id)){

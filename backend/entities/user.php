@@ -10,7 +10,6 @@ class User extends Entity implements \Auth\Users\User {
     protected /* string */ $first_name;
     protected /* string */ $last_name;
     protected /* string */ $login;
-    protected /* int */ $priviledges;
 
     protected static /* string */ function GetTableName(){
         return TABLE_USERS;
@@ -49,7 +48,6 @@ class User extends Entity implements \Auth\Users\User {
         $this->first_name = 'Anonimowy';
         $this->last_name = 'Użytkownik';
         $this->login = '';
-        $this->priviledges = 0;
     }
 
     public /* int */ function GetId(){
@@ -70,11 +68,6 @@ class User extends Entity implements \Auth\Users\User {
     public /* string */ function GetFullName(){
         $this->FetchIfNeeded();
         return $this->first_name.' '.$this->last_name;
-    }
-
-    public /* int */ function GetPriviledges(){
-        $this->FetchIfNeeded();
-        return $this->priviledges;
     }
 
     public /* Group[] */ function GetGroups(){
