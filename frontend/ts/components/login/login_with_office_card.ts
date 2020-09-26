@@ -42,7 +42,7 @@ client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
 &response_type=code
 &redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Foffice_login
 &response_mode=query
-&scope=offline_access%20user.read
+&scope=offline_access%20user.read%20user.read.all
 &state=12345`;
         link.textContent = 'Zaloguj';
         link_wrapper.appendChild(link);
