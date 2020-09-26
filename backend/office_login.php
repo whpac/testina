@@ -34,11 +34,13 @@ TokenManager::RegisterAccessToken($response->AccessToken, $response->ExpiresIn);
 TokenManager::RegisterRefreshToken($response->RefreshToken);
 
 // Krok 3. Pobranie informacji o aktualnie zalogowanym użytkowniku
+$user = new Auth\ExternalLogin\OfficeUser();
 // Auth\AuthManager::LogInExternalUser('user_id');
 // Krok 4. Przekierowanie do strony głównej (w zamierzeniu - do strony, którą chciał wyświetlić użytkownik)
 
 echo('<pre>');
 echo("Stan: $state\n");
 echo("Wygasa za: $response->ExpiresIn\n");
+echo($user);
 echo('</pre>');
 ?>
