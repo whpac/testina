@@ -55,26 +55,26 @@ class User extends Entity implements \Auth\Users\User {
         return $this->id;
     }
 
-    public /* string */ function GetFirstName(){
+    public /* string */ function GetFirstName(): string{
         $this->FetchIfNeeded();
         return $this->first_name;
     }
 
-    public /* string */ function GetLastName(){
+    public /* string */ function GetLastName(): string{
         $this->FetchIfNeeded();
         return $this->last_name;
     }
 
-    public /* string */ function GetFullName(){
+    public /* string */ function GetFullName(): string{
         $this->FetchIfNeeded();
         return $this->first_name.' '.$this->last_name;
     }
 
-    public /* Group[] */ function GetGroups(){
+    public /* Group[] */ function GetGroups(): array{
         return [];
     }
 
-    public /* bool */ function IsFemale(){
+    public /* bool */ function IsFemale(): bool{
         $this->FetchIfNeeded();
         return (substr($this->first_name, -1, 1) == 'a');
     }

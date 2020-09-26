@@ -18,25 +18,25 @@ class OfficeUser extends ExternalUser {
         return $this->Id;
     }
 
-    public function GetFirstName(){
+    public function GetFirstName(): string{
         if(is_null($this->FirstName)) $this->FetchData();
         return $this->FirstName;
     }
 
-    public function GetLastName(){
+    public function GetLastName(): string{
         if(is_null($this->LastName)) $this->FetchData();
         return $this->LastName;
     }
 
-    public /* string */ function GetFullName(){
+    public /* string */ function GetFullName(): string{
         return $this->GetFirstName().' '.$this->GetLastName();
     }
 
-    public /* Group[] */ function GetGroups(){
+    public /* Group[] */ function GetGroups(): array{
         return [];
     }
 
-    public /* bool */ function IsFemale(){
+    public /* bool */ function IsFemale(): bool{
         return (substr($this->GetFirstName(), -1, 1) == 'a');
     }
 
