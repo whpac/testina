@@ -8,7 +8,7 @@ namespace Api;
 class Context{
     protected /* User */ $user;
 
-    public function __construct(\Entities\User $user){
+    public function __construct(\Auth\Users\User $user){
         $this->user = $user;
     }
 

@@ -83,7 +83,7 @@ class AuthManager {
 
     public static function RestoreCurrentUser(){
         if(is_null(self::$user_factory)){
-            Logger::Log('Nie zarejestrowano żadnej fabryki użytkowników.', LogChannels::APPLICATION_ERRORS);
+            Logger::Log('Nie zarejestrowano żadnej fabryki użytkowników.', LogChannels::APPLICATION_ERROR);
             throw new \Exception('Nie zarejestrowano żadnej fabryki użytkowników.');
         }
 

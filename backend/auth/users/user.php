@@ -5,6 +5,6 @@ interface User {
 
     public function GetId();
 
-    public function GetPriviledges();
+    //public function GetPriviledges();
 }
 ?>

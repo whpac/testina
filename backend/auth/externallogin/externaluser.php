@@ -1,7 +1,10 @@
 <?php
 namespace Auth\ExternalLogin;
 
-class ExternalUser {
+class ExternalUser implements \Auth\Users\User {
     
+    public function GetId(){
+        return 0;
+    }
 }
 ?>
