@@ -28,5 +28,8 @@ class LogChannels{
 
     // Kanał dla wiadomości związanych z bazą danych
     public const DATABASE = 50;
+
+    // Kanał dla zdarzeń związanych z komunikacją z zewnętrznymi serwerami
+    public const EXTERNAL_API = 60;
 }
 ?>
