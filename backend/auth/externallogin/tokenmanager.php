@@ -1,5 +1,5 @@
 <?php
-namespace ExternalLogin;
+namespace Auth\ExternalLogin;
 
 use Database\DatabaseManager;
 use Log\Logger;

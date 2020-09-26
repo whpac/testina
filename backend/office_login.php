@@ -2,7 +2,7 @@
 use Database\DatabaseManager;
 use Database\MySQL;
 
-use ExternalLogin\TokenManager;
+use Auth\ExternalLogin\TokenManager;
 
 use Session\SessionManager;
 

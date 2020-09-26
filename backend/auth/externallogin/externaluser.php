@@ -1,5 +1,5 @@
 <?php
-namespace ExternalLogin;
+namespace Auth\ExternalLogin;
 
 class ExternalUser {
     
