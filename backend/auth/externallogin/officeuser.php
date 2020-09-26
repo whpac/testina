@@ -9,6 +9,10 @@ class OfficeUser extends ExternalUser {
     protected $FirstName = null;
     protected $LastName = null;
 
+    public function __construct(?string $id = null){
+        $this->Id = $id;
+    }
+
     public function GetId(){
         if(is_null($this->Id)) $this->FetchData();
         return $this->Id;
@@ -25,7 +29,12 @@ class OfficeUser extends ExternalUser {
     }
 
     protected function FetchData(){
-        $url = 'https://graph.microsoft.com/v1.0/me/';
+        $resource = 'me';
+        if(!is_null($this->Id)){
+            $resource = 'users/'.$this->Id;
+        }
+
+        $url = 'https://graph.microsoft.com/v1.0/'.$resource.'/';
 
         // Opcje żądania
         $options = array(
