@@ -12,6 +12,7 @@ import AttemptLoader from './loaders/attemptloader';
 import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
+import { StringKeyedCollection } from './question_with_user_answers';
 
 type AssignmentTargetEntity = User | Group;
 export type AssignmentTargets = {
@@ -122,7 +123,7 @@ export default class Assignment extends Entity implements PageParams {
         return this._Targets;
     }
 
-    protected _Results: Collection<AssignmentResult> | undefined;
+    protected _Results: StringKeyedCollection<AssignmentResult> | undefined;
     /** Zwraca wyniki innych osób, indeksowane id użytkownika */
     public async GetResults() {
         if(this._Results === undefined) {
@@ -220,7 +221,7 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     async AddTargets(targets: AssignmentTargetEntity[]) {
-        let payload_targets: { type: number, id: number; }[] = [];
+        let payload_targets: { type: number, id: string; }[] = [];
 
         for(let target of targets) {
             let type = 0;
@@ -229,7 +230,7 @@ export default class Assignment extends Entity implements PageParams {
 
             payload_targets.push({
                 type: type,
-                id: target.Id
+                id: target.Id.toString()
             });
         }
 
@@ -247,7 +248,7 @@ export default class Assignment extends Entity implements PageParams {
     }
 
     async RemoveTargets(targets: AssignmentTargetEntity[]) {
-        let payload_targets: { type: number, id: number; }[] = [];
+        let payload_targets: { type: number, id: string; }[] = [];
 
         for(let target of targets) {
             let type = 0;
@@ -256,7 +257,7 @@ export default class Assignment extends Entity implements PageParams {
 
             payload_targets.push({
                 type: type,
-                id: target.Id
+                id: target.Id.toString()
             });
         }
 

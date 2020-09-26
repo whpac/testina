@@ -9,7 +9,7 @@ import ApiEndpoints from './apiendpoints';
 /** Deskryptor podejścia w odpowiedzi z API */
 export interface AttemptDescriptor {
     id: number,
-    user_id: number,
+    user_id: string,
     score: number | undefined,
     max_score: number,
     begin_time: string,

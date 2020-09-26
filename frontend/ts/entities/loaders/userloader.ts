@@ -6,12 +6,12 @@ import FetchingErrorException from '../../exceptions/fetching_error';
 
 /** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {
-    id: number,
+    id: string,
     first_name: string,
     last_name: string;
 }
 
-export default class UserLoader implements Loader<User> {
+export default class UserLoader {
     /** Przechowuje aktualnie zalogowanego użytkownika */
     protected static CurrentUser: (User | undefined) = undefined;
 
@@ -19,12 +19,12 @@ export default class UserLoader implements Loader<User> {
      * Wczytuje użytkowników o określonym identyfikatorze
      * @param user_id Identyfikatory użytkowników
      */
-    LoadById(user_id: number): Promise<User>;
-    LoadById(user_id: number[]): Promise<User[]>;
-    public async LoadById(user_id: number | number[]): Promise<User | User[]> {
-        if(typeof user_id == 'number') {
+    LoadById(user_id: string): Promise<User>;
+    LoadById(user_id: string[]): Promise<User[]>;
+    public async LoadById(user_id: string | string[]): Promise<User | User[]> {
+        if(typeof user_id == 'string') {
             let descriptor: UserDescriptor;
-            let response = await XHR.PerformRequest('api/users/' + user_id.toString() + '?depth=2', 'GET');
+            let response = await XHR.PerformRequest('api/users/' + user_id + '?depth=2', 'GET');
             descriptor = response.Response as UserDescriptor;
 
             try {
@@ -37,7 +37,7 @@ export default class UserLoader implements Loader<User> {
         } else {
             let users: User[] = [];
             for(let id of user_id) {
-                let response = await XHR.PerformRequest('api/users/' + id.toString() + '?depth=2', 'GET');
+                let response = await XHR.PerformRequest('api/users/' + id + '?depth=2', 'GET');
                 let descriptor = response.Response as UserDescriptor;
                 users.push(UserLoader.CreateFromDescriptor(descriptor));
             }
@@ -49,9 +49,9 @@ export default class UserLoader implements Loader<User> {
      * Wczytuje użytkowników o określonym identyfikatorze
      * @param user_id Identyfikatory użytkowników
      */
-    static LoadById(user_id: number): Promise<User>;
-    static LoadById(user_id: number[]): Promise<User[]>;
-    public static async LoadById(user_id: number | number[]): Promise<User | User[]> {
+    static LoadById(user_id: string): Promise<User>;
+    static LoadById(user_id: string[]): Promise<User[]>;
+    public static async LoadById(user_id: string | string[]): Promise<User | User[]> {
         //@ts-ignore - Kompilator niesłusznie zwraca błąd
         return new UserLoader().LoadById(user_id);
     }
@@ -83,7 +83,7 @@ export default class UserLoader implements Loader<User> {
                 u = UserLoader.CreateFromDescriptor(descriptors[parseInt(user_id)]);
             } catch(e) {
                 if(e instanceof TypeError) {
-                    u = await UserLoader.LoadById(parseInt(user_id));
+                    u = await UserLoader.LoadById(user_id);
                 } else throw e;
             }
             users.push(u);

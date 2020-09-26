@@ -2,6 +2,10 @@ import Answer from './answer';
 import Question from './question';
 import Levenshtein from '../utils/levenshtein';
 
+export type StringKeyedCollection<T> = {
+    [key: string]: T;
+};
+
 /** Klasa reprezentująca pytanie z odpowiedziami użytkownika */
 export default class QuestionWithUserAnswers {
     /** Pytanie */

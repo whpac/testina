@@ -7,8 +7,8 @@ import GroupLoader from './grouploader';
 /** Deskryptor celów w odpowiedzi z API */
 export interface AssignmentTargetsDescriptor {
     group_ids: number[],
-    user_ids: number[],
-    all_user_ids: number[];
+    user_ids: string[],
+    all_user_ids: string[];
 }
 
 export default class AssignmentTargetsLoader {
