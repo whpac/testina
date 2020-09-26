@@ -10,7 +10,7 @@ define('TABLE_TESTS', 'tests');
 class Test extends Entity{
     protected /* int */ $id;
     protected /* string */ $name;
-    protected /* int */ $author_id;
+    protected /* string */ $author_id;
     protected /* DateTime */ $creation_date;
     protected /* int */ $time_limit;
     protected /* float */ $question_multiplier;
@@ -31,7 +31,6 @@ class Test extends Entity{
 
     protected /* void */ function OnPopulate(){
         settype($this->id, 'int');
-        settype($this->author_id, 'int');
         settype($this->question_multiplier, 'float');
         settype($this->time_limit, 'int');
         settype($this->type, 'int');
@@ -51,7 +50,7 @@ class Test extends Entity{
 
     public /* User */ function GetAuthor(){
         $this->FetchIfNeeded();
-        return new User($this->author_id);
+        return new \Auth\ExternalLogin\OfficeUser($this->author_id);
     }
 
     public /* DateTime */ function GetCreationDate(){
@@ -104,19 +103,19 @@ class Test extends Entity{
         return Assignment::GetForTest($this);
     }
 
-    public /* bool */ function IsMadeByUser(User $user){
+    public /* bool */ function IsMadeByUser(\Auth\Users\User $user){
         return $this->GetAuthor()->GetId() == $user->GetId();
     }
 
-    public static /* Test[] */ function GetTestsCreatedByUser(User $user){
+    public static /* Test[] */ function GetTestsCreatedByUser(\Auth\Users\User $user){
         return self::GetCreatedByUser($user, self::TYPE_TEST);
     }
 
-    public static /* Test[] */ function GetSurveysCreatedByUser(User $user){
+    public static /* Test[] */ function GetSurveysCreatedByUser(\Auth\Users\User $user){
         return self::GetCreatedByUser($user, self::TYPE_SURVEY);
     }
 
-    public static /* Test[] */ function GetCreatedByUser(User $user, int $type){
+    public static /* Test[] */ function GetCreatedByUser(\Auth\Users\User $user, int $type){
         $tests = [];
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -162,7 +161,7 @@ class Test extends Entity{
         return $result === true;
     }
 
-    public static /* Test */ function Create(User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1){
+    public static /* Test */ function Create(\Auth\Users\User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Insert()

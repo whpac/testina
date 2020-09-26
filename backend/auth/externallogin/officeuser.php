@@ -41,6 +41,11 @@ class OfficeUser extends ExternalUser {
     }
 
     protected function FetchData(){
+        if($this->Id === '0'){
+            $this->PopulateDefaults();
+            return;
+        }
+
         $resource = 'me';
         if(!is_null($this->Id)){
             $resource = 'users/'.$this->Id;
@@ -69,6 +74,12 @@ class OfficeUser extends ExternalUser {
         $this->Id = $parsed['id'];
         $this->FirstName = $parsed['givenName'];
         $this->LastName = $parsed['surname'];
+    }
+
+    protected function PopulateDefaults(){
+        $this->Id = 0;
+        $this->FirstName = 'Użytkownik';
+        $this->LastName = 'Anonimowy';
     }
 
     public function __toString(){

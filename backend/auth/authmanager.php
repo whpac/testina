@@ -7,7 +7,7 @@ use Log\LogChannels;
 use Session\SessionManager;
 
 define('SESSION_USER_ID', '__user_id');
-define('ANONYMOUS_USER_ID', 0);
+define('ANONYMOUS_USER_ID', '0');
 
 class AuthManager {
     private static $users_table;
@@ -65,7 +65,7 @@ class AuthManager {
 
     public static function IsAuthorized(){
         $uid = SessionManager::Get(SESSION_USER_ID);
-        return (!is_null($uid) && $uid != ANONYMOUS_USER_ID);
+        return (!is_null($uid) && $uid !== ANONYMOUS_USER_ID);
     }
 
     private static function ChangeUser($user_id){

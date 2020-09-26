@@ -42,7 +42,7 @@ class Group extends Entity{
         $users = [];
         for($i = 0; $i < $result->num_rows; $i++){
             $row = $result->fetch_assoc();
-            $users[] = new User($row['user_id']);
+            $users[] = new \Auth\ExternalLogin\OfficeUser($row['user_id']);
         }
 
         return $users;

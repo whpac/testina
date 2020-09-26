@@ -14,7 +14,7 @@ class Assignment extends Entity {
     protected /* int[][] */ $targets;
     protected /* DateTime */ $time_limit;
     protected /* DateTime */ $assignment_date;
-    protected /* int */ $assigning_user_id;
+    protected /* string */ $assigning_user_id;
 
     const TARGET_TYPE_USER = 0;
     const TARGET_TYPE_GROUP = 1;
@@ -31,7 +31,6 @@ class Assignment extends Entity {
         settype($this->id, 'int');
         settype($this->test_id, 'int');
         settype($this->attempt_limit, 'int');
-        settype($this->assigning_user_id, 'int');
 
         $this->assignment_date = \DateTime::createFromFormat('Y-m-d H:i:s', $this->assignment_date);
         $this->time_limit = \DateTime::createFromFormat('Y-m-d H:i:s', $this->time_limit);
@@ -82,18 +81,18 @@ class Assignment extends Entity {
 
     public /* User */ function GetAssigningUser(){
         $this->FetchIfNeeded();
-        return new User($this->assigning_user_id);
+        return new \Auth\ExternalLogin\OfficeUser($this->assigning_user_id);
     }
 
     public /* bool */ function HasTimeLimitExceeded(){
         return $this->GetTimeLimit() < (new \DateTime());
     }
 
-    public /* bool */ function AreRemainingAttempts(User $user){
+    public /* bool */ function AreRemainingAttempts(\Auth\Users\User $user){
         return $this->AreAttemptsUnlimited() || $this->CountUserAttempts($user) < $this->GetAttemptLimit($user);
     }
 
-    public /* int */ function GetAverageScore(User $user){
+    public /* int */ function GetAverageScore(\Auth\Users\User $user){
         $attempts = $this->GetUserAttempts($user);
         $score_got = 0;
         $score_max = 0;
@@ -118,7 +117,7 @@ class Assignment extends Entity {
         foreach($this->targets as $target){
             switch($target[1]){
                 case self::TARGET_TYPE_USER:
-                    $targets[] = new User($target[0]);
+                    $targets[] = new \Auth\ExternalLogin\OfficeUser($target[0]);
                 break;
                 case self::TARGET_TYPE_GROUP:
                     $targets[] = new Group($target[0]);
@@ -128,7 +127,7 @@ class Assignment extends Entity {
         return $targets;
     }
 
-    public /* bool */ function IsForUser(User $user){
+    public /* bool */ function IsForUser(\Auth\Users\User $user){
         if(!isset($this->targets)) $this->ProcessTargets();
 
         $groups = $user->GetGroups();
@@ -175,15 +174,15 @@ class Assignment extends Entity {
         return $result->num_rows;
     }
 
-    public /* Attempt[] */ function GetUserAttempts(User $user){
+    public /* Attempt[] */ function GetUserAttempts(\Auth\Users\User $user){
         return Attempt::GetAttemptsByUserAndAssignment($user, $this);
     }
 
-    public /* int */ function CountUserAttempts(User $user){
+    public /* int */ function CountUserAttempts(\Auth\Users\User $user){
         return Attempt::CountAttemptsByUserAndAssignment($user, $this);
     }
 
-    public /* ?Attempt */ function GetUsersLastAttempt(User $user){
+    public /* ?Attempt */ function GetUsersLastAttempt(\Auth\Users\User $user){
         return Attempt::GetLastAttemptByUserAndAssignment($user, $this);
     }
 
@@ -223,7 +222,7 @@ class Assignment extends Entity {
         if(!$result) throw new \Exception('Nie udało się zaktualizować testu.');
     }
 
-    public static /* Assignment */ function Create(User $assigning_user, Test $test, int $attempt_limit, \DateTime $time_limit){
+    public static /* Assignment */ function Create(\Auth\Users\User $assigning_user, Test $test, int $attempt_limit, \DateTime $time_limit){
         $db = DatabaseManager::GetProvider();
 
         $result = $db->Table(TABLE_ASSIGNMENTS)
@@ -247,7 +246,7 @@ class Assignment extends Entity {
         return new Assignment($assignment_id);
     }
 
-    public static /* Assignment[] */ function GetAssignmentsForUser(User $user){
+    public static /* Assignment[] */ function GetAssignmentsForUser(\Auth\Users\User $user){
         $groups = $user->GetGroups();
 
         $master_cond = new Condition('OR');
@@ -284,7 +283,7 @@ class Assignment extends Entity {
         return $assignments;
     }
 
-    public static /* Assignment[] */ function GetAssignedByUser(User $user){
+    public static /* Assignment[] */ function GetAssignedByUser(\Auth\Users\User $user){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENTS)
                 ->Select()

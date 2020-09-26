@@ -17,7 +17,7 @@ class Context{
     }
 
     public function IsAuthorized(){
-        return $this->user->GetId() != 0;
+        return $this->user->GetId() !== '0';
     }
 }
 ?>
