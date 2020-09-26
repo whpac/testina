@@ -35,7 +35,8 @@ TokenManager::RegisterRefreshToken($response->RefreshToken);
 
 // Krok 3. Pobranie informacji o aktualnie zalogowanym użytkowniku
 $user = new Auth\ExternalLogin\OfficeUser();
-// Auth\AuthManager::LogInExternalUser('user_id');
+Auth\AuthManager::RegisterUserFactory(new Auth\ExternalLogin\OfficeUserFactory());
+Auth\AuthManager::LogInExternalUser($user->GetId());
 // Krok 4. Przekierowanie do strony głównej (w zamierzeniu - do strony, którą chciał wyświetlić użytkownik)
 
 echo('<pre>');
