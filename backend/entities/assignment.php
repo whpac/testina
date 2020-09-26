@@ -252,7 +252,7 @@ class Assignment extends Entity {
         $master_cond = new Condition('OR');
 
         $user_cond = new Condition('AND');
-        $user_cond->Add('target_id = '.$user->GetId());
+        $user_cond->Add('target_id = "'.$user->GetId().'"');
         $user_cond->Add('target_type = '.self::TARGET_TYPE_USER);
         $master_cond->Add($user_cond);
 
@@ -272,7 +272,7 @@ class Assignment extends Entity {
         
         $assignments = [];
         $assignment_ids = [];
-        for($i=0; $i<$result->num_rows; $i++){
+        for($i=0; $i < $result->num_rows; $i++){
             $row = $result->fetch_assoc();
             $id = $row['assignment_id'];
             if(isset($assignment_ids[$id])) continue;
