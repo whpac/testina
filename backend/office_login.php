@@ -44,4 +44,5 @@ echo("Stan: $state\n");
 echo("Wygasa za: $response->ExpiresIn\n");
 echo($user);
 echo('</pre>');
+echo('<a href="/p/">Przejdź do strony głównej</a>');
 ?>
