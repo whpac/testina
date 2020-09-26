@@ -12,6 +12,8 @@ class TokenManager{
     const TOKEN_TYPE_ACCESS = 0;
     const TOKEN_TYPE_REFRESH = 1;
 
+    const REQUESTED_SCOPES = 'offline_access user.read user.read.all';
+
     /**
      * Rejestruje token dostępu, nadpisując poprzedni (jeśli istniał)
      * @param $access_token Nowy token dostępu
@@ -113,7 +115,7 @@ class TokenManager{
         $url = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token';
         $data = [
             'client_id' => CRED_OFFICE_CLIENT_ID,
-            'scope' => 'offline_access user.read',
+            'scope' => self::REQUESTED_SCOPES,
             'code' => $authorization_code,
             'redirect_uri' => 'http://localhost/p/office_login',
             'grant_type' => 'authorization_code',
@@ -131,7 +133,7 @@ class TokenManager{
 
         // Wykonaj żądanie
         $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+        $result = @file_get_contents($url, false, $context);
         if ($result === false) {
             Logger::Log('Nie udało się pobrać informacji o logowaniu z serwera Office 365.', LogChannels::AUTHORIZATION_EXTERNAL_ERROR);
             throw new \Exception('Nie udało się pobrać informacji o logowaniu z serwera Office 365.');
@@ -170,7 +172,7 @@ class TokenManager{
         $url = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token';
         $data = [
             'client_id' => CRED_OFFICE_CLIENT_ID,
-            'scope' => 'offline_access user.read',
+            'scope' => self::REQUESTED_SCOPES,
             'refresh_token' => $refresh_token,
             'redirect_uri' => 'http://localhost/p/office_login',
             'grant_type' => 'refresh_token',
@@ -188,7 +190,7 @@ class TokenManager{
 
         // Wykonaj żądanie
         $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+        $result = @file_get_contents($url, false, $context);
         if ($result === false) {
             Logger::Log('Nie udało się pobrać informacji o logowaniu z serwera Office 365.', LogChannels::AUTHORIZATION_EXTERNAL_ERROR);
             throw new \Exception('Nie udało się pobrać informacji o logowaniu z serwera Office 365.');
