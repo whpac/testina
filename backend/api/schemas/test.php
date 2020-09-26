@@ -4,7 +4,7 @@ namespace Api\Schemas;
 interface Test{
     public function id(): int;
     public function name(): string;
-    public function author_id(): int;
+    public function author_id(): string;
     public function creation_date(): \DateTime;
     public function time_limit(): int;
     public function description(): ?string;

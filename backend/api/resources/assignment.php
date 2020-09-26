@@ -73,7 +73,7 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $t;
     }
 
-    public function assigned_by_id(): int{
+    public function assigned_by_id(): string{
         return $this->Assignment->GetAssigningUser()->GetId();
     }
 

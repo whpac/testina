@@ -8,7 +8,7 @@ interface Assignment{
     public function assignment_date(): \DateTime;
     public function score_current(): ?float;
     public function test(): Test;
-    public function assigned_by_id(): int;
+    public function assigned_by_id(): string;
 
     public function attempt_count(): int;
     public function attempts(): Collection; // <Attempt>
