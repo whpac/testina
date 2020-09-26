@@ -118,6 +118,14 @@ try{
     Logger::Log('Wystąpił nieznany błąd: '.$e->getMessage(), LogChannels::APPLICATION_ERROR);
 }
 
+try{
+    // Usuwa przeterminowane tokeny uwierzytelniania
+    // Ta funkcja znajduje się tutaj, by być wykonywaną jak najczęściej
+    Auth\ExternalLogin\TokenManager::RemoveExpiredTokens();
+}catch(\Exception $e){
+
+}
+
 
 /**
  * Odczytuje metodę żądania
