@@ -281,7 +281,6 @@ export default class Assignment extends Entity implements PageParams {
             if(typeof target == 'string') {
                 type = 2;
                 id = target;
-                if(isNaN(id)) id = 0;
             } else {
                 id = target.Id;
             }
