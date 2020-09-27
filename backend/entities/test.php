@@ -15,7 +15,6 @@ class Test extends Entity{
     protected /* int */ $time_limit;
     protected /* float */ $question_multiplier;
     protected /* ?string */ $description;
-    protected /* ?string */ $access_key;
     protected /* int */ $type;
 
     const TYPE_TEST = 0;
@@ -75,11 +74,6 @@ class Test extends Entity{
     public /* ?string */ function GetDescription(){
         $this->FetchIfNeeded();
         return $this->description;
-    }
-
-    public /* ?string */ function GetAccessKey(){
-        $this->FetchIfNeeded();
-        return $this->access_key;
     }
 
     public /* int */ function GetType(){

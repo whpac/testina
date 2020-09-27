@@ -18,6 +18,7 @@ class Assignment extends Entity {
 
     const TARGET_TYPE_USER = 0;
     const TARGET_TYPE_GROUP = 1;
+    const TARGET_TYPE_LINK = 2;
 
     protected static /* string */ function GetTableName(){
         return TABLE_ASSIGNMENTS;
@@ -122,6 +123,9 @@ class Assignment extends Entity {
                 case self::TARGET_TYPE_GROUP:
                     $targets[] = new Group($target[0]);
                 break;
+                case self::TARGET_TYPE_LINK:
+                    $targets[] = $target[0];
+                break;
             }
         }
         return $targets;
@@ -174,8 +178,8 @@ class Assignment extends Entity {
         return $result->num_rows;
     }
 
-    public /* Attempt[] */ function GetUserAttempts(\Auth\Users\User $user){
-        return Attempt::GetAttemptsByUserAndAssignment($user, $this);
+    public /* Attempt[] */ function GetUserAttempts(\Auth\Users\User $user, bool $include_unfinished = false){
+        return Attempt::GetAttemptsByUserAndAssignment($user, $this, $include_unfinished);
     }
 
     public /* int */ function CountUserAttempts(\Auth\Users\User $user){
@@ -187,6 +191,10 @@ class Assignment extends Entity {
     }
 
     public /* void */ function AddTarget($target_type, $target_id){
+        if($target_type == self::TARGET_TYPE_LINK){
+            $target_id = self::GenerateLinkId();
+        }
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENT_TARGETS)
                 ->Insert()
@@ -299,6 +307,27 @@ class Assignment extends Entity {
         }
 
         return $assignments;
+    }
+
+    protected static function GenerateLinkId(){
+        $is_unique = false;
+        $number = 0;
+
+        while(!$is_unique){
+            // Wylosuj identyfikator z zakresu 1e9 - 2e9
+            $number = random_int(1000000000, 2000000000);
+    
+            $result = DatabaseManager::GetProvider()
+                    ->Table(TABLE_ASSIGNMENT_TARGETS)
+                    ->Select()
+                    ->Where('target_type', '=', self::TARGET_TYPE_LINK)
+                    ->AndWhere('target_id', '=', $number)
+                    ->Run();
+
+            $is_unique = $result->num_rows == 0;
+        }
+
+        return $number;
     }
 }
 ?>

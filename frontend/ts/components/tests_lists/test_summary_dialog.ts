@@ -8,7 +8,7 @@ import { n } from '../../utils/textutils';
 
 export default class TestSummaryDialog extends Dialog {
     protected QuestionCountElement: HTMLTableDataCellElement;
-    protected QuestionCreationDateElement: HTMLTableDataCellElement;
+    protected TestCreationDateElement: HTMLTableDataCellElement;
     protected AssignmentCountRow: HTMLTableRowElement;
     protected AssignmentCountElement: HTMLTableDataCellElement;
     protected CurrentTest: (Test | undefined);
@@ -30,7 +30,7 @@ export default class TestSummaryDialog extends Dialog {
 
         row[2] = content_table.insertRow(-1);
         row[2].insertCell(-1).textContent = 'Utworzono:';
-        this.QuestionCreationDateElement = row[2].insertCell(-1);
+        this.TestCreationDateElement = row[2].insertCell(-1);
 
         this.AssignmentCountRow = content_table.insertRow(-1);
         this.AssignmentCountRow.insertCell(-1).textContent = 'Przypisano:';
@@ -73,7 +73,7 @@ export default class TestSummaryDialog extends Dialog {
         this.QuestionCountElement.textContent =
             (test.QuestionCount ?? 0).toString() +
             ' (×' + test.QuestionMultiplier.toString() + ')';
-        this.QuestionCreationDateElement.textContent = DateUtils.ToMediumFormat(test.CreationDate);
+        this.TestCreationDateElement.textContent = DateUtils.ToMediumFormat(test.CreationDate);
 
         let assignment_count = test.AssignmentCount;
         if(assignment_count === undefined) {

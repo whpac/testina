@@ -162,9 +162,9 @@ export default class QuestionCard extends Card {
                     let answer_button = document.createElement('button');
                     answer_button.classList.add('answer-button');
                     answer_button.textContent = answer.Text;
-                    answer_button.dataset.index = i.toString();
+                    answer_button.dataset.id = answer.Id.toString();
                     answer_button.addEventListener('click', ((e: MouseEvent) => {
-                        this.OnAnswerButtonClick(e, i);
+                        this.OnAnswerButtonClick(e, answer.Id.toString());
                     }).bind(this));
                     this.AnswerWrapper.appendChild(answer_button);
                 }
@@ -189,13 +189,13 @@ export default class QuestionCard extends Card {
         this.DisableAnswers = false;
     }
 
-    protected async OnAnswerButtonClick(e: MouseEvent, answer_index: number) {
+    protected async OnAnswerButtonClick(e: MouseEvent, answer_id: string) {
         if(this.DisableAnswers) return;
 
         switch(this.CurrentQuestion?.GetQuestion().Type) {
             case Question.TYPE_SINGLE_CHOICE:
                 this.CurrentQuestion?.DeselectAllAnswers();
-                this.CurrentQuestion?.SetAnswerSelection(answer_index, true);
+                this.CurrentQuestion?.SetAnswerSelection(answer_id, true);
 
                 let ans_buttons_selected = document.querySelectorAll('.answer-button.selected');
                 for(let btn of ans_buttons_selected) {
@@ -204,9 +204,9 @@ export default class QuestionCard extends Card {
                 (e.target as HTMLButtonElement).classList.add('selected');
                 break;
             case Question.TYPE_MULTI_CHOICE:
-                this.CurrentQuestion?.ToggleAnswerSelection(answer_index);
+                this.CurrentQuestion?.ToggleAnswerSelection(answer_id);
 
-                let is_selected = this.CurrentQuestion?.GetAnswerSelection(answer_index);
+                let is_selected = this.CurrentQuestion?.GetAnswerSelection(answer_id);
                 if(is_selected) (e.target as HTMLButtonElement).classList.add('selected');
                 else(e.target as HTMLButtonElement).classList.remove('selected');
                 break;
@@ -238,8 +238,8 @@ export default class QuestionCard extends Card {
                 // Zaznacz odpowiedzi
                 let answers_buttons = document.querySelectorAll('.answer-button');
                 for(let button of answers_buttons) {
-                    let index = parseInt((button as HTMLElement).dataset.index ?? '0');
-                    if(this.CurrentQuestion.GetAnswers()[index].Correct) {
+                    let id = (button as HTMLElement).dataset.id ?? '0';
+                    if(this.CurrentQuestion.GetAnswers()[id].Correct) {
                         button.classList.add('correct');
                     } else {
                         button.classList.add('wrong');

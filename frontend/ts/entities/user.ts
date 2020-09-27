@@ -31,6 +31,11 @@ export default class User extends Entity {
         return this.FirstName + ' ' + this.LastName;
     }
 
+    /** Zwraca inicjał imienia i nazwisko użytkownika */
+    GetInitial() {
+        return this.FirstName.charAt(0) + '. ' + this.LastName;
+    }
+
     /** Czy użytkownik jest kobietą? (Na podstawie ostatniej litery imienia) */
     IsFemale() {
         return this.FirstName.endsWith('a');

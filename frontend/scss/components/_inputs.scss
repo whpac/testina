@@ -61,3 +61,17 @@ input.deleted {opacity:0.5; text-decoration:line-through;}
 }
 
 select.hide-arrow {-webkit-appearance:none; -moz-appearance:none; appearance:none;}
+
+p + label {margin-top:-0.5em;}
+label.with-checkbox {
+    padding-left:20px; display:block;
+
+    input[type=radio], input[type=checkbox] {margin-left:-20px;}
+}
+
+input[type=text].link-presenter-input {
+    background:var(--background-empty-color); display:block; border-radius:3px;
+    font-family:monospace; width:100%; box-sizing:border-box; border:none;
+
+    &:focus {box-shadow:none;}
+}

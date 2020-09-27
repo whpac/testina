@@ -6,9 +6,10 @@ import GroupLoader from './grouploader';
 
 /** Deskryptor celów w odpowiedzi z API */
 export interface AssignmentTargetsDescriptor {
-    group_ids: string[],
-    user_ids: string[],
+    group_ids: string[];
+    user_ids: string[];
     all_user_ids: string[];
+    link_ids: string[];
 }
 
 export default class AssignmentTargetsLoader {
@@ -71,7 +72,8 @@ export default class AssignmentTargetsLoader {
         return {
             Groups: await group_awaiter,
             Users: await user_awaiter,
-            AllUsers: await all_user_awaiter
+            AllUsers: await all_user_awaiter,
+            LinkIds: targets_descriptor.link_ids
         };
     }
 }

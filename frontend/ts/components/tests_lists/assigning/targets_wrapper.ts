@@ -9,10 +9,13 @@ import NavigationPrevention from '../../../1page/navigation_prevention';
 import User from '../../../entities/user';
 import Group from '../../../entities/group';
 import { AssignmentTargets } from '../../../entities/assignment';
+import Test from '../../../entities/test';
+import ApiEndpoints from '../../../entities/loaders/apiendpoints';
 
 type TargetType = 'user' | 'group';
 
 export default class TargetsWrapper extends Component<'validationchanged'> {
+    protected TargetsDescription: HTMLParagraphElement;
     protected SearchField: HTMLInputElement;
     protected UsersTab: Tab;
     protected UsersTable: UsersTable;
@@ -20,7 +23,12 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     protected CurrentlyDisplayedTargetType!: TargetType;
     protected SelectedEntitiesCountText: HTMLElement;
     protected NothingSelectedError: HTMLParagraphElement;
+    protected ShareByLinkWrapper: HTMLElement;
+    protected ShareByLinkCheckbox: HTMLInputElement;
+    protected LinkPresenterElement: HTMLInputElement;
 
+    protected TestType: number = Test.TYPE_TEST;
+    protected WasShareByLinkOriginallySelected: boolean = false;
     public IsValid: boolean = true;
 
     constructor() {
@@ -29,10 +37,10 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.Element = document.createElement('section');
         this.Element.classList.add('no-margin');
 
-        let targets_description = document.createElement('p');
-        targets_description.classList.add('secondary');
-        targets_description.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
-        this.AppendChild(targets_description);
+        this.TargetsDescription = document.createElement('p');
+        this.TargetsDescription.classList.add('secondary');
+        this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+        this.AppendChild(this.TargetsDescription);
 
         let search_tabs = document.createElement('div');
         search_tabs.classList.add('search-and-tabs');
@@ -75,13 +83,38 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.NothingSelectedError.classList.add('error-message', 'specific');
         this.NothingSelectedError.textContent = 'Nie wybrano żadnej osoby ani grupy.';
         this.AppendChild(this.NothingSelectedError);
+
+        this.ShareByLinkWrapper = document.createElement('div');
+        this.AppendChild(this.ShareByLinkWrapper);
+
+        let share_by_link_description = document.createElement('p');
+        this.ShareByLinkWrapper.appendChild(share_by_link_description);
+        share_by_link_description.classList.add('secondary');
+        share_by_link_description.textContent = 'Możesz także udostępnić tę ankietę wszystkim, którym przekażesz link do niej.';
+
+        this.ShareByLinkCheckbox = document.createElement('input');
+        this.ShareByLinkCheckbox.type = 'checkbox';
+        this.ShareByLinkCheckbox.id = 'share-by-link';
+        this.ShareByLinkCheckbox.addEventListener('change', this.ChangeSurveyLinkVisibility.bind(this));
+        this.ShareByLinkWrapper.appendChild(this.ShareByLinkCheckbox);
+
+        let share_by_link_label = document.createElement('label');
+        this.ShareByLinkWrapper.appendChild(share_by_link_label);
+        share_by_link_label.htmlFor = this.ShareByLinkCheckbox.id;
+        share_by_link_label.appendChild(document.createTextNode(' Udostępnij wszystkim, którzy dostaną link'));
+
+        this.LinkPresenterElement = document.createElement('input');
+        this.ShareByLinkWrapper.appendChild(this.LinkPresenterElement);
+        this.LinkPresenterElement.classList.add('link-presenter-input');
+        this.LinkPresenterElement.readOnly = true;
+        this.LinkPresenterElement.type = 'text';
+        this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
     }
 
     async Populate(preselected_targets?: AssignmentTargets) {
         this.SearchField.value = '';
         this.UsersTab.Select();
         this.SwitchTargetType('user');
-        this.PrintNumberOfSelectedEntities(0, 0);
 
         let users_awaiter = this.UsersTable.Populate();
         let groups_awaiter = this.GroupsTable.Populate();
@@ -93,32 +126,73 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
         this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
+        if((preselected_targets?.LinkIds ?? []).length > 0) {
+            this.ShareByLinkCheckbox.checked = true;
+            this.WasShareByLinkOriginallySelected = true;
+            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
+        } else {
+            this.ShareByLinkCheckbox.checked = false;
+            this.WasShareByLinkOriginallySelected = false;
+            this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
+        }
+
+        this.PrintNumberOfSelectedEntities();
         this.Validate();
 
         this.FilterTable();
+        this.ChangeSurveyLinkVisibility();
     }
 
     GetSelectedTargets() {
-        let targets: (User | Group)[] = [];
+        let targets: (User | Group | string)[] = [];
         targets = this.UsersTable.GetSelected();
         targets = targets.concat(this.GroupsTable.GetSelected());
+
+        if(!this.WasShareByLinkOriginallySelected && this.ShareByLinkCheckbox.checked) targets = targets.concat(['link']);
+
         return targets;
     }
 
     GetDeselectedTargets() {
-        let targets: (User | Group)[] = [];
+        let targets: (User | Group | string)[] = [];
         targets = this.UsersTable.GetDeselected();
         targets = targets.concat(this.GroupsTable.GetDeselected());
+
+        if(this.WasShareByLinkOriginallySelected && !this.ShareByLinkCheckbox.checked) targets = targets.concat(['link']);
+
         return targets;
+    }
+
+    public DisplayAppropriateTargetsDescription(test_type: number) {
+        this.TestType = test_type;
+        this.Validate();
+        switch(test_type) {
+            case Test.TYPE_SURVEY:
+                this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym ankieta ma zostać udostępniona.';
+                this.ShareByLinkWrapper.style.display = '';
+                break;
+            default:
+                this.TargetsDescription.textContent = 'Wybierz osoby lub grupy, którym test ma zostać przypisany.';
+                this.ShareByLinkWrapper.style.display = 'none';
+                break;
+        }
     }
 
     protected Validate() {
         let old_validity = this.IsValid;
         this.IsValid = true;
 
-        let is_anything_selected = this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
-        this.NothingSelectedError.style.display = is_anything_selected ? 'none' : '';
-        if(!is_anything_selected) this.IsValid = false;
+        switch(this.TestType) {
+            case Test.TYPE_SURVEY:
+                this.IsValid = true;
+                this.NothingSelectedError.style.display = 'none';
+                break;
+            default:
+                let is_anyone_selected = this.UsersTable.GetSelectedCount() > 0 || this.GroupsTable.GetSelectedCount() > 0;
+                this.NothingSelectedError.style.display = is_anyone_selected ? 'none' : '';
+                if(!is_anyone_selected) this.IsValid = false;
+                break;
+        }
 
         if(this.IsValid != old_validity) this.FireEvent('validationchanged');
     }
@@ -153,14 +227,15 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
     }
 
     protected OnSelectionChanged() {
-        this.PrintNumberOfSelectedEntities(
-            this.UsersTable.GetSelectedCount(),
-            this.GroupsTable.GetSelectedCount());
+        this.PrintNumberOfSelectedEntities();
         this.Validate();
         NavigationPrevention.Prevent('assign-test-dialog');
     }
 
-    protected PrintNumberOfSelectedEntities(users: number, groups: number) {
+    protected PrintNumberOfSelectedEntities() {
+        let users = this.UsersTable.GetSelectedCount();
+        let groups = this.GroupsTable.GetSelectedCount();
+
         if(users > 0 || groups > 0) {
             let text = 'Wybrano';
 
@@ -173,5 +248,9 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         } else {
             this.SelectedEntitiesCountText.textContent = '';
         }
+    }
+
+    protected ChangeSurveyLinkVisibility() {
+        this.LinkPresenterElement.style.display = this.ShareByLinkCheckbox.checked ? '' : 'none';
     }
 }

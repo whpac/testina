@@ -13,9 +13,13 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
     protected _IsDeleted: boolean = false;
+    protected _IsOptional: boolean = false;
 
     protected QuestionNumberText: Text;
     protected QuestionTypeSelect: HTMLSelectElement | undefined;
+    protected MarkAsOptionalButton: HTMLButtonElement | undefined;
+    protected MarkAsRequiredButton: HTMLButtonElement | undefined;
+    protected RequiredIndicator: HTMLElement | undefined;
     protected MoveUpButton: HTMLButtonElement | undefined;
     protected MoveDownButton: HTMLButtonElement | undefined;
     protected RemoveButton: HTMLButtonElement | undefined;
@@ -23,6 +27,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     protected HeadingField: HTMLTextAreaElement | HTMLHeadingElement;
     protected FooterField: HTMLTextAreaElement | HTMLParagraphElement;
     protected AnswerWrapper: AnswerWrapper;
+    protected ErrorNotice: HTMLParagraphElement;
 
     public PreviousCard: SurveyQuestionCard | null;
     public NextCard: SurveyQuestionCard | null;
@@ -79,6 +84,20 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                 this.QuestionTypeSelect.appendChild(option);
             }
 
+            this.MarkAsOptionalButton = document.createElement('button');
+            question_header.appendChild(this.MarkAsOptionalButton);
+            this.MarkAsOptionalButton.classList.add('compact', 'error');
+            this.MarkAsOptionalButton.appendChild(new Icon('asterisk', 'fa-fw').GetElement());
+            this.MarkAsOptionalButton.title = 'Pytanie jest wymagane. Kliknij, by zmienić';
+            this.MarkAsOptionalButton.addEventListener('click', this.MarkAsOptional.bind(this));
+
+            this.MarkAsRequiredButton = document.createElement('button');
+            question_header.appendChild(this.MarkAsRequiredButton);
+            this.MarkAsRequiredButton.classList.add('compact', 'success');
+            this.MarkAsRequiredButton.appendChild(new Icon('dot-circle-o', 'fa-fw').GetElement());
+            this.MarkAsRequiredButton.title = 'Pytanie nie jest wymagane. Kliknij, by zmienić';
+            this.MarkAsRequiredButton.addEventListener('click', this.MarkAsRequired.bind(this));
+
             let buttons = document.createElement('span');
             buttons.classList.add('buttons');
             question_header.appendChild(buttons);
@@ -113,9 +132,16 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         } else {
             question_header.classList.add('secondary');
             question_header.appendChild(document.createTextNode('.'));
+
+            this.RequiredIndicator = document.createElement('span');
+            question_header.appendChild(this.RequiredIndicator);
+            this.RequiredIndicator.classList.add('error');
+            this.RequiredIndicator.textContent = '*';
         }
 
         this.AnswerWrapper = new AnswerWrapper(this.EditMode);
+        this.ErrorNotice = document.createElement('p');
+        this.ErrorNotice.classList.add('error-message');
 
         if(edit_mode) {
             let heading = document.createElement('textarea');
@@ -134,9 +160,11 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         } else {
             this.HeadingField = document.createElement('h2');
             this.FooterField = document.createElement('p');
+            this.FooterField.classList.add('small-margin', 'secondary');
         }
         this.AppendChild(this.HeadingField);
         this.AppendChild(this.AnswerWrapper);
+        this.AppendChild(this.ErrorNotice);
         this.AppendChild(this.FooterField);
     }
 
@@ -155,6 +183,12 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
 
         if(this.QuestionTypeSelect !== undefined)
             this.QuestionTypeSelect.value = (question?.Type ?? Question.TYPE_SINGLE_CHOICE).toString();
+        if(this.MarkAsOptionalButton !== undefined)
+            this.MarkAsOptionalButton.style.display = (question?.IsOptional ?? false) ? 'none' : '';
+        if(this.MarkAsRequiredButton !== undefined)
+            this.MarkAsRequiredButton.style.display = (question?.IsOptional ?? false) ? '' : 'none';
+        if(this.RequiredIndicator !== undefined)
+            this.RequiredIndicator.style.display = (question?.IsOptional ?? false) ? 'none' : '';
         this.AnswerWrapper.Populate(question);
     }
 
@@ -222,6 +256,22 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         NavigationPrevention.Prevent('survey-editor');
     }
 
+    protected MarkAsOptional() {
+        if(this.MarkAsOptionalButton === undefined || this.MarkAsRequiredButton === undefined) return;
+        this._IsOptional = true;
+        this.MarkAsOptionalButton.style.display = 'none';
+        this.MarkAsRequiredButton.style.display = '';
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
+    protected MarkAsRequired() {
+        if(this.MarkAsOptionalButton === undefined || this.MarkAsRequiredButton === undefined) return;
+        this._IsOptional = false;
+        this.MarkAsOptionalButton.style.display = '';
+        this.MarkAsRequiredButton.style.display = 'none';
+        NavigationPrevention.Prevent('survey-editor');
+    }
+
     /**
      * Zapisuje zmiany w pytaniu. Jeśli pytanie jest oznaczone jako
      * do usunięcia (IsDeleted = true), usuwa je.
@@ -243,7 +293,10 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     0,
                     this.FooterField.value,
-                    order
+                    order,
+                    this._IsOptional,
+                    this.AnswerWrapper.IsNASelected(),
+                    this.AnswerWrapper.IsOtherSelected()
                 );
                 await this.SaveAnswers();
                 await update_awaiter;
@@ -263,7 +316,10 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     0,
                     0,
                     this.FooterField.value,
-                    order
+                    order,
+                    this._IsOptional,
+                    this.AnswerWrapper.IsNASelected(),
+                    this.AnswerWrapper.IsOtherSelected()
                 );
                 await this.SaveAnswers();
             } else {
@@ -275,5 +331,36 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     protected async SaveAnswers() {
         if(this.Question !== undefined) this.AnswerWrapper.SetQuestion(this.Question);
         return this.AnswerWrapper.Save();
+    }
+
+    public GetUserAnswers() {
+        return this.AnswerWrapper.GetUserAnswers();
+    }
+
+    public ValidateFill() {
+        this.ErrorNotice.textContent = '';
+        let user_answers = this.GetUserAnswers();
+        console.log(user_answers);
+        if(this._IsOptional) {
+            return true;
+        } else {
+            if(typeof user_answers == 'string') {
+                let is_valid = user_answers != '';
+                if(!is_valid) this.ErrorNotice.textContent = 'Odpowiedź na to pytanie jest obowiązkowa.';
+                return is_valid;
+            } else {
+                let is_valid = false;
+                // Wystarczy, że zaznaczono przynajmniej jedną odpowiedź
+                for(let answer_id in user_answers) {
+                    let user_answer = user_answers[answer_id];
+                    if(user_answer === undefined) continue;
+                    console.log(user_answer);
+                    if(typeof user_answer == 'boolean') is_valid ||= user_answer;
+                    else is_valid ||= (user_answer.length > 0);
+                }
+                if(!is_valid) this.ErrorNotice.textContent = 'Przynajmniej jedna odpowiedź musi zostać zaznaczona.';
+                return is_valid;
+            }
+        }
     }
 }

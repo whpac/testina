@@ -20,6 +20,7 @@ import SurveysPage from './pages/surveys';
 import FillSurveyPage from './pages/fill_survey';
 import EditSurveyPage from './pages/edit_survey';
 import MobileHeader from './components/chrome/mobile_header';
+import UserLoader from './entities/loaders/userloader';
 import LoginWithOfficePage from './pages/login_office';
 
 // @ts-ignore
@@ -54,7 +55,7 @@ try {
     let pages = PageStorage.GetStorage();
     pages.RegisterPage('ankiety', { CreatePage: () => new SurveysPage() });
     pages.RegisterPage(/^ankiety\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditSurveyPage() });
-    pages.RegisterPage('ankiety/wypełnij', { CreatePage: () => new FillSurveyPage() });
+    pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9]+)?$/, { CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
     pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
@@ -77,10 +78,11 @@ try {
         root?.classList.remove('login');
     });
     AuthManager.AddEventListener('logout', async () => {
-        (await CacheManager.Open(CacheStorages.Entities)).Purge();
         ChromeManager.ApplicationNavbar.Destroy();
+        UserLoader.ClearCurrentUserCache();
         root?.classList.add('login');
         PageManager.GoToPage('zaloguj/office');
+        await (await CacheManager.Open(CacheStorages.Entities)).Purge();
     });
 
     // Załaduj stronę początkową
@@ -94,14 +96,19 @@ try {
  */
 export async function LoadInitialPage() {
     // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
-    let initial_page = 'home';
+    let default_page = 'home';
+    let initial_page = default_page;
     let url_path = decodeURI(ReadPageFromURL());
 
     // Jeżeli strona do załadowania nie jest pustym ciągiem - załaduj ją
     if(url_path != '') initial_page = url_path;
 
     // Załaduj stronę
-    PageManager.GoToPage(initial_page, undefined, true);
+    let is_success = await PageManager.GoToPage(initial_page, undefined, true);
+
+    if(!is_success) {
+        PageManager.GoToPage(default_page, undefined, true);
+    }
 }
 
 /**

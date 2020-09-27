@@ -5,9 +5,9 @@
         border-bottom:1px solid transparent; display:grid;
         grid-template-columns:auto 1fr auto;
 
-        input[type=checkbox], input[type=radio] {grid-column:1;}
-        input[type=text], .text {grid-column:2;}
-        .control-buttons {grid-column:3;}
+        input[type=checkbox], input[type=radio] {grid-column:1; grid-row:1;}
+        input[type=text], .text {grid-column:2; grid-row:1;}
+        .control-buttons {grid-column:3; grid-row:1;}
 
         @include media-large-xlarge{
             &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}

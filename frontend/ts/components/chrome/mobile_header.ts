@@ -2,15 +2,16 @@ import ChromeManager from '../../1page/chrome_manager';
 import Icon from '../basic/icon';
 
 export default class MobileHeader {
+    protected HamburgerButton: HTMLElement;
     protected Header: HTMLHeadingElement;
     protected ButtonWrapper: HTMLElement;
 
     public constructor(element: HTMLElement) {
-        let hamburger_btn = document.createElement('a');
-        hamburger_btn.classList.add('nav-toggle', 'nav-icon');
-        hamburger_btn.appendChild(new Icon('bars', 'fa-fw').GetElement());
-        hamburger_btn.addEventListener('click', () => ChromeManager.ApplicationNavbar.ToggleVisibility());
-        element.appendChild(hamburger_btn);
+        this.HamburgerButton = document.createElement('a');
+        this.HamburgerButton.classList.add('nav-toggle', 'nav-icon');
+        this.HamburgerButton.appendChild(new Icon('bars', 'fa-fw').GetElement());
+        this.HamburgerButton.addEventListener('click', () => ChromeManager.ApplicationNavbar.ToggleVisibility());
+        element.appendChild(this.HamburgerButton);
 
         this.Header = document.createElement('h1');
         this.Header.textContent = 'Testina';
@@ -49,5 +50,13 @@ export default class MobileHeader {
      */
     public RemoveButtons() {
         this.ButtonWrapper.textContent = '';
+    }
+
+    /**
+     * Ustawia widoczność przycisku menu
+     * @param is_visible Czy przycisk jest widoczny
+     */
+    public SetHamburgerButtonVisibility(is_visible: boolean) {
+        this.HamburgerButton.style.display = is_visible ? '' : 'none';
     }
 }

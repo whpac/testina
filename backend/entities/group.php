@@ -62,5 +62,26 @@ class Group extends Entity implements \Auth\Users\Group{
 
         return $groups;
     }
+
+    public static /* Group[] */ function GetGroupsForUser(User $user){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_GROUP_MEMBERS)
+                ->Select()
+                ->Where('user_id', '=', $user->GetId())
+                ->Run();
+        
+        if($result === false){
+            Logger::Log('Nie udało się pobrać grup użytkownika: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się pobrać grup, do których należy użytkownik');
+        }
+
+        $groups = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $groups[] = new Group($row['group_id']);
+        }
+
+        return $groups;
+    }
 }
 ?>

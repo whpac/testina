@@ -2,9 +2,8 @@ import HelpLink from '../help_link';
 
 /**
  * Klasa bazowa dla okienek dialogowych
- * TODO: dziedziczyć z Component #24
  */
-export default class Dialog{
+export default class Dialog {
     /** Element reprezentujący okno dialogowe */
     protected DialogElement: HTMLElement;
 
@@ -15,15 +14,12 @@ export default class Dialog{
     protected HeaderContentElement: HTMLSpanElement;
 
     /** Zawartość okna dialogowego */
-    protected Content: Node[] = [];
+    protected ContentWrapper: HTMLElement;
 
-    /** Przyciski okna dialogowego */
-    protected Buttons: HTMLButtonElement[] = [];
+    /** Element, w którym znajdą się przyciski okienka */
+    protected ButtonsWrapper: HTMLElement;
 
-    /** Czy okno zostało już wyrenderowane? */
-    protected IsRendered: boolean = false;
-
-    constructor(){
+    constructor() {
         this.DialogElement = document.createElement('div');
         this.DialogElement.setAttribute('role', 'alertdialog');
         this.DialogElement.classList.add('dialog');
@@ -33,13 +29,21 @@ export default class Dialog{
 
         this.HeaderContentElement = document.createElement('span');
         this.HeaderElement.appendChild(this.HeaderContentElement);
+
+        this.ContentWrapper = document.createElement('div');
+        this.ContentWrapper.classList.add('content');
+        this.DialogElement.appendChild(this.ContentWrapper);
+
+        this.ButtonsWrapper = document.createElement('div');
+        this.ButtonsWrapper.classList.add('buttons');
+        this.DialogElement.appendChild(this.ButtonsWrapper);
     }
 
     /**
      * Wstawia zadany tekst do nagłówka okna dialogowego
      * @param text Tekst
      */
-    SetHeader(text: string){
+    SetHeader(text: string) {
         this.HeaderContentElement.innerText = text;
     }
 
@@ -47,23 +51,23 @@ export default class Dialog{
      * Dodaje przycisk do okna dialogowego
      * @param btn Przycisk
      */
-    AddButton(btn: HTMLButtonElement){
-        this.Buttons.push(btn);
+    AddButton(btn: HTMLButtonElement) {
+        this.ButtonsWrapper.appendChild(btn);
     }
 
     /**
      * Dodaje element do zawartości okna dialogowego
      * @param elem Element
      */
-    AddContent(elem: Node){
-        this.Content.push(elem);
+    AddContent(elem: Node) {
+        this.ContentWrapper.appendChild(elem);
     }
 
     /**
      * Dodaje klasy CSS do głównego elementu okna
      * @param classes Tablica klas CSS
      */
-    AddClasses(classes: string[]){
+    AddClasses(classes: string[]) {
         this.DialogElement.classList.add(...classes);
     }
 
@@ -71,38 +75,14 @@ export default class Dialog{
      * Wyświetla przycisk prowadzący do strony pomocy
      * @param target Docelowy fragment pomocy
      */
-    DisplayHelpButton(target?: string){
+    DisplayHelpButton(target?: string) {
         this.HeaderElement.appendChild(new HelpLink(target).GetElement());
-    }
-
-    /**
-     * Przygotowuje okno do wyświetlenia
-     */
-    Render(){
-        var content_wrapper = document.createElement('div');
-        content_wrapper.classList.add('content');
-        
-        this.Content.forEach((elem) => {
-            content_wrapper.appendChild(elem);
-        });
-        this.DialogElement.appendChild(content_wrapper);
-
-        var button_wrapper = document.createElement('div');
-        button_wrapper.classList.add('buttons');
-
-        this.Buttons.forEach((button) => {
-            button_wrapper.appendChild(button);
-        });
-        this.DialogElement.appendChild(button_wrapper);
-        this.IsRendered = true;
     }
 
     /**
      * Wyświetla okno dialogowe
      */
-    Show(){
-        if(!this.IsRendered) this.Render();
-        
+    Show() {
         this.DialogElement.classList.add('shown');
 
         DialogBackdrop.AppendElement(this.DialogElement);
@@ -111,9 +91,9 @@ export default class Dialog{
     /**
      * Ukrywa okno dialogowe
      */
-    Hide(){
+    Hide() {
         DialogBackdrop.RemoveElement(this.DialogElement);
-        
+
         this.DialogElement.classList.remove('shown');
     }
 }
@@ -125,8 +105,8 @@ class DialogBackdrop {
     protected static DialogElements: HTMLElement[];
 
     /** Wyświetla tło */
-    protected static Display(){
-        if(this.BackdropElement === undefined){
+    protected static Display() {
+        if(this.BackdropElement === undefined) {
             this.BackdropElement = document.createElement('div');
             this.BackdropElement.classList.add('dialog-backdrop');
             document.body.appendChild(this.BackdropElement);
@@ -135,7 +115,7 @@ class DialogBackdrop {
     }
 
     /** Ukrywa tło */
-    protected static Hide(){
+    protected static Hide() {
         this.BackdropElement.classList.remove('shown');
     }
 
@@ -143,12 +123,12 @@ class DialogBackdrop {
      * Dodaje wskazany element na środek tła
      * @param element Element HTML do pokazania
      */
-    static AppendElement(element: HTMLElement){
+    static AppendElement(element: HTMLElement) {
         if(this.DialogElements === undefined) this.DialogElements = [];
 
-        if(this.DialogElements.length == 0){
+        if(this.DialogElements.length == 0) {
             this.Display();
-        }else{
+        } else {
             let current_dialog = this.DialogElements[this.DialogElements.length - 1];
             this.BackdropElement.removeChild(current_dialog);
         }
@@ -161,13 +141,13 @@ class DialogBackdrop {
      * Usuwa dany element z tła
      * @param element Element HTML do usunięcia z tła
      */
-    static RemoveElement(element: HTMLElement){
+    static RemoveElement(element: HTMLElement) {
         this.DialogElements.pop();
         this.BackdropElement.removeChild(element);
-        
-        if(this.DialogElements.length == 0){
+
+        if(this.DialogElements.length == 0) {
             this.Hide();
-        }else{
+        } else {
             let current_dialog = this.DialogElements[this.DialogElements.length - 1];
             this.BackdropElement.appendChild(current_dialog);
         }

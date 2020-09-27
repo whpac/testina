@@ -11,15 +11,22 @@ export default class QuestionWithUserAnswers {
     /** Pytanie */
     protected Question: Question;
     /** Odpowiedzi do pytania */
-    protected Answers: Answer[];
+    protected Answers: StringKeyedCollection<Answer>;
     /** Czy dana odpowiedź została zaznaczona */
-    protected IsAnswerSelected: boolean[];
+    protected IsAnswerSelected: StringKeyedCollection<boolean>;
     /** Czy rozwiązywanie pytania zostało ukończone */
     protected IsDone: boolean;
     /** Zdobyty wynik punktowy za pytanie */
     protected Score: number | undefined;
+    /** Czy zaznaczono "nie dotyczy" */
+    protected _IsNonApplicableSelected: boolean = false;
     /** Odpowiedź podana przez rozwiązującego */
     public UserSuppliedAnswer: string | undefined;
+
+    /** Czy zaznaczono "nie dotyczy" */
+    public get IsNonApplicableSelected() {
+        return this._IsNonApplicableSelected;
+    }
 
     /**
      * Klasa reprezentująca pytanie z odpowiedziami użytkownika
@@ -27,8 +34,8 @@ export default class QuestionWithUserAnswers {
      */
     constructor(question: Question) {
         this.Question = question;
-        this.Answers = [];
-        this.IsAnswerSelected = [];
+        this.Answers = {};
+        this.IsAnswerSelected = {};
         this.IsDone = false;
     }
 
@@ -54,7 +61,10 @@ export default class QuestionWithUserAnswers {
      * @param answers Tablica odpowiedzi
      */
     public SetAnswers(answers: Answer[]) {
-        this.Answers = answers;
+        this.Answers = {};
+        for(let answer of answers) {
+            this.Answers[answer.Id] = answer;
+        }
         this.DeselectAllAnswers();
     }
 
@@ -66,42 +76,46 @@ export default class QuestionWithUserAnswers {
     /** Zwraca zaznaczone odpowiedzi */
     public GetSelectedAnswers() {
         let selected: Answer[] = [];
-        for(let i = 0; i < this.Answers.length; i++) {
-            if(this.IsAnswerSelected[i]) selected.push(this.Answers[i]);
+        for(let id in this.Answers) {
+            if(this.IsAnswerSelected[id]) selected.push(this.Answers[id]);
         }
         return selected;
     }
 
     /** Oznacza wszystkie odpowiedzi jako niezaznaczone */
     public DeselectAllAnswers() {
-        for(let i = 0; i < this.Answers.length; i++) {
-            this.IsAnswerSelected[i] = false;
+        for(let id in this.Answers) {
+            this.IsAnswerSelected[id] = false;
         }
+        this._IsNonApplicableSelected = false;
     }
 
     /**
      * Oznacza daną odpowiedź jako zaznaczoną bądź niezaznaczoną
-     * @param index Numer odpowiedzi (począwszy od 0)
+     * @param id Identyfikator odpowiedzi
      * @param is_selected Czy wskazana odpowiedź ma być zaznaczona
      */
-    public SetAnswerSelection(index: number, is_selected: boolean) {
-        this.IsAnswerSelected[index] = is_selected;
+    public SetAnswerSelection(id: string, is_selected: boolean) {
+        if(id == '-1') this._IsNonApplicableSelected = is_selected;
+        else this.IsAnswerSelected[id] = is_selected;
     }
 
     /**
      * Zwraca, czy dana odpowiedź jest zaznaczona
-     * @param index Numer odpowiedzi (począwszy od 0)
+     * @param id Identyfikator odpowiedzi
      */
-    public GetAnswerSelection(index: number) {
-        return this.IsAnswerSelected[index] ?? false;
+    public GetAnswerSelection(id: string) {
+        if(id == '-1') return this._IsNonApplicableSelected;
+        return this.IsAnswerSelected[id] ?? false;
     }
 
     /**
      * Zmienia zaznaczenie odpowiedzi
-     * @param index Numer odpowiedzi (począwszy od 0)
+     * @param id Identyfikator odpowiedzi
      */
-    public ToggleAnswerSelection(index: number) {
-        this.IsAnswerSelected[index] = !this.IsAnswerSelected[index];
+    public ToggleAnswerSelection(id: string) {
+        if(id == '-1') this._IsNonApplicableSelected = !this._IsNonApplicableSelected;
+        this.IsAnswerSelected[id] = !this.IsAnswerSelected[id];
     }
 
     /** Oznacza pytanie jako ukończone */
@@ -119,6 +133,8 @@ export default class QuestionWithUserAnswers {
         if(!this.IsDone) return 0;
         if(this.Score !== undefined) return this.Score;
 
+        console.log(this.Answers);
+
         switch(this.Question.Type) {
             case Question.TYPE_SINGLE_CHOICE:
             case Question.TYPE_MULTI_CHOICE:
@@ -134,14 +150,14 @@ export default class QuestionWithUserAnswers {
     protected CountPointsClosedAnswer() {
         switch(this.Question.PointsCounting) {
             case Question.COUNTING_BINARY:
-                let number_of_correct_choices = 0;
-                for(let i = 0; i < this.IsAnswerSelected.length; i++) {
-                    if(this.IsAnswerSelected[i] == this.Answers[i].Correct) {
-                        number_of_correct_choices++;
+                let number_of_errors = 0;
+                for(let id in this.IsAnswerSelected) {
+                    if(this.IsAnswerSelected[id] != this.Answers[id].Correct) {
+                        number_of_errors++;
                     }
                 }
 
-                if(number_of_correct_choices == this.Answers.length) {
+                if(number_of_errors == 0) {
                     return this.Question.Points;
                 } else {
                     return 0;
@@ -151,11 +167,11 @@ export default class QuestionWithUserAnswers {
             case Question.COUNTING_LINEAR:
                 let number_of_wrong_choices = 0;
                 let number_of_correct_answers = 0;
-                for(let i = 0; i < this.IsAnswerSelected.length; i++) {
-                    if(this.IsAnswerSelected[i] != this.Answers[i].Correct) {
+                for(let id in this.IsAnswerSelected) {
+                    if(this.IsAnswerSelected[id] != this.Answers[id].Correct) {
                         number_of_wrong_choices++;
                     }
-                    if(this.Answers[i].Correct) {
+                    if(this.Answers[id].Correct) {
                         number_of_correct_answers++;
                     }
                 }
@@ -173,7 +189,8 @@ export default class QuestionWithUserAnswers {
     protected CountPointsOpenAnswer() {
         if(this.UserSuppliedAnswer === undefined) return 0;
 
-        for(let answer of this.Answers) {
+        for(let id in this.Answers) {
+            let answer = this.Answers[id];
             if(!answer.Correct) continue;
 
             if(this.Question.MaxTypos <= 0) {

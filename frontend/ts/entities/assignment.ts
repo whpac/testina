@@ -14,11 +14,12 @@ import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 import { StringKeyedCollection } from './question_with_user_answers';
 
-type AssignmentTargetEntity = User | Group;
+type AssignmentTargetEntity = User | Group | string;
 export type AssignmentTargets = {
-    Groups: Group[],
-    Users: User[],
+    Groups: Group[];
+    Users: User[];
     AllUsers: User[];
+    LinkIds: string[];
 };
 
 export type AssignmentResult = {
@@ -177,7 +178,19 @@ export default class Assignment extends Entity implements PageParams {
      */
     async CountUsersAttempts(user: User): Promise<number> {
         let results = await this.GetResults();
-        return results[user.Id].AttemptCount;
+        return results[user.Id]?.AttemptCount ?? 0;
+    }
+
+    /**
+     * Zwraca całkowitą ilość podejść, wykonanych przez wszystkich użytkowników
+     */
+    async CountAllAttempts(): Promise<number> {
+        let results = await this.GetResults();
+        let total_attempts = 0;
+        for(let user_id in results) {
+            total_attempts += results[user_id].AttemptCount;
+        }
+        return total_attempts;
     }
 
     GetSimpleRepresentation() {
@@ -200,7 +213,9 @@ export default class Assignment extends Entity implements PageParams {
 
         if(result.Status != 201) throw result;
 
-        return AssignmentLoader.LoadById(parseInt(result.ContentLocation));
+        let assignment = await AssignmentLoader.LoadById(parseInt(result.ContentLocation));
+        test.AddAssignment(assignment);
+        return assignment;
     }
 
     async Update(attempt_limit: number, deadline: Date) {
@@ -220,17 +235,24 @@ export default class Assignment extends Entity implements PageParams {
         this.FireEvent('change');
     }
 
-    async AddTargets(targets: AssignmentTargetEntity[]) {
+    async AddTargets(targets: AssignmentTargetEntity[], fire_event: boolean = true) {
         let payload_targets: { type: number, id: string; }[] = [];
 
         for(let target of targets) {
-            let type = 0;
+            let type = -1;
+            let id = '0';
             if(target instanceof User) type = 0;
             if(target instanceof Group) type = 1;
 
+            if(typeof target == 'string') {
+                type = 2;
+            } else {
+                id = target.Id;
+            }
+
             payload_targets.push({
                 type: type,
-                id: target.Id.toString()
+                id: id
             });
         }
 
@@ -244,20 +266,29 @@ export default class Assignment extends Entity implements PageParams {
 
         this._Targets = undefined;
         this.TargetsLoader.SaveDescriptor(undefined);
-        this.FireEvent('change');
+        if(fire_event) this.FireEvent('change');
     }
 
-    async RemoveTargets(targets: AssignmentTargetEntity[]) {
+    async RemoveTargets(targets: AssignmentTargetEntity[], fire_event: boolean = true) {
         let payload_targets: { type: number, id: string; }[] = [];
 
         for(let target of targets) {
-            let type = 0;
+            let type = -1;
+            let id = '0';
             if(target instanceof User) type = 0;
             if(target instanceof Group) type = 1;
 
+            if(typeof target == 'string') {
+                type = 2;
+                id = target;
+                if(isNaN(id)) id = 0;
+            } else {
+                id = target.Id;
+            }
+
             payload_targets.push({
                 type: type,
-                id: target.Id.toString()
+                id: id
             });
         }
 
@@ -271,6 +302,6 @@ export default class Assignment extends Entity implements PageParams {
 
         this._Targets = undefined;
         this.TargetsLoader.SaveDescriptor(undefined);
-        this.FireEvent('change');
+        if(fire_event) this.FireEvent('change');
     }
 }

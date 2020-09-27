@@ -32,7 +32,21 @@ class Question extends Resource implements Schemas\Question{
             $order = $data->order;
         }
 
-        $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos, $footer, $order);
+        $flags = [];
+        if(isset($data->is_optional) && !is_null($data->is_optional)){
+            TypeValidator::AssertIsBool($data->is_optional, 'is_optional');
+            $flags['optional'] = $data->is_optional;
+        }
+        if(isset($data->has_na) && !is_null($data->has_na)){
+            TypeValidator::AssertIsBool($data->has_na, 'has_na');
+            $flags['non-applicable'] = $data->has_na;
+        }
+        if(isset($data->has_other) && !is_null($data->has_other)){
+            TypeValidator::AssertIsBool($data->has_other, 'has_other');
+            $flags['other'] = $data->has_other;
+        }
+
+        $res = $this->Question->Update($data->text, $data->type, $data->points, $data->points_counting, $data->max_typos, $footer, $order, $flags);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować pytania.');
     }
@@ -60,6 +74,9 @@ class Question extends Resource implements Schemas\Question{
             'max_typos',
             'footer',
             'order',
+            'is_optional',
+            'has_na',
+            'has_other',
             'answer_count',
             'answers'
         ];
@@ -95,6 +112,18 @@ class Question extends Resource implements Schemas\Question{
 
     public function order(): int{
         return $this->Question->GetOrder();
+    }
+
+    public function is_optional(): bool{
+        return $this->Question->IsOptional();
+    }
+
+    public function has_na(): bool{
+        return $this->Question->HasNonApplicableAnswer();
+    }
+
+    public function has_other(): bool{
+        return $this->Question->HasOtherAnswer();
     }
 
     public function answer_count(): int{

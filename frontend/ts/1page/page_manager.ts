@@ -89,8 +89,10 @@ export async function GoToPage(page_id: string, params?: PageParams, is_first_pa
             window.location.hash = '';
             window.location.hash = fragment;
         }
+        return true;
     } catch(e) {
         alert('Nie udało się załadować strony: ' + e);
+        return false;
     }
 }
 
@@ -104,8 +106,12 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     let request = new PageRequest(page_id, params);
     let new_page = PageStorage.GetStorage().GetPage(request);
 
-    CurrentPage?.UnloadFrom(ContentRoot);
-    ChromeManager.MobileHeader.RemoveButtons();
+    try {
+        CurrentPage?.UnloadFrom(ContentRoot);
+        ChromeManager.MobileHeader.RemoveButtons();
+    } catch(e) {
+
+    }
 
     CurrentPage = new_page;
     CurrentPageId = page_id;

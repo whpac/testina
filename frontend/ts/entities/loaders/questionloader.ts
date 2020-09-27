@@ -17,6 +17,9 @@ export interface QuestionDescriptor {
     answers: Collection<AnswerDescriptor>;
     footer: string | null;
     order: number;
+    is_optional: boolean;
+    has_na: boolean;
+    has_other: boolean;
 }
 
 export default class QuestionLoader {
@@ -92,7 +95,10 @@ export default class QuestionLoader {
             question_descriptor.max_typos,
             answer_loader,
             question_descriptor.footer,
-            question_descriptor.order
+            question_descriptor.order,
+            question_descriptor.is_optional,
+            question_descriptor.has_na,
+            question_descriptor.has_other
         );
 
         answer_loader.SetQuestion(question);

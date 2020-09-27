@@ -46,7 +46,7 @@ try{
 
     // Przygotuj kontekst zabezpieczeń
     $current_user = AuthManager::GetCurrentUser();
-    $context = new Context($current_user);
+    $context = new Context($current_user, $method);
 
     // Przygotuj formater wyjścia na podstawie nagłówków HTTP
     $formatter = GetFormatter();

@@ -1,3 +1,4 @@
+import { StripQueryAndFragment } from '../utils/urlutils';
 import IPage from './ipage';
 import PageRequest from './page_request';
 
@@ -41,7 +42,7 @@ export default class PageStorage {
      */
     public GetPage(request: PageRequest) {
         let url = request.PageId;
-        url = PageStorage.StripQueryAndFragment(url);
+        url = StripQueryAndFragment(url);
 
         // Usuń ukośniki z końca adresu
         while(url.endsWith('/')) url = url.substr(0, url.length - 1);
@@ -73,19 +74,5 @@ export default class PageStorage {
         if(descriptor === undefined) throw 'Strona ' + key + ' nie istnieje.';
         if(descriptor.Page === undefined) descriptor.Page = descriptor?.CreatePage();
         return descriptor.Page;
-    }
-
-    /**
-     * Ucina z adresu URL części: zapytanie i fragment
-     * @param url Adres URL
-     */
-    protected static StripQueryAndFragment(url: string) {
-        let question_pos = url.indexOf('?');
-        if(question_pos != -1) return url.substr(0, question_pos);
-
-        let hash_pos = url.indexOf('#');
-        if(hash_pos != -1) return url.substr(0, hash_pos);
-
-        return url;
     }
 }

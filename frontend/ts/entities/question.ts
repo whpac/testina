@@ -40,6 +40,12 @@ export default class Question extends Entity {
     protected _Footer: string | null;
     /** Numer kolejny pytania */
     protected _Order: number;
+    /** Określa, czy pytanie jest opcjonalne */
+    protected _IsOptional: boolean;
+    /** Określa, czy pytanie ma opcję "nie dotyczy" */
+    protected _HasNonApplicableAnswer: boolean;
+    /** Określa, czy pytanie ma opcję "inna - jaka?" */
+    protected _HasOtherAnswer: boolean;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
 
@@ -98,6 +104,18 @@ export default class Question extends Entity {
         return this._Order;
     }
 
+    public get IsOptional() {
+        return this._IsOptional;
+    }
+
+    public get HasNonApplicableAnswer() {
+        return this._HasNonApplicableAnswer;
+    }
+
+    public get HasOtherAnswer() {
+        return this._HasOtherAnswer;
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie odpowiedzi dla tego pytania */
     protected AnswerLoader: AnswerLoader;
 
@@ -112,11 +130,15 @@ export default class Question extends Entity {
      * @param max_typos Maksymalna dopuszczalna ilość literówek
      * @param answer_loader Obiekt wczytujący odpowiedzi
      * @param footer Treść w stopce pod pytaniem
-     * @param oreder Numer kolejny pytania
+     * @param order Numer kolejny pytania
+     * @param is_optional Czy pytanie jest opcjonalne
+     * @param has_na Czy pytanie ma odpowiedź "nie dotyczy"
+     * @param has_other Czy pytanie ma odpowiedź "inna - jaka?"
      */
     constructor(id: number, test: Test, text: string, type: number, points: number,
         points_counting: number, max_typos: number, answer_loader: AnswerLoader,
-        footer: string | null, order: number) {
+        footer: string | null, order: number, is_optional: boolean, has_na: boolean,
+        has_other: boolean) {
         super();
 
         this.Id = id;
@@ -128,8 +150,11 @@ export default class Question extends Entity {
         this._MaxTypos = max_typos;
         this._Footer = footer;
         this._Order = order;
-        this.AnswerCount = answer_loader.AnswerCount;
+        this._IsOptional = is_optional;
+        this._HasNonApplicableAnswer = has_na;
+        this._HasOtherAnswer = has_other;
 
+        this.AnswerCount = answer_loader.AnswerCount;
         this.AnswerLoader = answer_loader;
     }
 
@@ -153,7 +178,7 @@ export default class Question extends Entity {
      * @param footer Tekst w stopce
      * @param order Numer kolejny pytania w teście
      */
-    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number) {
+    static async Create(test: Test, text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number, is_optional?: boolean, has_na?: boolean, has_other?: boolean) {
         if(footer == '') footer = undefined;
         let request_data = {
             text: text,
@@ -162,7 +187,10 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos,
             footer: footer ?? null,
-            order: order
+            order: order,
+            is_optional: is_optional,
+            has_na: has_na,
+            has_other: has_other
         };
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(test) + '/questions', 'POST', request_data);
 
@@ -183,7 +211,7 @@ export default class Question extends Entity {
      * @param footer Tekst w stopce
      * @param order Numer kolejny pytania w teście
      */
-    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number) {
+    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number, is_optional?: boolean, has_na?: boolean, has_other?: boolean) {
         if(footer == '') footer = undefined;
         let request_data = {
             text: text,
@@ -192,7 +220,10 @@ export default class Question extends Entity {
             points_counting: points_counting,
             max_typos: max_typos,
             footer: footer ?? null,
-            order: order
+            order: order,
+            is_optional: is_optional,
+            has_na: has_na,
+            has_other: has_other
         };
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204) {

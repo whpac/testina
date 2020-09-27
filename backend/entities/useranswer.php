@@ -44,6 +44,7 @@ class UserAnswer extends Entity {
     public /* Answer? */ function GetAnswer(){
         $this->FetchIfNeeded();
         if(is_null($this->answer_id)) return null;
+        if($this->answer_id < 0) return $this->answer_id;
         return new Answer($this->answer_id);
     }
 
@@ -125,6 +126,31 @@ class UserAnswer extends Entity {
                 ->Table(TABLE_USER_ANSWERS)
                 ->Insert()
                 ->Value('attempt_id', $attempt->GetId())
+                ->Value('question_index', $question_index)
+                ->Value('question_id', $question->GetId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się zapisać odpowiedzi: '.DatabaseManager::GetProvider()->GetError());
+            throw new \Exception('Nie udało się zapisać odpowiedzi.');
+        }
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Select(['id'])
+                ->Where('attempt_id', '=', $attempt->GetId())
+                ->OrderBy('id', 'DESC')
+                ->Run();
+
+        return new UserAnswer($result->fetch_assoc());
+    }
+
+    public static function CreateSpecialAnswer(Attempt $attempt, /* int */ $answer_id, /* int */ $question_index, Question $question){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Insert()
+                ->Value('attempt_id', $attempt->GetId())
+                ->Value('answer_id', $answer_id)
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $question->GetId())
                 ->Run();

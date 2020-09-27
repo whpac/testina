@@ -27,6 +27,7 @@ em {font-weight:500; font-style:normal;}
 hr {border:none; border-top:1px solid var(--nav-separator-color); margin:0.5em 0;}
 hr.spaced {margin:1em 0;}
 p {text-align:justify;}
+p.center {text-align:center;}
 p.small-margin {margin-top:0.4em; margin-bottom:0.4em;}
 
 .success, .success-message {color:var(--success-color) !important;}
@@ -52,6 +53,7 @@ body > main {grid-area:main; padding:15px; overflow-x:hidden;}
 body > main.login {grid-column:1 / 3}
 main h1 {font-size:2em; font-weight:var(--header-font-weight); margin-top:0;}
 h2 {font-size:1.5em;}
+.inline-header {font-weight:500;}
 
 .get-help {font-size:0.95em; margin-left:10px; text-decoration:none;}
 
@@ -72,6 +74,8 @@ div.about-logo-wrapper {
     }
     .logo {width:80px;}
 }
+
+.indented {margin-left:30px; margin-bottom:0.6em; display:inline-block;}
 
 @import 'navbar';
 @import 'components/card';
@@ -107,6 +111,8 @@ div.about-logo-wrapper {
 }
 @include media-xlarge {
     .narrow-screen-only {display:none !important;}
+    .not-xlarge-screen {display:none !important;}
+
     .small-screen-only {display:none !important;}
     .medium-screen-only {display:none !important;}
     .large-screen-only {display:none !important;}

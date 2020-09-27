@@ -70,8 +70,8 @@ class User extends Entity implements \Auth\Users\User {
         return $this->first_name.' '.$this->last_name;
     }
 
-    public /* Group[] */ function GetGroups(): array{
-        return [];
+    public /* Group[] */ function GetGroups(){
+        return Group::GetGroupsForUser($this);
     }
 
     public /* bool */ function IsFemale(): bool{

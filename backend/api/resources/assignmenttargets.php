@@ -9,6 +9,7 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
     protected $Users;
     protected $Groups;
     protected $AllUsers;
+    protected $Links;
     protected $Assignment;
 
     public function CreateSubResource(/* object */ $source){
@@ -23,7 +24,7 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
                 TypeValidator::AssertIsInt($target->id, 'id');
                 TypeValidator::AssertIsInt($target->type, 'type');
                 ValueValidator::AssertIsNonNegative($target->id, 'id');
-                ValueValidator::AssertIsInRange($target->type, 0, 1, 'type');
+                ValueValidator::AssertIsInRange($target->type, 0, 2, 'type');
 
                 $target_type = $target->type;
                 $target_id = $target->id;
@@ -57,6 +58,7 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
         $this->Users = [];
         $this->Groups = [];
         $this->AllUsers = [];
+        $this->Links = [];
         $this->Assignment = $assignment;
 
         $targets = $this->Assignment->GetTargets();
@@ -71,6 +73,8 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
                 foreach($users as $user){
                     $this->AllUsers[$user->GetId()] = true;
                 }
+            }elseif(is_scalar($target)){
+                $this->Links[] = $target;
             }
         }
     }
@@ -79,7 +83,8 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
         return [
             'group_ids',
             'user_ids',
-            'all_user_ids'
+            'all_user_ids',
+            'link_ids'
         ];
     }
 
@@ -93,6 +98,10 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
 
     public function all_user_ids(): array{
         return array_keys($this->AllUsers);
+    }
+
+    public function link_ids(): array{
+        return $this->Links;
     }
 }
 ?>

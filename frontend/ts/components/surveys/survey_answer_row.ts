@@ -5,17 +5,19 @@ import { Hash } from '../../utils/textutils';
 import Question from '../../entities/question';
 import NavigationPrevention from '../../1page/navigation_prevention';
 
-export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "markasdeleted" | "markasundeleted"> {
+export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "markasdeleted" | "markasundeleted" | "checkedchange"> {
     protected QuestionType: number | undefined;
     protected Question: Question | undefined;
     protected Answer: Answer | undefined;
     protected _IsFirst: boolean = false;
     protected _IsLast: boolean = false;
     protected _IsDeleted: boolean = false;
+    protected EditMode: boolean;
 
     protected Element: HTMLLIElement;
     protected CheckboxElement: HTMLInputElement;
     protected AnswerTextElement: HTMLLabelElement | HTMLInputElement;
+    protected ControlButtonsWrapper: HTMLElement | undefined;
     protected MoveUpButton: HTMLButtonElement | undefined;
     protected MoveDownButton: HTMLButtonElement | undefined;
     protected RemoveButton: HTMLButtonElement | undefined;
@@ -46,6 +48,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
 
     public constructor(edit_mode: boolean = false) {
         super();
+        this.EditMode = edit_mode;
 
         this.Element = document.createElement('li');
         if(!edit_mode) this.Element.classList.add('no-hover');
@@ -56,6 +59,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
         this.CheckboxElement = document.createElement('input');
         this.CheckboxElement.disabled = edit_mode;
         this.CheckboxElement.id = 'cb_' + Math.random().toString(16).substr(2);
+        this.CheckboxElement.addEventListener('change', (() => this.FireEvent('checkedchange')).bind(this));
         this.AppendChild(this.CheckboxElement);
 
         if(edit_mode) {
@@ -67,30 +71,30 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
             this.AppendChild(input);
             this.AnswerTextElement = input;
 
-            let control_buttons = document.createElement('div');
-            this.AppendChild(control_buttons);
-            control_buttons.classList.add('control-buttons');
+            this.ControlButtonsWrapper = document.createElement('div');
+            this.AppendChild(this.ControlButtonsWrapper);
+            this.ControlButtonsWrapper.classList.add('control-buttons');
 
             this.MoveUpButton = document.createElement('button');
             this.MoveUpButton.classList.add('secondary', 'control-button');
             this.MoveUpButton.appendChild(new Icon('arrow-up', 'fa-fw').GetElement());
             this.MoveUpButton.title = 'Przenieś wyżej';
             this.MoveUpButton.addEventListener('click', this.MoveUp.bind(this));
-            control_buttons.appendChild(this.MoveUpButton);
+            this.ControlButtonsWrapper.appendChild(this.MoveUpButton);
 
             this.MoveDownButton = document.createElement('button');
             this.MoveDownButton.classList.add('secondary', 'control-button');
             this.MoveDownButton.appendChild(new Icon('arrow-down', 'fa-fw').GetElement());
             this.MoveDownButton.title = 'Przenieś niżej';
             this.MoveDownButton.addEventListener('click', this.MoveDown.bind(this));
-            control_buttons.appendChild(this.MoveDownButton);
+            this.ControlButtonsWrapper.appendChild(this.MoveDownButton);
 
             this.RemoveButton = document.createElement('button');
             this.RemoveButton.classList.add('error', 'control-button');
             this.RemoveButton.appendChild(new Icon('trash', 'fa-fw').GetElement());
             this.RemoveButton.title = 'Usuń odpowiedź';
             this.RemoveButton.addEventListener('click', this.Delete.bind(this));
-            control_buttons.appendChild(this.RemoveButton);
+            this.ControlButtonsWrapper.appendChild(this.RemoveButton);
 
             this.RestoreButton = document.createElement('button');
             this.RestoreButton.classList.add('control-button');
@@ -98,7 +102,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
             this.RestoreButton.title = 'Przywróć odpowiedź';
             this.RestoreButton.style.display = 'none';
             this.RestoreButton.addEventListener('click', this.Undelete.bind(this));
-            control_buttons.appendChild(this.RestoreButton);
+            this.ControlButtonsWrapper.appendChild(this.RestoreButton);
         } else {
             this.AnswerTextElement = document.createElement('label');
             this.AnswerTextElement.htmlFor = this.CheckboxElement.id;
@@ -219,5 +223,17 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
                 // Zniszczyć ten wiersz
             }
         }
+    }
+
+    public GetValue(): boolean | string {
+        return this.CheckboxElement.checked;
+    }
+
+    public GetAnswerId(): number | undefined {
+        return this.Answer?.Id ?? undefined;
+    }
+
+    public OnSelectionChanged() {
+
     }
 }

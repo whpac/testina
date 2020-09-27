@@ -6,18 +6,24 @@ namespace Api;
  * zasoby decydują, jakie informacje udostępnić
  */
 class Context{
-    protected /* User */ $user;
+    protected /* User */ $User;
+    protected /* string */ $Method;
 
-    public function __construct(\Auth\Users\User $user){
-        $this->user = $user;
+    public function __construct(\Auth\Users\User $user, string $method){
+        $this->User = $user;
+        $this->Method = strtoupper($method);
     }
 
     public function GetUser(){
-        return $this->user;
+        return $this->User;
     }
 
     public function IsAuthorized(){
-        return $this->user->GetId() !== '0';
+        return $this->User->GetId() !== '0';
+    }
+
+    public function GetMethod(){
+        return $this->Method;
     }
 }
 ?>
