@@ -1,6 +1,7 @@
 import Component from '../../basic/component';
 import User from '../../../entities/user';
 import UserLoader from '../../../entities/loaders/userloader';
+import { CompareUsersByName } from '../../../utils/arrayutils';
 
 export default class UsersTable extends Component<'selectionchanged'> {
     protected Element: HTMLTableElement;
@@ -10,7 +11,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
     protected SelectedCount: number = 0;
     protected Rows: Row[] = [];
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('table');
@@ -38,20 +39,21 @@ export default class UsersTable extends Component<'selectionchanged'> {
         tr_head.appendChild(document.createElement('th'));
     }
 
-    async Populate(){
+    async Populate() {
         if(this.AreUsersPopulated) return;
         this.UsersTBody.textContent = '';
 
         let users = await UserLoader.GetAll();
-        for(let user of users){
+        users.sort(CompareUsersByName);
+        for(let user of users) {
             let tr = this.UsersTBody.insertRow(-1);
-            
+
             let checkbox_cell = tr.insertCell(-1);
             let checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.addEventListener('change', (() => this.OnRowSelectionChanged(checkbox.checked, tr)).bind(this));
             checkbox_cell.appendChild(checkbox);
-            
+
             let user_name = user.GetFullName();
             tr.dataset.userName = user_name;
             tr.insertCell(-1).textContent = user_name;
@@ -61,26 +63,26 @@ export default class UsersTable extends Component<'selectionchanged'> {
         this.AreUsersPopulated = true;
     }
 
-    DeselectAll(){
+    DeselectAll() {
         this.SelectedCount = 0;
 
         let rows = this.UsersTBody.rows;
-        for(let i = 0; i < rows.length; i++){
+        for(let i = 0; i < rows.length; i++) {
             let first_cell = rows[i].children[0];
             let checkbox = first_cell.children[0] as HTMLInputElement;
             if(checkbox.checked !== undefined) checkbox.checked = false;
         }
 
-        for(let row of this.Rows){
+        for(let row of this.Rows) {
             row.OriginallySelected = false;
         }
     }
 
-    SelectUsers(users_to_select: User[]){
+    SelectUsers(users_to_select: User[]) {
         let users = [...users_to_select];
-        for(let row of this.Rows){
-            for(let i = 0; i < users.length; i++){
-                if(row.User.Id == users[i].Id){
+        for(let row of this.Rows) {
+            for(let i = 0; i < users.length; i++) {
+                if(row.User.Id == users[i].Id) {
                     let first_cell = row.Tr.children[0];
                     let checkbox = first_cell.children[0] as HTMLInputElement;
                     checkbox.checked = true;
@@ -93,17 +95,17 @@ export default class UsersTable extends Component<'selectionchanged'> {
         }
     }
 
-    Filter(search_query: string){
+    Filter(search_query: string) {
         search_query = search_query.toLowerCase();
         let rows = this.UsersTBody.rows;
         let found = 0;
-        for(let i = 0; i < rows.length; i++){
+        for(let i = 0; i < rows.length; i++) {
             let user_name = rows[i].dataset.userName ?? '';
             user_name = user_name.toLowerCase();
-            if(user_name.includes(search_query)){
+            if(user_name.includes(search_query)) {
                 rows[i].style.display = '';
                 found++;
-            }else{
+            } else {
                 rows[i].style.display = 'none';
             }
         }
@@ -115,9 +117,9 @@ export default class UsersTable extends Component<'selectionchanged'> {
      * Zwraca osoby zaznaczone przez użytkownika
      * Jeśli dana pozycja była zaznaczona w okienku od początku, nie zostanie zwrócona
      */
-    GetSelected(){
+    GetSelected() {
         let users: User[] = [];
-        for(let row of this.Rows){
+        for(let row of this.Rows) {
             let first_cell = row.Tr.children[0];
             let checkbox = first_cell.children[0] as HTMLInputElement;
             if(checkbox.checked !== undefined && checkbox.checked && !row.OriginallySelected) users.push(row.User);
@@ -129,9 +131,9 @@ export default class UsersTable extends Component<'selectionchanged'> {
      * Zwraca osoby odznaczone przez użytkownika
      * Jeśli dana pozycja nie była zaznaczona w okienku od początku, nie zostanie zwrócona
      */
-    GetDeselected(){
+    GetDeselected() {
         let users: User[] = [];
-        for(let row of this.Rows){
+        for(let row of this.Rows) {
             let first_cell = row.Tr.children[0];
             let checkbox = first_cell.children[0] as HTMLInputElement;
             if(checkbox.checked !== undefined && !checkbox.checked && row.OriginallySelected) users.push(row.User);
@@ -139,13 +141,13 @@ export default class UsersTable extends Component<'selectionchanged'> {
         return users;
     }
 
-    protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement){
+    protected OnRowSelectionChanged(is_checked: boolean, row: HTMLTableRowElement) {
         if(is_checked) this.SelectedCount++; else this.SelectedCount--;
         //row.dataset.isSelected = is_checked ? 'true' : 'false';
         this.FireEvent('selectionchanged');
     }
 
-    public GetSelectedCount(){
+    public GetSelectedCount() {
         return this.SelectedCount;
     }
 }
@@ -155,7 +157,7 @@ class Row {
     OriginallySelected: boolean;
     User: User;
 
-    constructor(row: HTMLTableRowElement, user: User){
+    constructor(row: HTMLTableRowElement, user: User) {
         this.Tr = row;
         this.User = user;
         this.OriginallySelected = false;
