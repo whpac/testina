@@ -21,9 +21,8 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
 
         if(is_array($source->targets)){
             foreach($source->targets as $target){
-                TypeValidator::AssertIsInt($target->id, 'id');
+                TypeValidator::AssertIsString($target->id, 'id');
                 TypeValidator::AssertIsInt($target->type, 'type');
-                ValueValidator::AssertIsNonNegative($target->id, 'id');
                 ValueValidator::AssertIsInRange($target->type, 0, 2, 'type');
 
                 $target_type = $target->type;
