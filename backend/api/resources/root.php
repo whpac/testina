@@ -46,7 +46,7 @@ class Root extends Resource implements Schemas\Root {
         if(!$this->GetContext()->IsAuthorized()){
             throw new Exceptions\AuthorizationRequired('groups');
         }
-        $groups = \Entities\Group::GetAll();
+        $groups = \Auth\ExternalLogin\OfficeGroup::GetAll();
 
         $out_groups = [];
 
