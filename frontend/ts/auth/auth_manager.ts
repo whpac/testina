@@ -38,27 +38,6 @@ export default class AuthManager {
     }
 
     /**
-     * Próbuje zalogować z użyciem podanych poświadczeń
-     * @param username Nazwa użytkownika
-     * @param password Hasło
-     */
-    public static async TryToLogIn(username: string, password: string) {
-        let payload = {
-            login: username,
-            password: password
-        };
-
-        let result = await XHR.PerformRequest('api/session', 'POST', payload);
-        let response = result.Response as AuthResult;
-
-        if(response.is_success) {
-            AuthManager.FireEvent('login');
-        }
-
-        return response;
-    }
-
-    /**
      * Wylogowuje bieżącego użytkownika
      */
     public static async LogOut() {

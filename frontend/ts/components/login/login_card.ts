@@ -58,11 +58,14 @@ export default class LoginCard extends Card {
                 return;
             }
 
-            let result = await AuthManager.TryToLogIn(login, password);
-            if(!result.is_success) {
-                login_message.textContent = 'Nieprawidłowy login lub hasło.';
-                return;
-            }
+            // let result = await AuthManager.TryToLogIn(login, password);
+            // if(!result.is_success) {
+            //     login_message.textContent = 'Nieprawidłowy login lub hasło.';
+            //     return;
+            // }
+
+            login_message.textContent = 'Zaloguj się z Office.';
+            return;
 
             login_message.textContent = '';
             login_input.value = '';

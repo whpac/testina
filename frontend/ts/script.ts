@@ -68,7 +68,7 @@ try {
     pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
     PageManager.RegisterHomePage(new HomePage());
-    PageManager.RegisterLoginPage(new LoginPage());
+    PageManager.RegisterLoginPage(new LoginWithOfficePage());
 
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
     AuthManager.AddEventListener('login', async () => {
@@ -80,7 +80,7 @@ try {
         (await CacheManager.Open(CacheStorages.Entities)).Purge();
         ChromeManager.ApplicationNavbar.Destroy();
         root?.classList.add('login');
-        PageManager.GoToPage('zaloguj');
+        PageManager.GoToPage('zaloguj/office');
     });
 
     // Załaduj stronę początkową
