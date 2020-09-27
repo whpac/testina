@@ -121,7 +121,7 @@ class Assignment extends Entity {
                     $targets[] = new \Auth\ExternalLogin\OfficeUser($target[0]);
                 break;
                 case self::TARGET_TYPE_GROUP:
-                    $targets[] = new Group($target[0]);
+                    $targets[] = new \Auth\ExternalLogin\OfficeGroup($target[0]);
                 break;
                 case self::TARGET_TYPE_LINK:
                     $targets[] = $target[0];

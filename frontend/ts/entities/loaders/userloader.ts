@@ -1,8 +1,7 @@
 import * as XHR from '../../utils/xhr';
 import User from '../user';
-import { Collection } from '../entity';
-import Loader from './loader';
 import FetchingErrorException from '../../exceptions/fetching_error';
+import { StringKeyedCollection } from '../question_with_user_answers';
 
 /** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {
@@ -70,17 +69,16 @@ export default class UserLoader {
 
     /** Wczytuje wszystkich zarejestrowanych użytkowników */
     public static async GetAll() {
-        let descriptors: Collection<UserDescriptor>;
+        let descriptors: StringKeyedCollection<UserDescriptor>;
         let response = await XHR.PerformRequest('api/users?depth=3', 'GET');
-        descriptors = response.Response as Collection<UserDescriptor>;
+        descriptors = response.Response as StringKeyedCollection<UserDescriptor>;
 
-        let user_ids = Object.keys(descriptors);
         let users: User[] = [];
-        for(let user_id of user_ids) {
+        for(let user_id in descriptors) {
             if(user_id == 'current') continue;
             let u: User;
             try {
-                u = UserLoader.CreateFromDescriptor(descriptors[parseInt(user_id)]);
+                u = UserLoader.CreateFromDescriptor(descriptors[user_id]);
             } catch(e) {
                 if(e instanceof TypeError) {
                     u = await UserLoader.LoadById(user_id);
