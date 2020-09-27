@@ -36,7 +36,7 @@ class OfficeGroup implements \Auth\Users\Group{
             return;
         }
 
-        $url = 'https://graph.microsoft.com/v1.0/groups/'.$this->Id.'/';
+        $url = 'https://graph.microsoft.com/v1.0/groups/'.$this->Id.'/?$select=id,displayName';
 
         // Opcje żądania
         $options = array(
@@ -66,7 +66,7 @@ class OfficeGroup implements \Auth\Users\Group{
             return;
         }
 
-        $url = 'https://graph.microsoft.com/v1.0/groups/'.$this->GetId().'/members';
+        $url = 'https://graph.microsoft.com/v1.0/groups/'.$this->GetId().'/members?$select=id,givenName,surname';
 
         // Opcje żądania
         $options = array(
@@ -99,7 +99,7 @@ class OfficeGroup implements \Auth\Users\Group{
     }
 
     public static /* Group[] */ function GetAll(){
-        $url = 'https://graph.microsoft.com/v1.0/groups/';
+        $url = 'https://graph.microsoft.com/v1.0/groups/?$select=id,displayName';
 
         // Opcje żądania
         $options = array(

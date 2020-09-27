@@ -53,7 +53,7 @@ class OfficeUser extends ExternalUser {
             $resource = 'users/'.$this->Id;
         }
 
-        $url = 'https://graph.microsoft.com/v1.0/'.$resource.'/';
+        $url = 'https://graph.microsoft.com/v1.0/'.$resource.'/?$select=id,givenName,surname';
 
         // Opcje żądania
         $options = array(
@@ -85,7 +85,7 @@ class OfficeUser extends ExternalUser {
     }
 
     public static function GetAll(){
-        $url = 'https://graph.microsoft.com/v1.0/users/';
+        $url = 'https://graph.microsoft.com/v1.0/users/?$select=id,givenName,surname';
 
         // Opcje żądania
         $options = array(
