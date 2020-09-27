@@ -26,7 +26,6 @@ SessionManager::SetKeyProvider($kp);
 SessionManager::Start(36000);
 
 // Inicjalizacja menedżera kont
-AuthManager::Initialize('users', 'id', 'login', 'password_hash', 'sha256');
 AuthManager::RegisterUserFactory(new Auth\ExternalLogin\OfficeUserFactory());
 AuthManager::RestoreCurrentUser();
 
