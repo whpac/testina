@@ -10,7 +10,6 @@ class User extends Entity implements \Auth\Users\User {
     protected /* string */ $first_name;
     protected /* string */ $last_name;
     protected /* string */ $login;
-    protected /* int */ $priviledges;
 
     protected static /* string */ function GetTableName(){
         return TABLE_USERS;
@@ -49,7 +48,6 @@ class User extends Entity implements \Auth\Users\User {
         $this->first_name = 'Anonimowy';
         $this->last_name = 'Użytkownik';
         $this->login = '';
-        $this->priviledges = 0;
     }
 
     public /* int */ function GetId(){
@@ -57,31 +55,26 @@ class User extends Entity implements \Auth\Users\User {
         return $this->id;
     }
 
-    public /* string */ function GetFirstName(){
+    public /* string */ function GetFirstName(): string{
         $this->FetchIfNeeded();
         return $this->first_name;
     }
 
-    public /* string */ function GetLastName(){
+    public /* string */ function GetLastName(): string{
         $this->FetchIfNeeded();
         return $this->last_name;
     }
 
-    public /* string */ function GetFullName(){
+    public /* string */ function GetFullName(): string{
         $this->FetchIfNeeded();
         return $this->first_name.' '.$this->last_name;
-    }
-
-    public /* int */ function GetPriviledges(){
-        $this->FetchIfNeeded();
-        return $this->priviledges;
     }
 
     public /* Group[] */ function GetGroups(){
         return Group::GetGroupsForUser($this);
     }
 
-    public /* bool */ function IsFemale(){
+    public /* bool */ function IsFemale(): bool{
         $this->FetchIfNeeded();
         return (substr($this->first_name, -1, 1) == 'a');
     }

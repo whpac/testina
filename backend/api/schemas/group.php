@@ -2,7 +2,7 @@
 namespace Api\Schemas;
 
 interface Group{
-    public function id(): int;
+    public function id(): string;
     public function name(): string;
 }
 ?>

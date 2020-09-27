@@ -64,10 +64,10 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
         $targets = $this->Assignment->GetTargets();
 
         foreach($targets as $target){
-            if($target instanceof \Entities\User){
+            if($target instanceof \Auth\Users\User){
                 $this->Users[] = $target->GetId();
                 $this->AllUsers[$target->GetId()] = true;
-            }elseif($target instanceof \Entities\Group){
+            }elseif($target instanceof \Auth\Users\Group){
                 $this->Groups[] = $target->GetId();
                 $users = $target->GetUsers();
                 foreach($users as $user){

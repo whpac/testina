@@ -29,6 +29,13 @@ class Table {
     }
 
     /**
+     * Wykonuje zapytanie typu REPLACE
+     */
+    public function Replace(){
+        return new Queries\ReplaceQuery($this);
+    }
+
+    /**
      * Wykonuje zapytanie typu UPDATE
      */
     public function Update(){

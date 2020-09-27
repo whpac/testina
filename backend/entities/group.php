@@ -6,7 +6,7 @@ use Database\DatabaseManager;
 define('TABLE_GROUPS', 'groups');
 define('TABLE_GROUP_MEMBERS', 'group_members');
 
-class Group extends Entity{
+class Group extends Entity implements \Auth\Users\Group{
     protected /* int */ $id;
     protected /* string */ $name;
 
@@ -27,12 +27,12 @@ class Group extends Entity{
         return $this->id;
     }
 
-    public /* string */ function GetName(){
+    public /* string */ function GetName(): string{
         $this->FetchIfNeeded();
         return $this->name;
     }
 
-    public /* User[] */ function GetUsers(){
+    public /* User[] */ function GetUsers(): array{
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_GROUP_MEMBERS)
                 ->Select(['user_id'])
@@ -42,7 +42,7 @@ class Group extends Entity{
         $users = [];
         for($i = 0; $i < $result->num_rows; $i++){
             $row = $result->fetch_assoc();
-            $users[] = new User($row['user_id']);
+            $users[] = new \Auth\ExternalLogin\OfficeUser($row['user_id']);
         }
 
         return $users;

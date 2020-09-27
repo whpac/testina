@@ -17,7 +17,7 @@ use Session\SessionManager;
 require('autoincluder.php');
 
 // Inicjalizacja dostawcy bazy danych oraz sesji
-$db = new MySQL('localhost', 'user', 'passwd', 'p');
+$db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, CRED_DATABASE_BASE);
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
@@ -27,7 +27,7 @@ SessionManager::Start(36000);
 
 // Inicjalizacja menedżera kont
 AuthManager::Initialize('users', 'id', 'login', 'password_hash', 'sha256');
-AuthManager::RegisterUserFactory(new Entities\UserFactory());
+AuthManager::RegisterUserFactory(new Auth\ExternalLogin\OfficeUserFactory());
 AuthManager::RestoreCurrentUser();
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
@@ -116,6 +116,14 @@ try{
 }catch(\Exception $e){
     SetResponseCode(500);
     Logger::Log('Wystąpił nieznany błąd: '.$e->getMessage(), LogChannels::APPLICATION_ERROR);
+}
+
+try{
+    // Usuwa przeterminowane tokeny uwierzytelniania
+    // Ta funkcja znajduje się tutaj, by być wykonywaną jak najczęściej
+    Auth\ExternalLogin\TokenManager::RemoveExpiredTokens();
+}catch(\Exception $e){
+
 }
 
 

@@ -7,7 +7,7 @@ use Log\LogChannels;
 use Session\SessionManager;
 
 define('SESSION_USER_ID', '__user_id');
-define('ANONYMOUS_USER_ID', 0);
+define('ANONYMOUS_USER_ID', '0');
 
 class AuthManager {
     private static $users_table;
@@ -65,7 +65,7 @@ class AuthManager {
 
     public static function IsAuthorized(){
         $uid = SessionManager::Get(SESSION_USER_ID);
-        return (!is_null($uid) && $uid != ANONYMOUS_USER_ID);
+        return (!is_null($uid) && $uid !== ANONYMOUS_USER_ID);
     }
 
     private static function ChangeUser($user_id){
@@ -83,7 +83,7 @@ class AuthManager {
 
     public static function RestoreCurrentUser(){
         if(is_null(self::$user_factory)){
-            Logger::Log('Nie zarejestrowano żadnej fabryki użytkowników.', LogChannels::APPLICATION_ERRORS);
+            Logger::Log('Nie zarejestrowano żadnej fabryki użytkowników.', LogChannels::APPLICATION_ERROR);
             throw new \Exception('Nie zarejestrowano żadnej fabryki użytkowników.');
         }
 
@@ -93,6 +93,10 @@ class AuthManager {
 
     public static function RegisterUserFactory(Users\UserFactory $factory){
         self::$user_factory = $factory;
+    }
+
+    public static function LogInExternalUser($user_id){
+        self::ChangeUser($user_id);
     }
 }
 ?>

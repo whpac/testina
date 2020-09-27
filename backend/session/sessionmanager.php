@@ -49,7 +49,7 @@ class SessionManager {
             $key = self::GenerateKey();
     
         // Utwórz nową sesję zamiast przestarzałej
-        if(strtotime(self::GetExpireTime()) < time())
+        if(self::GetExpireTime() < new \DateTime())
             $key = self::GenerateKey();
 
         self::$session_id = self::GetSessionId();
@@ -97,7 +97,7 @@ class SessionManager {
     /**
      * Zwraca termin ważności sesji
      */
-    protected static function GetExpireTime(){
+    public static function GetExpireTime(){
         $key = self::GetKeyProvider()->GetKey();
 
         $result = DatabaseManager::GetProvider()
@@ -112,7 +112,7 @@ class SessionManager {
         }
 
         $result = $result->fetch_assoc();
-        return $result['expire_date'];
+        return new \DateTime($result['expire_date']);
     }
     
     /**

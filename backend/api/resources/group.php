@@ -20,7 +20,7 @@ class Group extends Resource implements Schemas\Group{
         ];
     }
 
-    public function id(): int{
+    public function id(): string{
         return $this->Group->GetId();
     }
 

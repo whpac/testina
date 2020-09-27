@@ -18,7 +18,7 @@ export interface AssignmentDescriptor {
     assignment_date: string,
     score_current: number | null,
     test: TestDescriptor,
-    assigned_by_id: number,
+    assigned_by_id: string,
     attempt_count: number,
     attempts: Collection<AttemptDescriptor>,
     targets: AssignmentTargetsDescriptor | undefined,

@@ -9,7 +9,7 @@ class Context{
     protected /* User */ $User;
     protected /* string */ $Method;
 
-    public function __construct(\Entities\User $user, string $method){
+    public function __construct(\Auth\Users\User $user, string $method){
         $this->User = $user;
         $this->Method = strtoupper($method);
     }
@@ -19,7 +19,7 @@ class Context{
     }
 
     public function IsAuthorized(){
-        return $this->User->GetId() != 0;
+        return $this->User->GetId() !== '0';
     }
 
     public function GetMethod(){

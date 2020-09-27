@@ -68,7 +68,7 @@ class Test extends Resource implements Schemas\Test{
         return $this->Test->GetName();
     }
 
-    public function author_id(): int{
+    public function author_id(): string{
         return $this->Test->GetAuthor()->GetId();
     }
 

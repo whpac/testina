@@ -21,7 +21,7 @@ class User extends Resource implements Schemas\User{
         ];
     }
 
-    public function id(): int{
+    public function id(): string{
         return $this->User->GetId();
     }
 

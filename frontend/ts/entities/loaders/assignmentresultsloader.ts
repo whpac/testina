@@ -1,11 +1,11 @@
 import * as XHR from '../../utils/xhr';
 import UserLoader from './userloader';
-import Assignment, { AssignmentTargets, AssignmentResult } from '../assignment';
+import Assignment, { AssignmentResult } from '../assignment';
 import ApiEndpoints from './apiendpoints';
 
 /** Deskryptor wyników w odpowiedzi z API */
 export interface AssignmentResultsDescriptor {
-    user_id: number,
+    user_id: string,
     attempt_count: number,
     last_attempt: string | null,
     average_score: number | null;

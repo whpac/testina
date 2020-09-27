@@ -10,7 +10,7 @@ import AssignmentLoader from './assignmentloader';
 export interface TestDescriptor {
     id: number,
     name: string,
-    author_id: number,
+    author_id: string,
     creation_date: string,
     time_limit: number,
     type: number,

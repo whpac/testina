@@ -16,6 +16,9 @@ class MySQLTranslator implements Translator {
             case 'INSERT':
                 return self::TranslateInsert($query);
             break;
+            case 'REPLACE':
+                return self::TranslateReplace($query);
+            break;
             case 'UPDATE':
                 return self::TranslateUpdate($query);
             break;
@@ -75,6 +78,26 @@ class MySQLTranslator implements Translator {
 
         $query_text = '';
         $query_text .= 'INSERT INTO '.$table;
+        $query_text .= $columns;
+        $query_text .= ' VALUES '.$values;
+        return $query_text;
+    }
+
+    static function TranslateReplace($query){
+        $percent_function = false;
+
+        $table = $query->table;
+
+        $columns = '';
+        if(!is_null($query->columns)){
+            $columns = ArrayUtils::QuoteEachString($query->columns, '`');
+            $columns = ' ('.ArrayUtils::ArrayToList($columns).')';
+        }
+        $values = ArrayUtils::QuoteEachString($query->values, '"');
+        $values = '('.ArrayUtils::ArrayToList($values).')';
+
+        $query_text = '';
+        $query_text .= 'REPLACE INTO '.$table;
         $query_text .= $columns;
         $query_text .= ' VALUES '.$values;
         return $query_text;

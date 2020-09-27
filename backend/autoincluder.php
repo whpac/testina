@@ -1,4 +1,7 @@
 <?php
+// Dołącza plik z poświadczeniami, używanymi np. do dostępu do bazy danych albo API Office 365
+require('credentials.php');
+
 /**
  * Funkcja odpowiedzialna za automatyczne ładowanie klas aplikacji Testina
  * Ładowane są tylko klasy w określonych przestrzeniach nazw

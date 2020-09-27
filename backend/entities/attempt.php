@@ -9,7 +9,7 @@ define('TABLE_ATTEMPTS', 'attempts');
 
 class Attempt extends Entity {
     protected /* int */ $id;
-    protected /* int */ $user_id;
+    protected /* string */ $user_id;
     protected /* int */ $assignment_id;
     protected /* float */ $score;
     protected /* float */ $max_score;
@@ -28,7 +28,6 @@ class Attempt extends Entity {
         $this->begin_time = \DateTime::createFromFormat('Y-m-d H:i:s', $this->begin_time);
 
         settype($this->id, 'int');
-        settype($this->user_id, 'int');
         settype($this->assignment_id, 'int');
         settype($this->score, 'float');
         settype($this->max_score, 'float');
@@ -42,7 +41,7 @@ class Attempt extends Entity {
 
     public /* User */ function GetUser(){
         $this->FetchIfNeeded();
-        return new User($this->user_id);
+        return new \Auth\ExternalLogin\OfficeUser($this->user_id);
     }
 
     public /* Assignment */ function GetAssignment(){
@@ -70,7 +69,7 @@ class Attempt extends Entity {
         return round(100 * ($this->GetScore() / $this->GetMaxScore()));
     }
 
-    public static /* Attempt */ function Create(User $user, Assignment $assignment, \DateTime $begin_time = null, $score = 0, $max_score = 0){
+    public static /* Attempt */ function Create(\Auth\Users\User $user, Assignment $assignment, \DateTime $begin_time = null, $score = 0, $max_score = 0){
         if(is_null($begin_time)) $begin_time = new \DateTime();
         
         $result = DatabaseManager::GetProvider()
@@ -99,7 +98,7 @@ class Attempt extends Entity {
         return new Attempt($result->fetch_assoc());
     }
 
-    public static /* Attempt */ function GetAttemptsByUserAndAssignment(User $user, Assignment $assignment, bool $include_unfinished = false){
+    public static /* Attempt */ function GetAttemptsByUserAndAssignment(\Auth\Users\User $user, Assignment $assignment, bool $include_unfinished = false){
         $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
 
         $result = DatabaseManager::GetProvider()
@@ -118,7 +117,7 @@ class Attempt extends Entity {
         return $attempts;
     }
 
-    public static /* int */ function CountAttemptsByUserAndAssignment(User $user, Assignment $assignment){
+    public static /* int */ function CountAttemptsByUserAndAssignment(\Auth\Users\User $user, Assignment $assignment){
         $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
 
         $result = DatabaseManager::GetProvider()
@@ -132,7 +131,7 @@ class Attempt extends Entity {
         return $result->num_rows;
     }
 
-    public static /* ?Attempt */ function GetLastAttemptByUserAndAssignment(User $user, Assignment $assignment){
+    public static /* ?Attempt */ function GetLastAttemptByUserAndAssignment(\Auth\Users\User $user, Assignment $assignment){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ATTEMPTS)
                 ->Select()

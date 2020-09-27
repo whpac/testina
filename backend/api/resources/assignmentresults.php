@@ -28,7 +28,7 @@ class AssignmentResults extends Resource implements Schemas\AssignmentResults{
         return $keys;
     }
 
-    public function user_id(): int{
+    public function user_id(): string{
         return $this->User->GetId();
     }
 

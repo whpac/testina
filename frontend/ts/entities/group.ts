@@ -3,7 +3,7 @@ import Entity from './entity';
 /** Klasa reprezentująca grupę */
 export default class Group extends Entity {
     /** Unikatowy identyfikator grupy */
-    public readonly Id: number;
+    public readonly Id: string;
     /** Nazwa grupy */
     public readonly Name: string;
 
@@ -12,7 +12,7 @@ export default class Group extends Entity {
      * @param id Identyfikator grupy
      * @param name Nazwa grupy
      */
-    constructor(id: number, name: string){
+    constructor(id: string, name: string) {
         super();
 
         if(id === undefined || name === undefined)

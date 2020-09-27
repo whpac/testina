@@ -28,7 +28,7 @@ class Attempt extends Resource implements Schemas\Attempt {
         return $this->Attempt->GetId();
     }
 
-    public function user_id(): int{
+    public function user_id(): string{
         return $this->Attempt->GetUser()->GetId();
     }
 
