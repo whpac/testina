@@ -49,7 +49,12 @@ class TokenManager{
                 ->Run();
 
         if($result->num_rows < 1){
-            return null;
+            if($try_to_refresh){
+                self::TryToGetNewAccessToken();
+                return self::GetAccessToken(false);
+            }else{
+                return null;
+            }
         }
 
         $row = $result->fetch_assoc();
@@ -168,6 +173,7 @@ class TokenManager{
 
     protected static function TryToGetNewAccessToken(): void{
         $refresh_token = self::GetRefreshToken();
+        if(is_null($refresh_token)) return;
 
         $url = 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token';
         $data = [
