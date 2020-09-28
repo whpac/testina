@@ -5,6 +5,7 @@ import AssignedSurveysTable from './assigned_surveys_table';
 
 export default class AssignedSurveysCard extends Card {
     protected AssignedSurveysTable: AssignedSurveysTable;
+    public SurveyCount: number = 0;
 
     public constructor() {
         super('semi-wide');
@@ -25,6 +26,7 @@ export default class AssignedSurveysCard extends Card {
     public async Populate() {
         let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
         assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_SURVEY);
+        this.SurveyCount = assignments.length;
         this.AssignedSurveysTable.Populate(assignments);
     }
 }
