@@ -266,7 +266,7 @@ class Assignment extends Entity {
 
         foreach($groups as $group){
             $group_cond = new Condition('AND');
-            $group_cond->Add('target_id = '.$group->GetId());
+            $group_cond->Add('target_id = "'.$group->GetId().'"');
             $group_cond->Add('target_type = '.self::TARGET_TYPE_GROUP);
             $master_cond->Add($group_cond);
         }

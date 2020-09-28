@@ -35,7 +35,36 @@ class OfficeUser extends ExternalUser {
     }
 
     public /* Group[] */ function GetGroups(): array{
-        return [];
+        $url = 'https://graph.microsoft.com/v1.0/users/'.$this->GetId().'/memberOf/?$select=id,displayName';
+
+        // Opcje żądania
+        $options = array(
+            'http' => array(
+                'header'  => "Authorization: Bearer ".TokenManager::GetAccessToken()."\r\n",
+                'method'  => 'GET',
+            )
+        );
+
+        $groups = [];
+        $context = stream_context_create($options);
+
+        do{
+            // Wykonaj żądanie
+            $result = @file_get_contents($url, false, $context);
+            if ($result === false) {
+                Logger::Log('Nie udało się pobrać informacji o grupach, do których należy użytkownik z serwera Office 365.', LogChannels::EXTERNAL_API);
+                throw new \Exception('Nie udało się pobrać informacji o grupach, do których należy użytkownik z serwera Office 365.');
+            }
+
+            $parsed = json_decode($result, true);
+
+            foreach($parsed['value'] as $group){
+                $groups[] = new OfficeGroup($group['id'], $group['displayName']);
+            }
+            $url = $parsed['@odata.nextLink'];
+        }while(isset($parsed['@odata.nextLink']));
+
+        return $groups;
     }
 
     public /* bool */ function IsFemale(): bool{
