@@ -22,7 +22,7 @@ export default class SurveysPage extends Page {
         this.SurveyListCard = new SurveyListCard();
         this.AppendChild(this.SurveyListCard);
 
-        this.NoSurveysCreated = new NoSurveys(false);
+        this.NoSurveysCreated = new NoSurveys(true);
         this.AppendChild(this.NoSurveysCreated);
     }
 
