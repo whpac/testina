@@ -17,7 +17,7 @@ class QuestionCollection extends Collection {
         ValueValidator::AssertIsNonNegative($source->max_typos, 'max_typos');
         ValueValidator::AssertIsNonNegative($source->points, 'points');
         ValueValidator::AssertIsInRange($source->points_counting, 0, 2, 'points_counting');
-        ValueValidator::AssertIsInRange($source->type, 0, 2, 'type');
+        ValueValidator::AssertIsInRange($source->type, 0, 3, 'type');
 
         $footer = '';
         if(isset($source->footer) && !is_null($source->footer)){

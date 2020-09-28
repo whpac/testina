@@ -18,7 +18,7 @@ class Question extends Resource implements Schemas\Question{
         ValueValidator::AssertIsNonNegative($data->max_typos, 'max_typos');
         ValueValidator::AssertIsNonNegative($data->points, 'points');
         ValueValidator::AssertIsInRange($data->points_counting, 0, 2, 'points_counting');
-        ValueValidator::AssertIsInRange($data->type, 0, 2, 'type');
+        ValueValidator::AssertIsInRange($data->type, 0, 3, 'type');
 
         $footer = null;
         if(isset($data->footer) && !is_null($data->footer)){
