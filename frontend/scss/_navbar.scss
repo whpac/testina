@@ -19,7 +19,7 @@ nav.main-nav {
         .icon {margin-right:0.4ch; margin-left:-3px;}
     }
     li.separator {border-top:1px solid var(--nav-separator-color); margin:2px 8px 3px 8px;}
-    li.header {font-weight:700; padding:8px 12px 4px 12px; color:var(--text-emphazised-color);}
+    li.header {font-weight:700; padding:8px 12px 4px 12px; color:var(--text-emphazised-color); height:1em;}
     li.nav-toggle {display:none;}
     > .copyright {
         grid-area:copyright; color:var(--text-secondary-color); text-align:center;

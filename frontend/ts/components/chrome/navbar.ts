@@ -38,7 +38,7 @@ export default class Navbar {
         li.addEventListener('click', this.ToggleVisibility.bind(this));
         li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
-        ul.appendChild(this.CreateNavHeader((await UserLoader.GetCurrent(true))?.GetFullName() ?? 'Niezalogowany'));
+        ul.appendChild(this.CreateNavHeader());
         ul.appendChild(this.CreateNavLink('Strona główna', 'home', 'fa-home'));
         ul.appendChild(this.CreateNavLink('Testy', 'testy/lista', 'fa-pencil-square-o'));
         ul.appendChild(this.CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'));
@@ -81,10 +81,12 @@ export default class Navbar {
      * Tworzy nagłówek panelu nawigacji
      * @param caption Treść nagłówka
      */
-    protected CreateNavHeader(caption: string) {
+    protected CreateNavHeader() {
         let li = document.createElement('li');
         li.classList.add('header');
-        li.textContent = caption;
+        (async () => {
+            li.textContent = (await UserLoader.GetCurrent(true))?.GetFullName() ?? 'Niezalogowany';
+        })();
         return li;
     }
 
