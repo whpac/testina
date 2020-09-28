@@ -173,5 +173,22 @@ class SessionManager {
         self::GetKeyProvider()->SetKey($key);
         return $key;
     }
+
+    /**
+     * Unieważnia bieżącą sesję
+     */
+    public static function InvalidateSession(){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_SESSIONS)
+                ->Update()
+                ->Set('expire_date', '2000-01-01 00:00:00')
+                ->Where('id', '=', self::GetSessionId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się unieważnić sesji: '.DatabaseManager::GetProvider()->GetError(), LogChannels::SESSION_FAILURE);
+        }
+        self::Start(self::$session_duration);
+    }
 }
 ?>

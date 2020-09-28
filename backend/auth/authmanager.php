@@ -24,7 +24,9 @@ class AuthManager {
     }
 
     public static function LogOut(){
+        \Auth\ExternalLogin\TokenManager::RemoveCurrentSessionTokens();
         self::ChangeUser(ANONYMOUS_USER_ID);
+        SessionManager::InvalidateSession();
     }
 
     public static function GetCurrentUser(){

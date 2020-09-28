@@ -171,6 +171,9 @@ class TokenManager{
         }
     }
 
+    /**
+     * Próbuje uzyskać nowy token dostępu
+     */
     protected static function TryToGetNewAccessToken(): void{
         $refresh_token = self::GetRefreshToken();
         if(is_null($refresh_token)) return;
@@ -207,6 +210,17 @@ class TokenManager{
 
         self::RegisterAccessToken($decoded_result->access_token, $decoded_result->expires_in);
         if(isset($decoded_result->refresh_token)) self::RegisterRefreshToken($decoded_result->refresh_token);
+    }
+
+    /**
+     * Usuwa tokeny dostępu związane z bieżącą sesją
+     */
+    public static function RemoveCurrentSessionTokens(): void{
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_TOKENS)
+                ->Delete()
+                ->Where('session_id', '=', SessionManager::GetSessionId())
+                ->Run();
     }
 }
 ?>
