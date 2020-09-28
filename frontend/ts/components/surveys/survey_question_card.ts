@@ -74,7 +74,8 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
             let types: [number, string][] = [
                 [Question.TYPE_SINGLE_CHOICE, 'Jednokrotnego wyboru'],
                 [Question.TYPE_MULTI_CHOICE, 'Wielokrotnego wyboru'],
-                [Question.TYPE_OPEN_ANSWER, 'Otwarte']
+                [Question.TYPE_OPEN_ANSWER, 'Otwarte'],
+                [Question.TYPE_RANGE, 'O liczbę z zakresu']
             ];
 
             for(let type of types) {
@@ -283,15 +284,17 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
         if(!('value' in this.FooterField)) return;
         if(this.QuestionTypeSelect === undefined) return;
 
+        let range = this.AnswerWrapper.GetRange();
+
         if(this.Question !== undefined) {
             if(!this.IsDeleted) {
                 // Zaktualizuj pytanie
                 let update_awaiter = this.Question.Update(
                     this.HeadingField.value,
                     parseInt(this.QuestionTypeSelect.value),
+                    range[0],
                     0,
-                    0,
-                    0,
+                    range[1],
                     this.FooterField.value,
                     order,
                     this._IsOptional,
@@ -312,9 +315,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     this.Survey,
                     this.HeadingField.value,
                     parseInt(this.QuestionTypeSelect.value),
+                    range[0],
                     0,
-                    0,
-                    0,
+                    range[1],
                     this.FooterField.value,
                     order,
                     this._IsOptional,

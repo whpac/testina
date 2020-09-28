@@ -9,6 +9,13 @@
         input[type=text], .text {grid-column:2; grid-row:1;}
         .control-buttons {grid-column:3; grid-row:1;}
 
+        .range {
+            display:grid; grid-column:1 / 4; grid-auto-flow:column;
+
+            button {border:2px solid transparent}
+            button.selected {border-color:var(--button-border-color);}
+        }
+
         @include media-large-xlarge{
             &:not(.no-hover):hover {border-bottom-color:var(--button-hover-background);}
         }

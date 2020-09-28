@@ -6,7 +6,6 @@ import { MoveElement } from '../../utils/arrayutils';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import SurveyAnswerRowNA from './survey_answer_row_na';
 import SurveyAnswerRowOther from './survey_answer_row_other';
-import { Collection } from '../../entities/entity';
 import { StringKeyedCollection } from '../../entities/question_with_user_answers';
 
 type SpecialAnswerRowsDescriptor = {
@@ -19,6 +18,8 @@ export default class AnswerWrapper extends Component {
     protected AddAnswerButton: HTMLButtonElement | undefined;
     protected AnswerPlaceholderWrapper: HTMLElement;
     protected OpenAnswerInput: HTMLInputElement | undefined;
+    protected RangeAnswerMinInput: HTMLInputElement | undefined;
+    protected RangeAnswerMaxInput: HTMLInputElement | undefined;
     protected SpecialAnswersListElement: HTMLUListElement;
 
     protected Question: Question | undefined;
@@ -93,11 +94,14 @@ export default class AnswerWrapper extends Component {
             }
         }
 
+        this.AnswerPlaceholderWrapper.textContent = '';
+        this.OpenAnswerInput = undefined;
+        this.RangeAnswerMinInput = undefined;
+        this.RangeAnswerMaxInput = undefined;
+
         if((this.QuestionType == Question.TYPE_SINGLE_CHOICE
             || this.QuestionType == Question.TYPE_MULTI_CHOICE)
             && this.EditMode) {
-            this.AnswerPlaceholderWrapper.textContent = '';
-            this.OpenAnswerInput = undefined;
             this.RenderAddAnswerButton();
             this.RefreshAnswerOrder();
         } else {
@@ -106,6 +110,10 @@ export default class AnswerWrapper extends Component {
 
         if(this.QuestionType == Question.TYPE_OPEN_ANSWER) {
             this.RenderOpenAnswer();
+        }
+
+        if(this.QuestionType == Question.TYPE_RANGE) {
+            this.RenderRangeAnswer();
         }
 
         this.RenderSpecialAnswers();
@@ -159,6 +167,44 @@ export default class AnswerWrapper extends Component {
         else this.OpenAnswerInput.placeholder = 'Tu użytkownik wpisze odpowiedź';
         this.OpenAnswerInput.disabled = this.EditMode;
         this.AnswerPlaceholderWrapper.appendChild(this.OpenAnswerInput);
+    }
+
+    protected RenderRangeAnswer() {
+        if(this.EditMode) {
+            let range_wrapper = document.createElement('div');
+            range_wrapper.appendChild(document.createTextNode('Zakres od: '));
+
+            this.RangeAnswerMinInput = document.createElement('input');
+            this.RangeAnswerMinInput.type = 'number';
+            this.RangeAnswerMinInput.min = '0';
+            this.RangeAnswerMinInput.step = '1';
+            this.RangeAnswerMinInput.value = this.Question?.Points.toString() ?? '0';
+            range_wrapper.appendChild(this.RangeAnswerMinInput);
+
+            range_wrapper.appendChild(document.createTextNode(' do: '));
+
+            this.RangeAnswerMaxInput = document.createElement('input');
+            this.RangeAnswerMaxInput.type = 'number';
+            this.RangeAnswerMaxInput.min = '0';
+            this.RangeAnswerMaxInput.step = '1';
+            this.RangeAnswerMaxInput.value = this.Question?.MaxTypos.toString() ?? '10';
+            range_wrapper.appendChild(this.RangeAnswerMaxInput);
+            this.AnswerPlaceholderWrapper.appendChild(range_wrapper);
+        } else {
+            let buttons_wrapper = document.createElement('div');
+            buttons_wrapper.classList.add('range');
+
+            let min = this.Question?.Points ?? 0;
+            let max = this.Question?.MaxTypos ?? 10;
+
+            for(let i = min; i <= max; i++) {
+                let button = document.createElement('button');
+                button.textContent = i.toString();
+                button.addEventListener('click', () => button.classList.toggle('selected'));
+                buttons_wrapper.appendChild(button);
+            }
+            this.AnswerPlaceholderWrapper.appendChild(buttons_wrapper);
+        }
     }
 
     protected RenderSpecialAnswers() {
@@ -298,5 +344,14 @@ export default class AnswerWrapper extends Component {
 
     public IsOtherSelected() {
         return (this.SpecialAnswerRows.OtherRow?.GetValue() ?? false) !== false;
+    }
+
+    public GetRange(): [number, number] {
+        if(this.RangeAnswerMinInput === undefined || this.RangeAnswerMaxInput === undefined) return [0, 0];
+
+        return [
+            parseInt(this.RangeAnswerMinInput.value),
+            parseInt(this.RangeAnswerMaxInput.value)
+        ];
     }
 }

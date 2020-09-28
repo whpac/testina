@@ -14,6 +14,8 @@ export default class Question extends Entity {
     public static TYPE_MULTI_CHOICE = 1;
     /** Pytanie otwarte */
     public static TYPE_OPEN_ANSWER = 2;
+    /** Pytanie o liczbę z zakresu */
+    public static TYPE_RANGE = 3;
 
     /** Po ułamku punktu za każdy dobry wybór */
     public static COUNTING_LINEAR = 0;
@@ -30,11 +32,11 @@ export default class Question extends Entity {
     protected _Text: string;
     /** Typ pytania */
     protected _Type: number;
-    /** Ilość punktów do zdobycia */
+    /** Ilość punktów do zdobycia; w ankietach - dolna granica zakresu */
     protected _Points: number;
     /** Sposób liczenia punktów */
     protected _PointsCounting: number;
-    /** Maksymalna dozwolona liczba literówek */
+    /** Maksymalna dozwolona liczba literówek; w ankietach - górna granica zakresu */
     protected _MaxTypos: number;
     /** Tekst w stopce pod pytaniem */
     protected _Footer: string | null;
@@ -67,7 +69,7 @@ export default class Question extends Entity {
         this.FireEvent('change');
     }
 
-    /** Ilość punktów do zdobycia */
+    /** Ilość punktów do zdobycia; w ankietach - dolna granica zakresu */
     public get Points() {
         return this._Points;
     }
@@ -85,7 +87,7 @@ export default class Question extends Entity {
         this.FireEvent('change');
     }
 
-    /** Maksymalna dozwolona liczba literówek */
+    /** Maksymalna dozwolona liczba literówek; w ankietach - górna granica zakresu */
     public get MaxTypos() {
         return this._MaxTypos;
     }
