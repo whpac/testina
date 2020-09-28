@@ -79,7 +79,6 @@ export default class Navbar {
 
     /**
      * Tworzy nagłówek panelu nawigacji
-     * @param caption Treść nagłówka
      */
     protected CreateNavHeader() {
         let li = document.createElement('li');

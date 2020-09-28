@@ -32,18 +32,6 @@ try {
     if(root === null) throw 'Błąd ładowania';
     let splash_screen = new SplashScreen('loading-wrapper');
 
-    // Inicjalizacja paska nawigacji
-    ChromeManager.ApplicationNavbar = new Navbar('main-nav');
-    (async () => {
-        if(await AuthManager.IsAuthorized(true)) {
-            ChromeManager.ApplicationNavbar.Draw();
-            root.classList.remove('login');
-        } else {
-            ChromeManager.ApplicationNavbar.Destroy();
-            root.classList.add('login');
-        }
-    })();
-
     // Inicjalizacja menedżera stron
     let mobile_header = document.getElementById('mobile-header');
     if(mobile_header === null) throw 'Nie można odnaleźć nagłówka strony.';
@@ -65,7 +53,7 @@ try {
     pages.RegisterPage(/^testy\/rozwiąż(\/[0-9]+)?$/, { CreatePage: () => new SolveTestPage() });
     pages.RegisterPage(/^testy\/przypisane(\/[0-9]+)?$/, { CreatePage: () => new AssignmentsPage() });
     pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
-    pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
+    // pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
     pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
     PageManager.RegisterHomePage(new HomePage());
@@ -81,12 +69,23 @@ try {
         ChromeManager.ApplicationNavbar.Destroy();
         UserLoader.ClearCurrentUserCache();
         root?.classList.add('login');
-        //PageManager.GoToPage('zaloguj/office');
         await (await CacheManager.Open(CacheStorages.Entities)).Purge();
     });
 
-    // Załaduj stronę początkową
-    LoadInitialPage();
+    // Inicjalizacja paska nawigacji
+    ChromeManager.ApplicationNavbar = new Navbar('main-nav');
+    (async () => {
+        if(await AuthManager.IsAuthorized(true)) {
+            ChromeManager.ApplicationNavbar.Draw();
+            root.classList.remove('login');
+        } else {
+            ChromeManager.ApplicationNavbar.Destroy();
+            root.classList.add('login');
+        }
+
+        // Załaduj stronę początkową
+        LoadInitialPage();
+    })();
 } catch(e) {
     alert('Wystąpił błąd: ' + e.toString() + '.');
 }
