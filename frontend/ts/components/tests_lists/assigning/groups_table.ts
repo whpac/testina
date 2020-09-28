@@ -17,6 +17,7 @@ export default class GroupsTable extends Component<'selectionchanged'> {
         this.Element.classList.add('table', 'full-width');
 
         this.GroupsTBody = this.Element.createTBody();
+        this.DisplayLoading();
         this.SearchEmptyTBody = this.Element.createTBody();
 
         this.SearchEmptyTBody.style.display = 'none';
@@ -40,9 +41,9 @@ export default class GroupsTable extends Component<'selectionchanged'> {
 
     async Populate() {
         if(this.AreGroupsPopulated) return;
+        let groups = await GroupLoader.GetAll();
         this.GroupsTBody.textContent = '';
 
-        let groups = await GroupLoader.GetAll();
         groups.sort((a, b) => (a.Name < b.Name) ? -1 : (a.Name > b.Name) ? 1 : 0);
         for(let group of groups) {
             let tr = this.GroupsTBody.insertRow(-1);
@@ -60,6 +61,14 @@ export default class GroupsTable extends Component<'selectionchanged'> {
             this.Rows.push(new Row(tr, group));
         }
         this.AreGroupsPopulated = true;
+    }
+
+    protected DisplayLoading() {
+        let groups_empty_tr = this.GroupsTBody.insertRow(-1);
+        groups_empty_tr.insertCell(-1);
+        let text_groups_empty_cell = groups_empty_tr.insertCell(-1);
+        text_groups_empty_cell.textContent = 'Wczytywanie grup...';
+        text_groups_empty_cell.classList.add('secondary');
     }
 
     DeselectAll() {

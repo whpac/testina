@@ -18,6 +18,7 @@ export default class UsersTable extends Component<'selectionchanged'> {
         this.Element.classList.add('table', 'full-width');
 
         this.UsersTBody = this.Element.createTBody();
+        this.DisplayLoading();
         this.SearchEmptyTBody = this.Element.createTBody();
 
         this.SearchEmptyTBody.style.display = 'none';
@@ -41,9 +42,9 @@ export default class UsersTable extends Component<'selectionchanged'> {
 
     async Populate() {
         if(this.AreUsersPopulated) return;
+        let users = await UserLoader.GetAll();
         this.UsersTBody.textContent = '';
 
-        let users = await UserLoader.GetAll();
         users.sort(CompareUsersByName);
         for(let user of users) {
             let tr = this.UsersTBody.insertRow(-1);
@@ -61,6 +62,14 @@ export default class UsersTable extends Component<'selectionchanged'> {
             this.Rows.push(new Row(tr, user));
         }
         this.AreUsersPopulated = true;
+    }
+
+    protected DisplayLoading() {
+        let users_empty_tr = this.UsersTBody.insertRow(-1);
+        users_empty_tr.insertCell(-1);
+        let text_users_empty_cell = users_empty_tr.insertCell(-1);
+        text_users_empty_cell.textContent = 'Wczytywanie użytkowników...';
+        text_users_empty_cell.classList.add('secondary');
     }
 
     DeselectAll() {
