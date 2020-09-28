@@ -95,20 +95,25 @@ class OfficeUser extends ExternalUser {
             )
         );
 
-        // Wykonaj żądanie
-        $context = stream_context_create($options);
-        $result = @file_get_contents($url, false, $context);
-        if ($result === false) {
-            Logger::Log('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.', LogChannels::EXTERNAL_API);
-            throw new \Exception('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.');
-        }
-
-        $parsed = json_decode($result, true);
-
         $users = [];
-        foreach($parsed['value'] as $user){
-            $users[] = new self($user['id'], $user['givenName'], $user['surname']);
-        }
+        $context = stream_context_create($options);
+
+        do{
+            // Wykonaj żądanie
+            $result = @file_get_contents($url, false, $context);
+            if ($result === false) {
+                Logger::Log('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.', LogChannels::EXTERNAL_API);
+                throw new \Exception('Nie udało się pobrać informacji o użytkownikach z serwera Office 365.');
+            }
+
+            $parsed = json_decode($result, true);
+
+            foreach($parsed['value'] as $user){
+                $users[] = new self($user['id'], $user['givenName'], $user['surname']);
+            }
+            $url = $parsed['@odata.nextLink'];
+        }while(isset($parsed['@odata.nextLink']));
+
         return $users;
     }
 

@@ -76,21 +76,24 @@ class OfficeGroup implements \Auth\Users\Group{
             )
         );
 
-        // Wykonaj żądanie
+        $this->Members = [];
         $context = stream_context_create($options);
-        $result = @file_get_contents($url, false, $context);
-        if ($result === false) {
-            Logger::Log('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.', LogChannels::EXTERNAL_API);
-            throw new \Exception('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.');
-        }
 
-        $parsed = json_decode($result, true);
+        do{
+            // Wykonaj żądanie
+            $result = @file_get_contents($url, false, $context);
+            if ($result === false) {
+                Logger::Log('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.', LogChannels::EXTERNAL_API);
+                throw new \Exception('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.');
+            }
 
-        $members = [];
-        foreach($parsed['value'] as $group){
-            $members[] = new OfficeUser($group['id'], $group['givenName'], $group['surname']);
-        }
-        $this->Members = $members;
+            $parsed = json_decode($result, true);
+
+            foreach($parsed['value'] as $group){
+                $this->Members[] = new OfficeUser($group['id'], $group['givenName'], $group['surname']);
+            }
+            $url = $parsed['@odata.nextLink'];
+        }while(isset($parsed['@odata.nextLink']));
     }
 
     protected function PopulateDefaults(){
@@ -109,20 +112,25 @@ class OfficeGroup implements \Auth\Users\Group{
             )
         );
 
-        // Wykonaj żądanie
-        $context = stream_context_create($options);
-        $result = @file_get_contents($url, false, $context);
-        if ($result === false) {
-            Logger::Log('Nie udało się pobrać informacji o grupach z serwera Office 365.', LogChannels::EXTERNAL_API);
-            throw new \Exception('Nie udało się pobrać informacji o grupach z serwera Office 365.');
-        }
-
-        $parsed = json_decode($result, true);
-
         $groups = [];
-        foreach($parsed['value'] as $group){
-            $groups[] = new self($group['id'], $group['displayName']);
-        }
+        $context = stream_context_create($options);
+
+        do{
+            // Wykonaj żądanie
+            $result = @file_get_contents($url, false, $context);
+            if ($result === false) {
+                Logger::Log('Nie udało się pobrać informacji o grupach z serwera Office 365.', LogChannels::EXTERNAL_API);
+                throw new \Exception('Nie udało się pobrać informacji o grupach z serwera Office 365.');
+            }
+
+            $parsed = json_decode($result, true);
+
+            foreach($parsed['value'] as $group){
+                $groups[] = new self($group['id'], $group['displayName']);
+            }
+            $url = $parsed['@odata.nextLink'];
+        }while(isset($parsed['@odata.nextLink']));
+        
         return $groups;
     }
 }
