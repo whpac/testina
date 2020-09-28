@@ -35,7 +35,7 @@ try {
     // Inicjalizacja paska nawigacji
     ChromeManager.ApplicationNavbar = new Navbar('main-nav');
     (async () => {
-        if(await AuthManager.IsAuthorized()) {
+        if(await AuthManager.IsAuthorized(true)) {
             ChromeManager.ApplicationNavbar.Draw();
             root.classList.remove('login');
         } else {
@@ -81,7 +81,7 @@ try {
         ChromeManager.ApplicationNavbar.Destroy();
         UserLoader.ClearCurrentUserCache();
         root?.classList.add('login');
-        PageManager.GoToPage('zaloguj/office');
+        //PageManager.GoToPage('zaloguj/office');
         await (await CacheManager.Open(CacheStorages.Entities)).Purge();
     });
 

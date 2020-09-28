@@ -2,9 +2,9 @@ import UserLoader from '../entities/loaders/userloader';
 import * as XHR from '../utils/xhr';
 import NavigationPrevention from '../1page/navigation_prevention';
 
-export type AuthResult = {
-    is_success: boolean;
-    reason: number | null;
+type SessionDescriptor = {
+    is_authorized: boolean;
+    expire_time: string | null;
 };
 
 /** Typ reprezentujący obsługiwane nazwy zdarzeń */
@@ -20,12 +20,31 @@ type EventListenerCollection = {
 
 export default class AuthManager {
     private static EventListeners: EventListenerCollection = {};
+    private static ExpireDate: Date | null;
+    private static LastAuthorizedState: boolean = false;
 
     /**
      * Sprawdza, czy bieżący użytkownik jest zalogowany
      */
-    public static async IsAuthorized() {
-        let response = (await XHR.PerformRequest('api/session')).Response as { is_authorized: boolean; };
+    public static async IsAuthorized(bypass_cache: boolean = false) {
+        let response = (await XHR.PerformRequest('api/session', undefined, undefined, bypass_cache)).Response as SessionDescriptor;
+
+        if(response.expire_time !== null) {
+            AuthManager.ExpireDate = new Date(response.expire_time);
+        } else {
+            AuthManager.ExpireDate = null;
+        }
+
+        if(AuthManager.ExpireDate === null || AuthManager.ExpireDate < new Date()) {
+            response.is_authorized = false;
+        }
+
+        if(AuthManager.LastAuthorizedState != response.is_authorized) {
+            if(response.is_authorized) AuthManager.FireEvent('login');
+            else AuthManager.FireEvent('logout');
+        }
+        AuthManager.LastAuthorizedState = response.is_authorized;
+
         return response.is_authorized;
     }
 

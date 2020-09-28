@@ -1,5 +1,5 @@
 import UserLoader from '../../entities/loaders/userloader';
-import { HandleLinkClick } from '../../1page/page_manager';
+import { GoToPage, HandleLinkClick } from '../../1page/page_manager';
 import AuthManager from '../../auth/auth_manager';
 import ChromeManager from '../../1page/chrome_manager';
 
@@ -45,7 +45,7 @@ export default class Navbar {
         ul.appendChild(this.CreateNavLink('Ankiety', 'ankiety', 'fa-bar-chart'));
         ul.appendChild(this.CreateNavSeparator());
         ul.appendChild(this.CreateNavLink('Konto', 'konto', 'fa-user-o'));
-        ul.appendChild(this.CreateNavLink('Wyloguj', AuthManager.LogOut, 'fa-sign-out', ['vulnerable']));
+        ul.appendChild(this.CreateNavLink('Wyloguj', () => { AuthManager.LogOut(); GoToPage('zaloguj/office'); }, 'fa-sign-out', ['vulnerable']));
         ul.appendChild(this.CreateNavSeparator());
         ul.appendChild(this.CreateNavLink('Pomoc', 'pomoc', 'fa-question-circle'));
 

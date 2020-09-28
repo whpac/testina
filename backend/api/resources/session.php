@@ -19,12 +19,18 @@ class Session extends Resource implements Schemas\Session{
 
     public function GetKeys(): array{
         return [
-            'is_authorized'
+            'is_authorized',
+            'expire_time'
         ];
     }
 
     public function is_authorized(): bool{
         return AuthManager::IsAuthorized();
+    }
+
+    public function expire_time(): ?string{
+        if(!$this->is_authorized()) return null;
+        return \Session\SessionManager::GetExpireTime()->format('Y-m-d H:i:s');
     }
 }
 ?>
