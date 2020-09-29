@@ -191,8 +191,11 @@ export default class AnswerWrapper extends Component {
             range_wrapper.appendChild(this.RangeAnswerMaxInput);
             this.AnswerPlaceholderWrapper.appendChild(range_wrapper);
         } else {
+            this.OpenAnswerInput = document.createElement('input');
+
             let buttons_wrapper = document.createElement('div');
             buttons_wrapper.classList.add('range');
+            let buttons: HTMLButtonElement[] = [];
 
             let min = this.Question?.Points ?? 0;
             let max = this.Question?.MaxTypos ?? 10;
@@ -200,8 +203,20 @@ export default class AnswerWrapper extends Component {
             for(let i = min; i <= max; i++) {
                 let button = document.createElement('button');
                 button.textContent = i.toString();
-                button.addEventListener('click', () => button.classList.toggle('selected'));
+                button.addEventListener('click', () => {
+                    let was_selected = button.classList.contains('selected');
+                    for(let btn of buttons) {
+                        btn.classList.remove('selected');
+                    }
+                    if(was_selected) {
+                        if(this.OpenAnswerInput !== undefined) this.OpenAnswerInput.value = '';
+                        return;
+                    }
+                    button.classList.add('selected');
+                    if(this.OpenAnswerInput !== undefined) this.OpenAnswerInput.value = i.toString();
+                });
                 buttons_wrapper.appendChild(button);
+                buttons.push(button);
             }
             this.AnswerPlaceholderWrapper.appendChild(buttons_wrapper);
         }

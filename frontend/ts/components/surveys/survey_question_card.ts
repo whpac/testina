@@ -361,7 +361,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                     if(typeof user_answer == 'boolean') is_valid ||= user_answer;
                     else is_valid ||= (user_answer.length > 0);
                 }
-                if(!is_valid) this.ErrorNotice.textContent = 'Przynajmniej jedna odpowiedź musi zostać zaznaczona.';
+                if(!is_valid) this.ErrorNotice.textContent = 'Odpowiedź na to pytanie jest obowiązkowa.';
                 return is_valid;
             }
         }
