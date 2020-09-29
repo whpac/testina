@@ -2,6 +2,7 @@ import Page from '../components/basic/page';
 import TestsTable from '../components/tests_lists/tests_table';
 import Card from '../components/basic/card';
 import EmptyLibrary from '../components/tests_lists/empty_states/empty_library';
+import Toast from '../components/basic/toast';
 
 export default class LibraryPage extends Page {
     TestsListTable: TestsTable;
@@ -45,12 +46,19 @@ export default class LibraryPage extends Page {
     }
 
     async LoadInto(container: HTMLElement) {
-        container.appendChild(this.Element);
+        try {
+            container.appendChild(this.Element);
 
-        await this.TestsListTable.LoadTests();
-        if(this.TestsListTable.GetRowCount() == 0) {
-            this.LibraryCard.GetElement().style.display = 'none';
-            this.EmptyLibrary.GetElement().style.display = '';
+            await this.TestsListTable.LoadTests();
+            if(this.TestsListTable.GetRowCount() == 0) {
+                this.LibraryCard.GetElement().style.display = 'none';
+                this.EmptyLibrary.GetElement().style.display = '';
+            }
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać testów' + message).Show(0);
         }
     }
 

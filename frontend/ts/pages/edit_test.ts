@@ -9,6 +9,7 @@ import * as PageManager from '../1page/page_manager';
 import TestLoader from '../entities/loaders/testloader';
 import ChromeManager from '../1page/chrome_manager';
 import Icon from '../components/basic/icon';
+import Toast from '../components/basic/toast';
 
 export default class EditTestPage extends Page {
     QuestionsTable: QuestionsTable;
@@ -50,19 +51,26 @@ export default class EditTestPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams) {
-        if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
-        else this.Test = params as Test;
+        try {
+            if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
+            else this.Test = params as Test;
 
-        this.QuestionsTable.LoadQuestions(this.Test);
-        this.TestSettingsCard.Populate(this.Test);
-        container.appendChild(this.Element);
+            this.QuestionsTable.LoadQuestions(this.Test);
+            this.TestSettingsCard.Populate(this.Test);
+            container.appendChild(this.Element);
 
-        this.TestNameHeading.textContent = this.Test.Name;
-        this.Test.AddEventListener('change', (async () => {
-            let new_name = this.Test?.Name ?? '';
-            this.TestNameHeading.textContent = new_name;
-            ChromeManager.SetTitle('Edycja: ' + new_name);
-        }).bind(this));
+            this.TestNameHeading.textContent = this.Test.Name;
+            this.Test.AddEventListener('change', (async () => {
+                let new_name = this.Test?.Name ?? '';
+                this.TestNameHeading.textContent = new_name;
+                ChromeManager.SetTitle('Edycja: ' + new_name);
+            }).bind(this));
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać testu' + message).Show(0);
+        }
     }
 
     UnloadFrom(container: HTMLElement) {

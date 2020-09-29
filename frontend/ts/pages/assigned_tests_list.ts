@@ -5,6 +5,7 @@ import AssignmentLoader from '../entities/loaders/assignmentloader';
 import AllTestsSolved from '../components/tests_lists/empty_states/all_tests_solved';
 import NoTests from '../components/tests_lists/empty_states/no_tests';
 import Test from '../entities/test';
+import Toast from '../components/basic/toast';
 
 export default class AssignedTestsListPage extends Page {
     ToSolveTable: TestsToSolveTable;
@@ -37,18 +38,25 @@ export default class AssignedTestsListPage extends Page {
 
         // Zawinięte w funkcję inline, aby działało niezależnie
         (async () => {
-            this.AllTestsSolved.GetElement().style.display = 'none';
-            this.NoTests.GetElement().style.display = 'none';
-            let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
-            assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_TEST);
-            this.ToSolveTable.Populate(assignments);
-            this.SolvedTable.Populate(assignments);
-            if(this.ToSolveTable.RowCount == 0) {
-                if(this.SolvedTable.RowCount == 0) {
-                    this.GoToCompletelyEmptyState();
-                } else {
-                    this.GoToEmptyStateNoCurrent();
+            try {
+                this.AllTestsSolved.GetElement().style.display = 'none';
+                this.NoTests.GetElement().style.display = 'none';
+                let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
+                assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_TEST);
+                this.ToSolveTable.Populate(assignments);
+                this.SolvedTable.Populate(assignments);
+                if(this.ToSolveTable.RowCount == 0) {
+                    if(this.SolvedTable.RowCount == 0) {
+                        this.GoToCompletelyEmptyState();
+                    } else {
+                        this.GoToEmptyStateNoCurrent();
+                    }
                 }
+            } catch(e) {
+                let message = '.';
+                if('Message' in e) message = ': ' + e.Message;
+
+                new Toast('Nie udało się wczytać testów' + message).Show(0);
             }
         })();
     }

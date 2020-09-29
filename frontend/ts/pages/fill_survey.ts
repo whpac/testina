@@ -57,44 +57,42 @@ export default class FillSurveyPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
-        if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
-        else this.Assignment = params as Assignment;
-
-        this.QuestionCards = [];
-        this.QuestionWrapper.textContent = '';
-
-        this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
-        this.IntroductionCard.Populate(this.Assignment.Test);
-
-        // Utwórz podejście
-        let questions;
         try {
+            if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+            else this.Assignment = params as Assignment;
+
+            this.QuestionCards = [];
+            this.QuestionWrapper.textContent = '';
+
+            this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
+            this.IntroductionCard.Populate(this.Assignment.Test);
+
+            // Utwórz podejście
             this.Attempt = await Attempt.Create(this.Assignment);
-            questions = await this.Attempt.GetQuestions();
+            let questions = await this.Attempt.GetQuestions();
+
+            NavigationPrevention.Prevent('filling-survey');
+
+            questions.sort((a, b) => a.Order - b.Order);
+            this.Questions = QuestionWithUserAnswers.FromArray(questions);
+
+            for(let i = 0; i < this.Questions.length; i++) {
+                await this.RenderQuestion(this.Questions[i], i + 1);
+            }
+            this.RefreshQuestionOrder();
+
+            container.appendChild(this.Element);
+
+            this.Assignment.AddEventListener('change', () => {
+                this.SurveyNameHeading.textContent = this.Assignment?.Test?.Name ?? '';
+                ChromeManager.SetTitle(this.GetTitle());
+            });
         } catch(e) {
             let message = '.';
-            if('Message' in e) {
-                message = ': ' + e.Message;
-            }
-            throw 'Nie udało się pobrać pytań w ankiecie' + message;
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać ankiety' + message).Show(0);
         }
-
-        NavigationPrevention.Prevent('filling-survey');
-
-        questions.sort((a, b) => a.Order - b.Order);
-        this.Questions = QuestionWithUserAnswers.FromArray(questions);
-
-        for(let i = 0; i < this.Questions.length; i++) {
-            await this.RenderQuestion(this.Questions[i], i + 1);
-        }
-        this.RefreshQuestionOrder();
-
-        container.appendChild(this.Element);
-
-        this.Assignment.AddEventListener('change', () => {
-            this.SurveyNameHeading.textContent = this.Assignment?.Test?.Name ?? '';
-            ChromeManager.SetTitle(this.GetTitle());
-        });
     }
 
     UnloadFrom(container: HTMLElement) {

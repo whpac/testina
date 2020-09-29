@@ -3,6 +3,7 @@ import Test from '../entities/test';
 import AssignmentsCard from '../components/assignments/assignments_card';
 import TestLoader from '../entities/loaders/testloader';
 import { GoToPage } from '../1page/page_manager';
+import Toast from '../components/basic/toast';
 
 export default class AssignmentsPage extends Page {
     protected Test: Test | undefined;
@@ -36,13 +37,20 @@ export default class AssignmentsPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
-        if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
-        else this.Test = params as Test;
-        this.TestNameHeading.textContent = this.Test.Name;
+        try {
+            if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
+            else this.Test = params as Test;
+            this.TestNameHeading.textContent = this.Test.Name;
 
-        this.AssignmentsCard.Populate(this.Test);
+            this.AssignmentsCard.Populate(this.Test);
 
-        container.appendChild(this.Element);
+            container.appendChild(this.Element);
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać przypisań' + message).Show(0);
+        }
     }
 
     UnloadFrom(container: HTMLElement) {

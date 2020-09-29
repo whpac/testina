@@ -22,6 +22,7 @@ import EditSurveyPage from './pages/edit_survey';
 import MobileHeader from './components/chrome/mobile_header';
 import UserLoader from './entities/loaders/userloader';
 import LoginWithOfficePage from './pages/login_office';
+import Toast from './components/basic/toast';
 
 // @ts-ignore
 window._debug = true;
@@ -75,16 +76,23 @@ try {
     // Inicjalizacja paska nawigacji
     ChromeManager.ApplicationNavbar = new Navbar('main-nav');
     (async () => {
-        if(await AuthManager.IsAuthorized(true)) {
-            ChromeManager.ApplicationNavbar.Draw();
-            root.classList.remove('login');
-        } else {
-            ChromeManager.ApplicationNavbar.Destroy();
-            root.classList.add('login');
-        }
+        try {
+            if(await AuthManager.IsAuthorized(true)) {
+                ChromeManager.ApplicationNavbar.Draw();
+                root.classList.remove('login');
+            } else {
+                ChromeManager.ApplicationNavbar.Destroy();
+                root.classList.add('login');
+            }
 
-        // Załaduj stronę początkową
-        LoadInitialPage();
+            // Załaduj stronę początkową
+            LoadInitialPage();
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać strony' + message).Show();
+        }
     })();
 } catch(e) {
     alert('Wystąpił błąd: ' + e.toString() + '.');

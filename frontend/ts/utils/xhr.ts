@@ -40,6 +40,7 @@ export function PerformRequest(url: string, method?: string, request_data?: any,
         }
 
         if(!window.navigator.onLine) {
+            console.error('Brak połączenia z internetem');
             return reject(new NetworkErrorException('Brak połączenia z internetem.'));
         }
 

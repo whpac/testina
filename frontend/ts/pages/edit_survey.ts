@@ -69,29 +69,36 @@ export default class EditSurveyPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
-        if(typeof params === 'number') this.Survey = await SurveyLoader.LoadById(params);
-        else this.Survey = params as Test;
+        try {
+            if(typeof params === 'number') this.Survey = await SurveyLoader.LoadById(params);
+            else this.Survey = params as Test;
 
-        this.QuestionCards = [];
-        this.QuestionWrapper.textContent = '';
+            this.QuestionCards = [];
+            this.QuestionWrapper.textContent = '';
 
-        this.SurveyNameHeading.textContent = this.Survey.Name;
-        this.IntroductionCard.Populate(this.Survey);
+            this.SurveyNameHeading.textContent = this.Survey.Name;
+            this.IntroductionCard.Populate(this.Survey);
 
-        let questions = await this.Survey.GetQuestions();
-        questions.sort((a, b) => a.Order - b.Order);
-        for(let i = 0; i < questions.length; i++) {
-            this.RenderQuestion(questions[i], i + 1);
+            let questions = await this.Survey.GetQuestions();
+            questions.sort((a, b) => a.Order - b.Order);
+            for(let i = 0; i < questions.length; i++) {
+                this.RenderQuestion(questions[i], i + 1);
+            }
+            this.RefreshQuestionOrder();
+
+            container.appendChild(this.Element);
+            ChromeManager.MobileHeader.AddButton(new Icon('save'), this.Save.bind(this), 'Zapisz');
+
+            this.Survey.AddEventListener('change', () => {
+                this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';
+                ChromeManager.SetTitle(this.GetTitle());
+            });
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać ankiety' + message).Show(0);
         }
-        this.RefreshQuestionOrder();
-
-        container.appendChild(this.Element);
-        ChromeManager.MobileHeader.AddButton(new Icon('save'), this.Save.bind(this), 'Zapisz');
-
-        this.Survey.AddEventListener('change', () => {
-            this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';
-            ChromeManager.SetTitle(this.GetTitle());
-        });
     }
 
     UnloadFrom(container: HTMLElement) {

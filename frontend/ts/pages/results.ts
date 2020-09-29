@@ -3,6 +3,7 @@ import Assignment from '../entities/assignment';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import ResultsCard from '../components/results/results_card';
 import { GoToPage } from '../1page/page_manager';
+import Toast from '../components/basic/toast';
 
 export default class ResultsPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -36,13 +37,20 @@ export default class ResultsPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
-        if(params === undefined) throw 'Nie podano testu, dla którego mają być wyświetlone wyniki.';
-        if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
-        else this.Assignment = params as Assignment;
+        try {
+            if(params === undefined) throw 'Nie podano testu, dla którego mają być wyświetlone wyniki.';
+            if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+            else this.Assignment = params as Assignment;
 
-        this.TestNameHeading.textContent = this.Assignment.Test.Name;
-        container.appendChild(this.Element);
-        this.ResultsCard.Populate(this.Assignment);
+            this.TestNameHeading.textContent = this.Assignment.Test.Name;
+            container.appendChild(this.Element);
+            this.ResultsCard.Populate(this.Assignment);
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać wyników' + message).Show(0);
+        }
     }
 
     UnloadFrom(container: HTMLElement) {

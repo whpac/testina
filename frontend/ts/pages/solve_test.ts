@@ -8,6 +8,7 @@ import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import TestSummary from '../components/solving/test_summary';
 import AssignmentLoader from '../entities/loaders/assignmentloader';
 import Test from '../entities/test';
+import Toast from '../components/basic/toast';
 
 export default class SolveTestPage extends Page {
     HeadingTestName: Text;
@@ -60,19 +61,26 @@ export default class SolveTestPage extends Page {
     }
 
     async LoadInto(container: HTMLElement, params?: PageParams) {
-        if(params === undefined) throw 'Nie podano testu do rozwiązania';
-        if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
-        else this.Assignment = params as Assignment;
+        try {
+            if(params === undefined) throw 'Nie podano testu do rozwiązania';
+            if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+            else this.Assignment = params as Assignment;
 
-        if(this.Assignment.Test.Type != Test.TYPE_TEST) throw 'Oczekiwano testu, a otrzymano coś innego';
+            if(this.Assignment.Test.Type != Test.TYPE_TEST) throw 'Oczekiwano testu, a otrzymano coś innego';
 
-        this.Invitation.GetElement().style.display = '';
-        this.QuestionCard.GetElement().style.display = 'none';
-        this.TestSummary.GetElement().style.display = 'none';
+            this.Invitation.GetElement().style.display = '';
+            this.QuestionCard.GetElement().style.display = 'none';
+            this.TestSummary.GetElement().style.display = 'none';
 
-        container.appendChild(this.Element);
-        this.HeadingTestName.textContent = this.Assignment.Test.Name;
-        this.Invitation.Populate(this.Assignment);
+            container.appendChild(this.Element);
+            this.HeadingTestName.textContent = this.Assignment.Test.Name;
+            this.Invitation.Populate(this.Assignment);
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się wczytać testu' + message).Show(0);
+        }
     }
 
     UnloadFrom(container: HTMLElement) {

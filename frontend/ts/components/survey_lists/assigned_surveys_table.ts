@@ -86,6 +86,7 @@ export default class AssignedSurveysTable extends Component {
             td_assigned.textContent = ToMediumFormat(assignment.AssignmentDate, true);
 
             let td_fill = tr.insertCell(-1);
+            td_fill.classList.add('center');
             td_fill.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
 
             (async () => {
