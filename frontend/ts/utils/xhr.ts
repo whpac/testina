@@ -1,6 +1,7 @@
 import MalformedResponseException from '../exceptions/malformed_response';
 import FetchingErrorException from '../exceptions/fetching_error';
 import CacheManager, { CacheStorages } from '../cache/cache_manager';
+import NetworkErrorException from '../exceptions/network_error';
 
 type XHRResult = {
     Status: number,
@@ -38,6 +39,10 @@ export function PerformRequest(url: string, method?: string, request_data?: any,
             }
         }
 
+        if(!window.navigator.onLine) {
+            return reject(new NetworkErrorException('Brak połączenia z internetem.'));
+        }
+
         if(method != 'GET') {
             let cache = await CacheManager.Open(CacheStorages.Entities);
             await cache.InvalidateUrl(request.url, method == 'DELETE');
@@ -47,6 +52,7 @@ export function PerformRequest(url: string, method?: string, request_data?: any,
         xhr.open(method, url, true);
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.onreadystatechange = OnReadyStateChange(request, resolve, reject);
+        xhr.onerror = () => { reject(new NetworkErrorException('Wystąpił błąd połączenia internetowego.')); };
 
         // Zserializuj dane żądania
         let serialized_data: (string | null) = null;
