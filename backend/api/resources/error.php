@@ -5,12 +5,12 @@ use Api\Exceptions;
 use Api\Schemas;
 
 class Error extends Resource {
-    protected $Exception;
+    protected $Message;
 
-    public function __construct(\Exception $exception){
+    public function __construct(string $message){
         parent::__construct();
 
-        $this->Exception = $exception;
+        $this->Message = $message;
     }
 
     public function GetKeys(): array{
@@ -25,7 +25,7 @@ class Error extends Resource {
     }
 
     public function message(): string{
-        return $this->Exception->getMessage();
+        return $this->Message;
     }
 }
 ?>

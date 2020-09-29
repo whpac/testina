@@ -97,30 +97,65 @@ try{
     Logger::Log('Przeprowadzono błędne żądanie: '.$e->getMessage(), LogChannels::GENERAL);
 
     if(!is_null($formatter)){
-        $error_resource = new \Api\Resources\Error($e);
+        $error_resource = new \Api\Resources\Error($e->getMessage());
         echo($formatter->FormatResource($error_resource));
     }
 }catch(Exceptions\AuthorizationRequired $e){
     SetResponseCode(401);
     Logger::Log('Zablokowano niezalogowanemu próbę dostępu do '.$target, LogChannels::ACCESS_FORBIDDEN);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Musisz być zalogowany, by uzyskać dostęp do tego zasobu.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\ResourceInaccessible $e){
     SetResponseCode(403);
     Logger::Log('Zablokowano próbę dostępu z powodu niewystarczających uprawnień do '.$target, LogChannels::ACCESS_FORBIDDEN);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Nie masz wystarczających uprawnień, by uzyskać dostęp do tego zasobu.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\ResourceNotFound $e){
     SetResponseCode(404);
     Logger::Log('Wnioskowano o nieistniejący zasób: '.$target, LogChannels::GENERAL);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Zasób nie istnieje.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\MethodNotAllowed $e){
     SetResponseCode(405);
     Logger::Log('Zablokowano próbę żądania nieznaną metodą: '.$method, LogChannels::VALIDATION_GENERAL);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Metoda żądania jest nieobsługiwana przez zasób.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\NotAcceptable $e){
     SetResponseCode(406);
     Logger::Log('Serwer nie może zwrócić odpowiedzi w formacie oczekiwanym przez klienta: '.$e->GetClientAccept(), LogChannels::VALIDATION_GENERAL);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Serwer nie obsługuje żądanego formatu odpowiedzi.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\NotImplemented $e){
     SetResponseCode(501);
     Logger::Log('Próbowano wywołać niezaimplementowaną procedurę: '.$e->getMessage(), LogChannels::GENERAL);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Nie zaimplementowano tej funkcji.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(\Exception $e){
     SetResponseCode(500);
     Logger::Log('Wystąpił nieznany błąd: '.$e->getMessage(), LogChannels::APPLICATION_ERROR);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error('Wystąpił nieznany błąd.');
+        echo($formatter->FormatResource($error_resource));
+    }
 }
 
 try{
