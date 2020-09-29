@@ -44,7 +44,7 @@ class AttemptAnswers extends Resource {
         }
 
         if(!$assignment->AreRemainingAttempts($this->GetContext()->GetUser())){
-            throw new Exceptions\BadRequest('Wykorzystałeś(-aś) już wszystkie podejścia.');
+            throw new Exceptions\BadRequest('Wykorzystał'.($this->GetContext()->GetUser()->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');
         }
 
         $errors = 0;
