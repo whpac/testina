@@ -43,6 +43,10 @@ class AttemptAnswers extends Resource {
             }
         }
 
+        if(!$assignment->AreRemainingAttempts($this->GetContext()->GetUser())){
+            throw new Exceptions\BadRequest('Wykorzystałeś(-aś) już wszystkie podejścia.');
+        }
+
         $errors = 0;
         foreach($source->questions as $question_index => $question){
             TypeValidator::AssertIsBool($question->done, 'done');
