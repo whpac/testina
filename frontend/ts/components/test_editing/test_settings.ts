@@ -192,7 +192,11 @@ export default class TestSettings extends Card {
             PageManager.GoToPage('testy/biblioteka');
 
         } catch(e) {
-            new Toast('Nie udało się usunąć testu „' + test_name + '”.').Show(0);
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się usunąć testu „' + test_name + '”' + message).Show(0);
         } finally {
             removing_toast.Hide();
         }
@@ -218,7 +222,11 @@ export default class TestSettings extends Card {
             NavigationPrevention.Unprevent('test-settings');
 
         } catch(e) {
-            new Toast('Nie udało się zapisać zmian w ustawieniach testu.').Show(0);
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się zapisać zmian w ustawieniach testu' + message).Show(0);
         } finally {
             saving_toast.Hide();
         }

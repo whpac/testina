@@ -83,7 +83,11 @@ export default class AnswersTable extends Component {
             this.ContentWrapper.innerHTML = '';
             answers.forEach((answer) => this.AppendRow(answer));
         } catch(e) {
-            this.ClearContent('Nie udało się wczytać odpowiedzi');
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            this.ClearContent('Nie udało się wczytać odpowiedzi' + message);
         }
     }
 

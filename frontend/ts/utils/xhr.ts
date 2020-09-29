@@ -105,7 +105,7 @@ function OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: 
                 ContentLocation: content_location
             });
         } else {
-            let parsed_json = {};
+            let parsed_json: any = {};
             if(xhr.responseText !== '') {
                 try {
                     parsed_json = JSON.parse(xhr.responseText);
@@ -113,7 +113,13 @@ function OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: 
             }
 
             console.error('Serwer nie mógł zrealizować żądania. Kod odpowiedzi: ' + xhr.status);
-            return reject(new FetchingErrorException('Serwer nie był w stanie zrealizować żądania.', {
+            let message = 'Serwer nie był w stanie zrealizować żądania.';
+
+            if('message' in parsed_json) {
+                message = parsed_json.message;
+            }
+
+            return reject(new FetchingErrorException(message, {
                 Status: xhr.status,
                 StatusText: xhr.statusText,
                 Response: parsed_json

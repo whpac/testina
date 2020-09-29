@@ -146,7 +146,11 @@ export default class AssignTestDialog extends Dialog {
 
             new Toast(test_words[0] + ' „' + this.Test.Name + '” został' + test_words[1] + ' ' + test_words[2] + '.').Show(0);
         } catch(e) {
-            new Toast('Nie udało się ' + test_words[0] + ' ' + test_words[1] + '.').Show(0);
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się ' + test_words[0] + ' ' + test_words[1] + message).Show(0);
         } finally {
             assigning_toast.Hide();
         }

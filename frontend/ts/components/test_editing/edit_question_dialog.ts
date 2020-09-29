@@ -330,7 +330,11 @@ export default class EditQuestionDialog extends Dialog {
             this.PromiseResolve?.(this.Question);
 
         } catch(e) {
-            new Toast('Nie udało się zapisać pytania.').Show(0);
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się zapisać pytania' + message).Show(0);
         } finally {
             saving_toast.Hide();
             this.SaveButton.disabled = false;

@@ -67,7 +67,11 @@ export default class TestsTable extends Component {
             this.TestRowsContainer.innerText = '';
             this.RowCount = 0;
         } catch(e) {
-            this.ClearContent('Nie udało się załadować listy testów.');
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            this.ClearContent('Nie udało się załadować listy testów' + message);
         }
 
         tests.forEach(this.AppendRow.bind(this));
@@ -141,7 +145,11 @@ export default class TestsTable extends Component {
             let test = await Test.Create('[Bez nazwy]', 1, 0);
             this.AppendRow(test);
         } catch(e) {
-            new Toast('Nie udało się utworzyć nowego testu.').Show(0);
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się utworzyć nowego testu' + message).Show(0);
         }
     }
 }

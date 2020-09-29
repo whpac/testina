@@ -314,8 +314,11 @@ export default class QuestionCard extends Card {
             this.Attempt.SaveUserAnswers(this.Questions);
             new Toast('Twoje odpowiedzi zostały zapisane').Show(0);
         } catch(e) {
-            // #25
-            new Toast('Nie udało się zapisać odpowiedzi');
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się zapisać odpowiedzi' + message);
         }
     }
 

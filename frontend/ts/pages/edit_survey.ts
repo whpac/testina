@@ -222,7 +222,9 @@ export default class EditSurveyPage extends Page {
             NavigationPrevention.Unprevent('survey-editor');
         } catch(e) {
             let message = '.';
-            if('Message' in e) message = ': ' + e.Message;
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
 
             saving_toast.Hide();
             new Toast('Nie udało się zapisać' + message).Show(0);

@@ -10,25 +10,25 @@ export default class QuestionsTable extends Component {
     ContentWrapperElem: HTMLTableSectionElement;
     EditDialog: EditQuestionDialog;
 
-    constructor(){
+    constructor() {
         super();
 
         this.Element = document.createElement('table');
         this.Element.classList.add('table', 'full-width');
-        this.Element.innerHTML = 
+        this.Element.innerHTML =
             '<colgroup>' +
-                '<col class="shrink" />' +
-                '<col />' +
-                '<col class="shrink" />' +
-                '<col class="shrink" />' +
-                '<col class="shrink" />' +
+            '<col class="shrink" />' +
+            '<col />' +
+            '<col class="shrink" />' +
+            '<col class="shrink" />' +
+            '<col class="shrink" />' +
             '</colgroup>' +
             '<tr>' +
-                '<th></th>' +
-                '<th>Treść</th>' +
-                '<th>Punkty</th>' +
-                '<th></th>' +
-                '<th></th>' +
+            '<th></th>' +
+            '<th>Treść</th>' +
+            '<th>Punkty</th>' +
+            '<th></th>' +
+            '<th></th>' +
             '</tr>';
 
         this.ContentWrapperElem = (this.Element as HTMLTableElement).createTBody();
@@ -37,15 +37,15 @@ export default class QuestionsTable extends Component {
 
         let nocontent_tbody = (this.Element as HTMLTableElement).createTBody();
         nocontent_tbody.classList.add('nocontent-tbody');
-        nocontent_tbody.innerHTML = 
+        nocontent_tbody.innerHTML =
             '<tr>' +
-                '<td></td>' +
-                '<td><i class="secondary">Nie ma jeszcze żadnych pytań</i></td>' +
-                '<td></td>' +
-                '<td></td>' +
-                '<td></td>' +
+            '<td></td>' +
+            '<td><i class="secondary">Nie ma jeszcze żadnych pytań</i></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
             '</tr>';
-        
+
         let button_footer = (this.Element as HTMLTableElement).createTFoot();
         let tr = button_footer.insertRow(-1);
 
@@ -63,32 +63,36 @@ export default class QuestionsTable extends Component {
         this.EditDialog = new EditQuestionDialog();
     }
 
-    ClearContent(message?: string){
+    ClearContent(message?: string) {
         message = message ?? 'Ładowanie...';
-        this.ContentWrapperElem.innerHTML = 
+        this.ContentWrapperElem.innerHTML =
             '<tr>' +
-                '<td></td>' +
-                '<td>' + message + '</td>' +
-                '<td></td>' +
-                '<td></td>' +
-                '<td></td>' +
+            '<td></td>' +
+            '<td>' + message + '</td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
             '</tr>';
     }
 
-    async LoadQuestions(test: Test){
+    async LoadQuestions(test: Test) {
         let questions: Question[] = [];
-        try{
+        try {
             questions = await test.GetQuestions();
             this.ContentWrapperElem.innerText = '';
-        }catch(e){
-            this.ClearContent('Nie udało się wczytać pytań: ' + e.toString());
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            this.ClearContent('Nie udało się wczytać pytań: ' + message);
         }
         this.EditDialog.Test = test;
 
         questions.forEach(this.AppendRow.bind(this));
     }
 
-    async AppendRow(question: Question){
+    async AppendRow(question: Question) {
         let tr = this.ContentWrapperElem.insertRow(-1);
         let row_number = this.ContentWrapperElem.rows.length;
 
@@ -107,7 +111,7 @@ export default class QuestionsTable extends Component {
         let btn_edit = document.createElement('button');
         btn_edit.classList.add('compact');
         btn_edit.textContent = 'Edytuj';
-        btn_edit.addEventListener('click', () => this.EditDialog.PopulateAndShow(question).catch(() => {}));
+        btn_edit.addEventListener('click', () => this.EditDialog.PopulateAndShow(question).catch(() => { }));
         td_edit.appendChild(btn_edit);
 
         let td_rem = tr.insertCell(-1);
@@ -128,32 +132,36 @@ export default class QuestionsTable extends Component {
         }).bind(this));
     }
 
-    UpdateRowNumbers(){
+    UpdateRowNumbers() {
         let rows = this.ContentWrapperElem.rows;
-        for(let i = 0; i < rows.length; i++){
+        for(let i = 0; i < rows.length; i++) {
             rows[i].children[0].textContent = (i + 1).toString() + '.';
         }
     }
 
-    AddQuestion(){
+    AddQuestion() {
         this.EditDialog.PopulateAndShow(undefined).then((question) => {
             this.AppendRow(question);
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
-    async RemoveQuestion(question: Question){
+    async RemoveQuestion(question: Question) {
         let question_text = Truncate(question.Text, 30);
         let result = window.confirm('Usunięcia pytania nie da się cofnąć.\nCzy usunąć pytanie „' + question_text + '” mimo to?');
         if(!result) return;
 
         let removing_toast = new Toast('Usuwanie pytania „' + question_text + '”...');
         removing_toast.Show();
-        try{
+        try {
             await question.Remove();
             new Toast('Pytanie „' + question_text + '” zostało usunięte.').Show(0);
-        }catch(e){
-            new Toast('Nie udało się usunąć pytania.').Show(0);
-        }finally{
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się usunąć pytania' + message).Show(0);
+        } finally {
             removing_toast.Hide();
         }
     }

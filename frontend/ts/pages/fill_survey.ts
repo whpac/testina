@@ -72,7 +72,11 @@ export default class FillSurveyPage extends Page {
             this.Attempt = await Attempt.Create(this.Assignment);
             questions = await this.Attempt.GetQuestions();
         } catch(e) {
-            throw 'Nie udało się pobrać pytań w ankiecie. Możliwe, że wypełniłeś(-aś) tę ankietę maksymalną możliwą ilość razy.';
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            throw 'Nie udało się pobrać pytań w ankiecie' + message;
         }
 
         NavigationPrevention.Prevent('filling-survey');
@@ -175,8 +179,13 @@ export default class FillSurveyPage extends Page {
             new Toast('Wysłano odpowiedzi.').Show(0);
             NavigationPrevention.Unprevent('filling-survey');
         } catch(e) {
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+
             saving_toast.Hide();
-            new Toast('Nie udało się wysłać odpowiedzi.').Show(0);
+            new Toast('Nie udało się wysłać odpowiedzi' + message).Show(0);
             this.SubmitButton.disabled = false;
         }
     }
