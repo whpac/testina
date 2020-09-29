@@ -20,7 +20,13 @@ export default class TestinaCard extends Card {
         let logo = document.createElement('img');
         logo_backplate.appendChild(logo);
         logo.classList.add('logo');
-        logo.src = 'images/logo/testina.svg';
+
+        // @ts-ignore
+        if(window._debug) {
+            logo.src = 'images/logo/testina.dev.svg';
+        } else {
+            logo.src = 'images/logo/testina.svg';
+        }
 
         let app_name_heading = document.createElement('h2');
         this.AppendChild(app_name_heading);
