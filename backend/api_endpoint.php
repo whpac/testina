@@ -33,6 +33,7 @@ $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
 $method = '';
 $target = '';
+$formatter = null;
 
 try{
     // Odczytaj metodę żądania
@@ -94,6 +95,11 @@ try{
 }catch(Exceptions\BadRequest $e){
     SetResponseCode(400);
     Logger::Log('Przeprowadzono błędne żądanie: '.$e->getMessage(), LogChannels::GENERAL);
+
+    if(!is_null($formatter)){
+        $error_resource = new \Api\Resources\Error($e);
+        echo($formatter->FormatResource($error_resource));
+    }
 }catch(Exceptions\AuthorizationRequired $e){
     SetResponseCode(401);
     Logger::Log('Zablokowano niezalogowanemu próbę dostępu do '.$target, LogChannels::ACCESS_FORBIDDEN);
