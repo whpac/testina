@@ -5,6 +5,13 @@ use Api\Validation\TypeValidator;
 use Api\Validation\ValueValidator;
 
 class AssignmentCollection extends Collection {
+    protected $LinkAssignments;
+
+    public function __construct($items, $parent = null, $link_assignments = []){
+        parent::__construct($items, $parent);
+
+        $this->LinkAssignments = $link_assignments;
+    }
 
     public function GetKeys(): array{
         if($this->Filters == []) return array_keys($this->Items);
@@ -22,6 +29,28 @@ class AssignmentCollection extends Collection {
         }
 
         return array_intersect(array_keys($this->Items), $this->Filters);
+    }
+
+    public function KeyExists($key_name): bool{
+        if(array_key_exists($key_name, $this->Items)) return true;
+        if(array_key_exists($key_name, $this->LinkAssignments)) return true;
+        return false;
+    }
+
+    public function __call($name, $args){
+        if(isset($this->Items[$name])){
+            $item = $this->Items[$name];
+            $item->SetContext($this->GetContext());
+            return $item;
+        }
+
+        if(isset($this->LinkAssignments[$name])){
+            $item = $this->LinkAssignments[$name];
+            $item->SetContext($this->GetContext());
+            return $item;
+        }
+
+        throw new \BadMethodCallException('Indeks '.urlencode($name).' nie istnieje w tej kolekcji.');
     }
 
     public function CreateSubResource(/* mixed */ $source){

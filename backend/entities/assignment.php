@@ -4,6 +4,9 @@ namespace Entities;
 use Database\DatabaseManager;
 use Database\Entities\Condition;
 
+use Log\Logger;
+use Log\LogChannels;
+
 define('TABLE_ASSIGNMENTS', 'assignments');
 define('TABLE_ASSIGNMENT_TARGETS', 'assignment_targets');
 
@@ -45,7 +48,7 @@ class Assignment extends Entity {
                 ->Run();
         
         $this->targets = [];
-        for($i=0; $i<$result->num_rows; $i++){
+        for($i=0; $i < $result->num_rows; $i++){
             $row = $result->fetch_assoc();
             $this->targets[] = [$row['target_id'], $row['target_type']];
         }
@@ -129,6 +132,16 @@ class Assignment extends Entity {
             }
         }
         return $targets;
+    }
+
+    public function GetLink(){
+        if(!isset($this->targets)) $this->ProcessTargets();
+
+        foreach ($this->targets as $target) {
+            if($target[1] == self::TARGET_TYPE_LINK) return $target[0];
+        }
+
+        return null;
     }
 
     public /* bool */ function IsForUser(\Auth\Users\User $user){
@@ -328,6 +341,28 @@ class Assignment extends Entity {
         }
 
         return $number;
+    }
+
+    public static /* Assignment[] */ function GetLinkAssignments(){
+        $assignments = [];
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ASSIGNMENT_TARGETS)
+                ->Select()
+                ->Where('target_type', '=', self::TARGET_TYPE_LINK)
+                ->Run();
+        
+        if($result === false){
+            Logger::Log('Nie udało się pobrać przypisań dostępnych po linku: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się pobrać przypsań dostępnych po linku');
+        }
+
+        for($i = 0; $i < $result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $assignments[] = new Assignment($row['assignment_id']);
+        }
+
+        return $assignments;
     }
 }
 ?>

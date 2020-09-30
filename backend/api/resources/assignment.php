@@ -26,6 +26,12 @@ class Assignment extends Resource implements Schemas\Assignment{
     }
 
     public function GetKeys(): array{
+        $is_accessible = true;
+        if(!$this->GetContext()->IsAuthorized()) $is_accessible = false;
+        if(!is_null($this->Assignment->GetLink())) $is_accessible = true;
+
+        if(!$is_accessible) return [];
+
         $keys = [
             'id',
             'attempt_limit',

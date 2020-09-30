@@ -22,8 +22,10 @@ class AttemptWithTest extends Resource implements Schemas\Attempt {
         if(is_null($this->Attempt)){
             $current_user = $this->GetContext()->GetUser();
 
-            if(!$this->Assignment->AreRemainingAttempts($current_user)){
-                throw new Exceptions\BadRequest('Wykorzystał'.($current_user->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');
+            if($this->GetContext()->IsAuthorized()){
+                if(!$this->Assignment->AreRemainingAttempts($current_user)){
+                    throw new Exceptions\BadRequest('Wykorzystał'.($current_user->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');
+                }
             }
 
             if($this->Assignment->HasTimeLimitExceeded()){
@@ -32,7 +34,7 @@ class AttemptWithTest extends Resource implements Schemas\Attempt {
 
             $test = $this->Assignment->GetTest();
             $this->Questions = $test->GetQuestions();
-            $q_count = $test->GetQuestionCount(); // Multiplier is taken into account
+            $q_count = $test->GetQuestionCount(); // Mnożnik pytań jest brany pod uwagę przy określaniu liczby pytań
 
             $this->Path = [];
             $points = [];
@@ -43,7 +45,7 @@ class AttemptWithTest extends Resource implements Schemas\Attempt {
                 }
             }
             shuffle($this->Path);
-            $this->Path = array_slice($this->Path, 0, $q_count); // Drop the excess questions
+            $this->Path = array_slice($this->Path, 0, $q_count); // Usuń nadmiarowe pytania
 
             $max_score = 0;
             foreach($this->Path as $q_id){

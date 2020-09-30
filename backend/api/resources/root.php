@@ -18,26 +18,33 @@ class Root extends Resource implements Schemas\Root {
     }
 
     public function assignments(): Schemas\Collection{
-        if(!$this->GetContext()->IsAuthorized()){
-            throw new Exceptions\AuthorizationRequired('assignments');
-        }
-        $current_user = $this->GetContext()->GetUser();
-
         $out_assignments = [];
 
-        $assignments = \Entities\Assignment::GetAssignmentsForUser($current_user);
+        if($this->GetContext()->IsAuthorized()){
+            $current_user = $this->GetContext()->GetUser();
 
-        foreach($assignments as $assignment){
-            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
+            $assignments = \Entities\Assignment::GetAssignmentsForUser($current_user);
+
+            foreach($assignments as $assignment){
+                $out_assignments[$assignment->GetId()] = new Assignment($assignment);
+            }
+
+            $assignments = \Entities\Assignment::GetAssignedByUser($current_user);
+
+            foreach($assignments as $assignment){
+                $out_assignments[$assignment->GetId()] = new Assignment($assignment);
+            }
         }
 
-        $assignments = \Entities\Assignment::GetAssignedByUser($current_user);
-
-        foreach($assignments as $assignment){
-            $out_assignments[$assignment->GetId()] = new Assignment($assignment);
+        $link_assignments = \Entities\Assignment::GetLinkAssignments();
+        $link_assignments_res = [];
+        foreach($link_assignments as $a){
+            $link = $a->GetLink();
+            if(is_null($link)) continue;
+            $link_assignments_res[$link] = new Assignment($a);
         }
 
-        $collection = new AssignmentCollection($out_assignments);
+        $collection = new AssignmentCollection($out_assignments, null, $link_assignments_res);
         $collection->SetContext($this->GetContext());
         return $collection;
     }
