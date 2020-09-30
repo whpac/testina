@@ -121,19 +121,41 @@ export async function LoadInitialPage() {
 /**
  * Zwraca adres strony, odczytany z adresu URL
  */
-function ReadPageFromURL() {
+export function ReadPageFromURL() {
     let base_element = document.querySelector('base');
+    let base_path: string;
+    let url_path = window.location.href;
+
     if(base_element === null) {
-        // Zwraca ścieżkę, bez ukośnika z przodu
-        return window.location.pathname.substr(1);
+        base_path = window.location.origin;
     } else {
-        let base_path = base_element.href;
-        let url_path = window.location.href;
-        if(url_path.startsWith(base_path)) {
-            // Zwraca ścieżkę, ale bez części danej przez <base>
-            return url_path.substr(base_path.length ?? 0);
-        } else {
-            return window.location.pathname.substr(1);
-        }
+        base_path = base_element.href;
     }
+
+    let relative_url: string;
+    if(url_path.startsWith(base_path)) {
+        // Zwraca ścieżkę, ale bez adresu bazowego (nazwy hosta albo określonego przez <base>)
+        relative_url = url_path.substr(base_path.length);
+    } else {
+        relative_url = url_path.substr(window.location.origin.length);
+    }
+
+    // Jeżeli nazwa strony zaczyna się od ukośnika, utnij go
+    if(relative_url.startsWith('/')) relative_url = relative_url.substr(1);
+
+    if(relative_url.startsWith('office_login?')) relative_url = ReadStateFromOfficeLogin();
+
+    return relative_url;
+}
+
+function ReadStateFromOfficeLogin() {
+    let query_string = window.location.search;
+    let url_params = new URLSearchParams(query_string);
+
+    if(!url_params.has('state')) return '';
+
+    let page = url_params.get('state');
+    if(page === null) return '';
+
+    return page;
 }

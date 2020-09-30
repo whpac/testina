@@ -1,3 +1,4 @@
+import { ReadPageFromURL } from '../../script';
 import Card from '../basic/card';
 
 export default class LoginWithOfficeCard extends Card {
@@ -35,6 +36,8 @@ export default class LoginWithOfficeCard extends Card {
         link_wrapper.style.textAlign = 'center';
         this.AppendChild(link_wrapper);
 
+        let continue_link = ReadPageFromURL();
+
         let link = document.createElement('a');
         link.classList.add('button');
         link.href = `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?
@@ -43,7 +46,7 @@ client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
 &redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Foffice_login
 &response_mode=query
 &scope=offline_access%20user.read%20user.read.all%20group.read.all
-&state=12345`;
+&state=` + continue_link;
         link.textContent = 'Zaloguj';
         link_wrapper.appendChild(link);
 
