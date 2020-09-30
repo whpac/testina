@@ -10,6 +10,7 @@ import Attempt from '../entities/attempt';
 import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import Toast from '../components/basic/toast';
 import NavigationPrevention from '../1page/navigation_prevention';
+import AuthManager from '../auth/auth_manager';
 
 export default class FillSurveyPage extends Page {
     protected Assignment: Assignment | undefined;
@@ -64,6 +65,21 @@ export default class FillSurveyPage extends Page {
             this.QuestionCards = [];
             this.QuestionWrapper.textContent = '';
 
+            if(!(await AuthManager.IsAuthorized())) {
+                try {
+                    let key_name = 'survey_' + this.Assignment.Id;
+                    let number_of_fills = localStorage.getItem(key_name);
+                    if(number_of_fills === null) number_of_fills = '0';
+
+                    if(parseInt(number_of_fills) >= this.Assignment.AttemptLimit && this.Assignment.AttemptLimit > 0) {
+                        new Toast('Nie można załadować ankiety: Wypełniłeś(-aś) ją już maksymalną możliwą liczbę razy.').Show();
+                        return;
+                    }
+                } catch(e) {
+
+                }
+            }
+
             this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
             this.IntroductionCard.Populate(this.Assignment.Test);
 
@@ -107,9 +123,16 @@ export default class FillSurveyPage extends Page {
         return 'Wypełnij: ' + (this.Assignment?.Test?.Name ?? '');
     }
 
+    async IsAccessible() {
+        return true;
+    }
+
     protected async RenderQuestion(question_with_answers: QuestionWithUserAnswers, question_number: number) {
         let question = question_with_answers.GetQuestion();
-        if(question.Type != Question.TYPE_OPEN_ANSWER) {
+
+        let questions_with_provided_answers = [Question.TYPE_SINGLE_CHOICE, Question.TYPE_MULTI_CHOICE];
+
+        if(question.Type in questions_with_provided_answers) {
             let answers = await question.GetAnswers();
             answers.sort((a, b) => a.Order - b.Order);
             question_with_answers.SetAnswers(answers);
@@ -176,6 +199,17 @@ export default class FillSurveyPage extends Page {
             saving_toast.Hide();
             new Toast('Wysłano odpowiedzi.').Show(0);
             NavigationPrevention.Unprevent('filling-survey');
+
+            if(!(await AuthManager.IsAuthorized()) && this.Assignment !== undefined) {
+                try {
+                    let key_name = 'survey_' + this.Assignment.Id;
+                    let number_of_fills = localStorage.getItem(key_name);
+                    if(number_of_fills === null) number_of_fills = '0';
+                    localStorage.setItem(key_name, (parseInt(number_of_fills) + 1).toString());
+                } catch(e) {
+
+                }
+            }
         } catch(e) {
             let message = '.';
             if('Message' in e) {

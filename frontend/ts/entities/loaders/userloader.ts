@@ -18,9 +18,11 @@ export default class UserLoader {
      * Wczytuje użytkowników o określonym identyfikatorze
      * @param user_id Identyfikatory użytkowników
      */
-    LoadById(user_id: string): Promise<User>;
+    LoadById(user_id: string | 0): Promise<User>;
     LoadById(user_id: string[]): Promise<User[]>;
-    public async LoadById(user_id: string | string[]): Promise<User | User[]> {
+    public async LoadById(user_id: string | string[] | 0): Promise<User | User[]> {
+        if(user_id === 0) return new User('0', 'Nieznany', 'użytkownik');
+
         if(typeof user_id == 'string') {
             let descriptor: UserDescriptor;
             let response = await XHR.PerformRequest('api/users/' + user_id + '?depth=2', 'GET');

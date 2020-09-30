@@ -5,6 +5,8 @@ import { Collection } from '../entity';
 import Test from '../test';
 import QuestionLoader, { QuestionDescriptor } from './questionloader';
 import AssignmentLoader from './assignmentloader';
+import AuthManager from '../../auth/auth_manager';
+import User from '../user';
 
 /** Deskryptor testu w odpowiedzi z API */
 export interface TestDescriptor {
@@ -28,7 +30,7 @@ export default class TestLoader {
      * Wczytuje test o określonym identyfikatorze
      * @param test_id Identyfikator testu
      */
-    public static async LoadById(test_id: number) {
+    public static async LoadById(test_id: number | string) {
         let response = await XHR.PerformRequest('api/tests/' + test_id.toString() + '?depth=3', 'GET');
         let json = response.Response as TestDescriptor;
         return this.CreateFromDescriptor(json);
@@ -43,10 +45,18 @@ export default class TestLoader {
 
         let assignment_loader = () => new AssignmentLoader().LoadById(test_descriptor.assignment_ids);
 
+        let author;
+        try {
+            author = await UserLoader.LoadById(test_descriptor.author_id);
+        } catch(e) {
+            if(await AuthManager.IsAuthorized()) throw e;
+            author = new User('0', 'Nieznany', 'użytkownik');
+        }
+
         let test = new Test(
             test_descriptor.id,
             test_descriptor.name,
-            await UserLoader.LoadById(test_descriptor.author_id),
+            author,
             new Date(test_descriptor.creation_date),
             test_descriptor.time_limit,
             test_descriptor.question_multiplier,

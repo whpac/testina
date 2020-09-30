@@ -6,6 +6,7 @@ import Assignment from './assignment';
 import QuestionWithUserAnswers from './question_with_user_answers';
 import QuestionLoader, { QuestionDescriptor } from './loaders/questionloader';
 import AttemptLoader, { AttemptDescriptor } from './loaders/attemptloader';
+import ApiEndpoints from './loaders/apiendpoints';
 
 /** Klasa reprezentująca podejście */
 export default class Attempt extends Entity {
@@ -74,7 +75,7 @@ export default class Attempt extends Entity {
      * @param assignment Przypisanie, do którego należy utworzyć podejście
      */
     static async Create(assignment: Assignment) {
-        let response = await XHR.PerformRequest('api/assignments/' + assignment.Id + '/attempts?depth=8', 'POST');
+        let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(assignment) + '/attempts?depth=8', 'POST');
         let json = response.Response as AttemptDescriptor;
         return AttemptLoader.CreateFromDescriptor(assignment, json);
     }

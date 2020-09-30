@@ -13,6 +13,7 @@ import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 import { StringKeyedCollection } from './question_with_user_answers';
+import UserLoader from './loaders/userloader';
 
 type AssignmentTargetEntity = User | Group | string;
 export type AssignmentTargets = {
@@ -32,7 +33,7 @@ export type AssignmentResult = {
 /** Klasa reprezentująca przypisanie */
 export default class Assignment extends Entity implements PageParams {
     /** Unikatowy identyfikator przypisania */
-    public readonly Id: number;
+    public readonly Id: number | string;
     /** Test, który przypisano */
     public readonly Test: Test;
     /** Limit podejść */
@@ -84,7 +85,7 @@ export default class Assignment extends Entity implements PageParams {
      * @param score Średni wynik (lub null, jeśli nie było podejść)
      * @param assigned_by Osoba przypisująca
      */
-    constructor(id: number, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
+    constructor(id: number | string, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
         targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader) {
 
