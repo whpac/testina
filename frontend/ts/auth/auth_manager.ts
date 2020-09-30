@@ -27,9 +27,10 @@ export default class AuthManager {
      * Sprawdza, czy bieżący użytkownik jest zalogowany
      */
     public static async IsAuthorized(bypass_cache: boolean = false) {
-        let response = (await XHR.PerformRequest('api/session', undefined, undefined, bypass_cache)).Response as SessionDescriptor;
+        let result = await XHR.PerformRequest('api/session', undefined, undefined, bypass_cache);
+        let response = result.Response as SessionDescriptor;
 
-        if(response.expire_time !== null) {
+        if(response.expire_time !== null && !result.FromCache) {
             AuthManager.ExpireDate = new Date(response.expire_time);
         } else {
             AuthManager.ExpireDate = null;
@@ -65,6 +66,7 @@ export default class AuthManager {
             NavigationPrevention.ClearReasons();
         }
         await XHR.PerformRequest('api/session', 'DELETE');
+        AuthManager.ExpireDate = null;
         AuthManager.FireEvent('logout');
     }
 

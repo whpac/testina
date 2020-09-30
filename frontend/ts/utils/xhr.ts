@@ -4,10 +4,11 @@ import CacheManager, { CacheStorages } from '../cache/cache_manager';
 import NetworkErrorException from '../exceptions/network_error';
 
 type XHRResult = {
-    Status: number,
-    StatusText: string,
-    Response: any,
+    Status: number;
+    StatusText: string;
+    Response: any;
     ContentLocation: string;
+    FromCache: boolean;
 };
 type ResolveFunction = (value?: XHRResult | PromiseLike<XHRResult> | undefined) => void;
 type RejectFunction = (reason?: any) => void;
@@ -33,7 +34,8 @@ export function PerformRequest(url: string, method?: string, request_data?: any,
                         Status: resource.status,
                         StatusText: resource.statusText,
                         Response: JSON.parse(await resource.text()),
-                        ContentLocation: resource.headers.get('Content-Location') ?? ''
+                        ContentLocation: resource.headers.get('Content-Location') ?? '',
+                        FromCache: true
                     });
                 } catch(e) { }
             }
@@ -109,7 +111,8 @@ function OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: 
                 Status: xhr.status,
                 StatusText: xhr.statusText,
                 Response: parsed_json,
-                ContentLocation: content_location
+                ContentLocation: content_location,
+                FromCache: false
             });
         } else {
             let parsed_json: any = {};
