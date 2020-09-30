@@ -220,6 +220,10 @@ class Assignment extends Entity {
     }
 
     public /* void */ function RemoveTarget($target_type, $target_id){
+        if($target_type == self::TARGET_TYPE_LINK){
+            $target_id = $this->GetLink();
+        }
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_ASSIGNMENT_TARGETS)
                 ->Delete()
@@ -324,23 +328,23 @@ class Assignment extends Entity {
 
     protected static function GenerateLinkId(){
         $is_unique = false;
-        $number = 0;
+        $link_id = 0;
 
         while(!$is_unique){
-            // Wylosuj identyfikator z zakresu 1e9 - 2e9
-            $number = random_int(1000000000, 2000000000);
-    
+            // Wylosuj identyfikator - ciąg 8 losowych liter
+            $link_id = \Utils\StringUtils::RandomString(8);
+
             $result = DatabaseManager::GetProvider()
                     ->Table(TABLE_ASSIGNMENT_TARGETS)
                     ->Select()
                     ->Where('target_type', '=', self::TARGET_TYPE_LINK)
-                    ->AndWhere('target_id', '=', $number)
+                    ->AndWhere('target_id', '=', $link_id)
                     ->Run();
 
             $is_unique = $result->num_rows == 0;
         }
 
-        return $number;
+        return $link_id;
     }
 
     public static /* Assignment[] */ function GetLinkAssignments(){

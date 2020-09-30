@@ -42,18 +42,15 @@ class StringUtils {
         return strtr($str, $map);
     }
 
-    // Didactic example showing the usage of the previous conversion function but,
-    // for better performance, in a real application with a single input string
-    // matched against many strings from a database, you will probably want to
-    // pre-encode the input only once.
-    //
-    function levenshtein_utf8($s1, $s2)
-    {
-        $charMap = array();
-        $s1 = utf8_to_extended_ascii($s1, $charMap);
-        $s2 = utf8_to_extended_ascii($s2, $charMap);
-    
-        return levenshtein($s1, $s2);
+    function RandomString($length){
+        $chars = 'abcdefghijklmnopqrstuvwxyz';
+        $chars_count = strlen($chars);
+
+        $string = '';
+        for($i = 0; $i < $length; $i++){
+            $string.= $chars[random_int(0, $chars_count - 1)];
+        }
+        return $string;
     }
 }
 ?>
