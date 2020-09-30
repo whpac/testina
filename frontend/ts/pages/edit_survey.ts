@@ -70,7 +70,7 @@ export default class EditSurveyPage extends Page {
 
     async LoadInto(container: HTMLElement, params?: any) {
         try {
-            if(typeof params === 'number') this.Survey = await SurveyLoader.LoadById(params);
+            if(typeof params === 'string') this.Survey = await SurveyLoader.LoadById(parseInt(params));
             else this.Survey = params as Test;
 
             this.QuestionCards = [];

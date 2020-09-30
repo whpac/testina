@@ -59,7 +59,7 @@ export default class FillSurveyPage extends Page {
 
     async LoadInto(container: HTMLElement, params?: any) {
         try {
-            if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+            if(typeof params === 'number' || typeof params === 'string') this.Assignment = await AssignmentLoader.LoadById(params);
             else this.Assignment = params as Assignment;
 
             this.QuestionCards = [];

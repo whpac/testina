@@ -38,7 +38,7 @@ export default class AssignmentsPage extends Page {
 
     async LoadInto(container: HTMLElement, params?: any) {
         try {
-            if(typeof params === 'number') this.Test = await TestLoader.LoadById(params);
+            if(typeof params === 'string') this.Test = await TestLoader.LoadById(parseInt(params));
             else this.Test = params as Test;
             this.TestNameHeading.textContent = this.Test.Name;
 

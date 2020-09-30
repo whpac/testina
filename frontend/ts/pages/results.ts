@@ -39,7 +39,7 @@ export default class ResultsPage extends Page {
     async LoadInto(container: HTMLElement, params?: any) {
         try {
             if(params === undefined) throw 'Nie podano testu, dla którego mają być wyświetlone wyniki.';
-            if(typeof params === 'number') this.Assignment = await AssignmentLoader.LoadById(params);
+            if(typeof params === 'string') this.Assignment = await AssignmentLoader.LoadById(params);
             else this.Assignment = params as Assignment;
 
             this.TestNameHeading.textContent = this.Assignment.Test.Name;

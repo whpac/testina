@@ -44,7 +44,7 @@ try {
     let pages = PageStorage.GetStorage();
     pages.RegisterPage('ankiety', { CreatePage: () => new SurveysPage() });
     pages.RegisterPage(/^ankiety\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditSurveyPage() });
-    pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9]+)?$/, { CreatePage: () => new FillSurveyPage() });
+    pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9a-zA-Z]+)?$/, { CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
     pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });

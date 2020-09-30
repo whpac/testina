@@ -130,10 +130,10 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
         }
     }
 
-    let params_or_id: (PageParams | number | undefined) = params;
+    let params_or_id: (PageParams | string | undefined) = params;
     let last_slash = page_id.lastIndexOf('/');
     if(last_slash != -1 && params === undefined) {
-        params_or_id = parseInt(page_id.substr(last_slash + 1));
+        params_or_id = page_id.substr(last_slash + 1);
     }
 
     await CurrentPage.LoadInto(ContentRoot, params_or_id);
