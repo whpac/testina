@@ -43,7 +43,6 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
         this.ShortDeadlineWarning = document.createElement('p');
         this.ShortDeadlineWarning.classList.add('warning-message', 'specific');
-        this.ShortDeadlineWarning.textContent = 'Termin na rozwiązanie testu może być za krótki.';
         this.ShortDeadlineWarning.appendChild(new HelpLink().GetElement());
         this.AppendChild(this.ShortDeadlineWarning);
 
@@ -133,12 +132,14 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
         switch(test_type) {
             case Test.TYPE_SURVEY:
                 this.SettingsDescription.textContent = 'Ustaw termin na wypełnienie ankiety oraz dopuszczalną ilość wypełnień przez jedną osobę.';
+                this.ShortDeadlineWarning.textContent = 'Termin na wypełnienie ankiety może być za krótki.';
                 this.AttemptLimitDesciption.textContent = 'Maksymalna liczba wypełnień:';
                 this.AttemptsLimitedLabel.textContent = 'Maksymalnie tyle wypełnień: ';
                 this.WrongAttemptLimitError.textContent = 'Limit ilości wypełnień musi być liczbą całkowitą większą od zera.';
                 break;
             default:
                 this.SettingsDescription.textContent = 'Ustaw termin na rozwiązanie testu oraz limit podejść.';
+                this.ShortDeadlineWarning.textContent = 'Termin na rozwiązanie testu może być za krótki.';
                 this.AttemptLimitDesciption.textContent = 'Maksymalna liczba podejść:';
                 this.AttemptsLimitedLabel.textContent = 'Maksymalnie tyle podejść: ';
                 this.WrongAttemptLimitError.textContent = 'Limit ilości podejść musi być liczbą całkowitą większą od zera.';

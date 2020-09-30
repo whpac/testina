@@ -116,6 +116,16 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         this.UsersTab.Select();
         this.SwitchTargetType('user');
 
+        if((preselected_targets?.LinkIds ?? []).length > 0) {
+            this.ShareByLinkCheckbox.checked = true;
+            this.WasShareByLinkOriginallySelected = true;
+            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
+        } else {
+            this.ShareByLinkCheckbox.checked = false;
+            this.WasShareByLinkOriginallySelected = false;
+            this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
+        }
+
         let users_awaiter = this.UsersTable.Populate();
         let groups_awaiter = this.GroupsTable.Populate();
         await users_awaiter;
@@ -126,15 +136,6 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
 
         this.UsersTable.SelectUsers(preselected_targets?.Users ?? []);
         this.GroupsTable.SelectGroups(preselected_targets?.Groups ?? []);
-        if((preselected_targets?.LinkIds ?? []).length > 0) {
-            this.ShareByLinkCheckbox.checked = true;
-            this.WasShareByLinkOriginallySelected = true;
-            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
-        } else {
-            this.ShareByLinkCheckbox.checked = false;
-            this.WasShareByLinkOriginallySelected = false;
-            this.LinkPresenterElement.value = 'Link zostanie wygenerowany po zapisaniu.';
-        }
 
         this.PrintNumberOfSelectedEntities();
         this.Validate();
