@@ -19,6 +19,7 @@ export default class AssignTestDialog extends Dialog {
         super();
 
         this.DialogElement.classList.add('rich');
+        this.DisplayHelpButton();
 
         this.TargetsWrapper = new TargetsWrapper();
         this.TargetsWrapper.AddEventListener('validationchanged', this.OnValidationChanged.bind(this));
