@@ -14,8 +14,21 @@ class TestCollection extends Collection {
         ValueValidator::AssertIsNonNegative($source->question_multiplier, 'question_multiplier');
         ValueValidator::AssertIsNonNegative($source->time_limit, 'time_limit');
 
+        $type = null;
+        if(isset($data->type)){
+            TypeValidator::AssertIsInt($data->type, 'type');
+            ValueValidator::AssertIsInRange($data->type, 0, 1, 'type');
+            $type = $data->type;
+        }
+        $score_counting = null;
+        if(isset($data->score_counting)){
+            TypeValidator::AssertIsInt($data->score_counting, 'score_counting');
+            ValueValidator::AssertIsInRange($data->score_counting, 0, 1, 'score_counting');
+            $score_counting = $data->score_counting;
+        }
+
         $current_user = $this->GetContext()->GetUser();
-        $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier);
+        $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier, $type, $score_counting);
 
         header('Content-Location: '.$test->GetId());
         return null;

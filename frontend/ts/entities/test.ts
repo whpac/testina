@@ -36,22 +36,15 @@ export default class Test extends Entity implements PageParams {
     public readonly Type: number;
     /** Opis testu */
     protected _Description: string | null;
+    /** Sposób liczenia wyniku z podejść */
+    protected _ScoreCounting: number;
 
-    /** Nazwa testu */
+    /** Nazwa testu / ankiety */
     public get Name() {
         return this._Name;
     }
     public set Name(new_name: string) {
         this._Name = new_name;
-        this.FireEvent('change');
-    }
-
-    /** Nazwa testu */
-    public get Description() {
-        return this._Description;
-    }
-    public set Description(new_description: string | null) {
-        this._Description = new_description;
         this.FireEvent('change');
     }
 
@@ -78,6 +71,24 @@ export default class Test extends Entity implements PageParams {
         return this._QuestionCount;
     }
 
+    /** Opis testu / ankiety */
+    public get Description() {
+        return this._Description;
+    }
+    public set Description(new_description: string | null) {
+        this._Description = new_description;
+        this.FireEvent('change');
+    }
+
+    /** Opis testu / ankiety */
+    public get ScoreCounting() {
+        return this._ScoreCounting;
+    }
+    public set ScoreCounting(new_value: number) {
+        this._ScoreCounting = new_value;
+        this.FireEvent('change');
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
     protected QuestionLoader: QuestionLoader;
     /** Obiekt odpowiedzialny za wczytywanie przypisań */
@@ -101,7 +112,8 @@ export default class Test extends Entity implements PageParams {
      */
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
-        assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null) {
+        assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
+        score_counting: number) {
 
         super();
 
@@ -115,6 +127,7 @@ export default class Test extends Entity implements PageParams {
         this.AssignmentCount = assignment_count;
         this.Type = type;
         this._Description = description;
+        this._ScoreCounting = score_counting;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;

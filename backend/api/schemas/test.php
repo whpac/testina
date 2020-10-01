@@ -9,6 +9,7 @@ interface Test{
     public function time_limit(): int;
     public function description(): ?string;
     public function type(): int;
+    public function score_counting(): int;
     public function question_multiplier(): float;
 
     public function question_count(): int;

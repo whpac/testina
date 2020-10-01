@@ -98,20 +98,39 @@ class Assignment extends Entity {
 
     public /* int */ function GetAverageScore(\Auth\Users\User $user){
         $attempts = $this->GetUserAttempts($user);
-        $score_got = 0;
-        $score_max = 0;
-        foreach($attempts as $attempt){
-            $got = $attempt->GetScore();
-            $max = $attempt->GetMaxScore();
+        $test = $this->GetTest();
 
-            if($got > $max) continue;
+        if($test->GetScoreCounting() == Test::SCORE_BEST){
+            $best_score = -1;
+            foreach ($attempts as $attempt) {
+                $got = $attempt->GetScore();
+                $max = $attempt->GetMaxScore();
 
-            $score_got += $got;
-            $score_max += $max;
+                if($got > $max) continue;
+                if($max == 0) continue;
+
+                $score = $got / $max;
+                if($score > $best_score) $best_score = $score;
+            }
+
+            if($best_score == -1) return null;
+            return round(100 * $best_score);
+        }else{
+            $score_got = 0;
+            $score_max = 0;
+            foreach($attempts as $attempt){
+                $got = $attempt->GetScore();
+                $max = $attempt->GetMaxScore();
+
+                if($got > $max) continue;
+
+                $score_got += $got;
+                $score_max += $max;
+            }
+
+            if($score_max == 0) return null;
+            return round(100 * ($score_got / $score_max));
         }
-
-        if($score_max == 0) return null;
-        return round(100 * ($score_got / $score_max));
     }
 
     public /* (User|Group)[] */ function GetTargets(){

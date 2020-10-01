@@ -16,9 +16,13 @@ class Test extends Entity{
     protected /* float */ $question_multiplier;
     protected /* ?string */ $description;
     protected /* int */ $type;
+    protected /* int */ $score_counting;
 
     const TYPE_TEST = 0;
     const TYPE_SURVEY = 1;
+
+    const SCORE_AVERAGE = 0;
+    const SCORE_BEST = 1;
 
     protected static /* string */ function GetTableName(){
         return TABLE_TESTS;
@@ -81,6 +85,11 @@ class Test extends Entity{
         return $this->type;
     }
 
+    public /* int */ function GetScoreCounting(){
+        $this->FetchIfNeeded();
+        return $this->score_counting;
+    }
+
     public /* Question[] */ function GetQuestions(){
         return Question::GetQuestionsForTest($this);
     }
@@ -136,11 +145,12 @@ class Test extends Entity{
         return ($result->num_rows == 1);
     }
 
-    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
         if(is_null($description)) $description = $this->GetDescription();
+        if(is_null($score_counting)) $score_counting = $this->GetScoreCounting();
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -149,13 +159,14 @@ class Test extends Entity{
                 ->Set('question_multiplier', $question_multiplier)
                 ->Set('time_limit', $time_limit)
                 ->Set('description', $description)
+                ->Set('score_counting', $score_counting)
                 ->Where('id', '=', $this->id)
                 ->Run();
         
         return $result === true;
     }
 
-    public static /* Test */ function Create(\Auth\Users\User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1){
+    public static /* Test */ function Create(\Auth\Users\User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1, /* int */ $type = 0, /* int */ $score_counting = 0){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Insert()
@@ -164,7 +175,8 @@ class Test extends Entity{
                 ->Value('creation_date', (new \DateTime())->format('Y-m-d H:i:s'))
                 ->Value('time_limit', $time_limit)
                 ->Value('question_multiplier', $question_multiplier)
-                ->Value('type', self::TYPE_TEST)
+                ->Value('type', $type)
+                ->Value('score_counting', $score_counting)
                 ->Run();
             
         if($result === false){

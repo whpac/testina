@@ -16,6 +16,7 @@ export interface TestDescriptor {
     creation_date: string,
     time_limit: number,
     type: number,
+    score_counting: number,
     description: string | null;
     question_multiplier: number,
     question_count: number,
@@ -64,7 +65,8 @@ export default class TestLoader {
             test_descriptor.assignment_count,
             assignment_loader,
             test_descriptor.type,
-            test_descriptor.description
+            test_descriptor.description,
+            test_descriptor.score_counting
         );
 
         question_loader.SetTest(test);
