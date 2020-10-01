@@ -136,11 +136,18 @@ export default class QuestionCard extends Card {
     async DisplayQuestion(question: QuestionWithUserAnswers, number: number) {
         this.CurrentQuestion = question;
         let question_text = question.GetQuestion().Text;
-        this.QuestionText.textContent = question_text;
         if(question_text.length > 350) {
             this.QuestionText.classList.add('long');
         } else {
             this.QuestionText.classList.remove('long');
+        }
+
+        let rows = question_text.split('\n');
+        this.QuestionText.textContent = '';
+
+        for(let i = 0; i < rows.length; i++) {
+            if(i != 0) this.QuestionText.appendChild(document.createElement('br'));
+            this.QuestionText.appendChild(document.createTextNode(rows[i]));
         }
 
         this.CurrentQuestionNumberText.textContent = number.toString();

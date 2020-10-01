@@ -177,8 +177,21 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
             this.HeadingField.value = question?.Text ?? '';
             this.FooterField.value = question?.Footer ?? '';
         } else {
-            this.HeadingField.textContent = question?.Text ?? '[Nie podano treści pytania]';
-            this.FooterField.textContent = question?.Footer ?? '';
+            let rows = (question?.Text ?? '[Nie podano treści pytania]').split('\n');
+            this.HeadingField.textContent = '';
+
+            for(let i = 0; i < rows.length; i++) {
+                if(i != 0) this.HeadingField.appendChild(document.createElement('br'));
+                this.HeadingField.appendChild(document.createTextNode(rows[i]));
+            }
+
+            rows = (question?.Footer ?? '').split('\n');
+            this.FooterField.textContent = '';
+
+            for(let i = 0; i < rows.length; i++) {
+                if(i != 0) this.FooterField.appendChild(document.createElement('br'));
+                this.FooterField.appendChild(document.createTextNode(rows[i]));
+            }
             this.FooterField.style.display = question?.Footer === null ? 'none' : '';
         }
 

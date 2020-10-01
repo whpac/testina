@@ -42,7 +42,14 @@ export default class SurveyIntroduction extends Card {
             this.DescriptionField.value = survey.Description ?? '';
         } else {
             this.HeadingField.textContent = survey.Name;
-            this.DescriptionField.textContent = survey.Description;
+
+            let rows = (survey.Description ?? '').split('\n');
+            this.DescriptionField.textContent = '';
+
+            for(let i = 0; i < rows.length; i++) {
+                if(i != 0) this.DescriptionField.appendChild(document.createElement('br'));
+                this.DescriptionField.appendChild(document.createTextNode(rows[i]));
+            }
         }
     }
 
