@@ -79,17 +79,21 @@ export default class TestSummaryDialog extends Dialog {
         if(assignment_count === undefined) {
             this.AssignmentCountRow.style.display = 'none';
         } else {
-            let link = document.createElement('a');
-            link.title = 'Kliknij, aby zobaczyć wyniki oraz szczegóły przypisań';
-            link.textContent = assignment_count.toString() + ' raz' + n(assignment_count, '', 'y', 'y');
-            link.href = 'testy/przypisane/' + test.Id;
-            link.addEventListener('click', (e) => {
-                this.Hide();
-                HandleLinkClick(e, 'testy/przypisane', test);
-            });
+            if(assignment_count > 0) {
+                let link = document.createElement('a');
+                link.title = 'Kliknij, aby zobaczyć wyniki oraz szczegóły przypisań';
+                link.textContent = assignment_count.toString() + ' raz' + n(assignment_count, '', 'y', 'y');
+                link.href = 'testy/przypisane/' + test.Id;
+                link.addEventListener('click', (e) => {
+                    this.Hide();
+                    HandleLinkClick(e, 'testy/przypisane', test);
+                });
 
-            this.AssignmentCountElement.textContent = '';
-            this.AssignmentCountElement.appendChild(link);
+                this.AssignmentCountElement.textContent = '';
+                this.AssignmentCountElement.appendChild(link);
+            } else {
+                this.AssignmentCountElement.textContent = 'nikomu';
+            }
             this.AssignmentCountRow.style.display = '';
         }
     }
