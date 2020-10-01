@@ -175,7 +175,9 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
 
         if(this.HeadingField instanceof HTMLTextAreaElement && this.FooterField instanceof HTMLTextAreaElement) {
             this.HeadingField.value = question?.Text ?? '';
+            this.HeadingField.style.height = ((question?.Text ?? '').split('\n').length * 1.5).toString() + 'em';
             this.FooterField.value = question?.Footer ?? '';
+            this.FooterField.style.height = ((question?.Footer ?? '').split('\n').length * 1.5).toString() + 'em';
         } else {
             let rows = (question?.Text ?? '[Nie podano treści pytania]').split('\n');
             this.HeadingField.textContent = '';

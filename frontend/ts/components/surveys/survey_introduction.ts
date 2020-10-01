@@ -40,6 +40,7 @@ export default class SurveyIntroduction extends Card {
         if(this.HeadingField instanceof HTMLInputElement && this.DescriptionField instanceof HTMLTextAreaElement) {
             this.HeadingField.value = survey.Name;
             this.DescriptionField.value = survey.Description ?? '';
+            this.DescriptionField.style.height = ((survey.Description ?? '').split('\n').length * 1.5).toString() + 'em';
         } else {
             this.HeadingField.textContent = survey.Name;
 
