@@ -16,7 +16,8 @@ export default class TestSaver {
             name: test.Name,
             question_multiplier: test.QuestionMultiplier,
             time_limit: test.TimeLimit,
-            description: test.Description
+            description: test.Description,
+            score_counting: test.ScoreCounting
         };
         try {
             let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(test), 'PUT', request_data);

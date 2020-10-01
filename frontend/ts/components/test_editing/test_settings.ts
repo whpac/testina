@@ -15,14 +15,12 @@ export default class TestSettings extends Card {
     protected TimeLimitPresentRadio: HTMLInputElement;
     protected TimeLimitInput: HTMLInputElement;
 
+    protected ScoreCountingSelect: HTMLSelectElement;
     protected ErrorWrapper: HTMLElement;
 
     protected Test: Test | undefined;
     protected IgnoreChange: boolean = false;
 
-    /**
-     * Creates the element and prepares HTML to be displayed
-     */
     constructor() {
         super();
 
@@ -115,6 +113,23 @@ export default class TestSettings extends Card {
 
         this.AppendChild(time_limit_fieldset);
 
+        let score_counting_label = document.createElement('label');
+        score_counting_label.htmlFor = 'score-counting-select';
+        score_counting_label.textContent = 'Sposób liczenia punktów:';
+        this.AppendChild(score_counting_label);
+
+        this.ScoreCountingSelect = document.createElement('select');
+        this.ScoreCountingSelect.id = score_counting_label.htmlFor;
+        this.AppendChild(this.ScoreCountingSelect);
+
+        let options = [[Test.SCORE_AVERAGE.toString(), 'Średni wynik z podejść'], [Test.SCORE_BEST.toString(), 'Wynik z najlepszego podejścia']];
+        for(let option of options) {
+            let option_element = document.createElement('option');
+            option_element.value = option[0];
+            option_element.textContent = option[1];
+            this.ScoreCountingSelect.appendChild(option_element);
+        }
+
         this.ErrorWrapper = document.createElement('p');
         this.ErrorWrapper.classList.add('error-message');
         this.AppendChild(this.ErrorWrapper);
@@ -125,6 +140,7 @@ export default class TestSettings extends Card {
         this.TestNameInput.addEventListener('change', this.StateChanged.bind(this));
         this.QuestionMultiplierInput.addEventListener('change', this.StateChanged.bind(this));
         this.TimeLimitInput.addEventListener('change', this.StateChanged.bind(this));
+        this.ScoreCountingSelect.addEventListener('change', this.StateChanged.bind(this));
 
         let btn_save = document.createElement('button');
         btn_save.innerText = 'Zapisz ustawienia';
@@ -139,16 +155,17 @@ export default class TestSettings extends Card {
     }
 
     /**
-     * Populates the fields with appropriate data
-     * @param test Source of data to display
+     * Wypełnia pola odpowiednimi danymi
+     * @param test Test do wyświetlenia
      */
     async Populate(test: Test) {
         this.IgnoreChange = true;
         this.Test = test;
         this.TestNameInput.value = test.Name;
         this.QuestionMultiplierInput.value = test.QuestionMultiplier.toString();
+        this.ScoreCountingSelect.value = test.ScoreCounting.toString();
 
-        if(await test.HasTimeLimit()) {
+        if(test.HasTimeLimit()) {
             this.TimeLimitPresentRadio.checked = true;
             this.TimeLimitInput.value = (test.TimeLimit / 60).toString();
         } else {
@@ -160,7 +177,7 @@ export default class TestSettings extends Card {
     }
 
     /**
-     * Used to track changes and prevent from closing the browser window
+     * Śledzi zmiany i blokuje nawigację
      */
     protected StateChanged() {
         if(this.IgnoreChange) return;
@@ -168,7 +185,7 @@ export default class TestSettings extends Card {
     }
 
     /**
-     * Enables or disables the time limit input field according to checked radio button
+     * Odblokowuje pole z limitem czasu
      */
     protected UpdateTimeLimitInputEnabledState() {
         this.StateChanged();
@@ -176,7 +193,7 @@ export default class TestSettings extends Card {
     }
 
     /**
-     * Removes current test and navigates to tests list
+     * Usuwa test i przechodzi do biblioteki
      */
     protected async RemoveTest() {
         let result = window.confirm('Usunięcia testu nie da się cofnąć.\nKontynuować?');
@@ -203,7 +220,7 @@ export default class TestSettings extends Card {
     }
 
     /**
-     * Saves the settings
+     * Zapisuje ustawienia
      */
     protected async SaveTestSettings() {
         if(!this.Validate()) return;
@@ -216,6 +233,7 @@ export default class TestSettings extends Card {
             test.Name = this.TestNameInput.value;
             test.QuestionMultiplier = parseFloat(this.QuestionMultiplierInput.value);
             test.TimeLimit = this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0;
+            test.ScoreCounting = parseInt(this.ScoreCountingSelect.value);
             TestSaver.Update(test);
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
@@ -232,6 +250,9 @@ export default class TestSettings extends Card {
         }
     }
 
+    /**
+     * Sprawdza poprawność danych
+     */
     protected Validate() {
         let errors = [];
 

@@ -2,11 +2,12 @@ import Dialog from '../basic/dialog';
 import Assignment from '../../entities/assignment';
 import Attempt from '../../entities/attempt';
 import { ToDayHourFormat } from '../../utils/dateutils';
+import Test from '../../entities/test';
 
-export default class ScoreDetailsDialog extends Dialog{
+export default class ScoreDetailsDialog extends Dialog {
     TBody: HTMLTableSectionElement;
 
-    constructor(){
+    constructor() {
         super();
 
         let table = document.createElement('table');
@@ -37,16 +38,16 @@ export default class ScoreDetailsDialog extends Dialog{
         this.AddButton(close_btn);
     }
 
-    async Populate(assignment: Assignment){
+    async Populate(assignment: Assignment) {
         let attempts_awaiter = assignment.GetAttempts();
-        
+
         let test = assignment.Test;
         this.SetHeader(test.Name);
 
         let attempts = await attempts_awaiter;
-        for(let attempt of attempts){
+        for(let attempt of attempts) {
             let tr = this.TBody.insertRow(-1);
-            
+
             let td_date = tr.insertCell(-1);
             td_date.classList.add('center');
             td_date.textContent = ToDayHourFormat(attempt.BeginTime);
@@ -67,7 +68,7 @@ export default class ScoreDetailsDialog extends Dialog{
         td_avg_score.classList.add('center');
         td_avg_score.appendChild(em_score = document.createElement('em'));
 
-        em_avg.textContent = 'Średnia:';
+        em_avg.textContent = assignment.Test.ScoreCounting == Test.SCORE_BEST ? 'Najlepszy:' : 'Średnia:';
         em_score.textContent = assignment.Score + '%';
     }
 }

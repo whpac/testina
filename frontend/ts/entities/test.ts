@@ -16,6 +16,11 @@ export default class Test extends Entity implements PageParams {
     /** Ankieta */
     public static TYPE_SURVEY = 1;
 
+    /** Średnia z podejść */
+    public static SCORE_AVERAGE = 0;
+    /** Wynik najlepszego podejścia */
+    public static SCORE_BEST = 1;
+
     /** Unikatowy identyfikator testu */
     public readonly Id: number;
     /** Nazwa testu */
@@ -173,7 +178,8 @@ export default class Test extends Entity implements PageParams {
         let request_data = {
             name: name,
             question_multiplier: question_multiplier,
-            time_limit: time_limit
+            time_limit: time_limit,
+            type: Test.TYPE_TEST
         };
         let result = await XHR.PerformRequest('api/tests', 'POST', request_data);
 
