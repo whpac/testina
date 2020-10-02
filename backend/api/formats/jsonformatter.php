@@ -6,38 +6,40 @@ use \Api\Resources\Resource;
 class JsonFormatter extends Formatter {
 
     public function FormatResource($obj, int $depth = 3): string{
-        // Return empty string - not to have an empty field
+        // Zwróć pusty ciąg znaków - aby nie pozostawić pustego pola
         if($depth <= -1) return '""';
         
         $out = '';
-
+        
         if($obj instanceof Resource){
-            // Don't go deeper and return an empty object
+            // Nie zagłębiaj się i zwróć pusty obiekt
             if($depth <= 0) return '{}';
+            
+            try{
+                $keys = $obj->GetKeys();
 
-            $keys = $obj->GetKeys();
+                $out = '{';
 
-            $out = '{';
+                // Używany do oddzielenia właściwości
+                $add_comma = false;
+                foreach($keys as $key){
+                    if(!$obj->KeyExists($key)) continue;
+                    try{
+                        $k = strval($key);
+                        $resource = $obj->$k();
 
-            // Used to separate properties
-            $add_comma = false;
-            foreach($keys as $key){
-                if(!$obj->KeyExists($key)) continue;
-                try{
-                $key = strval($key);
-                $resource = $obj->$key();
+                        if($add_comma) $out .= ',';
+                        $add_comma = true;
 
-                if($add_comma) $out .= ',';
-                $add_comma = true;
-
-                // Append the key: value pair
-                $out .= '"'.$key.'":';
-                $out .= $this->FormatResource($resource, $depth - 1);
-                }catch(\Exception $e){
-
+                        // Dopisz parę klucz: wartość
+                        $out .= '"'.$k.'":';
+                        $out .= $this->FormatResource($resource, $depth - 1);
+                    }catch(\Exception $e){ }
                 }
+                $out .= '}';
+            }catch(\Exception $e){
+                return '{}';
             }
-            $out .= '}';
         }else{
             if(is_array($obj)){
                 if($depth <= 0) return '[]';
