@@ -72,7 +72,13 @@ export function HandleLinkClick(e: MouseEvent, page_id: string, params?: PagePar
 export async function GoToPage(page_id: string, params?: PageParams, is_first_page: boolean = false) {
     if(NavigationPrevention.IsPrevented()) {
         let confirm_result = window.confirm('Na tej stronie są niezapisane zmiany.\nCzy chcesz ją opuścić?');
-        if(!confirm_result) return;
+        if(!confirm_result) {
+            // Ustaw adres URL jeszcze raz - na wypadek, gdyby cofanie go zmieniło
+            let url = CurrentPage?.GetUrlPath();
+            let fragment = GetFragment(page_id);
+            ChromeManager.SetUrlAddress(url + fragment, page_id, params, is_first_page);
+            return;
+        }
     }
     NavigationPrevention.ClearReasons();
 
@@ -151,7 +157,8 @@ async function PopStateHandler(e: PopStateEvent) {
     let page_id = state.page_id;
     let params = state.params;
 
-    if(page_id != null) DisplayPage(page_id, await UnserializeParams(params));
+    let unserialized_params = await UnserializeParams(params);
+    GoToPage(page_id, unserialized_params);
 }
 
 export function RegisterHomePage(page: IPage) {
