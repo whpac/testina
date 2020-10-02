@@ -33,7 +33,7 @@ abstract class Entity {
         }elseif(is_array($entity_descriptor)){
             if(static::AllowsCreationFromArray()) $row = $entity_descriptor;
             else{
-                Logger::Log('Próbowano utworzyć obiekt '.__CLASSNAME__.'z tablicy.', LogChannels::APPLICATION_ERROR);
+                Logger::Log('Próbowano utworzyć obiekt z tablicy.', LogChannels::APPLICATION_ERROR);
                 throw new \Exception('Ten obiekt nie obsługuje tworzenia z tablicy');
             }
         }else{
@@ -54,7 +54,7 @@ abstract class Entity {
                 ->Where('id', '=', $entity_id)
                 ->Run();
         if($result->num_rows == 0){
-            throw new \Exception('Obiekt o podanym identyfikatorze nie istnieje');
+            throw new \Exception('Obiekt o identyfikatorze '.$entity_id.' nie istnieje');
         }
         
         return $result->fetch_assoc();
