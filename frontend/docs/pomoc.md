@@ -78,8 +78,42 @@ Możesz też sprawdzić wyniki poszczególnych osób – w tym celu naciśnij pr
 Jeśli wybierzesz termin na rozwiązanie testu przypadający w ciągu 24 godzin od momentu przypisywania, wyświetli się ostrzeżenie, że użytkownicy mogą nie mieć czasu na rozwiązanie testu w tym terminie. Jeżeli jesteś pewny(-a), że wybrany termin będzie wystarczający, możesz przypisać test pomimo ostrzeżenia.
 
 # Ankiety
+Testina pozwala także na przeprowadzanie ankiet. Tworzy się je i wypełnia za pośrednictwem podstrony „Ankiety”. Jest ona podzielona na dwie części – w górnej wymienione są te ankiety, które udostępniono Tobie do wypełnienia, natomiast w dolnej – utworzone przez Ciebie.
+
+W ankietach dostępne są cztery rodzaje pytań:
+* jednokrotnego wyboru – użytkownik może wybrać jedynie jedną spośród proponowanych odpowiedzi,
+* wielokrotnego wyboru – użytkownik może wybrać dowolną ilość odpowiedzi spośród zaproponowanych (ale co najmniej jedną),
+* otwarte – to użytkownik musi wpisać swoją odpowiedź,
+* o liczbę z zakresu – użytkownik wybiera liczbę całkowitą z ustawionego przedziału, np. od 0 do 5.
+
+Ponadto, każde z powyższych pytań obsługuje tzw. specjalne odpowiedzi, czyli „Nie dotyczy” oraz „Inna – jaka?” (tej nie da się włączyć w pytaniach otwartych).
+
 # Jak utworzyć ankietę?
-# Jak zmienić kolejność pytań?
+...
+
+# Jak zmienić kolejność pytań w ankiecie?
+Będąc w edytorze ankiet, najedź myszką na nagłówek pytania, które chcesz przenieść (nagłówek to ta część panelu z pytaniem, gdzie podany jest jego numer oraz pole wyboru rodzaju pytania). W tym momencie po prawej stronie powinny pokazać się trzy przyciski – strzałki w górę i dół oraz ikonka kosza na śmieci. Kliknij jedną ze strzałek, aby przesunąć pytanie o jedno do góry lub do dołu.
+
+# Jak usunąć pytanie w ankiecie?
+Będąc w edytorze ankiet, najedź myszką na nagłówek pytania. Naciśnij ikonkę kosza na śmieci, która pokaże się po prawej stronie. W tym momencie cały panel zmieni swój wygląd (będzie bardziej wyblakły), a oprócz tego treść pytania zostanie przekreślona. To znak, że po kliknięciu „Zapisz”, to pytanie zostanie usunięte. Aby cofnąć usuwanie, najedź myszką na górną część panelu z pytaniem i naciśnij przycisk z niebieską strzałką w kształcie okręgu.
+
+# Jak zmienić kolejność odpowiedzi w ankiecie?
+Będąc w edytorze pytań, najedź myszką na odpowiedź. Po prawej stronie ukażą się trzy przyciski – strzałki w górę i dół oraz ikonka kosza na śmieci. Kliknij jedną ze strzałek, aby przenieść odpowiedź w górę lub w dół.
+
+# Jak usunąć odpowiedź w ankiecie?
+Będąc w edytorze ankiet, najedź myszką na odpowiedź. Po prawej stronie wyświetli się między innymi ikonka kosza na śmieci. Kliknij na nią. Wtedy treść odpowiedzi zostanie przekreślona. To znak, że po zapisaniu ankiety odpowiedź będzie skasowana. Jeśli będziesz chciał ją przywrócić (co jest możliwe jedynie przed zapisaniem zmian), naciśnij przycisk z okrągłą strzałką w lewo, który wyświetli się po najechaniu na odpowiedź.
+
 # Odpowiedzi specjalne: „Nie dotyczy” i „Inna – jaka?”
+Edytując pytanie w ankiecie, możesz zdecydować, czy ma umożliwiać wybranie odpowiedzi takiej jak „Nie dotyczy” lub „Inna – jaka?”. Odpowiednie pola wyboru wyświetlają się na dole listy odpowiedzi, pod przyciskiem „Dodaj odpowiedź”.
+
 # Jak udostępnić ankietę?
+Udaj się na stronę [Ankiety](ankiety) i znajdź ankietę, którą chcesz udostępnić. W odpowiednim wierszu naciśnij przycisk z trzema kropkami. Ukaże się wtedy okienko z informacjami o danej ankiecie.
+
+W sekcji „Udostępnianie” zobaczysz informację o tym, czy i komu udostępniono wybraną ankietę. Jeżeli nie jest jeszcze udostępniona, kliknij link „Udostępnij...”, by przejść do okna udostępniania. Natomiast jeśli jest już udostępniona innym, naciśnij link „Zarządzaj...”.
+
+Ukaże się wtedy okienko podobne do okna przypisywania testu. Możesz w nim wybrać osoby i/lub grupy, którym ankieta będzie udostępniona, a także wygenerować link bezpośredni do strony wypełniania ankiety. Na następnej stronie są dostępne opcje dotyczące terminu wypełnienia i maksymalnej liczby podejść.
+
 # Jak udostępnić ankietę osobom, które nie mają konta w Testinie?
+Osoby, które nie mają konta w Testinie mogą wypełniać te ankiety, dla których wygenerowano link dostępowy. Aby wygenerować taki link, udaj się do okna udostępniania ankiety i zaznacz opcję „Udostępnij wszystkim, którzy dostaną link” (jeśli jest już zaznaczona, wystarczy, że skopiujesz link wyświetlany pod spodem).
+
+Każda osoba, która dostanie link dostępowy, będzie mogła wypełnić daną ankietę. Należy mieć na uwadze, że nie jest możliwe ścisłe egzekwowanie limitu podejść odnośnie do niezalogowanych osób. W ich przypadku limit będzie obowiązywał osobno w każdej przeglądarce.
