@@ -27,8 +27,18 @@ class Test extends Resource implements Schemas\Test{
             ValueValidator::AssertIsInRange($data->score_counting, 0, 1, 'score_counting');
             $score_counting = $data->score_counting;
         }
+        $final_title = null;
+        if(isset($data->final_title)){
+            TypeValidator::AssertIsString($data->final_title, 'final_title');
+            $final_title = $data->final_title;
+        }
+        $final_text = null;
+        if(isset($data->final_text)){
+            TypeValidator::AssertIsString($data->final_text, 'final_text');
+            $final_text = $data->final_text;
+        }
 
-        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting);
+        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting, $final_title, $final_text);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
@@ -54,6 +64,8 @@ class Test extends Resource implements Schemas\Test{
             'description',
             'type',
             'score_counting',
+            'final_title',
+            'final_text',
             'question_multiplier',
             'question_count'
         ];
@@ -97,6 +109,14 @@ class Test extends Resource implements Schemas\Test{
 
     public function score_counting(): int{
         return $this->Test->GetScoreCounting();
+    }
+
+    public function final_title(): string{
+        return $this->Test->GetFinalTitle();
+    }
+
+    public function final_text(): string{
+        return $this->Test->GetFinalText();
     }
 
     public function question_multiplier(): float{

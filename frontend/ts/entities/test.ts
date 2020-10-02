@@ -43,6 +43,10 @@ export default class Test extends Entity implements PageParams {
     protected _Description: string | null;
     /** Sposób liczenia wyniku z podejść */
     protected _ScoreCounting: number;
+    /** Tytuł na podziękowaniu za wypełnienie */
+    protected _FinalTitle: string;
+    /** Treść podziękowania za wypełnienie */
+    protected _FinalText: string;
 
     /** Nazwa testu / ankiety */
     public get Name() {
@@ -85,12 +89,30 @@ export default class Test extends Entity implements PageParams {
         this.FireEvent('change');
     }
 
-    /** Opis testu / ankiety */
+    /** Sposób liczenia punktów */
     public get ScoreCounting() {
         return this._ScoreCounting;
     }
     public set ScoreCounting(new_value: number) {
         this._ScoreCounting = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Tytuł na podziękowaniu za wypełnienie */
+    public get FinalTitle() {
+        return this._FinalTitle;
+    }
+    public set FinalTitle(new_value: string) {
+        this._FinalTitle = new_value;
+        this.FireEvent('change');
+    }
+
+    /** Treść podziękowania za wypełnienie */
+    public get FinalText() {
+        return this._FinalText;
+    }
+    public set FinalText(new_value: string) {
+        this._FinalText = new_value;
         this.FireEvent('change');
     }
 
@@ -118,7 +140,7 @@ export default class Test extends Entity implements PageParams {
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
         assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
-        score_counting: number) {
+        score_counting: number, final_title: string, final_text: string) {
 
         super();
 
@@ -133,6 +155,8 @@ export default class Test extends Entity implements PageParams {
         this.Type = type;
         this._Description = description;
         this._ScoreCounting = score_counting;
+        this._FinalTitle = final_title;
+        this._FinalText = final_text;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;

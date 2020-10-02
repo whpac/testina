@@ -10,6 +10,7 @@ import NavigationPrevention from '../1page/navigation_prevention';
 import Toast from '../components/basic/toast';
 import ChromeManager from '../1page/chrome_manager';
 import { GoToPage } from '../1page/page_manager';
+import SurveyFinalCard from '../components/surveys/survey_final_card';
 
 export default class EditSurveyPage extends Page {
     protected Survey: Test | undefined;
@@ -17,6 +18,7 @@ export default class EditSurveyPage extends Page {
     protected IntroductionCard: SurveyIntroduction;
     protected QuestionWrapper: HTMLElement;
     protected QuestionCards: SurveyQuestionCard[];
+    protected FinalCard: SurveyFinalCard;
 
     public constructor() {
         super();
@@ -59,6 +61,7 @@ export default class EditSurveyPage extends Page {
 
         let new_question_btn_wrapper = document.createElement('div');
         new_question_btn_wrapper.classList.add('center');
+        new_question_btn_wrapper.style.marginBottom = '1em';
         this.AppendChild(new_question_btn_wrapper);
 
         let new_question_btn = document.createElement('button');
@@ -66,6 +69,9 @@ export default class EditSurveyPage extends Page {
         new_question_btn.appendChild(document.createTextNode(' Dodaj pytanie'));
         new_question_btn.addEventListener('click', this.OnAddQuestionClick.bind(this));
         new_question_btn_wrapper.appendChild(new_question_btn);
+
+        this.FinalCard = new SurveyFinalCard(true);
+        this.AppendChild(this.FinalCard);
     }
 
     async LoadInto(container: HTMLElement, params?: any) {
@@ -78,6 +84,7 @@ export default class EditSurveyPage extends Page {
 
             this.SurveyNameHeading.textContent = this.Survey.Name;
             this.IntroductionCard.Populate(this.Survey);
+            this.FinalCard.Populate(this.Survey);
 
             let questions = await this.Survey.GetQuestions();
             questions.sort((a, b) => a.Order - b.Order);
@@ -216,6 +223,7 @@ export default class EditSurveyPage extends Page {
 
         try {
             this.IntroductionCard.Save();
+            this.FinalCard.Save();
 
             let question_awaiters: Promise<void>[] = [];
             for(let question_card of this.QuestionCards) {

@@ -26,9 +26,19 @@ class TestCollection extends Collection {
             ValueValidator::AssertIsInRange($data->score_counting, 0, 1, 'score_counting');
             $score_counting = $data->score_counting;
         }
+        $final_title = null;
+        if(isset($data->final_title)){
+            TypeValidator::AssertIsString($data->final_title, 'final_title');
+            $final_title = $data->final_title;
+        }
+        $final_text = null;
+        if(isset($data->final_text)){
+            TypeValidator::AssertIsString($data->final_text, 'final_text');
+            $final_text = $data->final_text;
+        }
 
         $current_user = $this->GetContext()->GetUser();
-        $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier, $type, $score_counting);
+        $test = \Entities\Test::Create($current_user, $source->name, $source->time_limit, $source->question_multiplier, $type, $score_counting, $final_title, $final_text);
 
         header('Content-Location: '.$test->GetId());
         return null;

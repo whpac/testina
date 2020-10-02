@@ -11,14 +11,17 @@ import QuestionWithUserAnswers from '../entities/question_with_user_answers';
 import Toast from '../components/basic/toast';
 import NavigationPrevention from '../1page/navigation_prevention';
 import AuthManager from '../auth/auth_manager';
+import SurveyFinalCard from '../components/surveys/survey_final_card';
 
 export default class FillSurveyPage extends Page {
     protected Assignment: Assignment | undefined;
     protected SurveyNameHeading: Text;
+    protected SurveyWrapper: HTMLElement;
     protected IntroductionCard: SurveyIntroduction;
     protected QuestionWrapper: HTMLElement;
     protected QuestionCards: SurveyQuestionCard[];
     protected SubmitButton: HTMLButtonElement;
+    protected FinalCard: SurveyFinalCard;
 
     protected Questions: QuestionWithUserAnswers[];
     protected Attempt: Attempt | undefined;
@@ -38,21 +41,29 @@ export default class FillSurveyPage extends Page {
         this.SurveyNameHeading = document.createTextNode('');
         heading.appendChild(this.SurveyNameHeading);
 
+        this.SurveyWrapper = document.createElement('div');
+        this.SurveyWrapper.style.display = '';
+        this.AppendChild(this.SurveyWrapper);
+
         this.IntroductionCard = new SurveyIntroduction(false);
-        this.AppendChild(this.IntroductionCard);
+        this.SurveyWrapper.appendChild(this.IntroductionCard.GetElement());
 
         this.QuestionWrapper = document.createElement('div');
-        this.AppendChild(this.QuestionWrapper);
+        this.SurveyWrapper.appendChild(this.QuestionWrapper);
 
         let sumbit_btn_wrapper = document.createElement('div');
         sumbit_btn_wrapper.classList.add('center');
-        this.AppendChild(sumbit_btn_wrapper);
+        this.SurveyWrapper.appendChild(sumbit_btn_wrapper);
 
         this.SubmitButton = document.createElement('button');
         this.SubmitButton.appendChild(new Icon('paper-plane-o').GetElement());
         this.SubmitButton.appendChild(document.createTextNode(' Wyślij'));
         this.SubmitButton.addEventListener('click', this.Submit.bind(this));
         sumbit_btn_wrapper.appendChild(this.SubmitButton);
+
+        this.FinalCard = new SurveyFinalCard(false);
+        this.FinalCard.GetElement().style.display = 'none';
+        this.AppendChild(this.FinalCard);
 
         this.Questions = [];
     }
@@ -82,6 +93,7 @@ export default class FillSurveyPage extends Page {
 
             this.SurveyNameHeading.textContent = this.Assignment.Test.Name;
             this.IntroductionCard.Populate(this.Assignment.Test);
+            this.FinalCard.Populate(this.Assignment.Test);
 
             // Utwórz podejście
             this.Attempt = await Attempt.Create(this.Assignment);
@@ -199,6 +211,9 @@ export default class FillSurveyPage extends Page {
             saving_toast.Hide();
             new Toast('Wysłano odpowiedzi.').Show(0);
             NavigationPrevention.Unprevent('filling-survey');
+
+            this.SurveyWrapper.style.display = 'none';
+            this.FinalCard.GetElement().style.display = '';
 
             if(!(await AuthManager.IsAuthorized()) && this.Assignment !== undefined) {
                 try {

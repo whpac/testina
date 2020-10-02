@@ -17,6 +17,8 @@ class Test extends Entity{
     protected /* ?string */ $description;
     protected /* int */ $type;
     protected /* int */ $score_counting;
+    protected /* string */ $final_title;
+    protected /* string */ $final_text;
 
     const TYPE_TEST = 0;
     const TYPE_SURVEY = 1;
@@ -37,6 +39,7 @@ class Test extends Entity{
         settype($this->question_multiplier, 'float');
         settype($this->time_limit, 'int');
         settype($this->type, 'int');
+        settype($this->score_counting, 'int');
 
         $this->creation_date = \DateTime::createFromFormat('Y-m-d H:i:s', $this->creation_date);
     }
@@ -88,6 +91,16 @@ class Test extends Entity{
     public /* int */ function GetScoreCounting(){
         $this->FetchIfNeeded();
         return $this->score_counting;
+    }
+
+    public /* string */ function GetFinalTitle(){
+        $this->FetchIfNeeded();
+        return $this->final_title;
+    }
+
+    public /* string */ function GetFinalText(){
+        $this->FetchIfNeeded();
+        return $this->final_text;
     }
 
     public /* Question[] */ function GetQuestions(){
@@ -145,12 +158,14 @@ class Test extends Entity{
         return ($result->num_rows == 1);
     }
 
-    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null, /* string? */ $final_title = null, /* string? */ $final_text = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
         if(is_null($description)) $description = $this->GetDescription();
         if(is_null($score_counting)) $score_counting = $this->GetScoreCounting();
+        if(is_null($final_title)) $final_title = $this->GetFinalTitle();
+        if(is_null($final_text)) $final_text = $this->GetFinalText();
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -160,13 +175,15 @@ class Test extends Entity{
                 ->Set('time_limit', $time_limit)
                 ->Set('description', $description)
                 ->Set('score_counting', $score_counting)
+                ->Set('final_title', $final_title)
+                ->Set('final_text', $final_text)
                 ->Where('id', '=', $this->id)
                 ->Run();
         
         return $result === true;
     }
 
-    public static /* Test */ function Create(\Auth\Users\User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1, /* int */ $type = 0, /* int */ $score_counting = 0){
+    public static /* Test */ function Create(\Auth\Users\User $author, /* string */ $name = 'Test bez nazwy', /* int */ $time_limit = 0, /* float */ $question_multiplier = 1, /* int */ $type = 0, /* int */ $score_counting = 0, /* string */ $final_title = '', /* string */ $final_text = ''){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
                 ->Insert()
@@ -177,6 +194,8 @@ class Test extends Entity{
                 ->Value('question_multiplier', $question_multiplier)
                 ->Value('type', $type)
                 ->Value('score_counting', $score_counting)
+                ->Value('final_title', $final_title)
+                ->Value('final_text', $final_text)
                 ->Run();
             
         if($result === false){
