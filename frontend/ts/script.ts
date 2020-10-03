@@ -23,6 +23,7 @@ import MobileHeader from './components/chrome/mobile_header';
 import UserLoader from './entities/loaders/userloader';
 import LoginWithOfficePage from './pages/login_office';
 import Toast from './components/basic/toast';
+import SurveyResultsPage from './pages/survey_results';
 
 // @ts-ignore
 window._debug = true;
@@ -44,6 +45,7 @@ try {
     let pages = PageStorage.GetStorage();
     pages.RegisterPage('ankiety', { CreatePage: () => new SurveysPage() });
     pages.RegisterPage(/^ankiety\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditSurveyPage() });
+    pages.RegisterPage(/^ankiety\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new SurveyResultsPage() });
     pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9a-zA-Z]+)?$/, { CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });

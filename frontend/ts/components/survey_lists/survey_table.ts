@@ -80,10 +80,12 @@ export default class SurveyTable extends Component {
 
             let td_results = tr.insertCell(-1);
             td_results.classList.add('wide-screen-only');
-            let btn_results = document.createElement('button');
+            let btn_results = document.createElement('a');
             td_results.appendChild(btn_results);
-            btn_results.classList.add('compact', 'todo');
+            btn_results.classList.add('button', 'compact', 'todo');
             btn_results.textContent = 'Wyniki';
+            btn_results.href = 'ankiety/wyniki/' + survey.Id;
+            btn_results.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wyniki', survey));
 
             let td_edit = tr.insertCell(-1);
             td_edit.classList.add('wide-screen-only');
