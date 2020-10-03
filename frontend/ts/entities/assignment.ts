@@ -140,7 +140,7 @@ export default class Assignment extends Entity implements PageParams {
 
     /** Czy pozostały jeszcze podejścia */
     AreRemainingAttempts() {
-        return (this.AttemptCount < this.AttemptLimit) || this.AreAttemptsUnlimited();
+        return ((this.AttemptCount < this.AttemptLimit) || this.AreAttemptsUnlimited()) && !this.Test.IsDeleted;
     }
 
     /** Czy ilość podejść jest nieograniczona */
