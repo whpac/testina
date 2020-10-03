@@ -20,6 +20,7 @@ export interface TestDescriptor {
     score_counting: number,
     final_title: string,
     final_text: string,
+    is_deleted: boolean,
     question_multiplier: number,
     question_count: number,
     questions: Collection<QuestionDescriptor>,
@@ -70,7 +71,8 @@ export default class TestLoader {
             test_descriptor.description,
             test_descriptor.score_counting,
             test_descriptor.final_title,
-            test_descriptor.final_text
+            test_descriptor.final_text,
+            test_descriptor.is_deleted
         );
 
         question_loader.SetTest(test);

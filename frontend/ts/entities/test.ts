@@ -47,6 +47,8 @@ export default class Test extends Entity implements PageParams {
     protected _FinalTitle: string;
     /** Treść podziękowania za wypełnienie */
     protected _FinalText: string;
+    /** Czy usunięto */
+    protected _IsDeleted: boolean;
 
     /** Nazwa testu / ankiety */
     public get Name() {
@@ -116,6 +118,11 @@ export default class Test extends Entity implements PageParams {
         this.FireEvent('change');
     }
 
+    /** Czy test jest usunięty */
+    public get IsDeleted() {
+        return this._IsDeleted;
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
     protected QuestionLoader: QuestionLoader;
     /** Obiekt odpowiedzialny za wczytywanie przypisań */
@@ -140,7 +147,7 @@ export default class Test extends Entity implements PageParams {
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
         assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
-        score_counting: number, final_title: string, final_text: string) {
+        score_counting: number, final_title: string, final_text: string, is_deleted: boolean) {
 
         super();
 
@@ -157,6 +164,7 @@ export default class Test extends Entity implements PageParams {
         this._ScoreCounting = score_counting;
         this._FinalTitle = final_title;
         this._FinalText = final_text;
+        this._IsDeleted = is_deleted;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;
@@ -216,6 +224,7 @@ export default class Test extends Entity implements PageParams {
     async Remove() {
         let result = await XHR.PerformRequest('api/tests/' + this.Id.toString(), 'DELETE');
         if(result.Status == 204) {
+            this._IsDeleted = true;
             this.FireEvent('remove');
         } else throw result;
     }

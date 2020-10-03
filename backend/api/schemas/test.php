@@ -12,6 +12,7 @@ interface Test{
     public function score_counting(): int;
     public function final_title(): string;
     public function final_text(): string;
+    public function is_deleted(): bool;
     public function question_multiplier(): float;
 
     public function question_count(): int;

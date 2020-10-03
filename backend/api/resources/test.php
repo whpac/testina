@@ -66,6 +66,7 @@ class Test extends Resource implements Schemas\Test{
             'score_counting',
             'final_title',
             'final_text',
+            'is_deleted',
             'question_multiplier',
             'question_count'
         ];
@@ -117,6 +118,10 @@ class Test extends Resource implements Schemas\Test{
 
     public function final_text(): string{
         return $this->Test->GetFinalText();
+    }
+
+    public function is_deleted(): bool{
+        return $this->Test->IsDeleted();
     }
 
     public function question_multiplier(): float{

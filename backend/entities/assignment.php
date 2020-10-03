@@ -93,7 +93,7 @@ class Assignment extends Entity {
     }
 
     public /* bool */ function AreRemainingAttempts(\Auth\Users\User $user){
-        return $this->AreAttemptsUnlimited() || $this->CountUserAttempts($user) < $this->GetAttemptLimit($user);
+        return ($this->AreAttemptsUnlimited() || $this->CountUserAttempts($user) < $this->GetAttemptLimit($user)) && !$this->GetTest()->IsDeleted();
     }
 
     public /* int */ function GetAverageScore(\Auth\Users\User $user){

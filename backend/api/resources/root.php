@@ -100,6 +100,7 @@ class Root extends Resource implements Schemas\Root {
         $out_tests = [];
 
         foreach($tests as $test){
+            if($test->IsDeleted()) continue;
             $out_tests[$test->GetId()] = new Test($test);
         }
 
