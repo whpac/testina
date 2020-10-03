@@ -7,7 +7,7 @@ use Log\LogChannels;
 
 define('TABLE_TESTS', 'tests');
 
-class Test extends Entity{
+class Test extends EntityWithFlags {
     protected /* int */ $id;
     protected /* string */ $name;
     protected /* string */ $author_id;
@@ -26,6 +26,9 @@ class Test extends Entity{
     const SCORE_AVERAGE = 0;
     const SCORE_BEST = 1;
 
+    // Maski bitowe flag
+    public const FLAG_IS_DELETED = 1;
+
     protected static /* string */ function GetTableName(){
         return TABLE_TESTS;
     }
@@ -34,7 +37,9 @@ class Test extends Entity{
         return true;
     }
 
-    protected /* void */ function OnPopulate(){
+    protected /* void */ function OnPopulate(): void{
+        parent::OnPopulate();
+
         settype($this->id, 'int');
         settype($this->question_multiplier, 'float');
         settype($this->time_limit, 'int');
@@ -101,6 +106,10 @@ class Test extends Entity{
     public /* string */ function GetFinalText(){
         $this->FetchIfNeeded();
         return $this->final_text;
+    }
+
+    public /* bool */ function IsDeleted(){
+        return ($this->GetFlagValue(self::FLAG_IS_DELETED) == 1);
     }
 
     public /* Question[] */ function GetQuestions(){
@@ -219,9 +228,13 @@ class Test extends Entity{
     }
 
     public /* bool */ function Remove(){
+        $flags = [self::FLAG_IS_DELETED => true];
+        $flags_int = self::ConvertFlagsToInt($flags, $this->GetFlags());
+
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
-                ->Delete()
+                ->Update()
+                ->Set('flags', $flags_int)
                 ->Where('id', '=', $this->GetId())
                 ->Run();
         
