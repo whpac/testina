@@ -20,7 +20,7 @@ class Answer extends Resource implements Schemas\Answer{
             $order = $data->order;
         }
 
-        $res = $this->Answer->Update($data->text, ['correct' => $data->correct], $order);
+        $res = $this->Answer->Update($data->text, [\Entities\Answer::FLAG_CORRECT => $data->correct], $order);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować odpowiedzi');
     }

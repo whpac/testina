@@ -7,13 +7,14 @@ use Log\LogChannels;
 
 define('TABLE_ANSWERS', 'answers');
 
-class Answer extends Entity {
+class Answer extends EntityWithFlags {
     protected /* int */ $id;
     protected /* int */ $question_id;
     protected /* string */ $text;
-    protected /* int */ $flags;       // flags & 1 = correct
-    protected static /* array */ $flag_map = ['correct' => 1];
     protected /* int */ $order;
+
+    // Maski bitowe flag
+    public const FLAG_CORRECT = 1;
 
     protected static /* string */ function GetTableName(){
         return TABLE_ANSWERS;
@@ -23,10 +24,11 @@ class Answer extends Entity {
         return true;
     }
 
-    protected /* void */ function OnPopulate(){
+    protected function OnPopulate(): void{
+        parent::OnPopulate();
+
         settype($this->id, 'int');
         settype($this->question_id, 'int');
-        settype($this->flags, 'int');
         settype($this->order, 'int');
     }
 
@@ -45,32 +47,13 @@ class Answer extends Entity {
         return $this->text;
     }
 
-    protected /* int */ function GetFlags(){
-        $this->FetchIfNeeded();
-        return $this->flags;
-    }
-
     public /* int */ function GetOrder(){
         $this->FetchIfNeeded();
         return $this->order;
     }
 
-    public /* int */ function GetFlagValue($flag_name){
-        if(!isset(self::$flag_map[$flag_name])) return null;
-
-        $bitmask = self::$flag_map[$flag_name];
-        $flags_int = $this->GetFlags();
-
-        while(($bitmask & 1) == 0){
-            $bitmask = $bitmask >> 1;
-            $flags_int = $flags_int >> 1;
-        }
-
-        return $flags_int & $bitmask;
-    }
-
     public /* bool */ function IsCorrect(){
-        return ($this->GetFlagValue('correct') == 1);
+        return ($this->GetFlagValue(self::FLAG_CORRECT) == 1);
     }
 
     public static /* Answer[] */ function GetAnswersForQuestion(Question $question){
@@ -143,40 +126,6 @@ class Answer extends Entity {
                 ->Run();
         
         return $result;
-    }
-
-    protected static /* int */ function ConvertFlagsToInt(array $flags, /* int */ $orig_flags = 0){
-        $flags_int = $orig_flags;
-        foreach($flags as $flag_name => $flag_value){
-            if(!isset(self::$flag_map[$flag_name])) continue;
-
-            // Grab the bitmask for specified flag
-            $flag_bitmask = self::$flag_map[$flag_name];
-
-            // Clear previous flag value
-            $flags_int = $flags_int & ~$flag_bitmask;
-
-            // Calculate position of lowest flag bit
-            $bits_to_shift_val = 0;
-            $bitmask = $flag_bitmask;
-            while(($bitmask & 1) == 0){
-                $bitmask = $bitmask >> 1;
-                $bits_to_shift_val++;
-            }
-
-            // Convert bool to number
-            if(is_bool($flag_value)) $flag_value = $flag_value ? 1 : 0;
-            
-            // Align flag value with flag position
-            $flag_value = $flag_value << $bits_to_shift_val;
-
-            // Drop excess bits
-            $flag_value = $flag_value & $flag_bitmask;
-
-            // Put the flag value among others
-            $flags_int = $flags_int | $flag_value;
-        }
-        return $flags_int;
     }
 }
 ?>

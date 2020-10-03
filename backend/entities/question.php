@@ -7,7 +7,7 @@ use Log\LogChannels;
 
 define('TABLE_QUESTIONS', 'questions');
 
-class Question extends Entity {
+class Question extends EntityWithFlags {
     protected /* int */ $id;
     protected /* int */ $test_id;
     protected /* string */ $text;
@@ -17,8 +17,6 @@ class Question extends Entity {
     protected /* int8 */ $max_typos;
     protected /* ?string */ $footer;
     protected /* int */ $order;
-    protected /* int */ $flags;       // flags & 1 = optional; flags & 2 = N/A; flags & 4 = other
-    protected static /* array */ $flag_map = ['optional' => 1, 'non-applicable' => 2, 'other' => 4];
 
     const TYPE_SINGLE_CHOICE = 0;
     const TYPE_MULTI_CHOICE = 1;
@@ -28,6 +26,11 @@ class Question extends Entity {
     const COUNTING_BINARY = 1;
     const COUNTING_OPEN_ANSWER = 2;
 
+    // Maski bitowe flag
+    public const FLAG_OPTIONAL = 1;
+    public const FLAG_NON_APPLICABLE = 2;
+    public const FLAG_OTHER = 4;
+
     protected static /* string */ function GetTableName(){
         return TABLE_QUESTIONS;
     }
@@ -36,7 +39,9 @@ class Question extends Entity {
         return true;
     }
 
-    protected /* void */ function OnPopulate(){
+    protected function OnPopulate(): void{
+        parent::OnPopulate();
+
         settype($this->id, 'int');
         settype($this->test_id, 'int');
         settype($this->type, 'int');
@@ -91,35 +96,16 @@ class Question extends Entity {
         return $this->order;
     }
 
-    protected /* int */ function GetFlags(){
-        $this->FetchIfNeeded();
-        return $this->flags;
-    }
-    
-    public /* int */ function GetFlagValue($flag_name){
-        if(!isset(self::$flag_map[$flag_name])) return null;
-
-        $bitmask = self::$flag_map[$flag_name];
-        $flags_int = $this->GetFlags();
-
-        while(($bitmask & 1) == 0){
-            $bitmask = $bitmask >> 1;
-            $flags_int = $flags_int >> 1;
-        }
-
-        return $flags_int & $bitmask;
-    }
-
     public /* bool */ function IsOptional(){
-        return ($this->GetFlagValue('optional') == 1);
+        return ($this->GetFlagValue(self::FLAG_OPTIONAL) == 1);
     }
 
     public /* bool */ function HasNonApplicableAnswer(){
-        return ($this->GetFlagValue('non-applicable') == 1);
+        return ($this->GetFlagValue(self::FLAG_NON_APPLICABLE) == 1);
     }
 
     public /* bool */ function HasOtherAnswer(){
-        return ($this->GetFlagValue('other') == 1);
+        return ($this->GetFlagValue(self::FLAG_OTHER) == 1);
     }
 
     public /* Answer[] */ function GetAnswers(){
@@ -334,40 +320,6 @@ class Question extends Entity {
 
         // Kiedy nie znaleziono pasującej odpowiedzi, zwróć wynik 0 punktów
         return 0;
-    }
-
-    protected static /* int */ function ConvertFlagsToInt(array $flags, /* int */ $orig_flags = 0){
-        $flags_int = $orig_flags;
-        foreach($flags as $flag_name => $flag_value){
-            if(!isset(self::$flag_map[$flag_name])) continue;
-
-            // Grab the bitmask for specified flag
-            $flag_bitmask = self::$flag_map[$flag_name];
-
-            // Clear previous flag value
-            $flags_int = $flags_int & ~$flag_bitmask;
-
-            // Calculate position of lowest flag bit
-            $bits_to_shift_val = 0;
-            $bitmask = $flag_bitmask;
-            while(($bitmask & 1) == 0){
-                $bitmask = $bitmask >> 1;
-                $bits_to_shift_val++;
-            }
-
-            // Convert bool to number
-            if(is_bool($flag_value)) $flag_value = $flag_value ? 1 : 0;
-            
-            // Align flag value with flag position
-            $flag_value = $flag_value << $bits_to_shift_val;
-
-            // Drop excess bits
-            $flag_value = $flag_value & $flag_bitmask;
-
-            // Put the flag value among others
-            $flags_int = $flags_int | $flag_value;
-        }
-        return $flags_int;
     }
 }
 ?>
