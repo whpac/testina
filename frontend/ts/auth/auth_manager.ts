@@ -27,7 +27,7 @@ export default class AuthManager {
      * Sprawdza, czy bieżący użytkownik jest zalogowany
      */
     public static async IsAuthorized(bypass_cache: boolean = false) {
-        let result = await XHR.PerformRequest('api/session', undefined, undefined, bypass_cache || !AuthManager.LastAuthorizedState);
+        let result = await XHR.PerformRequest('api/session', undefined, undefined, bypass_cache || !AuthManager.LastAuthorizedState || AuthManager.ExpireDate === null);
         let response = result.Response as SessionDescriptor;
 
         if(response.expire_time !== null && !result.FromCache) {
