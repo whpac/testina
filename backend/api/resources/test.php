@@ -75,6 +75,10 @@ class Test extends Resource implements Schemas\Test{
             $keys[] = 'questions';
             $keys[] = 'assignment_count';
             $keys[] = 'assignment_ids';
+
+            if($this->Test->GetType() == \Entities\Test::TYPE_SURVEY){
+                $keys[] = 'results';
+            }
         }
 
         return $keys;
@@ -163,6 +167,18 @@ class Test extends Resource implements Schemas\Test{
         }
 
         return $out_assignments;
+    }
+
+    public function results(){
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+        if($this->Test->GetType() != \Entities\Test::TYPE_SURVEY) return null;
+
+        $assignments = $this->Test->GetAssignments();
+        if(count($assignments) == 0) return null;
+
+        $results = new SurveyResults($assignments[0]);
+        $results->SetContext($this->GetContext());
+        return $results;
     }
 }
 ?>

@@ -110,7 +110,25 @@ class Attempt extends Entity {
         $result = $result->Run();
 
         $attempts = [];
-        for($i=0; $i<$result->num_rows; $i++){
+        for($i = 0; $i < $result->num_rows; $i++){
+            $attempts[] = new Attempt($result->fetch_assoc());
+        }
+
+        return $attempts;
+    }
+
+    public static /* Attempt */ function GetAttemptsByAssignment(Assignment $assignment, bool $include_unfinished = false){
+        $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Select()
+                ->Where('assignment_id', '=', $assignment->GetId());
+        if($is_survey && !$include_unfinished) $result = $result->AndWhere('is_finished', '=', 1);
+        $result = $result->Run();
+
+        $attempts = [];
+        for($i = 0; $i < $result->num_rows; $i++){
             $attempts[] = new Attempt($result->fetch_assoc());
         }
 

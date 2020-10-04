@@ -21,6 +21,7 @@ class Question extends EntityWithFlags {
     const TYPE_SINGLE_CHOICE = 0;
     const TYPE_MULTI_CHOICE = 1;
     const TYPE_OPEN_ANSWER = 2;
+    const TYPE_RANGE = 3;
 
     const COUNTING_LINEAR = 0;
     const COUNTING_BINARY = 1;

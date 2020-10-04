@@ -64,7 +64,7 @@ class UserAnswer extends Entity {
     }
 
     public /* bool */ function IsOpenAnswer(){
-        return !is_null($this->GetSuppliedAnswer());
+        return !empty($this->GetSuppliedAnswer());
     }
 
     public /* bool */ function IsNoAnswer(){
