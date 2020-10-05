@@ -13,6 +13,7 @@ interface SurveyResultsQuestionDescriptor {
     id: number;
     text: string;
     answer_count: number;
+    order: number;
     user_supplied_answers: string[];
     closed_answers: {
         id: number;
@@ -54,9 +55,12 @@ export default class SurveyResultsLoader {
                 question.id,
                 question.text,
                 question.answer_count,
+                question.order,
                 question.user_supplied_answers,
                 answers));
         }
+
+        questions = questions.sort((a, b) => a.Order - b.Order);
 
         return new SurveyResults(questions);
     }

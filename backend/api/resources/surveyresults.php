@@ -20,6 +20,7 @@ class SurveyResults extends Resource {
 
                 $questions[$question->GetId()]['id'] = $question->GetId();
                 $questions[$question->GetId()]['text'] = $question->GetText();
+                $questions[$question->GetId()]['order'] = $question->GetOrder();
 
                 if(!isset($visited_question_in_attempt[$question->GetId()]) || $visited_question_in_attempt[$question->GetId()] === false){
                     if(!isset($questions[$question->GetId()]['answer_count'])) $questions[$question->GetId()]['answer_count'] = 0;
@@ -102,6 +103,7 @@ class QuestionResult extends Resource {
             'id',
             'text',
             'answer_count',
+            'order',
             'user_supplied_answers',
             'closed_answers'
         ];
@@ -117,6 +119,10 @@ class QuestionResult extends Resource {
 
     public function answer_count(): int{
         return $this->Data['answer_count'];
+    }
+
+    public function order(): int{
+        return $this->Data['order'];
     }
 
     public function user_supplied_answers(): array{
