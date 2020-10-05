@@ -1,6 +1,8 @@
 import Page from '../components/basic/page';
 import Toast from '../components/basic/toast';
+import QuestionCard from '../components/survey_results/question_card';
 import SurveyLoader from '../entities/loaders/surveyloader';
+import SurveyResultsLoader from '../entities/loaders/surveyresultsloader';
 import Test from '../entities/test';
 
 export default class SurveyResultsPage extends Page {
@@ -28,6 +30,12 @@ export default class SurveyResultsPage extends Page {
             else this.Survey = params as Test;
 
             this.SurveyNameHeadingText.textContent = this.Survey.Name;
+
+            let results = await SurveyResultsLoader.Load(this.Survey);
+            for(let question of results.Questions) {
+                let q_card = new QuestionCard(question);
+                this.AppendChild(q_card);
+            }
 
             container.appendChild(this.Element);
         } catch(e) {

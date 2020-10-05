@@ -53,3 +53,17 @@
     
     .heading, .survey-question-header {text-decoration:line-through;}
 }
+
+.answers-graph-wrapper {
+    display:grid; grid-template-columns:1fr auto;
+
+    .answers {grid-column:1;}
+    .graph {grid-column:2;}
+
+    @include media-small-medium {
+        grid-template-columns:1fr; grid-template-rows:auto auto;
+
+        .answers {grid-row:2;grid-column:unset;}
+        .graph {grid-row:1;grid-column:unset;}
+    }
+}
