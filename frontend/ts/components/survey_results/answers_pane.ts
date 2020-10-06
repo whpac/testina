@@ -30,7 +30,8 @@ export default class AnswersPane extends Component {
         ths[1].textContent = 'Odpowiedź';
         ths[2].textContent = 'Ilość';
 
-        for(let answer of question.ClosedAnswers) {
+        let closed_answers = question.ClosedAnswers.sort((a, b) => a.Order - b.Order);
+        for(let answer of closed_answers) {
             let tr = table.insertRow(-1);
 
             let legend_td = tr.insertCell(-1);

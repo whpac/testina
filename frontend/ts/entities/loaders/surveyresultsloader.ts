@@ -19,6 +19,7 @@ interface SurveyResultsQuestionDescriptor {
         id: number;
         text: string;
         answer_count: number;
+        order: number;
     }[];
 }
 
@@ -46,8 +47,9 @@ export default class SurveyResultsLoader {
             for(let closed_answer of question.closed_answers) {
                 answers.push(new SurveyResultsClosedAnswer(
                     closed_answer.id,
-                    closed_answer.text,
-                    closed_answer.answer_count
+                    closed_answer.text.toString(),
+                    closed_answer.answer_count,
+                    closed_answer.order
                 ));
             }
 

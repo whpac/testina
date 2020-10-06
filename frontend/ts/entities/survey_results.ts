@@ -34,12 +34,14 @@ export class SurveyResultsClosedAnswer extends Entity {
     public readonly Id: number;
     public readonly Text: string;
     public readonly AnswerCount: number;
+    public readonly Order: number;
 
-    public constructor(id: number, text: string, answer_count: number) {
+    public constructor(id: number, text: string, answer_count: number, order: number) {
         super();
 
         this.Id = id;
         this.Text = text;
         this.AnswerCount = answer_count;
+        this.Order = order;
     }
 }

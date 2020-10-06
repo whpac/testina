@@ -35,10 +35,12 @@ class SurveyResults extends Resource {
                 }else{
                     $answer = '';
                     $answer_id = 0;
+                    $order = 0;
 
                     if($user_answer->IsOpenAnswer()){
                         $answer = $user_answer->GetSuppliedAnswer();
                         $answer_id = -100 - intval($answer);
+                        $order = intval($answer);
                     }else{
                         $answer = $user_answer->GetAnswer();
 
@@ -46,6 +48,7 @@ class SurveyResults extends Resource {
                             $answer_id = $answer;
                         }else{
                             $answer_id = $answer->GetId();
+                            $order = $answer->GetOrder();
                         }
                     }
 
@@ -53,7 +56,8 @@ class SurveyResults extends Resource {
                         $a = [
                             'id' => $answer_id,
                             'answer_count' => 0,
-                            'text' => 'Nieznana'
+                            'text' => 'Nieznana',
+                            'order' => $order
                         ];
 
                         if($answer instanceof \Entities\Answer) $a['text'] = $answer->GetText();
@@ -158,7 +162,8 @@ class ClosedAnswerResult extends Resource{
         return [
             'id',
             'text',
-            'answer_count'
+            'answer_count',
+            'order'
         ];
     }
 
@@ -172,6 +177,10 @@ class ClosedAnswerResult extends Resource{
 
     public function answer_count(): int{
         return $this->Data['answer_count'];
+    }
+
+    public function order(): int{
+        return $this->Data['order'];
     }
 }
 ?>
