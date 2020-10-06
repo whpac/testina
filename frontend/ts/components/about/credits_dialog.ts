@@ -26,6 +26,11 @@ export default class CreditsDialog extends Dialog {
                 license: License.SIL_OpenFontLicense
             },
             {
+                name: 'Graph.js',
+                author: 'Graph.js community',
+                license: License.MIT
+            },
+            {
                 name: 'JS-Levenshtein',
                 author: 'Gustaf Andersson',
                 license: License.MIT
@@ -69,7 +74,7 @@ export default class CreditsDialog extends Dialog {
         lib_license.title = 'Wyświetl licencję';
         lib_license.addEventListener('click', (() => {
             let license_dialog = new LicenseDialog();
-            license_dialog.Populate(license);
+            license_dialog.Populate(license, author);
             license_dialog.Show();
         }).bind(this));
     }

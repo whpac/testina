@@ -21,7 +21,7 @@ export default class LicenseDialog extends Dialog {
         this.AddButton(close_button);
     }
 
-    public Populate(license: License) {
-        this.LicenseText.textContent = LicenseStore.GetLicenseText(license);
+    public Populate(license: License, author: string) {
+        this.LicenseText.textContent = LicenseStore.GetLicenseText(license, author);
     }
 }
