@@ -82,6 +82,7 @@ class Root extends Resource implements Schemas\Root {
         $out_surveys = [];
 
         foreach($surveys as $survey){
+            if($survey->IsDeleted()) continue;
             $out_surveys[$survey->GetId()] = new Test($survey);
         }
 
