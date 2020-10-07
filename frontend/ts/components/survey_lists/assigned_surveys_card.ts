@@ -25,7 +25,7 @@ export default class AssignedSurveysCard extends Card {
 
     public async Populate() {
         let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
-        assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_SURVEY);
+        assignments = assignments.filter((a) => (a.Test.Type == Test.TYPE_SURVEY && !a.HasDeadlineExceeded()));
         this.SurveyCount = assignments.length;
         this.AssignedSurveysTable.Populate(assignments);
     }

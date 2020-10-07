@@ -94,7 +94,7 @@ export default class AssignedSurveysTable extends Component {
                 if(current_user === undefined) return;
 
                 let btn_fill: HTMLAnchorElement | HTMLButtonElement;
-                if(assignment.GetRemainingAttemptsCount() > 0) {
+                if(assignment.AreRemainingAttempts()) {
                     btn_fill = document.createElement('a');
                     btn_fill.classList.add('button', 'compact');
                     btn_fill.href = 'ankiety/wypełnij/' + assignment.Id;
