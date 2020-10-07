@@ -3,7 +3,7 @@
  * Posługuję się zmiennymi CSS, a nie SASS, bo dzięki nim
  * do przeglądarki musi trafić tylko jeden arkusz stylów
  */
-html{
+@mixin theme-dark {
     --background-empty-color:#121212;
     --text-primary-color:rgba(255,255,255,0.87);
     --text-secondary-color:rgba(255,255,255,0.60);

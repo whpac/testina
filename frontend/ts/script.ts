@@ -29,6 +29,8 @@ import AccountPage from './pages/account';
 window._debug = true;
 
 try {
+    ChromeManager.ApplySiteTheme();
+
     // Odwołanie do obiektu, gdzie będzie wyświetlana strona
     let root = document.getElementById('content-container');
     if(root === null) throw 'Błąd ładowania';

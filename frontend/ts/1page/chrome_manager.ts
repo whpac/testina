@@ -60,4 +60,25 @@ export default class ChromeManager {
             if(this.MobileHeader) this.MobileHeader.SetTitle(new_title);
         }
     }
+
+    /**
+     * Wykorzystuje ustawienie skórki zapisane w pamięci lokalnej do stylizacji strony
+     */
+    public static ApplySiteTheme() {
+        try {
+            let theme = localStorage.getItem('theme') ?? '0';
+
+            document.documentElement.classList.remove('force-light', 'force-dark');
+            switch(theme) {
+                case '1':
+                    document.documentElement.classList.add('force-light');
+                    break;
+                case '2':
+                    document.documentElement.classList.add('force-dark');
+                    break;
+            }
+        } catch(e) {
+
+        }
+    }
 }

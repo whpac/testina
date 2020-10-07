@@ -3,7 +3,7 @@
  * Posługuję się zmiennymi CSS, a nie SASS, bo dzięki nim
  * do przeglądarki musi trafić tylko jeden arkusz stylów
  */
-html {
+@mixin theme-light {
     --background-empty-color:#f0f0f0;
     --text-primary-color:rgba(0,0,0,0.87);
     --text-secondary-color:rgba(0,0,0,0.60);

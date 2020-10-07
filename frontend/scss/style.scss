@@ -2,10 +2,16 @@
 
 @import 'media';
 @import 'themes/light';
+@import 'themes/dark';
+
+html { @include theme-light; }
 
 @media (prefers-color-scheme: dark) {
-    @import 'themes/dark';
+    html { @include theme-dark; }
 }
+
+html.force-light { @include theme-light; }
+html.force-dark { @include theme-dark; }
 
 body {
     --nav-panel-width:calc(150px + 10vw);
