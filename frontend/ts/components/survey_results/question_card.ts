@@ -17,15 +17,17 @@ export default class QuestionCard extends Card {
         answers_graph_wrapper.classList.add('answers-graph-wrapper');
         this.AppendChild(answers_graph_wrapper);
 
-        let answers = new AnswersPane(question);
+        let answers = new AnswersPane(question, BarGraph.DEFAULT_COLOR_SET);
         answers_graph_wrapper.appendChild(answers.GetElement());
 
         let data_points: GraphAnswerDescriptor[] = [];
-        for(let answer of question.ClosedAnswers) {
+        for(let i = 0; i < question.ClosedAnswers.length; i++) {
+            let answer = question.ClosedAnswers[i];
+
             data_points.push({
                 Value: answer.AnswerCount,
                 Label: Truncate(answer.Text, 15),
-                Color: 'red'
+                Color: BarGraph.DEFAULT_COLOR_SET[i % BarGraph.DEFAULT_COLOR_SET.length]
             });
         }
 
@@ -33,7 +35,7 @@ export default class QuestionCard extends Card {
             data_points.push({
                 Value: question.UserSuppliedAnswers.length,
                 Label: 'Inne',
-                Color: 'red'
+                Color: BarGraph.DEFAULT_COLOR_SET[question.ClosedAnswers.length % BarGraph.DEFAULT_COLOR_SET.length]
             });
         }
 
