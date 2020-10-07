@@ -10,10 +10,30 @@ export default class BarGraph extends Component {
     protected Canvas: HTMLCanvasElement;
     protected CanvasContext: CanvasRenderingContext2D | null;
 
-    protected readonly WIDTH = 350;
-    protected readonly HEIGHT = 200;
+    public static readonly DEFAULT_COLOR_SET = [
+        '#1f77b4',
+        '#ff7f0e',
+        '#2ca02c',
+        '#d62728',
+        '#9467bd',
+        '#8c564b',
+        '#e377c2',
+        '#7f7f7f',
+        '#bcbd22',
+        '#17becf',
+        '#aec7e8',
+        '#ffbb78',
+        '#98df8a',
+        '#ff9896',
+        '#c5b0d5',
+        '#c49c94',
+        '#f7b6d2',
+        '#c7c7c7',
+        '#dbdb8d',
+        '#9edae5'
+    ];
 
-    public constructor() {
+    public constructor(width: number = 350, height: number = 200) {
         super();
 
         this.Element.classList.add('graph');
@@ -21,8 +41,8 @@ export default class BarGraph extends Component {
         this.Canvas = document.createElement('canvas');
         this.AppendChild(this.Canvas);
         this.Canvas.textContent = 'Twoja przeglądarka nie obsługuje wykresów.';
-        this.Canvas.width = this.WIDTH;
-        this.Canvas.height = this.HEIGHT;
+        this.Canvas.width = width;
+        this.Canvas.height = height;
 
         this.CanvasContext = this.Canvas.getContext('2d');
     }
@@ -40,7 +60,7 @@ export default class BarGraph extends Component {
             colors.push(data_point.Color);
         }
 
-        //@ts-ignore
+        //@ts-ignore - według tsc Chart powinien być dołączony jako moduł
         var myChart = new Chart(this.CanvasContext, {
             type: 'bar',
             data: {
