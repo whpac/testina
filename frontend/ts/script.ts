@@ -10,7 +10,6 @@ import SolveTestPage from './pages/solve_test';
 import AboutPage from './pages/about';
 import AssignmentsPage from './pages/assignments';
 import ResultsPage from './pages/results';
-import LoginPage from './pages/login';
 import AuthManager from './auth/auth_manager';
 import CacheManager, { CacheStorages } from './cache/cache_manager';
 import HelpPage from './pages/help';
@@ -24,6 +23,7 @@ import UserLoader from './entities/loaders/userloader';
 import LoginWithOfficePage from './pages/login_office';
 import Toast from './components/basic/toast';
 import SurveyResultsPage from './pages/survey_results';
+import AccountPage from './pages/account';
 
 // @ts-ignore
 window._debug = true;
@@ -49,6 +49,7 @@ try {
     pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9a-zA-Z]+)?$/, { CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('home', { CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
+    pages.RegisterPage('konto', { CreatePage: () => new AccountPage() });
     pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
     pages.RegisterPage('testy/biblioteka', { CreatePage: () => new LibraryPage() });
     pages.RegisterPage(/^testy\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditTestPage() });
@@ -56,7 +57,6 @@ try {
     pages.RegisterPage(/^testy\/rozwiąż(\/[0-9]+)?$/, { CreatePage: () => new SolveTestPage() });
     pages.RegisterPage(/^testy\/przypisane(\/[0-9]+)?$/, { CreatePage: () => new AssignmentsPage() });
     pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
-    // pages.RegisterPage('zaloguj', { CreatePage: () => new LoginPage() });
     pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
     PageManager.RegisterHomePage(new HomePage());
