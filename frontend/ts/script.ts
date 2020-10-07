@@ -65,11 +65,11 @@ try {
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
     AuthManager.AddEventListener('login', async () => {
         (await CacheManager.Open(CacheStorages.Entities)).Purge();
-        ChromeManager.ApplicationNavbar.Draw();
+        ChromeManager.ApplicationNavbar?.Draw();
         root?.classList.remove('login');
     });
     AuthManager.AddEventListener('logout', async () => {
-        ChromeManager.ApplicationNavbar.Destroy();
+        ChromeManager.ApplicationNavbar?.Destroy();
         UserLoader.ClearCurrentUserCache();
         root?.classList.add('login');
         await (await CacheManager.Open(CacheStorages.Entities)).Purge();
@@ -80,10 +80,10 @@ try {
     (async () => {
         try {
             if(await AuthManager.IsAuthorized(true)) {
-                ChromeManager.ApplicationNavbar.Draw();
+                ChromeManager.ApplicationNavbar?.Draw();
                 root.classList.remove('login');
             } else {
-                ChromeManager.ApplicationNavbar.Destroy();
+                ChromeManager.ApplicationNavbar?.Destroy();
                 root.classList.add('login');
             }
 

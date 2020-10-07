@@ -94,7 +94,7 @@ export default class EditSurveyPage extends Page {
             this.RefreshQuestionOrder();
 
             container.appendChild(this.Element);
-            ChromeManager.MobileHeader.AddButton(new Icon('save'), this.Save.bind(this), 'Zapisz');
+            ChromeManager.MobileHeader?.AddButton(new Icon('save'), this.Save.bind(this), 'Zapisz');
 
             this.Survey.AddEventListener('change', () => {
                 this.SurveyNameHeading.textContent = this.Survey?.Name ?? '';

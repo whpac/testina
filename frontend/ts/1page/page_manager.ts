@@ -114,7 +114,7 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
 
     try {
         CurrentPage?.UnloadFrom(ContentRoot);
-        ChromeManager.MobileHeader.RemoveButtons();
+        ChromeManager.MobileHeader?.RemoveButtons();
     } catch(e) {
 
     }

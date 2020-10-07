@@ -7,7 +7,8 @@ import ChromeManager from '../../1page/chrome_manager';
  * Klasa reprezentująca panel nawigacji
  */
 export default class Navbar {
-    protected NavbarRoot: HTMLElement;
+    protected NavbarRoot: HTMLElement | undefined;
+    protected IsDrawn: boolean | undefined;
 
     /**
      * Tworzy klasę z odwołaniem do panelu nawigacji
@@ -16,6 +17,9 @@ export default class Navbar {
     public constructor(navbar_id: string) {
         let navbar_root = document.getElementById(navbar_id);
         if(navbar_root === null) throw 'Nie udało się utworzyć panelu nawigacji.';
+        if(navbar_root.dataset.isNavbar == 'true') return;
+
+        navbar_root.dataset.isNavbar = 'true';
         this.NavbarRoot = navbar_root;
     }
 
@@ -25,9 +29,10 @@ export default class Navbar {
      * Jeżeli użytkownik nie jest zalogowany, panel pozostaje pusty
      */
     public async Draw() {
+        if(this.IsDrawn === true || this.NavbarRoot === undefined) return;
         this.NavbarRoot.style.display = '';
 
-        ChromeManager.MobileHeader.SetHamburgerButtonVisibility(true);
+        ChromeManager.MobileHeader?.SetHamburgerButtonVisibility(true);
 
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
@@ -64,17 +69,20 @@ export default class Navbar {
         }).bind(this));
 
         this.AttachEventHandlers();
+        this.IsDrawn = true;
     }
 
     /**
      * Niszczy panel nawigacji
      */
     public Destroy() {
+        if(this.IsDrawn === false || this.NavbarRoot === undefined) return;
         this.Hide();
         this.NavbarRoot.textContent = '';
         this.NavbarRoot.style.display = 'none';
 
-        ChromeManager.MobileHeader.SetHamburgerButtonVisibility(false);
+        ChromeManager.MobileHeader?.SetHamburgerButtonVisibility(false);
+        this.IsDrawn = false;
     }
 
     /**
@@ -145,14 +153,14 @@ export default class Navbar {
      * Przełącza widoczność panelu nawigacji
      */
     public ToggleVisibility() {
-        this.NavbarRoot.classList.toggle('shown');
+        this.NavbarRoot?.classList.toggle('shown');
     }
 
     /**
      * Ukrywa panel nawigacji
      */
     protected Hide() {
-        this.NavbarRoot.classList.remove('shown');
+        this.NavbarRoot?.classList.remove('shown');
     }
 
     /**

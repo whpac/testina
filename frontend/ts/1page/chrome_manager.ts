@@ -7,9 +7,25 @@ import PageParams from './page_params';
  */
 export default class ChromeManager {
     /** Nagłówek mobilnej wersji strony */
-    public static MobileHeader: MobileHeader;
+    public static _MobileHeader: MobileHeader | undefined;
     /** Panel nawigacji */
-    public static ApplicationNavbar: Navbar;
+    public static _ApplicationNavbar: Navbar | undefined;
+
+    public static get MobileHeader() {
+        return ChromeManager._MobileHeader;
+    }
+    public static set MobileHeader(value: MobileHeader | undefined) {
+        if(ChromeManager._MobileHeader !== undefined) return;
+        ChromeManager._MobileHeader = value;
+    }
+
+    public static get ApplicationNavbar() {
+        return ChromeManager._ApplicationNavbar;
+    }
+    public static set ApplicationNavbar(value: Navbar | undefined) {
+        if(ChromeManager._ApplicationNavbar !== undefined) return;
+        ChromeManager._ApplicationNavbar = value;
+    }
 
     /**
      * Ustawia adres wyświetlany na pasku adresu

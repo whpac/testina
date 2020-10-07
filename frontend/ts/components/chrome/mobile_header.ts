@@ -8,18 +8,23 @@ export default class MobileHeader {
 
     public constructor(element: HTMLElement) {
         this.HamburgerButton = document.createElement('a');
+        this.Header = document.createElement('h1');
+        this.ButtonWrapper = document.createElement('div');
+
+        if(element.dataset.isMobileHeader == 'true') return;
+
         this.HamburgerButton.classList.add('nav-toggle', 'nav-icon');
         this.HamburgerButton.appendChild(new Icon('bars', 'fa-fw').GetElement());
-        this.HamburgerButton.addEventListener('click', () => ChromeManager.ApplicationNavbar.ToggleVisibility());
+        this.HamburgerButton.addEventListener('click', () => ChromeManager.ApplicationNavbar?.ToggleVisibility());
         element.appendChild(this.HamburgerButton);
 
-        this.Header = document.createElement('h1');
         this.Header.textContent = 'Testina';
         element.appendChild(this.Header);
 
-        this.ButtonWrapper = document.createElement('div');
         this.ButtonWrapper.classList.add('mobile-header-buttons');
         element.appendChild(this.ButtonWrapper);
+
+        element.dataset.isMobileHeader = 'true';
     }
 
     /**
