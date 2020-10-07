@@ -117,3 +117,8 @@ Ukaże się wtedy okienko podobne do okna przypisywania testu. Możesz w nim wyb
 Osoby, które nie mają konta w Testinie mogą wypełniać te ankiety, dla których wygenerowano link dostępowy. Aby wygenerować taki link, udaj się do okna udostępniania ankiety i zaznacz opcję „Udostępnij wszystkim, którzy dostaną link” (jeśli jest już zaznaczona, wystarczy, że skopiujesz link wyświetlany pod spodem).
 
 Każda osoba, która dostanie link dostępowy, będzie mogła wypełnić daną ankietę. Należy mieć na uwadze, że nie jest możliwe ścisłe egzekwowanie limitu podejść odnośnie do niezalogowanych osób. W ich przypadku limit będzie obowiązywał osobno w każdej przeglądarce.
+
+# Jak zobaczyć wyniki ankiety?
+Aby zobaczyć wyniki ankiety, którą utworzyłeś(-aś), przejdź na stronę „Ankiety”, a następnie naciśnij przycisk „Wyniki” w odpowiednim wierszu. Przejdziesz wtedy do strony, gdzie zostaną wyświetlone odpowiedzi użytkowników na każde z pytań. Jeśli zdarzyłoby się, że jakieś pytanie nie jest wyświetlane, oznacza to, że nikt na nie nie odpowiedział.
+
+Do wyników procentowych, pokazywanych przy każdej odpowiedzi, nie są wliczane sytuacje, gdy ktoś nie odpowiedział na dane pytanie (bo na przykład było niewymagane). To oznacza, że jeśli ankietę wypełniło 10 osób, ale tylko 5 odpowiedziało na dane pytanie, wyniki procentowe będą obliczane w odniesieniu do tych 5 respondentów.
