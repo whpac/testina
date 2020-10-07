@@ -205,6 +205,7 @@ class Test extends EntityWithFlags {
                 ->Value('score_counting', $score_counting)
                 ->Value('final_title', $final_title)
                 ->Value('final_text', $final_text)
+                ->Value('flags', 0)
                 ->Run();
             
         if($result === false){

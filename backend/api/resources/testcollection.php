@@ -14,27 +14,27 @@ class TestCollection extends Collection {
         ValueValidator::AssertIsNonNegative($source->question_multiplier, 'question_multiplier');
         ValueValidator::AssertIsNonNegative($source->time_limit, 'time_limit');
 
-        $type = null;
-        if(isset($data->type)){
-            TypeValidator::AssertIsInt($data->type, 'type');
-            ValueValidator::AssertIsInRange($data->type, 0, 1, 'type');
-            $type = $data->type;
+        $type = 0;
+        if(isset($source->type)){
+            TypeValidator::AssertIsInt($source->type, 'type');
+            ValueValidator::AssertIsInRange($source->type, 0, 1, 'type');
+            $type = $source->type;
         }
-        $score_counting = null;
-        if(isset($data->score_counting)){
-            TypeValidator::AssertIsInt($data->score_counting, 'score_counting');
-            ValueValidator::AssertIsInRange($data->score_counting, 0, 1, 'score_counting');
-            $score_counting = $data->score_counting;
+        $score_counting = 0;
+        if(isset($source->score_counting)){
+            TypeValidator::AssertIsInt($source->score_counting, 'score_counting');
+            ValueValidator::AssertIsInRange($source->score_counting, 0, 1, 'score_counting');
+            $score_counting = $dasourceta->score_counting;
         }
-        $final_title = null;
-        if(isset($data->final_title)){
-            TypeValidator::AssertIsString($data->final_title, 'final_title');
-            $final_title = $data->final_title;
+        $final_title = '';
+        if(isset($source->final_title)){
+            TypeValidator::AssertIsString($source->final_title, 'final_title');
+            $final_title = $source->final_title;
         }
-        $final_text = null;
-        if(isset($data->final_text)){
-            TypeValidator::AssertIsString($data->final_text, 'final_text');
-            $final_text = $data->final_text;
+        $final_text = '';
+        if(isset($source->final_text)){
+            TypeValidator::AssertIsString($source->final_text, 'final_text');
+            $final_text = $source->final_text;
         }
 
         $current_user = $this->GetContext()->GetUser();
