@@ -46,6 +46,7 @@ class SurveyResults extends Resource {
 
                         if(is_scalar($answer)){
                             $answer_id = $answer;
+                            $order = 1000; // Nie dotyczy ma być na końcu
                         }else{
                             $answer_id = $answer->GetId();
                             $order = $answer->GetOrder();
