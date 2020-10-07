@@ -47,7 +47,7 @@ export default class Navbar {
         ul.appendChild(this.CreateNavLink('Konto', 'konto', 'fa-user-o'));
         ul.appendChild(this.CreateNavLink('Wyloguj', async () => { await AuthManager.LogOut(); GoToPage('zaloguj/office'); }, 'fa-sign-out', ['vulnerable']));
         ul.appendChild(this.CreateNavSeparator());
-        ul.appendChild(this.CreateNavLink('Pomoc', 'pomoc', 'fa-question-circle'));
+        ul.appendChild(this.CreateNavLink('Pomoc', 'pomoc#spis_tresci', 'fa-question-circle'));
 
         let span_info = document.createElement('span');
         this.NavbarRoot.appendChild(span_info);

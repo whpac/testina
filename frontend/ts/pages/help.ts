@@ -8,6 +8,10 @@ export default class HelpPage extends Page {
     constructor() {
         super();
 
+        let span = document.createElement('span');
+        span.id = 'spis_tresci';
+        this.AppendChild(span);
+
         let heading = document.createElement('h1');
         heading.textContent = 'Pomoc';
         this.AppendChild(heading);
