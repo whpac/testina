@@ -1,11 +1,13 @@
 import { GoToPage } from '../../1page/page_manager';
 import Assignment, { AssignmentTargets } from '../../entities/assignment';
 import ApiEndpoints from '../../entities/loaders/apiendpoints';
+import UserLoader from '../../entities/loaders/userloader';
 import Test from '../../entities/test';
 import { ToMediumFormat } from '../../utils/dateutils';
 import { n } from '../../utils/textutils';
 import Dialog from '../basic/dialog';
 import Icon from '../basic/icon';
+import Toast from '../basic/toast';
 import AssignTestDialog from '../tests_lists/assigning/assign_test_dialog';
 
 export default class SurveyDetailsDialog extends Dialog {
@@ -69,6 +71,33 @@ export default class SurveyDetailsDialog extends Dialog {
         this.ShareLink.textContent = 'Zarządzaj...';
         this.ShareLink.addEventListener('click', this.DisplayAssignDialog.bind(this));
 
+        row[4] = content_table.insertRow(-1);
+        let delete_cell = row[4].insertCell(-1);
+        delete_cell.colSpan = 2;
+
+        let delete_heading = document.createElement('span');
+        delete_heading.classList.add('inline-header');
+        delete_heading.textContent = 'Usunięcie ankiety';
+        delete_cell.appendChild(delete_heading);
+
+        let delete_element = document.createElement('div');
+        delete_element.classList.add('center');
+        delete_cell.appendChild(delete_element);
+
+        let delete_description = document.createElement('p');
+        delete_element.appendChild(delete_description);
+        delete_description.classList.add('small-margin', 'secondary', 'center');
+        delete_description.textContent = 'Jeżeli jesteś pewien, że chcesz usunąć tę ankietę, naciśnij poniższy przycisk.';
+        (async () => {
+            delete_description.textContent = 'Jeżeli jesteś pew' + (((await UserLoader.GetCurrent())?.IsFemale() ?? false) ? 'na' : 'ien') + ', że chcesz usunąć tę ankietę, naciśnij poniższy przycisk.';
+        })();
+
+        let delete_button = document.createElement('button');
+        delete_button.classList.add('error');
+        delete_button.textContent = 'Usuń ankietę';
+        delete_element.appendChild(delete_button);
+        delete_button.addEventListener('click', this.DeleteSurvey.bind(this));
+
         this.AddContent(content_table);
 
         let close_btn = document.createElement('button');
@@ -120,6 +149,26 @@ export default class SurveyDetailsDialog extends Dialog {
             this.LinkPresenterElement.style.display = 'none';
             this.LinkPresenterElement.value = 'Wczytywanie linku...';
             this.SurveyFillsCountElement.textContent = '0';
+        }
+    }
+
+    protected async DeleteSurvey() {
+        if(this.Survey === undefined) return;
+
+        let confirm = window.confirm('Usunięcie ankiety jest nieodwracalne. Czy mimo to chcesz ją usunąć?');
+        if(!confirm) return;
+
+        try {
+            let name = this.Survey.Name;
+            await this.Survey.Remove();
+            this.Hide();
+
+            new Toast('Usunięto ankietę „' + name + '”.').Show(0);
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się usunąć ankiety' + message).Show(0);
         }
     }
 

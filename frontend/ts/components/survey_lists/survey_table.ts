@@ -107,6 +107,8 @@ export default class SurveyTable extends Component {
         btn_more.classList.add('compact');
         btn_more.appendChild(new Icon('ellipsis-h').GetElement());
         btn_more.addEventListener('click', (() => this.DisplaySurveyDetailsDialog(survey)).bind(this));
+
+        survey.AddEventListener('remove', tr.remove.bind(tr));
     }
 
     protected DisplaySurveyDetailsDialog(survey: Test) {

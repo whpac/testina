@@ -9,6 +9,7 @@ import TestLoader from './loaders/testloader';
 import QuestionLoader from './loaders/questionloader';
 import AssignmentLoader, { AssignmentDescriptor } from './loaders/assignmentloader';
 import SurveyLoader from './loaders/surveyloader';
+import ApiEndpoints from './loaders/apiendpoints';
 
 /** Klasa reprezentująca test */
 export default class Test extends Entity implements PageParams {
@@ -224,7 +225,7 @@ export default class Test extends Entity implements PageParams {
 
     /** Usuwa test */
     async Remove() {
-        let result = await XHR.PerformRequest('api/tests/' + this.Id.toString(), 'DELETE');
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this), 'DELETE');
         if(result.Status == 204) {
             this._IsDeleted = true;
             this.FireEvent('remove');

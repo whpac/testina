@@ -47,7 +47,6 @@ export default class SurveyListCard extends Card {
         } catch(e) {
             let message = '.';
             if('Message' in e) message = ': ' + e.Message;
-            else message = e;
 
             new Toast('Nie udało się utworzyć ankiety' + message).Show(0);
         } finally {
