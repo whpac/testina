@@ -1,3 +1,8 @@
+<?php
+$script_file_name = '../frontend/js/script.js';
+$script_last_modified = filemtime($script_file_name);
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
     <head>
@@ -13,7 +18,7 @@
         <link rel="stylesheet" href="css/style.css" />
 
         <!-- Skrypty JavaScript -->
-        <script src="js/script" type="module"></script>
+        <script src="js/script?<?php echo($script_last_modified); ?>" type="module"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
         <!-- Ikona strony -->
