@@ -17,7 +17,8 @@ class User extends Resource implements Schemas\User{
         return [
             'id',
             'first_name',
-            'last_name'
+            'last_name',
+            'groups'
         ];
     }
 
@@ -31,6 +32,21 @@ class User extends Resource implements Schemas\User{
 
     public function last_name(): string{
         return $this->User->GetLastName();
+    }
+
+    public function groups(): ?Schemas\Collection{
+        if($this->User->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+
+        $groups = $this->User->GetGroups();
+        $out_groups = [];
+
+        foreach($groups as $group){
+            $out_groups[] = new Group($group);
+        }
+
+        $collection = new Collection($out_groups);
+        $collection->SetContext($this->GetContext());
+        return $collection;
     }
 }
 ?>
