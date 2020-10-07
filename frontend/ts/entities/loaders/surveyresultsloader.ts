@@ -39,6 +39,8 @@ export default class SurveyResultsLoader {
      * @param results_descriptor Deskryptor wyników
      */
     public static CreateFromDescriptor(results_descriptor: SurveyResultsDescriptor) {
+        if(results_descriptor === null) return new SurveyResults([]);
+
         let questions: SurveyResultsQuestion[] = [];
         for(let question_id in results_descriptor.questions) {
             let question = results_descriptor.questions[question_id];
