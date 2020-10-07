@@ -73,6 +73,27 @@ export default class GroupLoader {
         return groups;
     }
 
+    public static async GetGroupsWithCurrentUser() {
+        let descriptors: StringKeyedCollection<GroupDescriptor>;
+        let response = await XHR.PerformRequest('api/users/current/groups?depth=3', 'GET');
+        descriptors = response.Response as StringKeyedCollection<GroupDescriptor>;
+
+        let groups: Group[] = [];
+        for(let group_id in descriptors) {
+            let g: Group;
+            try {
+                g = GroupLoader.CreateFromDescriptor(descriptors[group_id]);
+            } catch(e) {
+                if(e instanceof TypeError) {
+                    g = await GroupLoader.LoadById(group_id);
+                } else throw e;
+            }
+            groups.push(g);
+        }
+
+        return groups;
+    }
+
     /**
      * Wczytuje grupy o określonym identyfikatorze
      * @param group_id Identyfikatory grup
