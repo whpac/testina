@@ -54,9 +54,9 @@ W zależności od rodzaju pytania, sposób liczenia punktów może być nieco in
 Ilość literówek jest obliczana jako [odległość Levenshteina](https://pl.wikipedia.org/wiki/Odleg%C5%82o%C5%9B%C4%87_Levenshteina) między tekstem wpisanym przez rozwiązującego, a poprawną odpowiedzią. Jeżeli odległość ta jest mniejsza lub równa dopuszczalnej liczbie literówek dla przynajmniej jednego wariantu odpowiedzi, rozwiązujący dostaje komplet punktów za pytanie.
 
 Jak działa ten algorytm Levenshteina? Są trzy rodzaje literówek:
-* zmiana jednej litery na inną, np. *pies* -> *pues*,
-* pominięcie jednej litery, np. *pies* -> *pes*,
-* wstawienie dodatkowej litery, np. *pies* -> *piues*.
+* zmiana jednej litery na inną, np. *pies* → *pues*,
+* pominięcie jednej litery, np. *pies* → *pes*,
+* wstawienie dodatkowej litery, np. *pies* → *piues*.
 
 Wystąpienie któregokolwiek z nich jest liczone jako jedna literówka.
 
@@ -78,7 +78,7 @@ Możesz też sprawdzić wyniki poszczególnych osób – w tym celu naciśnij pr
 Jeśli wybierzesz termin na rozwiązanie testu przypadający w ciągu 24 godzin od momentu przypisywania, wyświetli się ostrzeżenie, że użytkownicy mogą nie mieć czasu na rozwiązanie testu w tym terminie. Jeżeli jesteś pewny(-a), że wybrany termin będzie wystarczający, możesz przypisać test pomimo ostrzeżenia.
 
 # Ankiety
-Testina pozwala także na przeprowadzanie ankiet. Tworzy się je i wypełnia za pośrednictwem podstrony „Ankiety”. Jest ona podzielona na dwie części – w górnej wymienione są te ankiety, które udostępniono Tobie do wypełnienia, natomiast w dolnej – utworzone przez Ciebie.
+Testina pozwala także na przeprowadzanie ankiet. Tworzy się je i wypełnia za pośrednictwem podstrony „[Ankiety](ankiety)”. Jest ona podzielona na dwie części – w górnej wymienione są te ankiety, które udostępniono Tobie do wypełnienia, natomiast w dolnej – utworzone przez Ciebie.
 
 W ankietach dostępne są cztery rodzaje pytań:
 * jednokrotnego wyboru – użytkownik może wybrać jedynie jedną spośród proponowanych odpowiedzi,
@@ -89,7 +89,11 @@ W ankietach dostępne są cztery rodzaje pytań:
 Ponadto, każde z powyższych pytań obsługuje tzw. specjalne odpowiedzi, czyli „Nie dotyczy” oraz „Inna – jaka?” (tej nie da się włączyć w pytaniach otwartych).
 
 # Jak utworzyć ankietę?
-...
+Wszystkie Twoje ankiety znajdują się w zakładce „[Ankiety](ankiety)”.
+
+Jeżeli nie utworzyłeś(-aś) jeszcze żadnej ankiety, zobaczysz na środku ekranu link, po kliknięciu którego zostanie stworzona Twoja pierwsza ankieta.
+
+Jeśli utworzyłeś(-aś) już jakieś ankiety, przycisk do tworzenia nowych znajdzie się na górze listy tych już stworzonych.
 
 # Jak zmienić kolejność pytań w ankiecie?
 Będąc w edytorze ankiet, najedź myszką na nagłówek pytania, które chcesz przenieść (nagłówek to ta część panelu z pytaniem, gdzie podany jest jego numer oraz pole wyboru rodzaju pytania). W tym momencie po prawej stronie powinny pokazać się trzy przyciski – strzałki w górę i dół oraz ikonka kosza na śmieci. Kliknij jedną ze strzałek, aby przesunąć pytanie o jedno do góry lub do dołu.
