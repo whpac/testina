@@ -27,7 +27,7 @@ export default class LibraryPage extends Page {
         buttons_wrapper.appendChild(create_button);
 
         let header = document.createElement('h2');
-        header.textContent = 'Moje testy';
+        header.textContent = 'Twoje testy';
         this.LibraryCard.AppendChild(header);
 
         let description = document.createElement('p');
