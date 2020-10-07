@@ -37,7 +37,7 @@ export default class TestLoader {
     public static async LoadById(test_id: number | string) {
         let response = await XHR.PerformRequest('api/tests/' + test_id.toString() + '?depth=3', 'GET');
         let json = response.Response as TestDescriptor;
-        return this.CreateFromDescriptor(json);
+        return TestLoader.CreateFromDescriptor(json);
     }
 
     /**

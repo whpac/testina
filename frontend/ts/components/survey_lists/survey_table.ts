@@ -52,57 +52,61 @@ export default class SurveyTable extends Component {
     public Populate(surveys: Test[]) {
         this.TBody.textContent = '';
 
-        // Posortuj ankiety od najnowszych
-        surveys.sort((a, b) => b.CreationDate.valueOf() - a.CreationDate.valueOf());
+        // Posortuj ankiety od najstarszych (umieszczane są w tabeli w odwrotnej kolejności niż w surveys)
+        surveys.sort((a, b) => a.CreationDate.valueOf() - b.CreationDate.valueOf());
 
         for(let survey of surveys) {
-            let tr = this.TBody.insertRow();
-
-            let td_name = tr.insertCell(-1);
-            td_name.textContent = survey.Name;
-
-            let td_fills = tr.insertCell(-1);
-            td_fills.classList.add('center');
-            td_fills.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
-            // Policz ilość wypełnień, asynchronicznie, aby nie blokować ładowania
-            (async () => {
-                let assignments = await survey.GetAssignments();
-                if(assignments.length > 0) {
-                    td_fills.textContent = (await assignments[0].CountAllAttempts()).toString();
-                } else {
-                    td_fills.textContent = '0';
-                }
-            })();
-
-            let td_created = tr.insertCell(-1);
-            td_created.classList.add('center', 'xlarge-screen-only');
-            td_created.textContent = ToMediumFormat(survey.CreationDate, true);
-
-            let td_results = tr.insertCell(-1);
-            td_results.classList.add('wide-screen-only');
-            let btn_results = document.createElement('a');
-            td_results.appendChild(btn_results);
-            btn_results.classList.add('button', 'compact', 'todo');
-            btn_results.textContent = 'Wyniki';
-            btn_results.href = 'ankiety/wyniki/' + survey.Id;
-            btn_results.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wyniki', survey));
-
-            let td_edit = tr.insertCell(-1);
-            td_edit.classList.add('wide-screen-only');
-            let btn_edit = document.createElement('a');
-            td_edit.appendChild(btn_edit);
-            btn_edit.classList.add('button', 'compact');
-            btn_edit.textContent = 'Edytuj';
-            btn_edit.href = 'ankiety/edytuj/' + survey.Id.toString();
-            btn_edit.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/edytuj', survey));
-
-            let td_more = tr.insertCell(-1);
-            let btn_more = document.createElement('button');
-            td_more.appendChild(btn_more);
-            btn_more.classList.add('compact');
-            btn_more.appendChild(new Icon('ellipsis-h').GetElement());
-            btn_more.addEventListener('click', (() => this.DisplaySurveyDetailsDialog(survey)).bind(this));
+            this.AddSurvey(survey);
         }
+    }
+
+    public AddSurvey(survey: Test) {
+        let tr = this.TBody.insertRow(0);
+
+        let td_name = tr.insertCell(-1);
+        td_name.textContent = survey.Name;
+
+        let td_fills = tr.insertCell(-1);
+        td_fills.classList.add('center');
+        td_fills.appendChild(new Icon('spinner', 'fa-pulse').GetElement());
+        // Policz ilość wypełnień, asynchronicznie, aby nie blokować ładowania
+        (async () => {
+            let assignments = await survey.GetAssignments();
+            if(assignments.length > 0) {
+                td_fills.textContent = (await assignments[0].CountAllAttempts()).toString();
+            } else {
+                td_fills.textContent = '0';
+            }
+        })();
+
+        let td_created = tr.insertCell(-1);
+        td_created.classList.add('center', 'xlarge-screen-only');
+        td_created.textContent = ToMediumFormat(survey.CreationDate, true);
+
+        let td_results = tr.insertCell(-1);
+        td_results.classList.add('wide-screen-only');
+        let btn_results = document.createElement('a');
+        td_results.appendChild(btn_results);
+        btn_results.classList.add('button', 'compact', 'todo');
+        btn_results.textContent = 'Wyniki';
+        btn_results.href = 'ankiety/wyniki/' + survey.Id;
+        btn_results.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/wyniki', survey));
+
+        let td_edit = tr.insertCell(-1);
+        td_edit.classList.add('wide-screen-only');
+        let btn_edit = document.createElement('a');
+        td_edit.appendChild(btn_edit);
+        btn_edit.classList.add('button', 'compact');
+        btn_edit.textContent = 'Edytuj';
+        btn_edit.href = 'ankiety/edytuj/' + survey.Id.toString();
+        btn_edit.addEventListener('click', (e) => HandleLinkClick(e, 'ankiety/edytuj', survey));
+
+        let td_more = tr.insertCell(-1);
+        let btn_more = document.createElement('button');
+        td_more.appendChild(btn_more);
+        btn_more.classList.add('compact');
+        btn_more.appendChild(new Icon('ellipsis-h').GetElement());
+        btn_more.addEventListener('click', (() => this.DisplaySurveyDetailsDialog(survey)).bind(this));
     }
 
     protected DisplaySurveyDetailsDialog(survey: Test) {

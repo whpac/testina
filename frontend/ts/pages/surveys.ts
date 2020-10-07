@@ -24,6 +24,7 @@ export default class SurveysPage extends Page {
         this.AppendChild(this.SurveyListCard);
 
         this.NoSurveysCreated = new NoSurveys(true);
+        this.NoSurveysCreated.AddEventListener('create-first-survey', this.SurveyListCard.CreateSurvey.bind(this.SurveyListCard));
         this.AppendChild(this.NoSurveysCreated);
     }
 

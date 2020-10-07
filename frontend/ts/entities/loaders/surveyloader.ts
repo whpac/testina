@@ -12,7 +12,7 @@ export default class SurveyLoader extends TestLoader {
     public static async LoadById(test_id: number) {
         let response = await XHR.PerformRequest('api/surveys/' + test_id.toString() + '?depth=3', 'GET');
         let json = response.Response as TestDescriptor;
-        return this.CreateFromDescriptor(json);
+        return SurveyLoader.CreateFromDescriptor(json);
     }
 
     /** Wczytuje wszystkie ankiety utworzone przez bieżącego użytkownika */

@@ -8,6 +8,7 @@ import Assignment from './assignment';
 import TestLoader from './loaders/testloader';
 import QuestionLoader from './loaders/questionloader';
 import AssignmentLoader, { AssignmentDescriptor } from './loaders/assignmentloader';
+import SurveyLoader from './loaders/surveyloader';
 
 /** Klasa reprezentująca test */
 export default class Test extends Entity implements PageParams {
@@ -205,19 +206,20 @@ export default class Test extends Entity implements PageParams {
      * @param name Nazwa testu
      * @param question_multiplier Mnożnik pytań
      * @param time_limit Limit czasu na rozwiązanie
+     * @param type Typ testu (test/ankieta)
      */
-    static async Create(name: string, question_multiplier: number, time_limit: number) {
+    static async Create(name: string, question_multiplier: number, time_limit: number, type: number = Test.TYPE_TEST, loader = TestLoader.LoadById) {
         let request_data = {
             name: name,
             question_multiplier: question_multiplier,
             time_limit: time_limit,
-            type: Test.TYPE_TEST
+            type: type
         };
         let result = await XHR.PerformRequest('api/tests', 'POST', request_data);
 
         if(result.Status != 201) throw result;
 
-        return TestLoader.LoadById(parseInt(result.ContentLocation));
+        return loader(parseInt(result.ContentLocation));
     }
 
     /** Usuwa test */
