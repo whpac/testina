@@ -91,6 +91,7 @@ export default class Navbar {
     protected CreateNavHeader() {
         let li = document.createElement('li');
         li.classList.add('header');
+        li.textContent = 'Testina';
         (async () => {
             li.textContent = (await UserLoader.GetCurrent(true))?.GetFullName() ?? 'Niezalogowany';
         })();
