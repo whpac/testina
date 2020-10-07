@@ -73,6 +73,11 @@ export default class FillSurveyPage extends Page {
             if(typeof params === 'number' || typeof params === 'string') this.Assignment = await AssignmentLoader.LoadById(params);
             else this.Assignment = params as Assignment;
 
+            if(this.Assignment.HasDeadlineExceeded()) {
+                new Toast('Termin na wypełnienie tej ankiety upłynął.').Show(0);
+                return;
+            }
+
             this.QuestionCards = [];
             this.QuestionWrapper.textContent = '';
 
