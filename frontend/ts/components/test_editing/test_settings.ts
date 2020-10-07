@@ -60,7 +60,7 @@ export default class TestSettings extends Card {
         question_multiplier_input_span.appendChild(this.QuestionMultiplierInput);
 
         // Link do pomocy
-        question_multiplier_input_span.appendChild(new HelpLink().GetElement());
+        question_multiplier_input_span.appendChild(new HelpLink('mnoznik_pytan').GetElement());
         this.AppendChild(question_multiplier_input_span);
 
         // Komentarz do mnożnika pytań
@@ -68,14 +68,14 @@ export default class TestSettings extends Card {
         question_multiplier_desc.classList.add('description', 'secondary');
         question_multiplier_desc.innerHTML =
             'Ta wartość oznacza, ile razy każde pytanie zostanie wyświetlone użytkownikowi. ' +
-            'Szczegółowy opis znajduje się w <a href="pomoc" class="todo" target="_blank">artykule pomocy</a>.';
+            'Szczegółowy opis znajduje się w <a href="pomoc#mnoznik_pytan" target="_blank">artykule pomocy</a>.';
         this.AppendChild(question_multiplier_desc);
 
         // Wybór limitu czasu
         let time_limit_fieldset = document.createElement('div');
         time_limit_fieldset.classList.add('fieldset');
         time_limit_fieldset.textContent = 'Limit czasu na podejście';
-        time_limit_fieldset.appendChild(new HelpLink().GetElement());
+        time_limit_fieldset.appendChild(new HelpLink('limit_czasu_na_podejscie').GetElement());
         time_limit_fieldset.appendChild(document.createElement('br'));
 
         // Pole radio - limit obecny

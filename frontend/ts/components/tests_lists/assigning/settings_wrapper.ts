@@ -43,7 +43,7 @@ export default class SettingsWrapper extends Component<'validationchanged'> {
 
         this.ShortDeadlineWarning = document.createElement('p');
         this.ShortDeadlineWarning.classList.add('warning-message', 'specific');
-        this.ShortDeadlineWarning.appendChild(new HelpLink().GetElement());
+        this.ShortDeadlineWarning.appendChild(new HelpLink('czas_moze_byc_za_krotki').GetElement());
         this.AppendChild(this.ShortDeadlineWarning);
 
         this.DeadlineInPastError = document.createElement('p');

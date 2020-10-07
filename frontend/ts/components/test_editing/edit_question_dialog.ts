@@ -106,7 +106,7 @@ export default class EditQuestionDialog extends Dialog {
         this.CountingFieldset = document.createElement('div');
         this.CountingFieldset.classList.add('fieldset');
         this.CountingFieldset.appendChild(document.createTextNode('Sposób liczenia punktów:'));
-        this.CountingFieldset.appendChild(new HelpLink().GetElement());
+        this.CountingFieldset.appendChild(new HelpLink('liczenie_punktow').GetElement());
         this.CountingFieldset.appendChild(document.createElement('br'));
 
         // Zero-jedynkowo - pole i etykieta
@@ -195,7 +195,7 @@ export default class EditQuestionDialog extends Dialog {
         this.AddContent(this.ErrorWrapper);
 
         this.SetHeader('Edytuj pytanie');
-        this.DisplayHelpButton();
+        this.DisplayHelpButton('edycja_pytan');
 
         this.SaveButton = document.createElement('button');
         this.SaveButton.textContent = 'Zapisz';
