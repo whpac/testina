@@ -22,6 +22,14 @@ class User extends Resource implements Schemas\User{
         ];
     }
 
+    public function GetDefaultKeys(): array{
+        return [
+            'id',
+            'first_name',
+            'last_name'
+        ];
+    }
+
     public function id(): string{
         return $this->User->GetId();
     }

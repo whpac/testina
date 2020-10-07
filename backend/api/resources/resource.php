@@ -46,6 +46,13 @@ abstract class Resource {
     }
 
     /**
+     * Zwraca tablicę nazw pól domyślnie zwracanych przez zasób
+     */
+    public function GetDefaultKeys(): array{
+        return $this->GetKeys();
+    }
+
+    /**
      * Sprawdza, czy pole o podanej nazwie istnieje
      * @param $key_name Nazwa pola
      */

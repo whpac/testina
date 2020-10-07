@@ -84,6 +84,32 @@ class Test extends Resource implements Schemas\Test{
         return $keys;
     }
 
+    public function GetDefaultKeys(): array{
+        $keys = [
+            'id',
+            'name',
+            'author_id',
+            'creation_date',
+            'time_limit',
+            'description',
+            'type',
+            'score_counting',
+            'final_title',
+            'final_text',
+            'is_deleted',
+            'question_multiplier',
+            'question_count'
+        ];
+
+        if($this->Test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId()){
+            $keys[] = 'questions';
+            $keys[] = 'assignment_count';
+            $keys[] = 'assignment_ids';
+        }
+
+        return $keys;
+    }
+
     public function id(): int{
         return $this->Test->GetId();
     }

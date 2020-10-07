@@ -16,7 +16,7 @@ class JsonFormatter extends Formatter {
             if($depth <= 0) return '{}';
             
             try{
-                $keys = $obj->GetKeys();
+                $keys = $obj->GetDefaultKeys();
 
                 $out = '{';
 
