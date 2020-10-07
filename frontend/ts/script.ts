@@ -59,8 +59,8 @@ try {
     pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
     pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
-    PageManager.RegisterHomePage(new HomePage());
-    PageManager.RegisterLoginPage(new LoginWithOfficePage());
+    PageManager.RegisterHomePage(() => new HomePage());
+    PageManager.RegisterLoginPage(() => new LoginWithOfficePage());
 
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
     AuthManager.AddEventListener('login', async () => {

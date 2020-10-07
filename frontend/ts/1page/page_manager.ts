@@ -17,9 +17,9 @@ let ContentRoot: HTMLElement;
 let Splash: (SplashScreen | null) = null;
 
 /** Strona główna */
-let HomePage: (IPage | null) = null;
+let HomePageGetter: ((() => IPage) | null) = null;
 /** Strona logowania */
-let LoginPage: (IPage | null) = null;
+let LoginPageGetter: ((() => IPage) | null) = null;
 
 /** Typ opisujący deskryptor stanu, zapisywany w historii przeglądarki */
 type StateDescriptor = {
@@ -123,11 +123,13 @@ async function DisplayPage(page_id: string, params?: PageParams): Promise<void> 
     CurrentPageId = page_id;
 
     if(!(await CurrentPage.IsAccessible())) {
-        if(HomePage !== null && await HomePage?.IsAccessible()) {
-            CurrentPage = HomePage;
+        let homepage = HomePageGetter?.();
+        let loginpage = LoginPageGetter?.();
+        if(HomePageGetter !== null && await homepage?.IsAccessible()) {
+            CurrentPage = homepage!;
             CurrentPageId = 'home';
-        } else if(LoginPage !== null && await LoginPage?.IsAccessible()) {
-            CurrentPage = LoginPage;
+        } else if(LoginPageGetter !== null && await loginpage?.IsAccessible()) {
+            CurrentPage = loginpage!;
             CurrentPageId = 'login';
         } else {
             CurrentPage = null;
@@ -161,12 +163,12 @@ async function PopStateHandler(e: PopStateEvent) {
     GoToPage(page_id, unserialized_params);
 }
 
-export function RegisterHomePage(page: IPage) {
-    HomePage = page;
+export function RegisterHomePage(page: () => IPage) {
+    HomePageGetter = page;
 }
 
-export function RegisterLoginPage(page: IPage) {
-    LoginPage = page;
+export function RegisterLoginPage(page: () => IPage) {
+    LoginPageGetter = page;
 }
 
 /**
