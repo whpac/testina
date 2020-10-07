@@ -41,7 +41,7 @@ class User extends Resource implements Schemas\User{
         $out_groups = [];
 
         foreach($groups as $group){
-            $out_groups[] = new Group($group);
+            $out_groups[$group->GetId()] = new Group($group);
         }
 
         $collection = new Collection($out_groups);
