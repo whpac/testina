@@ -44,7 +44,6 @@ export default class Navbar {
         li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
         ul.appendChild(this.CreateNavHeader());
-        ul.appendChild(this.CreateNavLink('Strona główna', 'home', 'fa-home'));
         ul.appendChild(this.CreateNavLink('Testy', 'testy/lista', 'fa-pencil-square-o'));
         ul.appendChild(this.CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'));
         ul.appendChild(this.CreateNavLink('Ankiety', 'ankiety', 'fa-bar-chart'));

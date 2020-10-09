@@ -2,7 +2,6 @@ import Navbar from './components/chrome/navbar';
 
 import * as PageManager from './1page/page_manager';
 import SplashScreen from './1page/splash_screen';
-import HomePage from './pages/home';
 import LibraryPage from './pages/library';
 import EditTestPage from './pages/edit_test';
 import AssignedTestsListPage from './pages/assigned_tests_list';
@@ -49,7 +48,6 @@ try {
     pages.RegisterPage(/^ankiety\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditSurveyPage() });
     pages.RegisterPage(/^ankiety\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new SurveyResultsPage() });
     pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9a-zA-Z]+)?$/, { CreatePage: () => new FillSurveyPage() });
-    pages.RegisterPage('home', { CreatePage: () => new HomePage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
     pages.RegisterPage('konto', { CreatePage: () => new AccountPage() });
     pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
@@ -61,7 +59,7 @@ try {
     pages.RegisterPage(/^testy\/wyniki(\/[0-9]+)?$/, { CreatePage: () => new ResultsPage() });
     pages.RegisterPage('zaloguj/office', { CreatePage: () => new LoginWithOfficePage() });
 
-    PageManager.RegisterHomePage(() => new HomePage());
+    PageManager.RegisterHomePage(() => new AssignedTestsListPage());
     PageManager.RegisterLoginPage(() => new LoginWithOfficePage());
 
     // Zarejestruj procedury do wykonania po za- i wylogowaniu
@@ -107,7 +105,7 @@ try {
  */
 export async function LoadInitialPage() {
     // Domyślna strona - w przypadku, gdy konkretny adres nie zostanie zdefiniowany
-    let default_page = 'home';
+    let default_page = 'testy/lista';
     let initial_page = default_page;
     let url_path = decodeURI(ReadPageFromURL());
 
