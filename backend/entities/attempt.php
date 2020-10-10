@@ -41,7 +41,7 @@ class Attempt extends Entity {
 
     public /* User */ function GetUser(){
         $this->FetchIfNeeded();
-        return new \Auth\ExternalLogin\OfficeUser($this->user_id);
+        return new \Entities\User($this->user_id);
     }
 
     public /* Assignment */ function GetAssignment(){

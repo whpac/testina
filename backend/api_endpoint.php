@@ -26,7 +26,7 @@ SessionManager::SetKeyProvider($kp);
 SessionManager::Start(36000);
 
 // Inicjalizacja menedżera kont
-AuthManager::RegisterUserFactory(new Auth\ExternalLogin\OfficeUserFactory());
+AuthManager::RegisterUserFactory(new Entities\UserFactory());
 AuthManager::RestoreCurrentUser();
 
 $SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];

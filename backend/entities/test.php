@@ -61,7 +61,7 @@ class Test extends EntityWithFlags {
 
     public /* User */ function GetAuthor(){
         $this->FetchIfNeeded();
-        return new \Auth\ExternalLogin\OfficeUser($this->author_id);
+        return new \Entities\User($this->author_id);
     }
 
     public /* DateTime */ function GetCreationDate(){

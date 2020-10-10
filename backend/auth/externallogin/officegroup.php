@@ -4,7 +4,7 @@ namespace Auth\ExternalLogin;
 use Log\Logger;
 use Log\LogChannels;
 
-class OfficeGroup implements \Auth\Users\Group{
+class OfficeGroup{
     protected /* int */ $Id = null;
     protected /* string */ $Name = null;
     protected /* User[] */ $Members = null;
@@ -26,7 +26,7 @@ class OfficeGroup implements \Auth\Users\Group{
     }
 
     public /* User[] */ function GetUsers(): array{
-        if(is_null($this->Members)) $this->FetchMembers();
+        if(is_null($this->Members)) self::FetchMembers($this->GetId());
         return $this->Members;
     }
 
@@ -60,13 +60,12 @@ class OfficeGroup implements \Auth\Users\Group{
         $this->Name = $parsed['displayName'];
     }
 
-    protected function FetchMembers(){
-        if($this->GetId() === 0){
-            $this->Members = [];
-            return;
+    public static function FetchMembers($group_id){
+        if($group_id === '0'){
+            return [];
         }
 
-        $url = 'https://graph.microsoft.com/v1.0/groups/'.$this->GetId().'/members?$select=id,givenName,surname';
+        $url = 'https://graph.microsoft.com/v1.0/groups/'.$group_id.'/members?$select=id,givenName,surname';
 
         // Opcje żądania
         $options = array(
@@ -76,7 +75,7 @@ class OfficeGroup implements \Auth\Users\Group{
             )
         );
 
-        $this->Members = [];
+        $members = [];
         $context = stream_context_create($options);
 
         do{
@@ -89,11 +88,19 @@ class OfficeGroup implements \Auth\Users\Group{
 
             $parsed = json_decode($result, true);
 
-            foreach($parsed['value'] as $group){
-                $this->Members[] = new OfficeUser($group['id'], $group['givenName'], $group['surname']);
+            foreach($parsed['value'] as $user){
+                $members[] = new \Entities\User([
+                    'user_id' => $user['id'],
+                    'first_name' => $user['givenName'],
+                    'last_name' => $user['surname'],
+                    'flags' => 0,
+                    'expire_date' => (new \DateTime())->format('Y-m-d H:i:s')
+                ]);
             }
             $url = $parsed['@odata.nextLink'];
         }while(isset($parsed['@odata.nextLink']));
+
+        return $members;
     }
 
     protected function PopulateDefaults(){
@@ -126,7 +133,12 @@ class OfficeGroup implements \Auth\Users\Group{
             $parsed = json_decode($result, true);
 
             foreach($parsed['value'] as $group){
-                $groups[] = new self($group['id'], $group['displayName']);
+                $groups[] = new \Entities\Group([
+                    'group_id' => $group['id'],
+                    'name' => $group['displayName'],
+                    'flags' => 0,
+                    'expire_date' => (new \DateTime())->format('Y-m-d H:i:s')
+                ]);
             }
             $url = $parsed['@odata.nextLink'];
         }while(isset($parsed['@odata.nextLink']));

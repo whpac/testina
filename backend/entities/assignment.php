@@ -85,7 +85,7 @@ class Assignment extends Entity {
 
     public /* User */ function GetAssigningUser(){
         $this->FetchIfNeeded();
-        return new \Auth\ExternalLogin\OfficeUser($this->assigning_user_id);
+        return new \Entities\User($this->assigning_user_id);
     }
 
     public /* bool */ function HasTimeLimitExceeded(){
@@ -138,12 +138,12 @@ class Assignment extends Entity {
 
         $targets = [];
         foreach($this->targets as $target){
-            switch($target[1]){
+            switch(intval($target[1])){
                 case self::TARGET_TYPE_USER:
-                    $targets[] = new \Auth\ExternalLogin\OfficeUser($target[0]);
+                    $targets[] = new \Entities\User($target[0]);
                 break;
                 case self::TARGET_TYPE_GROUP:
-                    $targets[] = new \Auth\ExternalLogin\OfficeGroup($target[0]);
+                    $targets[] = new \Entities\Group($target[0]);
                 break;
                 case self::TARGET_TYPE_LINK:
                     $targets[] = $target[0];

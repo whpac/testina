@@ -23,12 +23,12 @@ abstract class Entity {
         }
 
         $row = [];
-        if(is_numeric($entity_descriptor)){
+        if(is_numeric($entity_descriptor) || is_string($entity_descriptor)){
             if(static::AllowsDeferredFetch()){
                 $this->id = $entity_descriptor;
                 return;
             }else{
-                $row = self::FetchEntity(static::GetTableName(), $entity_descriptor);
+                $row = static::FetchEntity(static::GetTableName(), $entity_descriptor);
             }
         }elseif(is_array($entity_descriptor)){
             if(static::AllowsCreationFromArray()) $row = $entity_descriptor;
@@ -47,7 +47,7 @@ abstract class Entity {
     /**
      * Odczytuje z bazy danych tabelę właściwości odpowiadających identyfikatorowi
      */
-    protected static /* mixed[] */ function FetchEntity(/* string */ $table_name, /* int */ $entity_id){
+    protected static /* mixed[] */ function FetchEntity(string $table_name, $entity_id){
         $result = DatabaseManager::GetProvider()
                 ->Table($table_name)
                 ->Select()
@@ -79,7 +79,7 @@ abstract class Entity {
         if($this->_is_populated) return;
         if(isset($prop)) return;
 
-        $row = self::FetchEntity(static::GetTableName(), $this->_entity_descriptor);
+        $row = static::FetchEntity(static::GetTableName(), $this->_entity_descriptor);
         $this->PopulateProperties($row);
     }
 

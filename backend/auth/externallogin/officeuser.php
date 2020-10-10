@@ -4,7 +4,7 @@ namespace Auth\ExternalLogin;
 use Log\Logger;
 use Log\LogChannels;
 
-class OfficeUser extends ExternalUser {
+class OfficeUser {
     protected $Id = null;
     protected $FirstName = null;
     protected $LastName = null;
@@ -35,7 +35,11 @@ class OfficeUser extends ExternalUser {
     }
 
     public /* Group[] */ function GetGroups(): array{
-        $url = 'https://graph.microsoft.com/v1.0/users/'.$this->GetId().'/memberOf/?$select=id,displayName';
+        return self::GetGroupsForUser($this->GetId());
+    }
+
+    public static /* Group[] */ function GetGroupsForUser($user_id): array{
+        $url = 'https://graph.microsoft.com/v1.0/users/'.$user_id.'/memberOf/?$select=id,displayName';
 
         // Opcje żądania
         $options = array(
@@ -59,7 +63,12 @@ class OfficeUser extends ExternalUser {
             $parsed = json_decode($result, true);
 
             foreach($parsed['value'] as $group){
-                $groups[] = new OfficeGroup($group['id'], $group['displayName']);
+                $groups[] = new \Entities\Group([
+                    'group_id' => $group['id'],
+                    'name' => $group['displayName'],
+                    'flags' => 0,
+                    'expire_date' => (new \DateTime())->format('Y-m-d H:i:s')
+                ]);
             }
             $url = $parsed['@odata.nextLink'];
         }while(isset($parsed['@odata.nextLink']));
@@ -138,7 +147,13 @@ class OfficeUser extends ExternalUser {
             $parsed = json_decode($result, true);
 
             foreach($parsed['value'] as $user){
-                $users[] = new self($user['id'], $user['givenName'], $user['surname']);
+                $users[] = new \Entities\User([
+                    'user_id' => $user['id'],
+                    'first_name' => $user['givenName'],
+                    'last_name' => $user['surname'],
+                    'flags' => 0,
+                    'expire_date' => (new \DateTime())->format('Y-m-d H:i:s')
+                ]);
             }
             $url = $parsed['@odata.nextLink'];
         }while(isset($parsed['@odata.nextLink']));

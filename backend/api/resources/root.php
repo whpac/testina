@@ -53,7 +53,7 @@ class Root extends Resource implements Schemas\Root {
         if(!$this->GetContext()->IsAuthorized()){
             throw new Exceptions\AuthorizationRequired('groups');
         }
-        $groups = \Auth\ExternalLogin\OfficeGroup::GetAll();
+        $groups = \Entities\Group::GetAll();
 
         $out_groups = [];
 
@@ -120,7 +120,7 @@ class Root extends Resource implements Schemas\Root {
         $u = new User($current_user);
         $out_users['current'] = $u;
 
-        $all_users = \Auth\ExternalLogin\OfficeUser::GetAll();
+        $all_users = \Entities\User::GetAll();
         foreach($all_users as $user){
             $out_users[$user->GetId()] = new User($user);
         }
