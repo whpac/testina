@@ -11,9 +11,16 @@ class Root extends Resource implements Schemas\Root {
             'assignments',
             'groups',
             'session',
+            'static_data',
             'surveys',
             'tests',
             'users'
+        ];
+    }
+
+    public function GetDefaultKeys(): array{
+        return [
+            'session'
         ];
     }
 
@@ -70,6 +77,12 @@ class Root extends Resource implements Schemas\Root {
         $session = new Session();
         $session->SetContext($this->GetContext());
         return $session;
+    }
+
+    public function static_data(): Schemas\StaticData{
+        $static_data = new StaticData();
+        $static_data->SetContext($this->GetContext());
+        return $static_data;
     }
 
     public function surveys(): Schemas\Collection{
