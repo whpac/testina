@@ -208,5 +208,27 @@ class Group extends EntityWithFlags implements \Auth\Users\Group{
 
         return $groups;
     }
+
+    public static function ClearExpiredCache(){
+        DatabaseManager::GetProvider()
+                ->Table(TABLE_USERS)
+                ->Delete()
+                ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
+                ->Run();
+
+        DatabaseManager::GetProvider()
+                ->Table(TABLE_GROUP_MEMBERS)
+                ->Delete()
+                ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
+                ->Run();
+
+        DatabaseManager::GetProvider()
+                ->Table(TABLE_CACHE)
+                ->Update()
+                ->Set('value', '0')
+                ->Set('expire_date', '1970-01-01 00:00:00')
+                ->Where('key', '=', 'users_all')
+                ->Run();
+    }
 }
 ?>

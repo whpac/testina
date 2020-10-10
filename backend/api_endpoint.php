@@ -158,13 +158,18 @@ try{
     }
 }
 
+// Następne funkcje usuwają przeterminowane tokeny i czyszczą pamięć podręczną
+// Znajdują się tutaj, żeby mogły być wykonywane jak najczęściej
+// Szczególnie ważne jest usuwanie tokenów odświeżania
 try{
-    // Usuwa przeterminowane tokeny uwierzytelniania
-    // Ta funkcja znajduje się tutaj, by być wykonywaną jak najczęściej
     Auth\ExternalLogin\TokenManager::RemoveExpiredTokens();
-}catch(\Exception $e){
-
-}
+}catch(\Exception $e){ }
+try{
+    \Entities\User::ClearExpiredCache();
+}catch(\Exception $e){ }
+try{
+    \Entities\Group::ClearExpiredCache();
+}catch(\Exception $e){ }
 
 
 /**
