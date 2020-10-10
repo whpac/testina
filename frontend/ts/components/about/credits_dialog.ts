@@ -1,7 +1,13 @@
 import Dialog from '../basic/dialog';
 import Icon from '../basic/icon';
 import LicenseDialog from './license_dialog';
-import { License } from '../../utils/license_store';
+
+enum License {
+    ApacheLicense2 = 'apache2',
+    CreativeCommons_BY_3 = 'cc_by_3',
+    MIT = 'mit',
+    SIL_OpenFontLicense = 'sil_ofl'
+}
 
 export default class CreditsDialog extends Dialog {
     protected RowsContainer: HTMLElement;

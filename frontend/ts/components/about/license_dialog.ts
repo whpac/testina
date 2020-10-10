@@ -1,5 +1,5 @@
 import Dialog from '../basic/dialog';
-import LicenseStore, { License } from '../../utils/license_store';
+import * as XHR from '../../utils/xhr';
 
 export default class LicenseDialog extends Dialog {
     protected LicenseText: HTMLElement;
@@ -21,7 +21,17 @@ export default class LicenseDialog extends Dialog {
         this.AddButton(close_button);
     }
 
-    public Populate(license: License, author: string) {
-        this.LicenseText.textContent = LicenseStore.GetLicenseText(license, author);
+    public async Populate(license: string, author: string) {
+        this.LicenseText.textContent = 'Wczytywanie...';
+        try {
+            let license_text = (await XHR.PerformRequest('api/static_data/licenses/' + license.toString())).Response as string;
+            license_text = license_text.replace('%author%', author);
+            this.LicenseText.textContent = license_text;
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = e.Message;
+
+            this.LicenseText.textContent = 'Nie udało się wczytać treści licencji' + message;
+        }
     }
 }
