@@ -31,9 +31,11 @@ export default class AccountCard extends Card {
         Testina przetwarza następujące dane o Tobie: Twoje imię i nazwisko, rodzaj gramatyczny
         imienia (w celu dopasowania form komunikatów), unikatowy identyfikator, powiązany z Twoim
         kontem Office, oraz grupy, do których należysz. Te dane są pobierane bezpośrednio z serwera
-        usługi Microsoft Graph (punktu dostępowego do danych z Office 365) i nie są zapisywane przez
-        Testinę nigdzie po drodze. Aplikacja nie ma dostępu do Twojego loginu ani hasła, ani pozostałych
-        danych przechowywanych w usłudze Office, innych niż wcześniej wymienione.`;
+        usługi Microsoft Graph (punktu dostępowego do danych z Office 365). Testina przechowuje je
+        potem przez okres przynajmniej 12 godzin, aby zmniejszyć ruch sieciowy do usługi zewnętrznej
+        oraz po to, by zmniejszyć czas oczekiwania na załadowanie się poszczególnych podstron. Aplikacja
+        nie ma dostępu do Twojego loginu ani hasła, ani pozostałych danych przechowywanych w usłudze
+        Office, innych niż wcześniej wymienione.`;
         this.AppendChild(processed_data_notice);
     }
 
