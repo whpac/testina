@@ -206,8 +206,12 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
                 await update_awaiter;
             } else {
                 // Usuń pytanie
-                return this.Answer.Remove();
+                let remove_awaiter = this.Answer.Remove();
                 // Zniszczyć ten wiersz
+                this.Answer = undefined;
+                this.GetElement().style.display = 'none';
+
+                return remove_awaiter;
             }
         } else {
             if(!this.IsDeleted) {
@@ -221,6 +225,7 @@ export default class SurveyAnswerRow extends Component<"moveup" | "movedown" | "
                 this.Answer = await answer_creator;
             } else {
                 // Zniszczyć ten wiersz
+                this.GetElement().style.display = 'none';
             }
         }
     }

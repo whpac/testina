@@ -320,8 +320,12 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                 await update_awaiter;
             } else {
                 // Usuń pytanie
-                return this.Question.Remove();
+                let remove_awaiter = this.Question.Remove();
                 // Zniszczyć tę kartę
+                this.Question = undefined;
+                this.GetElement().style.display = 'none';
+
+                return remove_awaiter;
             }
         } else {
             if(!this.IsDeleted) {
@@ -342,6 +346,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                 await this.SaveAnswers();
             } else {
                 // Zniszczyć tę kartę
+                this.GetElement().style.display = 'none';
             }
         }
     }
