@@ -6,7 +6,7 @@ import Card from '../basic/card';
 
 export default class SurveyFinalCard extends Card {
     protected HeadingField: HTMLInputElement | HTMLHeadingElement;
-    protected DescriptionField: HTMLElement;
+    protected ContentField: HTMLElement;
     protected Survey: Test | undefined;
 
     public constructor(edit_mode: boolean = false) {
@@ -25,31 +25,31 @@ export default class SurveyFinalCard extends Card {
             description.placeholder = 'Tutaj wpisz tekst, który zostanie wyświetlony po zakończeniu wypełniania ankiety.';
             description.addEventListener('change', () => NavigationPrevention.Prevent('survey-editor'));
             AutoGrow(description);
-            this.DescriptionField = description;
+            this.ContentField = description;
         } else {
             this.HeadingField = document.createElement('h2');
-            this.DescriptionField = document.createElement('p');
+            this.ContentField = document.createElement('p');
         }
         this.AppendChild(this.HeadingField);
-        this.AppendChild(this.DescriptionField);
+        this.AppendChild(this.ContentField);
     }
 
     public Populate(survey: Test) {
         this.Survey = survey;
 
-        if(this.HeadingField instanceof HTMLInputElement && this.DescriptionField instanceof HTMLTextAreaElement) {
+        if(this.HeadingField instanceof HTMLInputElement && this.ContentField instanceof HTMLTextAreaElement) {
             this.HeadingField.value = survey.FinalTitle;
-            this.DescriptionField.value = survey.FinalText ?? '';
-            this.DescriptionField.style.height = ((survey.FinalText ?? '').split('\n').length * 1.5).toString() + 'em';
+            this.ContentField.value = survey.FinalText ?? '';
+            this.ContentField.style.height = ((survey.FinalText ?? '').split('\n').length * 1.5).toString() + 'em';
         } else {
             this.HeadingField.textContent = survey.FinalTitle;
 
             let rows = (survey.FinalText ?? '').split('\n');
-            this.DescriptionField.textContent = '';
+            this.ContentField.textContent = '';
 
             for(let i = 0; i < rows.length; i++) {
-                if(i != 0) this.DescriptionField.appendChild(document.createElement('br'));
-                this.DescriptionField.appendChild(document.createTextNode(rows[i]));
+                if(i != 0) this.ContentField.appendChild(document.createElement('br'));
+                this.ContentField.appendChild(document.createTextNode(rows[i]));
             }
         }
     }
@@ -59,13 +59,17 @@ export default class SurveyFinalCard extends Card {
      */
     public async Save() {
         if(this.Survey === undefined) return;
-        if(!(this.HeadingField instanceof HTMLInputElement && this.DescriptionField instanceof HTMLTextAreaElement)) return;
+        if(!(this.HeadingField instanceof HTMLInputElement && this.ContentField instanceof HTMLTextAreaElement)) return;
 
         let old_title = this.Survey.FinalTitle;
         let old_text = this.Survey.FinalText;
 
         this.Survey.FinalTitle = this.HeadingField.value;
-        this.Survey.FinalText = this.DescriptionField.value;
+        this.Survey.FinalText = this.ContentField.value;
+
+        // Jeżeli nie zmodyfikowano, nie zapisuj (bo nie ma po co)
+        if(this.HeadingField.value == old_title &&
+            this.ContentField.value == old_text) return;
 
         try {
             await TestSaver.Update(this.Survey);

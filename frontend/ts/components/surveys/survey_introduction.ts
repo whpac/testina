@@ -67,6 +67,10 @@ export default class SurveyIntroduction extends Card {
         this.Survey.Name = this.HeadingField.value;
         this.Survey.Description = this.DescriptionField.value;
 
+        // Jeżeli nie zmodyfikowano, nie zapisuj (bo nie ma po co)
+        if(this.HeadingField.value == old_name &&
+            this.DescriptionField.value == old_description) return;
+
         try {
             await TestSaver.Update(this.Survey);
         } catch(e) {

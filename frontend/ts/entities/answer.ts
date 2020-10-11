@@ -82,11 +82,17 @@ export default class Answer extends Entity {
      * @param correct Czy odpowiedź jest poprawna
      */
     async Update(text: string, correct: boolean, order?: number) {
+        // Jeżeli wszystkie właściwości są niezmienione, zakończ
+        if(this.Text === text &&
+            this.Correct === correct &&
+            this.Order === order) return;
+
         let request_data = {
             text: text,
             correct: correct,
             order: order ?? null
         };
+
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this), 'PUT', request_data);
         if(result.Status == 204) {
             this.Text = text;

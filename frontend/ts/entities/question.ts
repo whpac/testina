@@ -213,20 +213,34 @@ export default class Question extends Entity {
      * @param footer Tekst w stopce
      * @param order Numer kolejny pytania w teście
      */
-    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string, order?: number, is_optional?: boolean, has_na?: boolean, has_other?: boolean) {
-        if(footer == '') footer = undefined;
+    async Update(text: string, type: number, points: number, points_counting: number, max_typos: number, footer?: string | null, order?: number, is_optional?: boolean, has_na?: boolean, has_other?: boolean) {
+        if(footer == '' || footer === undefined) footer = null;
+
+        // Jeżeli wszystkie właściwości są niezmienione, zakończ
+        if(this.Text == text &&
+            this.Type == type &&
+            this.Points == points &&
+            this.PointsCounting == points_counting &&
+            this.MaxTypos == max_typos &&
+            this.Footer == (footer ?? '') &&
+            this.Order === order &&
+            this.IsOptional === is_optional &&
+            this.HasNonApplicableAnswer === has_na &&
+            this.HasOtherAnswer === has_other) return;
+
         let request_data = {
             text: text,
             type: type,
             points: points,
             points_counting: points_counting,
             max_typos: max_typos,
-            footer: footer ?? null,
+            footer: footer,
             order: order,
             is_optional: is_optional,
             has_na: has_na,
             has_other: has_other
         };
+
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Test) + '/questions/' + this.Id.toString(), 'PUT', request_data);
         if(result.Status == 204) {
             this.Text = text;
@@ -234,7 +248,7 @@ export default class Question extends Entity {
             this.Points = points;
             this.PointsCounting = points_counting;
             this.MaxTypos = max_typos;
-            this._Footer = footer ?? null;
+            this._Footer = footer;
             this._Order = order ?? 0;
             this.FireEvent('change');
         } else throw result;
