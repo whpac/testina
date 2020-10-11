@@ -2,12 +2,21 @@
 <svg width="130" height="170" viewBox="0 0 130 170" xmlns="http://www.w3.org/2000/svg">
     <style type="text/css" >
         <![CDATA[
+
         * {
-           stroke:url(#gradient-dark);
+           stroke:url(#gradient-light);
            stroke-width: 3;
            stroke-linecap: round;
            fill: none;
         }
+
+        @media (prefers-color-scheme: dark){
+            * {stroke: url(#gradient-dark);}
+        }
+
+        html.force-dark * {stroke: url(#gradient-dark);}
+        html.force-light * {stroke: url(#gradient-light);}
+
         ]]>
     </style>
     <defs>
@@ -22,7 +31,7 @@
             <stop stop-color="#7e57c2" offset="100%" />
         </linearGradient>
     </defs>
-    <rect x="0" y="0" width="130" height="170" style="stroke:#000; stroke-width:1; fill:#222; display:none;" />
+
     <!-- Zarys kartki -->
     <path 
         d=" M 10 10

@@ -4,7 +4,7 @@
         <![CDATA[
 
         * {
-           stroke:url(#gradient-light);
+           stroke: url(#gradient-light);
            stroke-width: 3;
            stroke-linecap: round;
            stroke-linejoin: round;
@@ -12,8 +12,11 @@
         }
 
         @media (prefers-color-scheme: dark){
-            * {stroke:url(#gradient-dark);}
+            * {stroke: url(#gradient-dark);}
         }
+
+        html.force-dark * {stroke: url(#gradient-dark);}
+        html.force-light * {stroke: url(#gradient-light);}
 
         .green {stroke: #0b0;}
 

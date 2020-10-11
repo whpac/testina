@@ -15,6 +15,9 @@
             * {stroke: url(#gradient-dark);}
         }
 
+        html.force-dark * {stroke: url(#gradient-dark);}
+        html.force-light * {stroke: url(#gradient-light);}
+
         ]]>
     </style>
 
