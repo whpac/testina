@@ -50,15 +50,46 @@ export function Hash(str: string, seed: number = 0) {
 }
 
 /**
- * Generuje pseudolosowy ciąg znaków o podanej długości. Ciąg wynikowy składa się z zakresu [a-zA-Z0-9].
- * @param length Długość wynikowego ciągu znaków
+ * Dekoduje tekst zapisany z użyciem base64
+ * @param base64 Zakodowany tekst
  */
-/*export function RandomString(length: number) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for(var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+export function Base64Decode(base64: string): string {
+    let ascii = window.atob(base64);
+    let utf = AsciiToUtf8(ascii);
+    return utf;
+}
+
+/**
+ * Przekształca tekst w ASCII na UTF-8
+ * @param ascii Tekst ASCII
+ */
+function AsciiToUtf8(ascii: string) {
+    let utf = '';
+    let char_code = 0;
+    let code_point = 0;
+    let chars_to_join = 0;
+    for(let i = 0; i < ascii.length; i++) {
+        char_code = ascii.charCodeAt(i);
+        if((char_code & 0x80) == 0x80) {
+            if((char_code & 0xf0) == 0xf0) {
+                chars_to_join = 4;
+                code_point = (char_code & 0x07);
+            } else if((char_code & 0xe0) == 0xe0) {
+                chars_to_join = 3;
+                code_point = (char_code & 0x0f);
+            } else if((char_code & 0xc0) == 0xc0) {
+                chars_to_join = 2;
+                code_point = (char_code & 0x1f);
+            } else {
+                code_point = (code_point << 6) + (char_code & 0x3f);
+            }
+            chars_to_join--;
+            if(code_point == 0) throw 'Nie można przekonwertować ASCII na UTF-8: Natrafiono na błędną sekwencję bajtów.';
+        } else {
+            code_point = (char_code & 0x7f);
+            chars_to_join = 0;
+        }
+        if(chars_to_join == 0) utf += String.fromCodePoint(code_point);
     }
-    return result;
-}*/
+    return utf;
+}

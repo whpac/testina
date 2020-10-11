@@ -2,6 +2,8 @@ import MalformedResponseException from '../exceptions/malformed_response';
 import FetchingErrorException from '../exceptions/fetching_error';
 import CacheManager, { CacheStorages } from '../cache/cache_manager';
 import NetworkErrorException from '../exceptions/network_error';
+import XHROptions from './xhr_options';
+import JsonDeserializer from './deserializers/json_deserializer';
 
 type XHRResult = {
     Status: number;
@@ -19,15 +21,35 @@ export default class XHR {
      * Wykonuje zapytanie pod podany adres URL i zwraca odpowiedź sformatowaną jako JSON
      * @param url URL, do którego należy wysłać zapytanie
      * @param method Metoda zapytania (domyślnie GET)
+     * @param options Opcje żądania
      * @param request_data Dane przesyłane razem z zapytaniem, zostaną zserializowane jako JSON
      * @param skip_cache Czy pominąć odczyt odpowiedzi z pamięci podręcznej (dotyczy tylko zapytań GET)
      */
-    public static PerformRequest(url: string, method?: string, request_data?: any, skip_cache: boolean = false) {
-        return new Promise<XHRResult>(async (resolve, reject) => {
-            method = (method ?? 'GET').toUpperCase();
-            let request = new Request(url, { method: method });
+    public static PerformRequest(url: string, options?: XHROptions): Promise<XHRResult>;
+    public static PerformRequest(url: string, method?: string, request_data?: any, skip_cache?: boolean): Promise<XHRResult>;
+    public static PerformRequest(url: string, method?: string | XHROptions, request_data?: any, skip_cache: boolean = false): Promise<XHRResult> {
+        let options: XHROptions = {
+            Method: 'GET',
+            ResponseDeserializer: new JsonDeserializer(),
+            RequestData: undefined,
+            SkipCache: false
+        };
+        if(typeof method == 'string' || method === undefined) {
+            options.Method = method;
+            options.RequestData = request_data;
+            options.SkipCache = skip_cache;
+        } else {
+            options = Object.assign(options, method);
+        }
 
-            if(method == 'GET' && !skip_cache) {
+        return new Promise<XHRResult>(async (resolve, reject) => {
+            options.Method = (options.Method ?? 'GET').toUpperCase();
+
+            let headers = new Headers();
+            headers.append('Accept', options.ResponseDeserializer!.GetAcceptableMimeTypes());
+            let request = new Request(url, { method: options.Method, headers: headers });
+
+            if(options.Method == 'GET' && !options.SkipCache) {
                 let cache = await CacheManager.Open(CacheStorages.Entities);
                 let resource = await cache.GetResource(request);
                 if(resource !== undefined) {
@@ -35,7 +57,7 @@ export default class XHR {
                         return resolve({
                             Status: resource.status,
                             StatusText: resource.statusText,
-                            Response: JSON.parse(await resource.text()),
+                            Response: options.ResponseDeserializer!.Parse(await resource.text()),
                             ContentLocation: resource.headers.get('Content-Location') ?? '',
                             FromCache: true
                         });
@@ -48,21 +70,23 @@ export default class XHR {
                 return reject(new NetworkErrorException('Brak połączenia z internetem.'));
             }
 
-            if(method != 'GET') {
+            if(options.Method != 'GET') {
                 let cache = await CacheManager.Open(CacheStorages.Entities);
-                await cache.InvalidateUrl(request.url, method == 'DELETE');
+                await cache.InvalidateUrl(request.url, options.Method == 'DELETE');
             }
 
             let xhr = new XMLHttpRequest();
-            xhr.open(method, url, true);
-            xhr.setRequestHeader('Accept', 'application/json');
-            xhr.onreadystatechange = XHR.OnReadyStateChange(request, resolve, reject);
+            xhr.open(options.Method, url, true);
+            for(let h of headers) {
+                xhr.setRequestHeader(h[0], h[1]);
+            }
+            xhr.onreadystatechange = XHR.OnReadyStateChange(request, resolve, reject, options);
             xhr.onerror = () => { reject(new NetworkErrorException('Wystąpił błąd połączenia internetowego.')); };
 
             // Zserializuj dane żądania
             let serialized_data: (string | null) = null;
-            if(request_data !== undefined) {
-                serialized_data = JSON.stringify(request_data);
+            if(options.RequestData !== undefined) {
+                serialized_data = JSON.stringify(options.RequestData);
                 xhr.setRequestHeader('Content-Type', 'application/json');
             }
 
@@ -76,7 +100,7 @@ export default class XHR {
      * @param resolve Funkcja, którą należy wywołać, by spełnić Promise
      * @param reject Funkcja, którą należy wywołać, by odrzucić Promise
      */
-    protected static OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: RejectFunction) {
+    protected static OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: RejectFunction, options: XHROptions) {
         return async function (this: XMLHttpRequest) {
             let xhr = this;
             if(xhr.readyState != 4) return;
@@ -86,7 +110,7 @@ export default class XHR {
                 let content_location = xhr.getResponseHeader('Content-Location') ?? '';
                 if(xhr.responseText !== '') {
                     try {
-                        parsed_json = JSON.parse(xhr.responseText);
+                        parsed_json = options.ResponseDeserializer!.Parse(xhr.responseText);
                     } catch(e) {
                         console.error('Odpowiedź serwera zawiera niepoprawny JSON');
                         return reject(new MalformedResponseException('Serwer zwrócił odpowiedź w nieznanym formacie.', {
@@ -120,7 +144,7 @@ export default class XHR {
                 let parsed_json: any = {};
                 if(xhr.responseText !== '') {
                     try {
-                        parsed_json = JSON.parse(xhr.responseText);
+                        parsed_json = options.ResponseDeserializer!.Parse(xhr.responseText);
                     } catch(e) { }
                 }
 
