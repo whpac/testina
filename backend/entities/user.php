@@ -242,25 +242,45 @@ class User extends EntityWithFlags implements \Auth\Users\User {
     }
 
     public static function ClearExpiredCache(){
-        DatabaseManager::GetProvider()
+        $result_users = DatabaseManager::GetProvider()
                 ->Table(TABLE_USERS)
-                ->Delete()
+                ->Select(['user_id'])
                 ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
                 ->Run();
-
-        DatabaseManager::GetProvider()
+        $result_members = DatabaseManager::GetProvider()
                 ->Table(TABLE_GROUP_MEMBERS)
-                ->Delete()
+                ->Select(['user_id'])
                 ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
                 ->Run();
 
-        DatabaseManager::GetProvider()
-                ->Table(TABLE_CACHE)
-                ->Update()
-                ->Set('value', '0')
-                ->Set('expire_date', '1970-01-01 00:00:00')
-                ->Where('key', '=', 'users_all')
-                ->Run();
+        $are_expired_users = ($result_users->num_rows > 0);
+        $are_expired_members = ($result_members->num_rows > 0);
+
+        if($are_expired_users){
+            DatabaseManager::GetProvider()
+                    ->Table(TABLE_USERS)
+                    ->Delete()
+                    ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
+                    ->Run();
+        }
+
+        if($are_expired_members){
+            DatabaseManager::GetProvider()
+                    ->Table(TABLE_GROUP_MEMBERS)
+                    ->Delete()
+                    ->Where('expire_date', '<', (new \DateTime())->format('Y-m-d H:i:s'))
+                    ->Run();
+        }
+
+        if($are_expired_users){
+            DatabaseManager::GetProvider()
+                    ->Table(TABLE_CACHE)
+                    ->Update()
+                    ->Set('value', '0')
+                    ->Set('expire_date', '1970-01-01 00:00:00')
+                    ->Where('key', '=', 'users_all')
+                    ->Run();
+        }
     }
 }
 ?>
