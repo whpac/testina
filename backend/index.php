@@ -2,7 +2,7 @@
 $script_file_name = '../frontend/js/script.js';
 $script_last_modified = filemtime($script_file_name);
 ?>
-
+<!-- Copyright (c) 2020, Marcin Szwarc -->
 <!DOCTYPE html>
 <html lang="pl">
     <head>
@@ -86,8 +86,8 @@ $script_last_modified = filemtime($script_file_name);
                         .logo-backplate {fill:url(#gradient-dark);}
                     }
 
-                    html.dark .logo-backplate {fill:url(#gradient-dark);}
-                    html.light .logo-backplate {fill:url(#gradient-light);}
+                    html.force-dark .logo-backplate {fill:url(#gradient-dark);}
+                    html.force-light .logo-backplate {fill:url(#gradient-light);}
 
                     ]]>
                 </style>
