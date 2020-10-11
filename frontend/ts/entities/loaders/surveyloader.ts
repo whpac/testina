@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 import TestLoader, { TestDescriptor } from './testloader';
 import Test from '../test';
 import { Collection } from '../entity';

@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 import Answer from '../answer';
 import Question from '../question';
 import { Collection } from '../entity';

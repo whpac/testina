@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 import Group from '../group';
 import { StringKeyedCollection } from '../question_with_user_answers';
 

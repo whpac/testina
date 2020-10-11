@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 import UserLoader from './userloader';
 import Assignment, { AssignmentResult } from '../assignment';
 import ApiEndpoints from './apiendpoints';

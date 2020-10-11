@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 
 import UserLoader from './userloader';
 import { Collection } from '../entity';

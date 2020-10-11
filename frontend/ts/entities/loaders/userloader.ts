@@ -1,4 +1,4 @@
-import * as XHR from '../../utils/xhr';
+import XHR from '../../utils/xhr';
 import User from '../user';
 import FetchingErrorException from '../../exceptions/fetching_error';
 import { StringKeyedCollection } from '../question_with_user_answers';
