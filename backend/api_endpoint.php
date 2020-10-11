@@ -62,7 +62,7 @@ try{
     switch($method){
         case 'GET':
             // Zserializuj zasób
-            $serialized_resource = $formatter->FormatResource($current_resource, $depth);
+            $serialized_resource = $formatter->Format($current_resource, $depth);
             echo($serialized_resource);
         break;
         case 'POST':
@@ -74,7 +74,7 @@ try{
                 SetResponseCode(201);
             }else{
                 // Zwróć zasób wynikowy
-                $serialized_resource = $formatter->FormatResource($result, $depth);
+                $serialized_resource = $formatter->Format($result, $depth);
                 echo($serialized_resource);
             }
         break;
@@ -98,7 +98,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error($e->getMessage());
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\AuthorizationRequired $e){
     SetResponseCode(401);
@@ -106,7 +106,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Musisz być zalogowany, by uzyskać dostęp do tego zasobu.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\ResourceInaccessible $e){
     SetResponseCode(403);
@@ -114,7 +114,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Nie masz wystarczających uprawnień, by uzyskać dostęp do tego zasobu.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\ResourceNotFound $e){
     SetResponseCode(404);
@@ -122,7 +122,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Zasób nie istnieje.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\MethodNotAllowed $e){
     SetResponseCode(405);
@@ -130,7 +130,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Metoda żądania jest nieobsługiwana przez zasób.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\NotAcceptable $e){
     SetResponseCode(406);
@@ -138,7 +138,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Serwer nie obsługuje żądanego formatu odpowiedzi.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\NotImplemented $e){
     SetResponseCode(501);
@@ -146,7 +146,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Nie zaimplementowano tej funkcji.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }catch(\Exception $e){
     SetResponseCode(500);
@@ -154,7 +154,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Wystąpił nieznany błąd.');
-        echo($formatter->FormatResource($error_resource));
+        echo($formatter->Format($error_resource));
     }
 }
 
@@ -231,6 +231,7 @@ function GetFormatter(){
     foreach($formats as $format){
         switch($format[0]){
             case 'application/json': return new Formats\JsonFormatter();
+            case 'application/x.json+base64': return new Formats\Base64JsonFormatter();
             case 'application/*': return new Formats\JsonFormatter();
             case '*/*': return new Formats\JsonFormatter();
         }

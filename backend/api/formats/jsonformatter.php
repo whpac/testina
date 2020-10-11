@@ -5,7 +5,11 @@ use \Api\Resources\Resource;
 
 class JsonFormatter extends Formatter {
 
-    public function FormatResource($obj, int $depth = 3): string{
+    public function Format($obj, int $depth = 3): string{
+        return $this->FormatResource($obj, $depth);
+    }
+
+    protected function FormatResource($obj, int $depth = 3): string{
         // Zwróć pusty ciąg znaków - aby nie pozostawić pustego pola
         if($depth <= -1) return '""';
         
