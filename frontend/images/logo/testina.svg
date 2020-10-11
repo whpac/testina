@@ -4,16 +4,23 @@
         <![CDATA[
 
         path {
-           stroke:#fff;
+           stroke: #fff;
            stroke-width: 16;
            stroke-linecap: round;
            fill: none;
         }
 
         .logo-backplate {
-            fill:url(#gradient-dark);
-            stroke:none;
+            fill: url(#gradient-light);
+            stroke: none;
         }
+
+        @media (prefers-color-scheme: dark){
+            .logo-backplate {fill: url(#gradient-dark);}
+        }
+
+        html.force-dark .logo-backplate {fill: url(#gradient-dark);}
+        html.force-light .logo-backplate {fill: url(#gradient-light);}
 
         ]]>
     </style>
