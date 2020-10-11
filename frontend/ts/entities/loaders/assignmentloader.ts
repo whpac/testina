@@ -1,4 +1,4 @@
-import XHR from '../../utils/xhr';
+import XHR from '../../network/xhr';
 import TestLoader, { TestDescriptor } from './testloader';
 import UserLoader from './userloader';
 import Assignment from '../assignment';

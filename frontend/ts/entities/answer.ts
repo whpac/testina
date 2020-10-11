@@ -1,4 +1,4 @@
-import XHR from '../utils/xhr';
+import XHR from '../network/xhr';
 import Entity from './entity';
 import AnswerLoader from './loaders/answerloader';
 import ApiEndpoints from './loaders/apiendpoints';

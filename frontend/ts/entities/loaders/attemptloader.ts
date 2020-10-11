@@ -1,4 +1,4 @@
-import XHR from '../../utils/xhr';
+import XHR from '../../network/xhr';
 import UserLoader from './userloader';
 import { Collection } from '../entity';
 import QuestionLoader, { QuestionDescriptor } from './questionloader';

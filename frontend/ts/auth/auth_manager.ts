@@ -1,5 +1,5 @@
 import UserLoader from '../entities/loaders/userloader';
-import XHR from '../utils/xhr';
+import XHR from '../network/xhr';
 import NavigationPrevention from '../1page/navigation_prevention';
 
 type SessionDescriptor = {

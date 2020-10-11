@@ -1,6 +1,6 @@
-import Entity, { Collection } from './entity';
+import Entity from './entity';
 
-import XHR from '../utils/xhr';
+import XHR from '../network/xhr';
 import Test from './test';
 import PageParams from '../1page/page_params';
 import Group from './group';
@@ -13,7 +13,6 @@ import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 import { StringKeyedCollection } from './question_with_user_answers';
-import UserLoader from './loaders/userloader';
 
 type AssignmentTargetEntity = User | Group | string;
 export type AssignmentTargets = {

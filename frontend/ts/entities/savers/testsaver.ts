@@ -1,7 +1,7 @@
 import EntitySavingException from '../../exceptions/entity_saving';
 import FetchingErrorException from '../../exceptions/fetching_error';
 import MalformedResponseException from '../../exceptions/malformed_response';
-import XHR from '../../utils/xhr';
+import XHR from '../../network/xhr';
 import ApiEndpoints from '../loaders/apiendpoints';
 import Test from '../test';
 

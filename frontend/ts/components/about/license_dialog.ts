@@ -1,5 +1,5 @@
 import Dialog from '../basic/dialog';
-import XHR from '../../utils/xhr';
+import XHR from '../../network/xhr';
 
 export default class LicenseDialog extends Dialog {
     protected LicenseText: HTMLElement;

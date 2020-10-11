@@ -1,5 +1,5 @@
-import XHR from '../utils/xhr';
-import Entity, { Collection } from './entity';
+import XHR from '../network/xhr';
+import Entity from './entity';
 import User from './user';
 import Question from './question';
 import Assignment from './assignment';

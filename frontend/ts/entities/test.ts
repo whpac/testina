@@ -1,5 +1,5 @@
-import XHR from '../utils/xhr';
-import Entity, { Collection } from './entity';
+import XHR from '../network/xhr';
+import Entity from './entity';
 import User from './user';
 import PageParams from '../1page/page_params';
 
@@ -7,8 +7,7 @@ import Question from './question';
 import Assignment from './assignment';
 import TestLoader from './loaders/testloader';
 import QuestionLoader from './loaders/questionloader';
-import AssignmentLoader, { AssignmentDescriptor } from './loaders/assignmentloader';
-import SurveyLoader from './loaders/surveyloader';
+import { AssignmentDescriptor } from './loaders/assignmentloader';
 import ApiEndpoints from './loaders/apiendpoints';
 
 /** Klasa reprezentująca test */
