@@ -288,7 +288,7 @@ export default class QuestionCard extends Card {
     }
 
     protected StartTimer() {
-        this.TimerRef = setInterval(this.OnTimerTick.bind(this), 1000);
+        this.TimerRef = window.setInterval(this.OnTimerTick.bind(this), 1000);
     }
 
     protected StopTimer() {
