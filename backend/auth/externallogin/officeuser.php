@@ -91,7 +91,7 @@ class OfficeUser {
             $resource = 'users/'.$this->Id;
         }
 
-        $url = 'https://graph.microsoft.com/v1.0/'.$resource.'/?$select=id,givenName,surname';
+        $url = 'https://graph.microsoft.com/v1.0/'.$resource.'/?$select=id,givenName,surname,displayName';
 
         // Opcje żądania
         $options = array(
@@ -112,8 +112,22 @@ class OfficeUser {
         $parsed = json_decode($result, true);
 
         $this->Id = $parsed['id'];
-        $this->FirstName = $parsed['givenName'];
-        $this->LastName = $parsed['surname'];
+
+        $first_name = $parsed['givenName'];
+        $last_name = $parsed['surname'];
+        if(is_null($first_name) || is_null($last_name)){
+            $display_name = $parsed['displayName'];
+            $last_space = strrpos($display_name, ' ');
+            if($last_space !== false){
+                $first_name = substr($display_name, 0, $last_space);
+                $last_name = substr($display_name, $last_space + 1);
+            }else{
+                $first_name = $display_name;
+                $last_name = '';
+            }
+        }
+        $this->FirstName = $first_name;
+        $this->LastName = $last_name;
     }
 
     protected function PopulateDefaults(){
@@ -123,7 +137,7 @@ class OfficeUser {
     }
 
     public static function GetAll(){
-        $url = 'https://graph.microsoft.com/v1.0/users/?$select=id,givenName,surname';
+        $url = 'https://graph.microsoft.com/v1.0/users/?$select=id,givenName,surname,displayName';
 
         // Opcje żądania
         $options = array(
@@ -147,10 +161,24 @@ class OfficeUser {
             $parsed = json_decode($result, true);
 
             foreach($parsed['value'] as $user){
+                $first_name = $user['givenName'];
+                $last_name = $user['surname'];
+                if(is_null($first_name) || is_null($last_name)){
+                    $display_name = $user['displayName'];
+                    $last_space = strrpos($display_name, ' ');
+                    if($last_space !== false){
+                        $first_name = substr($display_name, 0, $last_space);
+                        $last_name = substr($display_name, $last_space + 1);
+                    }else{
+                        $first_name = $display_name;
+                        $last_name = '';
+                    }
+                }
+
                 $users[] = new \Entities\User([
                     'user_id' => $user['id'],
-                    'first_name' => $user['givenName'],
-                    'last_name' => $user['surname'],
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
                     'flags' => 0,
                     'expire_date' => (new \DateTime())->format('Y-m-d H:i:s')
                 ]);
