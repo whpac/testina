@@ -1,0 +1,31 @@
+# Sposób wdrożenia Testiny
+
+1. Dostosować kod do katalogu, w którym znajdzie się aplikacja (w stosunku) do katalogu głównego serwera:
+    * Zmienić zawartość tagu `<base href="/">`,
+    * Ustawić odpowiedni katalog bazowy w `.htaccess`.
+
+2. Usunąć dyrektywy debugowania:
+    * Usunąć `window._debug = true` w `script.ts`,
+    * Usunąć klasę `.todo` w `style.scss`.
+
+3. Dopasować odwołania do API Office 365:
+    * W `components/login/login_with_office_card.ts` ustawić adres powrotu z logowania Office na właściwy,
+    * W `credentials.php` wpisać identyfikator aplikacji Office 365 i hasło,
+    * W `auth/externallogin/tokenmanager.php` ustawić dobry link powrotny w funkcjach: `ExchangeAuthorizationCodeIntoTokens()` i `TryToGetNewAccessToken()`.
+
+4. Integracja z bazą danych:
+    * W `credentials.php` zapisać dane logowania do bazy danych.
+
+5. Skompilować pliki TypeScript i SCSS:
+    * Pliki SCSS są kompilowane plikiem wsadowym `scss.bat`,
+    * Pliki TypeScript są kompilowane poleceniem `npx webpack`.
+
+6. Usunąć niepotrzebne pliki i foldery:
+    * `/node_modules/`,
+    * `/package-lock.json`,
+    * `/scss.bat`,
+    * `/tsconfig.json`,
+    * `/webpack.config.js`,
+    * `/frontend/docs/`,
+    * `/frontend/scss/`,
+    * `/frontend/ts/`.
