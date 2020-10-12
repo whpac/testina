@@ -40,11 +40,4 @@ Auth\AuthManager::LogInExternalUser($user->GetId());
 
 // Krok 4. Przekierowanie do strony głównej (w zamierzeniu - do strony, którą chciał wyświetlić użytkownik)
 include('index.php');
-/*
-echo('<pre>');
-echo("Stan: $state\n");
-echo("Wygasa za: $response->ExpiresIn\n");
-echo($user);
-echo('</pre>');
-echo('<a href="/p/">Przejdź do strony głównej</a>');*/
 ?>
