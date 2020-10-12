@@ -1,4 +1,12 @@
 <?php
+define('USE_HTTPS', false);
+if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && USE_HTTPS){
+    $redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: '.$redirect);
+    exit;
+}
+
 $script_file_name = '../frontend/js/script.js';
 $script_last_modified = filemtime($script_file_name);
 ?>
