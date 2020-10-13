@@ -28,7 +28,7 @@ export default class TestSummary extends Card {
 
         this.AverageScoreSubtitle = document.createElement('span');
         this.AverageScoreSubtitle.classList.add('subtitle', 'center');
-        this.AverageScoreSubtitle.innerText = 'Uśredniony wynik ze wszystkich podejść: ';
+        this.AverageScoreSubtitle.innerText = 'Końcowy wynik ze wszystkich podejść: ';
         this.AverageScoreSubtitle.style.display = 'none';
         this.AppendChild(this.AverageScoreSubtitle);
 
