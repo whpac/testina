@@ -21,7 +21,7 @@ class UserAnswerCollection {
     }
 
     public /* number */ function Count(){
-        return count($user_answers);
+        return count($this->user_answers);
     }
 
     public /* void */ function GroupByQuestionIndex(){
