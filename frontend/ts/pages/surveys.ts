@@ -4,6 +4,7 @@ import SurveyListCard from '../components/survey_lists/survey_list_card';
 import AssignedSurveysCard from '../components/survey_lists/assigned_surveys_card';
 import NoSurveys from '../components/survey_lists/no_surveys';
 import Toast from '../components/basic/toast';
+import Test from '../entities/test';
 
 export default class SurveysPage extends Page {
     protected AssignedSurveys: AssignedSurveysCard;
@@ -21,10 +22,11 @@ export default class SurveysPage extends Page {
         this.AppendChild(this.AssignedSurveys);
 
         this.SurveyListCard = new SurveyListCard();
+        this.SurveyListCard.AddEventListener('create-survey', this.CreateSurvey.bind(this));
         this.AppendChild(this.SurveyListCard);
 
         this.NoSurveysCreated = new NoSurveys(true);
-        this.NoSurveysCreated.AddEventListener('create-first-survey', this.SurveyListCard.CreateSurvey.bind(this.SurveyListCard));
+        this.NoSurveysCreated.AddEventListener('create-first-survey', this.CreateSurvey.bind(this));
         this.AppendChild(this.NoSurveysCreated);
     }
 
@@ -60,5 +62,25 @@ export default class SurveysPage extends Page {
 
     GetTitle() {
         return 'Ankiety';
+    }
+
+    protected async CreateSurvey() {
+        let creating_toast = new Toast('Tworzenie ankiety...');
+        creating_toast.Show();
+
+        try {
+            let survey = await Test.Create('[Bez nazwy]', 1, 0, Test.TYPE_SURVEY, SurveyLoader.LoadById);
+            this.SurveyListCard.AppendSurvey(survey);
+
+            this.SurveyListCard.GetElement().style.display = '';
+            this.NoSurveysCreated.GetElement().style.display = 'none';
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) message = ': ' + e.Message;
+
+            new Toast('Nie udało się utworzyć ankiety' + message).Show(0);
+        } finally {
+            creating_toast.Hide();
+        }
     }
 }

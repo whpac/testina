@@ -1,10 +1,8 @@
 import Card from '../basic/card';
 import Test from '../../entities/test';
 import SurveyTable from './survey_table';
-import Toast from '../basic/toast';
-import SurveyLoader from '../../entities/loaders/surveyloader';
 
-export default class SurveyListCard extends Card {
+export default class SurveyListCard extends Card<'create-survey'> {
     protected SurveyTable: SurveyTable;
 
     public constructor() {
@@ -17,7 +15,7 @@ export default class SurveyListCard extends Card {
         let create_button = document.createElement('button');
         create_button.classList.add('button', 'header-button');
         create_button.innerHTML = '<i class="fa fa-plus icon"></i><span>Utwórz nową</span>';
-        create_button.addEventListener('click', this.CreateSurvey.bind(this));
+        create_button.addEventListener('click', (() => this.FireEvent('create-survey')).bind(this));
         buttons_wrapper.appendChild(create_button);
 
         let heading = document.createElement('h2');
@@ -37,8 +35,9 @@ export default class SurveyListCard extends Card {
         this.SurveyTable.Populate(surveys);
     }
 
-    public async CreateSurvey() {
-        let creating_toast = new Toast('Tworzenie ankiety...');
+    public async AppendSurvey(survey: Test) {
+        this.SurveyTable.AddSurvey(survey);
+        /*let creating_toast = new Toast('Tworzenie ankiety...');
         creating_toast.Show();
 
         try {
@@ -51,6 +50,6 @@ export default class SurveyListCard extends Card {
             new Toast('Nie udało się utworzyć ankiety' + message).Show(0);
         } finally {
             creating_toast.Hide();
-        }
+        }*/
     }
 }
