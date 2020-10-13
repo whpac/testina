@@ -275,16 +275,23 @@ class Assignment extends Entity {
                 ->Value('test_id', $test->GetId())
                 ->Value('attempt_limit', $attempt_limit)
                 ->Value('time_limit', $time_limit->format('Y-m-d H:i:s'))
+                ->Value('assignment_date', (new \DateTime())->format('Y-m-d H:i:s'))
                 ->Run();
 
-        if(!$result) throw new \Exception('Nie udało się przypisać testu');
+        if(!$result){
+            Logger::Log('Nie udało się przypisać testu: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się przypisać testu');
+        }
 
         $result = $db->Table(TABLE_ASSIGNMENTS)
                 ->Select(['id'])
                 ->OrderBy('id', 'DESC')
                 ->Run();
 
-        if($result === false || $result->num_rows == 0) throw new \Exception('Nie udało się przypisać testu');
+        if($result === false || $result->num_rows == 0){
+            Logger::Log('Nie udało się przypisać testu: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się przypisać testu');
+        }
         $row = $result->fetch_assoc();
         $assignment_id = $row['id'];
         return new Assignment($assignment_id);
