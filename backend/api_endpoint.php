@@ -16,6 +16,10 @@ use Session\SessionManager;
 
 require('autoincluder.php');
 
+// Ustawia formatowanie liczb na amerykańskie, ponieważ jest ono zgodne z interfejsami
+// do bazy danych, a także ze składnią JSON i wszystkim innym.
+setlocale(LC_NUMERIC, 'en_US', 'en');
+
 // Inicjalizacja dostawcy bazy danych oraz sesji
 $db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, CRED_DATABASE_BASE);
 $db->Connect();
