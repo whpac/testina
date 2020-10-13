@@ -133,8 +133,6 @@ export default class QuestionWithUserAnswers {
         if(!this.IsDone) return 0;
         if(this.Score !== undefined) return this.Score;
 
-        console.log(this.Answers);
-
         switch(this.Question.Type) {
             case Question.TYPE_SINGLE_CHOICE:
             case Question.TYPE_MULTI_CHOICE:

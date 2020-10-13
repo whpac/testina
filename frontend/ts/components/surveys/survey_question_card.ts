@@ -363,7 +363,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
     public ValidateFill() {
         this.ErrorNotice.textContent = '';
         let user_answers = this.GetUserAnswers();
-        console.log(user_answers);
+
         if(this._IsOptional) {
             return true;
         } else {
@@ -377,7 +377,7 @@ export default class SurveyQuestionCard extends Card<"moveup" | "movedown" | "ma
                 for(let answer_id in user_answers) {
                     let user_answer = user_answers[answer_id];
                     if(user_answer === undefined) continue;
-                    console.log(user_answer);
+
                     if(typeof user_answer == 'boolean') is_valid ||= user_answer;
                     else is_valid ||= (user_answer.length > 0);
                 }
