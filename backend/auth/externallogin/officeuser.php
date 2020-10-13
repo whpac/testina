@@ -63,6 +63,8 @@ class OfficeUser {
             $parsed = json_decode($result, true);
 
             foreach($parsed['value'] as $group){
+                if($group['@odata.type'] != '#microsoft.graph.group') continue;
+
                 $groups[] = new \Entities\Group([
                     'group_id' => $group['id'],
                     'name' => $group['displayName'],
