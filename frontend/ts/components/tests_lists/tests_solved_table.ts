@@ -14,7 +14,7 @@ export default class TestsSolvedTable extends Card {
         this.GetElement().classList.add('semi-wide');
 
         let heading = document.createElement('h2');
-        heading.textContent = 'Już rozwiązane';
+        heading.textContent = 'Już zakończone';
         this.AppendChild(heading);
 
         this.Subheading = document.createElement('p');
@@ -109,7 +109,7 @@ export default class TestsSolvedTable extends Card {
 
     Populate(assignments: Assignment[]) {
         (async () => {
-            this.Subheading.textContent = 'Tutaj wyświetlane są te testy, które już rozwiązał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś, oraz te, których termin ukończenia minął.';
+            this.Subheading.textContent = 'Tutaj wyświetlane są te testy, dla których wykorzystał' + ((await UserLoader.GetCurrent())?.IsFemale() ? 'a' : 'e') + 'ś wszystkie podejścia, oraz te, których termin rozwiązania minął.';
         })();
         this.GetElement().style.display = '';
         this.ContentWrapper.textContent = '';
