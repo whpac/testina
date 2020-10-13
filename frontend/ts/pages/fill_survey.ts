@@ -62,7 +62,6 @@ export default class FillSurveyPage extends Page {
         sumbit_btn_wrapper.appendChild(this.SubmitButton);
 
         this.FinalCard = new SurveyFinalCard(false);
-        this.FinalCard.GetElement().style.display = 'none';
         this.AppendChild(this.FinalCard);
 
         this.Questions = [];
@@ -80,6 +79,9 @@ export default class FillSurveyPage extends Page {
 
             this.QuestionCards = [];
             this.QuestionWrapper.textContent = '';
+
+            this.QuestionWrapper.style.display = '';
+            this.FinalCard.GetElement().style.display = 'none';
 
             if(!(await AuthManager.IsAuthorized())) {
                 try {
