@@ -107,7 +107,10 @@ export default class AssignTestDialog extends Dialog {
 
     protected CancelChanges() {
         if(NavigationPrevention.IsPreventedBy('assign-test-dialog')) {
-            let result = window.confirm('Czy na pewno chcesz przerwać przypisywanie testu?\nSpowoduje to odrzucenie wszystkich zmian dokonanych w tym okienku.');
+            let text = 'przypisywanie testu';
+            if(this.Test?.Type == Test.TYPE_SURVEY) text = 'udostępnianie ankiety';
+
+            let result = window.confirm('Czy na pewno chcesz przerwać ' + text + '?\nSpowoduje to odrzucenie wszystkich zmian dokonanych w tym okienku.');
             if(!result) return;
         }
         NavigationPrevention.Unprevent('assign-test-dialog');
@@ -151,7 +154,7 @@ export default class AssignTestDialog extends Dialog {
             if('Message' in e) {
                 message = ': ' + e.Message;
             }
-            new Toast('Nie udało się ' + test_words[0] + ' ' + test_words[1] + message).Show(0);
+            new Toast('Nie udało się ' + test_words[1] + ' ' + test_words[2] + message).Show(0);
         } finally {
             assigning_toast.Hide();
         }
