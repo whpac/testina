@@ -12,6 +12,7 @@
 
 4. Dopasować odwołania do API Office 365:
     * W `components/login/login_with_office_card.ts` ustawić adres powrotu z logowania Office na właściwy,
+    * W `auth/auth_manager.ts` ustawić adres powrotu z wylogowywania Office,
     * W `credentials.php` wpisać identyfikator aplikacji Office 365 i hasło,
     * W `auth/externallogin/tokenmanager.php` ustawić dobry link powrotny w funkcjach: `ExchangeAuthorizationCodeIntoTokens()` i `TryToGetNewAccessToken()`.
 
