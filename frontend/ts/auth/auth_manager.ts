@@ -70,6 +70,10 @@ export default class AuthManager {
         AuthManager.FireEvent('logout');
     }
 
+    public static LogOutOfOffice() {
+        window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost%2Fp%2F';
+    }
+
     /**
      * Dodaje procedurę obsługi zdarzenia
      * @param event Zdarzenie do obsłużenia
