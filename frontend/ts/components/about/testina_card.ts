@@ -1,6 +1,7 @@
 import Card from '../basic/card';
 import CreditsDialog from './credits_dialog';
 import { HandleLinkClick } from '../../1page/page_manager';
+import { Config } from '../../config';
 
 export default class TestinaCard extends Card {
 
@@ -21,8 +22,7 @@ export default class TestinaCard extends Card {
         logo_backplate.appendChild(logo);
         logo.classList.add('logo');
 
-        // @ts-ignore
-        if(window._debug) {
+        if(Config.DEBUG) {
             logo.src = 'images/logo/testina.dev.svg';
         } else {
             logo.src = 'images/logo/testina.svg';

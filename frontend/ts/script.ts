@@ -24,8 +24,6 @@ import Toast from './components/basic/toast';
 import SurveyResultsPage from './pages/survey_results';
 import AccountPage from './pages/account';
 
-// @ts-ignore
-window._debug = true;
 
 try {
     ChromeManager.ApplySiteTheme();

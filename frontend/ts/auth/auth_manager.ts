@@ -1,6 +1,7 @@
 import UserLoader from '../entities/loaders/userloader';
 import XHR from '../network/xhr';
 import NavigationPrevention from '../1page/navigation_prevention';
+import { Config } from '../config';
 
 type SessionDescriptor = {
     is_authorized: boolean;
@@ -71,7 +72,8 @@ export default class AuthManager {
     }
 
     public static LogOutOfOffice() {
-        window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost%2Fp%2F';
+        window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?
+post_logout_redirect_uri=` + encodeURIComponent(Config.OFFICE_LOGOUT_RETURN_ADDRESS);
     }
 
     /**

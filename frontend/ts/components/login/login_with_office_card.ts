@@ -1,3 +1,4 @@
+import { Config } from '../../config';
 import { ReadPageFromURL } from '../../script';
 import Card from '../basic/card';
 
@@ -20,8 +21,7 @@ export default class LoginWithOfficeCard extends Card {
         logo_backplate.appendChild(logo);
         logo.classList.add('logo');
 
-        // @ts-ignore
-        if(window._debug) {
+        if(Config.DEBUG) {
             logo.src = 'images/logo/testina.dev.svg';
         } else {
             logo.src = 'images/logo/testina.svg';
@@ -43,7 +43,7 @@ export default class LoginWithOfficeCard extends Card {
         link.href = `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?
 client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
 &response_type=code
-&redirect_uri=http%3A%2F%2Flocalhost%2Fp%2Foffice_login
+&redirect_uri=` + encodeURIComponent(Config.OFFICE_LOGIN_RETURN_ADDRESS) + `
 &response_mode=query
 &scope=offline_access%20user.read%20user.read.all%20group.read.all
 &state=` + continue_link;

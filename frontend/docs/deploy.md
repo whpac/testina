@@ -5,14 +5,13 @@
     * Ustawić odpowiedni katalog bazowy w `.htaccess`.
 
 2. Usunąć dyrektywy debugowania:
-    * Usunąć `window._debug = true` w `script.ts`,
+    * Ustawić `DEBUG` na `false` w `config.ts`,
     * Usunąć klasę `.todo` w `style.scss`.
 
 3. Włączyć wymuszanie HTTPS w `index.php`.
 
 4. Dopasować odwołania do API Office 365:
-    * W `components/login/login_with_office_card.ts` ustawić adres powrotu z logowania Office na właściwy,
-    * W `auth/auth_manager.ts` ustawić adres powrotu z wylogowywania Office,
+    * W `config.ts` ustawić adresy powrotu z logowania i wylogowywania Office,
     * W `credentials.php` wpisać identyfikator aplikacji Office 365 i hasło,
     * W `auth/externallogin/tokenmanager.php` ustawić dobry link powrotny w funkcjach: `ExchangeAuthorizationCodeIntoTokens()` i `TryToGetNewAccessToken()`.
 
