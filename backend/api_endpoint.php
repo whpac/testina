@@ -56,6 +56,11 @@ try{
     $formatter = GetFormatter();
     $formatter->SetContext($context);
 
+    // Upewnij się, że żądanie przyszło po HTTPS, jeśli nie - zgłoś wyjątek
+    if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && CONFIG_USE_HTTPS){
+        throw new Exceptions\BadRequest('Żądanie nie zostało wykonane bezpiecznym protokołem HTTPS.');
+    }
+
     // Wyślij nagłówki odpowiedzi, w tym typ zawartości
     SendHeaders($formatter->GetContentType());
 

@@ -1,6 +1,7 @@
 <?php
-define('USE_HTTPS', false);
-if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && USE_HTTPS){
+require_once('config.php');
+
+if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && CONFIG_USE_HTTPS){
     $redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: '.$redirect);
@@ -16,7 +17,7 @@ $script_last_modified = filemtime($script_file_name);
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <base href="/p/" />
+        <base href="<?php echo(CONFIG_BASE_DIR); ?>" />
         <title>Testina</title>
 
         <!-- Arkusze stylów CSS -->

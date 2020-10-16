@@ -122,7 +122,7 @@ class TokenManager{
             'client_id' => CRED_OFFICE_CLIENT_ID,
             'scope' => self::REQUESTED_SCOPES,
             'code' => $authorization_code,
-            'redirect_uri' => 'http://localhost/p/office_login',
+            'redirect_uri' => CONFIG_AUTHORIZATION_REDIRECT_URL,
             'grant_type' => 'authorization_code',
             'client_secret' => CRED_OFFICE_CLIENT_SECRET
         ];
@@ -183,7 +183,7 @@ class TokenManager{
             'client_id' => CRED_OFFICE_CLIENT_ID,
             'scope' => self::REQUESTED_SCOPES,
             'refresh_token' => $refresh_token,
-            'redirect_uri' => 'http://localhost/p/office_login',
+            'redirect_uri' => CONFIG_AUTHORIZATION_REDIRECT_URL,
             'grant_type' => 'refresh_token',
             'client_secret' => CRED_OFFICE_CLIENT_SECRET
         ];

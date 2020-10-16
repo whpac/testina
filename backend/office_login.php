@@ -38,6 +38,10 @@ $user = new Auth\ExternalLogin\OfficeUser();
 Auth\AuthManager::RegisterUserFactory(new Entities\UserFactory());
 Auth\AuthManager::LogInExternalUser($user->GetId());
 
-// Krok 4. Przekierowanie do strony głównej (w zamierzeniu - do strony, którą chciał wyświetlić użytkownik)
-include('index.php');
+// Krok 4. Przekierowanie do strony głównej (dokładniej - do strony, którą chciał wyświetlić użytkownik)
+try{
+    require('index.php');
+}catch(Throwable $t){
+    echo('<a href="'.CONFIG_BASE_DIR.'">Przejdź do strony głównej</a>');
+}
 ?>

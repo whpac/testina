@@ -1,6 +1,6 @@
 <?php
-// Dołącza plik z poświadczeniami, używanymi np. do dostępu do bazy danych albo API Office 365
-require('credentials.php');
+// Dołącza plik ze stałymi konfiguracyjnymi
+require_once('config.php');
 
 /**
  * Funkcja odpowiedzialna za automatyczne ładowanie klas aplikacji Testina
@@ -25,7 +25,7 @@ function TestinaClassLoader($name){
     if(!$is_found) return;
 
     if(file_exists(__DIR__.'/'.$name.'.php'))
-        include(__DIR__.'/'.$name.'.php');
+        require_once(__DIR__.'/'.$name.'.php');
 }
 
 spl_autoload_register('TestinaClassLoader');
