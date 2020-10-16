@@ -14,7 +14,9 @@ class AssignmentCollection extends Collection {
     }
 
     public function GetKeys(): array{
-        if($this->Filters == []) return array_keys($this->Items);
+        $keys = array_keys($this->Items);
+        if(!is_array($this->Filters)) return $keys;
+
         if(in_array('to_me', $this->Filters)){
             $assigned_to_me_ids = [];
             $current_user = $this->GetContext()->GetUser();
@@ -25,10 +27,26 @@ class AssignmentCollection extends Collection {
                 $assigned_to_me_ids[] = $assignment->GetId();
             }
 
-            return array_intersect(array_keys($this->Items), $assigned_to_me_ids);
+            $keys = array_intersect($keys, $assigned_to_me_ids);
         }
 
-        return array_intersect(array_keys($this->Items), $this->Filters);
+        if(in_array('tests_only', $this->Filters)){
+            foreach($keys as $i => $key){
+                if((new \Entities\Assignment($key))->GetTest()->GetType() != \Entities\Test::TYPE_TEST){
+                    unset($keys[$i]);
+                }
+            }
+        }
+
+        if(in_array('surveys_only', $this->Filters)){
+            foreach($keys as $i => $key){
+                if((new \Entities\Assignment($key))->GetTest()->GetType() != \Entities\Test::TYPE_SURVEY){
+                    unset($keys[$i]);
+                }
+            }
+        }
+
+        return $keys;
     }
 
     public function KeyExists($key_name): bool{
