@@ -41,7 +41,7 @@ export default class AssignedTestsListPage extends Page {
             try {
                 this.AllTestsSolved.GetElement().style.display = 'none';
                 this.NoTests.GetElement().style.display = 'none';
-                let assignments = await AssignmentLoader.GetAssignedToCurrentUser();
+                let assignments = await AssignmentLoader.GetAssignedToCurrentUser('tests_only');
                 assignments = assignments.filter((a) => a.Test.Type == Test.TYPE_TEST);
                 this.ToSolveTable.Populate(assignments);
                 this.SolvedTable.Populate(assignments);
