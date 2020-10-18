@@ -1,6 +1,6 @@
-import Answer from '../schemas/answer';
-import Collection from '../schemas/collection';
-import Question, { QuestionPointsCounting, QuestionType } from '../schemas/question';
+import Answer from '../../schemas/answer';
+import Collection from '../../schemas/collection';
+import Question, { QuestionPointsCounting, QuestionType } from '../../schemas/question';
 
 export default class QuestionDecorator implements Question {
 

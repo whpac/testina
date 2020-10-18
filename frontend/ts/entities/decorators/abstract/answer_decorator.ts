@@ -1,5 +1,5 @@
-import Answer from '../schemas/answer';
-import Question from '../schemas/question';
+import Answer from '../../schemas/answer';
+import Question from '../../schemas/question';
 
 export default abstract class AnswerDecorator implements Answer {
 
