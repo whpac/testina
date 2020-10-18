@@ -1,3 +1,5 @@
+import Answer from '../schemas/answer';
+import Collection from '../schemas/collection';
 import Question, { QuestionPointsCounting, QuestionType } from '../schemas/question';
 
 export default class QuestionDecorator implements Question {
@@ -83,7 +85,10 @@ export default class QuestionDecorator implements Question {
         this.Question.SetHasOtherAnswer(new_has_other_answer);
     }
 
-    GetAnswers(): unknown {
-        throw new Error('Method not implemented.');
+    GetAnswers(): Collection<number, Answer> | Promise<Collection<number, Answer>> | PromiseLike<Collection<number, Answer>> {
+        return this.Question.GetAnswers();
+    }
+    SetAnswers(new_answers: Collection<number, Answer>): void {
+        this.Question.SetAnswers(new_answers);
     }
 }

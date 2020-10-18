@@ -1,3 +1,6 @@
+import Answer from './answer';
+import Collection from './collection';
+
 export default interface Question {
 
     GetId(): number;
@@ -33,7 +36,8 @@ export default interface Question {
     HasOtherAnswer(): boolean;
     SetHasOtherAnswer(new_has_other_answer: boolean): void;
 
-    GetAnswers(): unknown;
+    GetAnswers(): Collection<number, Answer> | Promise<Collection<number, Answer>> | PromiseLike<Collection<number, Answer>>;
+    SetAnswers(new_answers: Collection<number, Answer>): void;
 }
 
 export enum QuestionType {

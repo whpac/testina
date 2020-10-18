@@ -1,6 +1,10 @@
+import Answer from '../schemas/answer';
+import Collection from '../schemas/collection';
 import Question, { QuestionPointsCounting, QuestionType } from '../schemas/question';
+import ConcreteAnswerCollection from './concrete_answer_collection';
 
 export default class ConcreteQuestion implements Question {
+    protected Answers: Collection<number, Answer>;
 
     public constructor(
         protected Id: number,
@@ -14,8 +18,11 @@ export default class ConcreteQuestion implements Question {
         protected Order: number,
         protected Optional: boolean,
         protected WithNonApplicableAnswer: boolean,
-        protected WithOtherAnswer: boolean
-    ) { }
+        protected WithOtherAnswer: boolean,
+        answers: Iterable<[number, Answer]> = []
+    ) {
+        this.Answers = new ConcreteAnswerCollection(answers);
+    }
 
     GetId(): number {
         return this.Id;
@@ -94,7 +101,10 @@ export default class ConcreteQuestion implements Question {
         this.WithOtherAnswer = new_has_other_answer;
     }
 
-    GetAnswers(): unknown {
-        throw new Error('Method not implemented.');
+    GetAnswers(): Collection<number, Answer> | Promise<Collection<number, Answer>> | PromiseLike<Collection<number, Answer>> {
+        return this.Answers;
+    }
+    SetAnswers(new_answers: Collection<number, Answer>): void {
+        this.Answers = new_answers;
     }
 }
