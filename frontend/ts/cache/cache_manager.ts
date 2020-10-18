@@ -15,12 +15,17 @@ export default class CacheManager {
             return new MockCacheStore();
         }
 
-        if(this.OpenCaches === undefined) this.OpenCaches = new Map<CacheStorages, EntityCacheStore>();
+        try {
+            if(this.OpenCaches === undefined) this.OpenCaches = new Map<CacheStorages, EntityCacheStore>();
 
-        if(!this.OpenCaches.has(storage_name)) {
-            this.OpenCaches.set(storage_name, new EntityCacheStore(await caches.open(storage_name)));
+            if(!this.OpenCaches.has(storage_name)) {
+                this.OpenCaches.set(storage_name, new EntityCacheStore(await caches.open(storage_name)));
+            }
+            return this.OpenCaches.get(storage_name) as EntityCacheStore;
+        } catch(e) {
+            if(!(e instanceof DOMException)) throw e;
+            return new MockCacheStore();
         }
-        return this.OpenCaches.get(storage_name) as EntityCacheStore;
     }
 }
 
