@@ -42,8 +42,9 @@ button.answer-button {
     border:1px solid var(--button-border-color); border-radius:4px; color:var(--text-primary-color);
     min-height:3em; max-height:4.5em;
 
-    &:focus {border:2px solid var(--input-active-border-color); margin:-1px;}
-    &.selected {background:var(--button-focus-background); border-color:var(--input-active-border-color);}
+    &:focus {border-color:var(--input-active-border-color);}
+    &.selected {background:var(--button-focus-background); border:2px dashed var(--input-active-border-color);}
+    &.selected:hover {background:var(--button-focus-background-intense);}
 
     &.correct {border-color:var(--success-color); color:var(--success-color);}
     &.wrong {border-color:var(--error-color); color:var(--error-color);}
