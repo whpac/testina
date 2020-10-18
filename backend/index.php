@@ -1,5 +1,10 @@
 <?php
-require_once('config.php');
+use Database\DatabaseManager;
+use Database\MySQL;
+
+use Session\SessionManager;
+
+require_once('autoincluder.php');
 
 if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && CONFIG_USE_HTTPS){
     $redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -7,6 +12,15 @@ if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && CONFIG_USE_HTTPS){
     header('Location: '.$redirect);
     exit;
 }
+
+// Inicjalizacja dostawcy bazy danych oraz sesji
+$db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, CRED_DATABASE_BASE);
+$db->Connect();
+DatabaseManager::SetProvider($db);
+
+$kp = new Session\Key\CookieKeyProvider(CONFIG_SESSION_COOKIE);
+SessionManager::SetKeyProvider($kp);
+SessionManager::Start(CONFIG_SESSION_DURATION);
 
 $script_file_name = '../frontend/js/script.js';
 $script_last_modified = filemtime($script_file_name);

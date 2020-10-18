@@ -14,7 +14,7 @@ use Log\LogChannels;
 
 use Session\SessionManager;
 
-require('autoincluder.php');
+require_once('autoincluder.php');
 
 // Ustawia formatowanie liczb na amerykańskie, ponieważ jest ono zgodne z interfejsami
 // do bazy danych, a także ze składnią JSON i wszystkim innym.
@@ -25,9 +25,9 @@ $db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, 
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
-$kp = new Session\Key\CookieKeyProvider('SESSION');
+$kp = new Session\Key\CookieKeyProvider(CONFIG_SESSION_COOKIE);
 SessionManager::SetKeyProvider($kp);
-SessionManager::Start(36000);
+SessionManager::Start(CONFIG_SESSION_DURATION);
 
 // Inicjalizacja menedżera kont
 AuthManager::RegisterUserFactory(new Entities\UserFactory());

@@ -13,9 +13,9 @@ $db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, 
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
-$kp = new Session\Key\CookieKeyProvider('SESSION');
+$kp = new Session\Key\CookieKeyProvider(CONFIG_SESSION_COOKIE);
 SessionManager::SetKeyProvider($kp);
-SessionManager::Start(36000);
+SessionManager::Start(CONFIG_SESSION_DURATION);
 
 // Krok 1. Odbiór danych z serwera Office
 // Sprawdź, czy wymagane parametry istnieją

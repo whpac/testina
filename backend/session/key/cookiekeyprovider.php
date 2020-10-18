@@ -34,7 +34,11 @@ class CookieKeyProvider implements KeyProvider {
      * @param $key nowy klucz sesji
      */
     public function SetKey($key){
-        setcookie($this->cookie_name, $key, 0, '/');
+        if(CONFIG_USE_HTTPS){
+            header('Set-Cookie: '.$this->cookie_name.'='.$key.'; Path=/; Max-Age='.CONFIG_SESSION_DURATION.'; Secure; HttpOnly; SameSite=Strict');
+        }else{
+            header('Set-Cookie: '.$this->cookie_name.'='.$key.'; Path=/; Max-Age='.CONFIG_SESSION_DURATION.'; HttpOnly; SameSite=Strict');
+        }
         $_COOKIE[$this->cookie_name] = $key;
     }
 }
