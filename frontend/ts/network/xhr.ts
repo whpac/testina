@@ -28,14 +28,14 @@ export default class XHR {
     public static PerformRequest(url: string, options?: XHROptions): Promise<XHRResult>;
     public static PerformRequest(url: string, method?: string, request_data?: any, skip_cache?: boolean): Promise<XHRResult>;
     public static PerformRequest(url: string, method?: string | XHROptions, request_data?: any, skip_cache: boolean = false): Promise<XHRResult> {
-        let options: XHROptions = {
+        let options: Required<XHROptions> = {
             Method: 'GET',
             ResponseDeserializer: new JsonDeserializer(),
             RequestData: undefined,
             SkipCache: false
         };
         if(typeof method == 'string' || method === undefined) {
-            options.Method = method;
+            options.Method = method ?? options.Method;
             options.RequestData = request_data;
             options.SkipCache = skip_cache;
         } else {
@@ -43,10 +43,10 @@ export default class XHR {
         }
 
         return new Promise<XHRResult>(async (resolve, reject) => {
-            options.Method = (options.Method ?? 'GET').toUpperCase();
+            options.Method = options.Method.toUpperCase();
 
             let headers = new Headers();
-            headers.append('Accept', options.ResponseDeserializer!.GetAcceptableMimeTypes());
+            headers.append('Accept', options.ResponseDeserializer.GetAcceptableMimeTypes());
             let request = new Request(url, { method: options.Method, headers: headers });
 
             if(options.Method == 'GET' && !options.SkipCache) {
@@ -57,7 +57,7 @@ export default class XHR {
                         return resolve({
                             Status: resource.status,
                             StatusText: resource.statusText,
-                            Response: options.ResponseDeserializer!.Parse(await resource.text()),
+                            Response: options.ResponseDeserializer.Parse(await resource.text()),
                             ContentLocation: resource.headers.get('Content-Location') ?? '',
                             FromCache: true
                         });
@@ -100,7 +100,7 @@ export default class XHR {
      * @param resolve Funkcja, którą należy wywołać, by spełnić Promise
      * @param reject Funkcja, którą należy wywołać, by odrzucić Promise
      */
-    protected static OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: RejectFunction, options: XHROptions) {
+    protected static OnReadyStateChange(request: Request, resolve: ResolveFunction, reject: RejectFunction, options: Required<XHROptions>) {
         return async function (this: XMLHttpRequest) {
             let xhr = this;
             if(xhr.readyState != 4) return;
@@ -110,7 +110,7 @@ export default class XHR {
                 let content_location = xhr.getResponseHeader('Content-Location') ?? '';
                 if(xhr.responseText !== '') {
                     try {
-                        parsed_json = options.ResponseDeserializer!.Parse(xhr.responseText);
+                        parsed_json = options.ResponseDeserializer.Parse(xhr.responseText);
                     } catch(e) {
                         console.error('Odpowiedź serwera zawiera niepoprawny JSON');
                         return reject(new MalformedResponseException('Serwer zwrócił odpowiedź w nieznanym formacie.', {
@@ -144,7 +144,7 @@ export default class XHR {
                 let parsed_json: any = {};
                 if(xhr.responseText !== '') {
                     try {
-                        parsed_json = options.ResponseDeserializer!.Parse(xhr.responseText);
+                        parsed_json = options.ResponseDeserializer.Parse(xhr.responseText);
                     } catch(e) { }
                 }
 
