@@ -54,7 +54,7 @@ abstract class Entity {
                 ->Where('id', '=', $entity_id)
                 ->Run();
         if($result->num_rows == 0){
-            throw new \Exception('Obiekt o identyfikatorze '.$entity_id.' nie istnieje');
+            throw new \Exception('Obiekt '.static::GetTableName().' o identyfikatorze '.$entity_id.' nie istnieje');
         }
         
         return $result->fetch_assoc();
