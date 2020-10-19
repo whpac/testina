@@ -44,7 +44,7 @@ class UserAnswer extends Entity {
     public /* Answer? */ function GetAnswer(){
         $this->FetchIfNeeded();
         if(is_null($this->answer_id)) return null;
-        if($this->answer_id < 0) return $this->answer_id;
+        if($this->answer_id <= 0) return $this->answer_id;
         return new Answer($this->answer_id);
     }
 
@@ -64,7 +64,7 @@ class UserAnswer extends Entity {
     }
 
     public /* bool */ function IsOpenAnswer(){
-        return !empty($this->GetSuppliedAnswer());
+        return is_null($this->answer_id);
     }
 
     public /* bool */ function IsNoAnswer(){
