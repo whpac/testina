@@ -1,3 +1,4 @@
+import FetchingErrorException from '../../exceptions/fetching_error';
 import XHR from '../../network/xhr';
 import Group from '../group';
 import { StringKeyedCollection } from '../question_with_user_answers';
@@ -19,22 +20,31 @@ export default class GroupLoader {
     public async LoadById(group_id: string | string[]): Promise<Group | Group[]> {
         if(typeof group_id == 'string') {
             let descriptor: GroupDescriptor;
-            let response = await XHR.PerformRequest('api/groups/' + group_id + '?depth=2', 'GET');
-            descriptor = response.Response as GroupDescriptor;
-
             try {
+                let response = await XHR.PerformRequest('api/groups/' + group_id + '?depth=2', 'GET');
+                descriptor = response.Response as GroupDescriptor;
+
                 return GroupLoader.CreateFromDescriptor(descriptor);
             } catch(e) {
-                if(e instanceof TypeError) {
-                    return GroupLoader.LoadById(group_id);
-                } else throw e;
+                if(e instanceof FetchingErrorException) {
+                    return GroupLoader.CreateFromDescriptor({
+                        id: group_id,
+                        name: 'Nie udało się pobrać grupy'
+                    });
+                }
+                throw e;
             }
         } else {
             let groups: Group[] = [];
             for(let id of group_id) {
-                let response = await XHR.PerformRequest('api/groups/' + group_id.toString() + '?depth=2', 'GET');
-                let descriptor = response.Response as GroupDescriptor;
-                groups.push(GroupLoader.CreateFromDescriptor(descriptor));
+                try {
+                    let response = await XHR.PerformRequest('api/groups/' + id + '?depth=2', 'GET');
+                    let descriptor = response.Response as GroupDescriptor;
+                    groups.push(GroupLoader.CreateFromDescriptor(descriptor));
+                } catch(e) {
+                    // W przypadku błędu ładowania jednej z grup nie rób nic
+                    if(!(e instanceof FetchingErrorException)) throw e;
+                }
             }
             return groups;
         }

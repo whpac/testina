@@ -24,23 +24,32 @@ export default class UserLoader {
         if(user_id === 0) return new User('0', 'Nieznany', 'użytkownik');
 
         if(typeof user_id == 'string') {
-            let descriptor: UserDescriptor;
-            let response = await XHR.PerformRequest('api/users/' + user_id + '?depth=2', 'GET');
-            descriptor = response.Response as UserDescriptor;
-
             try {
+                let response = await XHR.PerformRequest('api/users/' + user_id + '?depth=2', 'GET');
+                let descriptor = response.Response as UserDescriptor;
+
                 return UserLoader.CreateFromDescriptor(descriptor);
             } catch(e) {
-                if(e instanceof TypeError) {
-                    return UserLoader.LoadById(user_id);
-                } else throw e;
+                if(e instanceof FetchingErrorException) {
+                    return UserLoader.CreateFromDescriptor({
+                        id: user_id,
+                        first_name: 'Błąd',
+                        last_name: 'wczytywania'
+                    });
+                }
+                throw e;
             }
         } else {
             let users: User[] = [];
             for(let id of user_id) {
-                let response = await XHR.PerformRequest('api/users/' + id + '?depth=2', 'GET');
-                let descriptor = response.Response as UserDescriptor;
-                users.push(UserLoader.CreateFromDescriptor(descriptor));
+                try {
+                    let response = await XHR.PerformRequest('api/users/' + id + '?depth=2', 'GET');
+                    let descriptor = response.Response as UserDescriptor;
+                    users.push(UserLoader.CreateFromDescriptor(descriptor));
+                } catch(e) {
+                    // W przypadku błędu ładowania jednego z użytkowników nie rób nic
+                    if(!(e instanceof FetchingErrorException)) throw e;
+                }
             }
             return users;
         }
