@@ -216,7 +216,10 @@ class Test extends Resource implements Schemas\Test{
         if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
         if($this->Test->GetType() != \Entities\Test::TYPE_SURVEY) return null;
 
-        return 0;
+        $assignments = $this->Test->GetAssignments();
+        if(count($assignments) == 0) return 0;
+
+        return count(\Entities\Attempt::GetAttemptsByAssignment($assignments[0]));
     }
 }
 ?>
