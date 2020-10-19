@@ -115,13 +115,17 @@ class Assignment extends Resource implements Schemas\Assignment{
         $all_users = [];
         $targets = $this->Assignment->GetTargets();
         foreach($targets as $target){
-            if($target instanceof \Auth\Users\User){
-                $all_users[$target->GetId()] = $target;
-            }elseif($target instanceof \Auth\Users\Group){
-                $users = $target->GetUsers();
-                foreach($users as $user){
-                    $all_users[$user->GetId()] = $user;
+            try{
+                if($target instanceof \Auth\Users\User){
+                    $all_users[$target->GetId()] = $target;
+                }elseif($target instanceof \Auth\Users\Group){
+                    $users = $target->GetUsers();
+                    foreach($users as $user){
+                        $all_users[$user->GetId()] = $user;
+                    }
                 }
+            }catch(\Exception $e){
+                
             }
         }
 

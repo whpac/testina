@@ -138,16 +138,20 @@ class Assignment extends Entity {
 
         $targets = [];
         foreach($this->targets as $target){
-            switch(intval($target[1])){
-                case self::TARGET_TYPE_USER:
-                    $targets[] = new \Entities\User($target[0]);
-                break;
-                case self::TARGET_TYPE_GROUP:
-                    $targets[] = new \Entities\Group($target[0]);
-                break;
-                case self::TARGET_TYPE_LINK:
-                    $targets[] = $target[0];
-                break;
+            try{
+                switch(intval($target[1])){
+                    case self::TARGET_TYPE_USER:
+                        $targets[] = new \Entities\User($target[0]);
+                    break;
+                    case self::TARGET_TYPE_GROUP:
+                        $targets[] = new \Entities\Group($target[0]);
+                    break;
+                    case self::TARGET_TYPE_LINK:
+                        $targets[] = $target[0];
+                    break;
+                }
+            }catch(\Exception $e){
+                Logger::Log('Nie można utworzyć celu przypisania: typ:'.$target[1].', id:'.$target[0]);
             }
         }
         return $targets;

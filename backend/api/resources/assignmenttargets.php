@@ -63,17 +63,21 @@ class AssignmentTargets extends Resource implements Schemas\AssignmentTargets {
         $targets = $this->Assignment->GetTargets();
 
         foreach($targets as $target){
-            if($target instanceof \Auth\Users\User){
-                $this->Users[] = $target->GetId();
-                $this->AllUsers[$target->GetId()] = true;
-            }elseif($target instanceof \Auth\Users\Group){
-                $this->Groups[] = $target->GetId();
-                $users = $target->GetUsers();
-                foreach($users as $user){
-                    $this->AllUsers[$user->GetId()] = true;
+            try{
+                if($target instanceof \Auth\Users\User){
+                    $this->Users[] = $target->GetId();
+                    $this->AllUsers[$target->GetId()] = true;
+                }elseif($target instanceof \Auth\Users\Group){
+                    $this->Groups[] = $target->GetId();
+                    $users = $target->GetUsers();
+                    foreach($users as $user){
+                        $this->AllUsers[$user->GetId()] = true;
+                    }
+                }elseif(is_scalar($target)){
+                    $this->Links[] = $target;
                 }
-            }elseif(is_scalar($target)){
-                $this->Links[] = $target;
+            }catch(\Exception $e){
+                
             }
         }
     }
