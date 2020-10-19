@@ -88,7 +88,7 @@ export default class SolveTestPage extends Page {
     }
 
     GetUrlPath() {
-        return 'testy/rozwiąż/' + (this.Assignment?.Id.toString() ?? '');
+        return 'testy/rozwiąż/' + (this.Assignment?.Id.toString() ?? '0');
     }
 
     GetTitle() {

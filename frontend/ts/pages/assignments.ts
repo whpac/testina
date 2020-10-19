@@ -58,7 +58,7 @@ export default class AssignmentsPage extends Page {
     }
 
     GetUrlPath() {
-        return 'testy/przypisane/' + this.Test?.Id.toString() ?? '0';
+        return 'testy/przypisane/' + (this.Test?.Id.toString() ?? '0');
     }
 
     GetTitle() {

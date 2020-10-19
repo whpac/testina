@@ -58,7 +58,7 @@ export default class ResultsPage extends Page {
     }
 
     GetUrlPath() {
-        return 'testy/wyniki/' + this.Assignment?.Id.toString() ?? '0';
+        return 'testy/wyniki/' + (this.Assignment?.Id.toString() ?? '0');
     }
 
     GetTitle() {
