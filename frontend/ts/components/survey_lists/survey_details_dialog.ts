@@ -1,4 +1,5 @@
 import { GoToPage } from '../../1page/page_manager';
+import { Config } from '../../config';
 import Assignment, { AssignmentTargets } from '../../entities/assignment';
 import ApiEndpoints from '../../entities/loaders/apiendpoints';
 import UserLoader from '../../entities/loaders/userloader';
@@ -178,7 +179,7 @@ export default class SurveyDetailsDialog extends Dialog {
         this.ShareStatusElement.textContent = 'Ankieta została udostępniona ' + this.MakeTargetsText(assignment_targets);
         if(assignment_targets.LinkIds.length > 0) {
             this.LinkPresenterElement.style.display = '';
-            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + assignment_targets.LinkIds[0];
+            this.LinkPresenterElement.value = Config.SURVEY_FILL_URL_BEGINNING + assignment_targets.LinkIds[0];
         } else {
             this.LinkPresenterElement.style.display = 'none';
             this.LinkPresenterElement.nodeValue = 'Wczytywanie linku...';

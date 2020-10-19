@@ -8,7 +8,6 @@ import User from '../user';
 import Group from '../group';
 
 export default class ApiEndpoints {
-    public static readonly SurveyFillUrlBeginning = 'http://localhost/p/ankiety/wypełnij/';
 
     public static GetEntityUrl(entity: Entity) {
         if(entity instanceof Assignment) {

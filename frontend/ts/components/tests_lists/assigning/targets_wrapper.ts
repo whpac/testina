@@ -11,6 +11,7 @@ import Group from '../../../entities/group';
 import { AssignmentTargets } from '../../../entities/assignment';
 import Test from '../../../entities/test';
 import ApiEndpoints from '../../../entities/loaders/apiendpoints';
+import { Config } from '../../../config';
 
 type TargetType = 'user' | 'group';
 
@@ -119,7 +120,7 @@ export default class TargetsWrapper extends Component<'validationchanged'> {
         if((preselected_targets?.LinkIds ?? []).length > 0) {
             this.ShareByLinkCheckbox.checked = true;
             this.WasShareByLinkOriginallySelected = true;
-            this.LinkPresenterElement.value = ApiEndpoints.SurveyFillUrlBeginning + preselected_targets!.LinkIds[0];
+            this.LinkPresenterElement.value = Config.SURVEY_FILL_URL_BEGINNING + preselected_targets!.LinkIds[0];
         } else {
             this.ShareByLinkCheckbox.checked = false;
             this.WasShareByLinkOriginallySelected = false;
