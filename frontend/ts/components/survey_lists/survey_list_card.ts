@@ -37,19 +37,5 @@ export default class SurveyListCard extends Card<'create-survey'> {
 
     public async AppendSurvey(survey: Test) {
         this.SurveyTable.AddSurvey(survey);
-        /*let creating_toast = new Toast('Tworzenie ankiety...');
-        creating_toast.Show();
-
-        try {
-            let survey = await Test.Create('[Bez nazwy]', 1, 0, Test.TYPE_SURVEY, SurveyLoader.LoadById);
-            this.SurveyTable.AddSurvey(survey);
-        } catch(e) {
-            let message = '.';
-            if('Message' in e) message = ': ' + e.Message;
-
-            new Toast('Nie udało się utworzyć ankiety' + message).Show(0);
-        } finally {
-            creating_toast.Hide();
-        }*/
     }
 }

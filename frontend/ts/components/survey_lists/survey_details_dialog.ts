@@ -120,7 +120,7 @@ export default class SurveyDetailsDialog extends Dialog {
         btn_results.textContent = 'Wyniki';
         btn_results.addEventListener('click', (() => {
             this.Hide();
-            // GoToPage(..., this.Survey);
+            GoToPage('ankiety/wyniki', this.Survey);
         }).bind(this));
     }
 
@@ -134,6 +134,7 @@ export default class SurveyDetailsDialog extends Dialog {
 
     protected async PopulateValues(survey: Test) {
         this.SurveyCreationDateElement.textContent = ToMediumFormat(survey.CreationDate, true);
+        this.SurveyFillsCountElement.textContent = survey.FillCount.toString();
 
         this.Assignments = await survey.GetAssignments();
 
@@ -142,13 +143,11 @@ export default class SurveyDetailsDialog extends Dialog {
             this.ShareStatusElement.textContent = 'Ankieta została udostępniona';
             this.FillSharingField(assignment);
             assignment.AddEventListener('change', (() => this.FillSharingField(assignment)).bind(this));
-            this.SurveyFillsCountElement.textContent = (await assignment.CountAllAttempts()).toString();
         } else {
             this.ShareStatusElement.textContent = 'Ankieta nie jest nikomu udostępniona';
             this.ShareLink.textContent = 'Udostępnij...';
             this.LinkPresenterElement.style.display = 'none';
             this.LinkPresenterElement.value = 'Wczytywanie linku...';
-            this.SurveyFillsCountElement.textContent = '0';
         }
     }
 

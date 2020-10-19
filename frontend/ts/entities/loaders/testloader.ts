@@ -10,22 +10,23 @@ import User from '../user';
 
 /** Deskryptor testu w odpowiedzi z API */
 export interface TestDescriptor {
-    id: number,
-    name: string,
-    author_id: string,
-    creation_date: string,
-    time_limit: number,
-    type: number,
+    id: number;
+    name: string;
+    author_id: string;
+    creation_date: string;
+    time_limit: number;
+    type: number;
     description: string | null;
-    score_counting: number,
-    final_title: string,
-    final_text: string,
-    is_deleted: boolean,
-    question_multiplier: number,
-    question_count: number,
-    questions: Collection<QuestionDescriptor>,
-    assignment_count: number | undefined,
+    score_counting: number;
+    final_title: string;
+    final_text: string;
+    is_deleted: boolean;
+    question_multiplier: number;
+    question_count: number;
+    questions: Collection<QuestionDescriptor>;
+    assignment_count: number | undefined;
     assignment_ids: number[];
+    fill_count: number | undefined;
 }
 
 export default class TestLoader {
@@ -72,7 +73,8 @@ export default class TestLoader {
             test_descriptor.score_counting,
             test_descriptor.final_title,
             test_descriptor.final_text,
-            test_descriptor.is_deleted
+            test_descriptor.is_deleted,
+            test_descriptor.fill_count ?? 0
         );
 
         question_loader.SetTest(test);

@@ -50,6 +50,8 @@ export default class Test extends Entity implements PageParams {
     protected _FinalText: string;
     /** Czy usunięto */
     protected _IsDeleted: boolean;
+    /** Ilość wypełnień ankiety */
+    public readonly FillCount: number;
 
     /** Nazwa testu / ankiety */
     public get Name() {
@@ -148,7 +150,8 @@ export default class Test extends Entity implements PageParams {
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
         assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
-        score_counting: number, final_title: string, final_text: string, is_deleted: boolean) {
+        score_counting: number, final_title: string, final_text: string, is_deleted: boolean,
+        fill_count: number) {
 
         super();
 
@@ -166,6 +169,7 @@ export default class Test extends Entity implements PageParams {
         this._FinalTitle = final_title;
         this._FinalText = final_text;
         this._IsDeleted = is_deleted;
+        this.FillCount = fill_count;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;
