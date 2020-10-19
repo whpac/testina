@@ -20,5 +20,8 @@ interface Test{
 
     public function assignment_count(): ?int;
     public function assignment_ids(): ?array; // int[]
+
+    public function results(): ?SurveyResults;
+    public function fill_count(): ?int;
 }
 ?>

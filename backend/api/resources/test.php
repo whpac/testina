@@ -78,6 +78,7 @@ class Test extends Resource implements Schemas\Test{
 
             if($this->Test->GetType() == \Entities\Test::TYPE_SURVEY){
                 $keys[] = 'results';
+                $keys[] = 'fill_count';
             }
         }
 
@@ -105,6 +106,10 @@ class Test extends Resource implements Schemas\Test{
             $keys[] = 'questions';
             $keys[] = 'assignment_count';
             $keys[] = 'assignment_ids';
+
+            if($this->Test->GetType() == \Entities\Test::TYPE_SURVEY){
+                $keys[] = 'fill_count';
+            }
         }
 
         return $keys;
@@ -195,7 +200,7 @@ class Test extends Resource implements Schemas\Test{
         return $out_assignments;
     }
 
-    public function results(){
+    public function results(): ?Schemas\SurveyResults{
         if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
         if($this->Test->GetType() != \Entities\Test::TYPE_SURVEY) return null;
 
@@ -205,6 +210,13 @@ class Test extends Resource implements Schemas\Test{
         $results = new SurveyResults($assignments[0]);
         $results->SetContext($this->GetContext());
         return $results;
+    }
+
+    public function fill_count(): ?int{
+        if($this->Test->GetAuthor()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+        if($this->Test->GetType() != \Entities\Test::TYPE_SURVEY) return null;
+
+        return 0;
     }
 }
 ?>

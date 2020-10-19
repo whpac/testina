@@ -1,7 +1,9 @@
 <?php
 namespace Api\Resources;
 
-class SurveyResults extends Resource {
+use Api\Schemas;
+
+class SurveyResults extends Resource implements Schemas\SurveyResults{
     protected $Questions;
 
     public function __construct($assignment){
@@ -83,7 +85,7 @@ class SurveyResults extends Resource {
         ];
     }
 
-    public function questions(): Collection{
+    public function questions(): Schemas\Collection{
         $out_questions = [];
         foreach($this->Questions as $question){
             $out_questions[$question['id']] = new QuestionResult($question);
