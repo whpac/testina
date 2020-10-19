@@ -21,12 +21,20 @@ class OfficeUser {
     }
 
     public function GetFirstName(): string{
-        if(is_null($this->FirstName)) $this->FetchData();
+        try{
+            if(is_null($this->FirstName)) $this->FetchData();
+        }catch(\Exception $e){
+            $this->FirstName = '';
+        }
         return $this->FirstName;
     }
 
     public function GetLastName(): string{
-        if(is_null($this->LastName)) $this->FetchData();
+        try{
+            if(is_null($this->LastName)) $this->FetchData();
+        }catch(\Exception $e){
+            $this->LastName = '';
+        }
         return $this->LastName;
     }
 
@@ -35,7 +43,11 @@ class OfficeUser {
     }
 
     public /* Group[] */ function GetGroups(): array{
-        return self::GetGroupsForUser($this->GetId());
+        try{
+            return self::GetGroupsForUser($this->GetId());
+        }catch(\Exception $e){
+            return [];
+        }
     }
 
     public static /* Group[] */ function GetGroupsForUser($user_id): array{
@@ -56,7 +68,7 @@ class OfficeUser {
             // Wykonaj żądanie
             $result = @file_get_contents($url, false, $context);
             if ($result === false) {
-                Logger::Log('Nie udało się pobrać informacji o grupach, do których należy użytkownik z serwera Office 365.', LogChannels::EXTERNAL_API);
+                Logger::Log('Nie udało się pobrać informacji o grupach, do których należy użytkownik '.$user_id.' z serwera Office 365.', LogChannels::EXTERNAL_API);
                 throw new \Exception('Nie udało się pobrać informacji o grupach, do których należy użytkownik z serwera Office 365.');
             }
 
@@ -107,7 +119,7 @@ class OfficeUser {
         $context = stream_context_create($options);
         $result = @file_get_contents($url, false, $context);
         if ($result === false) {
-            Logger::Log('Nie udało się pobrać informacji o użytkowniku z serwera Office 365.', LogChannels::EXTERNAL_API);
+            Logger::Log('Nie udało się pobrać informacji o użytkowniku '.$this->Id.' z serwera Office 365.', LogChannels::EXTERNAL_API);
             throw new \Exception('Nie udało się pobrać informacji o użytkowniku z serwera Office 365.');
         }
 

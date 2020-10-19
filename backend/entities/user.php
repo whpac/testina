@@ -27,14 +27,14 @@ class User extends EntityWithFlags implements \Auth\Users\User {
     }
 
     protected static /* bool */ function IsDefault($id){
-        return ($id === '0') || is_null($id);
+        return ($id === '0' || $id === 0) || is_null($id);
     }
 
     protected /* void */ function PopulateDefaults(){
-        $this->id = '0';
+        $this->user_id = '0';
         $this->first_name = 'Anonimowy';
         $this->last_name = 'Użytkownik';
-        $this->login = '';
+        $this->expire_date = new \DateTime();
     }
 
     protected function OnPopulate(): void{
@@ -162,13 +162,15 @@ class User extends EntityWithFlags implements \Auth\Users\User {
             'expire_date' => (new \DateTime(USER_CACHE_PERIOD))->format('Y-m-d H:i:s')
         ];
 
-        $query = DatabaseManager::GetProvider()
-                ->Table($table_name)
-                ->Replace();
-        foreach($user_data as $key => $value){
-            $query->Value($key, $value);
+        if(!empty($user->GetFirstName()) && !empty($user->GetLastName()) && $user->GetId() !== '0'){
+            $query = DatabaseManager::GetProvider()
+                    ->Table($table_name)
+                    ->Replace();
+            foreach($user_data as $key => $value){
+                $query->Value($key, $value);
+            }
+            $query->Run();
         }
-        $query->Run();
 
         return $user_data;
     }

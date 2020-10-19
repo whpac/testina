@@ -21,12 +21,20 @@ class OfficeGroup{
     }
 
     public /* string */ function GetName(): string{
-        if(is_null($this->Name)) $this->FetchData();
+        try{
+            if(is_null($this->Name)) $this->FetchData();
+        }catch(\Exception $e){
+            $this->Name = '';
+        }
         return $this->Name;
     }
 
     public /* User[] */ function GetUsers(): array{
-        if(is_null($this->Members)) self::FetchMembers($this->GetId());
+        try{
+            if(is_null($this->Members)) self::FetchMembers($this->GetId());
+        }catch(\Exception $e){
+            $this->Members = [];
+        }
         return $this->Members;
     }
 
@@ -50,7 +58,7 @@ class OfficeGroup{
         $context = stream_context_create($options);
         $result = @file_get_contents($url, false, $context);
         if ($result === false) {
-            Logger::Log('Nie udało się pobrać informacji o grupie z serwera Office 365.', LogChannels::EXTERNAL_API);
+            Logger::Log('Nie udało się pobrać informacji o grupie '.$this->Id.' z serwera Office 365.', LogChannels::EXTERNAL_API);
             throw new \Exception('Nie udało się pobrać informacji o grupie z serwera Office 365.');
         }
 
@@ -82,7 +90,7 @@ class OfficeGroup{
             // Wykonaj żądanie
             $result = @file_get_contents($url, false, $context);
             if ($result === false) {
-                Logger::Log('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.', LogChannels::EXTERNAL_API);
+                Logger::Log('Nie udało się pobrać informacji o członkach grupy '.$group_id.' z serwera Office 365.', LogChannels::EXTERNAL_API);
                 throw new \Exception('Nie udało się pobrać informacji o członkach grupy z serwera Office 365.');
             }
 

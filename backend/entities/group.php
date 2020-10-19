@@ -27,6 +27,16 @@ class Group extends EntityWithFlags implements \Auth\Users\Group{
         return true;
     }
 
+    protected static /* bool */ function IsDefault($id){
+        return ($id === '0' || $id === 0) || is_null($id);
+    }
+
+    protected /* void */ function PopulateDefaults(){
+        $this->group_id = '0';
+        $this->name = 'Nieznana grupa';
+        $this->expire_date = new \DateTime();
+    }
+
     protected function OnPopulate(): void{
         parent::OnPopulate();
 
@@ -131,13 +141,15 @@ class Group extends EntityWithFlags implements \Auth\Users\Group{
             'expire_date' => (new \DateTime(GROUP_CACHE_PERIOD))->format('Y-m-d H:i:s')
         ];
 
-        $query = DatabaseManager::GetProvider()
-                ->Table($table_name)
-                ->Replace();
-        foreach($group_data as $key => $value){
-            $query->Value($key, $value);
+        if(!empty($group->GetName()) && $group->GetId() !== '0'){
+            $query = DatabaseManager::GetProvider()
+                    ->Table($table_name)
+                    ->Replace();
+            foreach($group_data as $key => $value){
+                $query->Value($key, $value);
+            }
+            $query->Run();
         }
-        $query->Run();
 
         return $group_data;
     }
