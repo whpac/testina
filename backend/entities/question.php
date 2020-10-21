@@ -233,7 +233,7 @@ class Question extends EntityWithFlags {
 
         foreach($user_answers as $user_answer){
             $answer = $user_answer->GetAnswer();
-            if(!is_null($answer)) $selected_ids[] = $answer->GetId();
+            if(!is_null($answer) && ($answer instanceof Answer)) $selected_ids[] = $answer->GetId();
         }
 
         $answers = $this->GetAnswers();
