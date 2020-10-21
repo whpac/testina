@@ -90,6 +90,7 @@ export default class AssignmentsTable extends Component {
                 cells[1].title = 'Termin upłynął';
             }
 
+            cells[2].appendChild(new Icon('spinner', 'fa-pulse').GetElement());
             let targets = await assignment.GetTargets();
             cells[2].textContent = this.MakeTargetsText(targets);
             cells[2].classList.add('wide-screen-only');

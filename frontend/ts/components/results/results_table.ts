@@ -54,6 +54,7 @@ export default class ResultsTable extends Component {
 
             tds[0].textContent = user.GetFullName();
 
+            let attempt_count_awaiter = assignment.CountUsersAttempts(user);
             let score = await assignment.GetUsersScore(user);
             if(score === undefined) {
                 tds[1].textContent = '—';
@@ -62,7 +63,7 @@ export default class ResultsTable extends Component {
                 tds[1].textContent = score.toString() + '%';
             }
 
-            let attempt_count = await assignment.CountUsersAttempts(user);
+            let attempt_count = await attempt_count_awaiter;
             tds[2].textContent = attempt_count.toString();
             if(attempt_count >= assignment.AttemptLimit && !assignment.AreAttemptsUnlimited()) {
                 tds[2].classList.add('error');
