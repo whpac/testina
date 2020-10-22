@@ -2,6 +2,8 @@ import Component from '../basic/component';
 import Assignment from '../../entities/assignment';
 import { CompareUsersByName } from '../../utils/arrayutils';
 import * as DateUtils from '../../utils/dateutils';
+import User from '../../entities/user';
+import ScoreDetailsDialog from '../tests_lists/score_details_dialog';
 
 export default class ResultsTable extends Component {
     protected Element: HTMLTableElement;
@@ -55,12 +57,20 @@ export default class ResultsTable extends Component {
             tds[0].textContent = user.GetFullName();
 
             let attempt_count_awaiter = assignment.CountUsersAttempts(user);
-            let score = await assignment.GetUsersScore(user);
+            let score = assignment.GetScoreForUser(user);
             if(score === undefined) {
                 tds[1].textContent = '—';
                 tds[1].title = 'Nie pod' + (user.IsFemale() ? 'eszła' : 'szedł');
             } else {
-                tds[1].textContent = score.toString() + '%';
+                tds[1].textContent = '';
+                tds[1].title = '';
+
+                let score_link = document.createElement('a');
+                score_link.title = 'Zobacz wyniki poszczególnych podejść';
+                score_link.href = 'javascript:void(0)';
+                score_link.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment, user));
+                score_link.textContent = score + '%';
+                tds[1].appendChild(score_link);
             }
 
             let attempt_count = await attempt_count_awaiter;
@@ -85,5 +95,11 @@ export default class ResultsTable extends Component {
             tds[2].classList.add('center');
             tds[3].classList.add('center');
         }
+    }
+
+    protected DisplayScoreDetailsDialog(assignment: Assignment, user: User) {
+        let dialog = new ScoreDetailsDialog();
+        dialog.Populate(assignment, user);
+        dialog.Show();
     }
 }

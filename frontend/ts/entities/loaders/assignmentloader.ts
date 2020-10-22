@@ -11,6 +11,7 @@ import Loader from './loader';
 import AssignmentResultsLoader, { AssignmentResultsDescriptor } from './assignmentresultsloader';
 import User from '../user';
 import AuthManager from '../../auth/auth_manager';
+import { StringKeyedCollection } from '../question_with_user_answers';
 
 /** Deskryptor przypisania w odpowiedzi z API */
 export interface AssignmentDescriptor {
@@ -19,6 +20,7 @@ export interface AssignmentDescriptor {
     time_limit: string,
     assignment_date: string,
     score_current: number | null,
+    scores: StringKeyedCollection<number> | null,
     test: TestDescriptor,
     assigned_by_id: string,
     attempt_count: number,
@@ -126,7 +128,8 @@ export default class AssignmentLoader implements Loader<Assignment> {
             assignment_descriptor.score_current,
             assigning_user,
             targets_loader,
-            results_loader
+            results_loader,
+            assignment_descriptor.scores
         );
 
         attempt_loader.SetAssignment(assignment);

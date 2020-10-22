@@ -47,6 +47,7 @@ class Assignment extends Resource implements Schemas\Assignment{
         if($this->Assignment->GetAssigningUser()->GetId() == $this->GetContext()->GetUser()->GetId()){
             $keys[] = 'targets';
             $keys[] = 'results';
+            $keys[] = 'scores';
         }
 
         return $keys;
@@ -73,6 +74,16 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $this->Assignment->GetAverageScore($current_user);
     }
 
+    public function scores(): ?Schemas\Collection{
+        if($this->Assignment->GetAssigningUser()->GetId() != $this->GetContext()->GetUser()->GetId()) return null;
+        $users = \Entities\Attempt::GetUsersWhoAttempted($this->Assignment);
+        $scores = [];
+        foreach($users as $user){
+            $scores[$user->GetId()] = $this->Assignment->GetAverageScore($user);
+        }
+        return new Collection($scores);
+    }
+
     public function test(): Schemas\Test{
         $t = new Test($this->Assignment->GetTest());
         $t->SetContext($this->GetContext());
@@ -83,6 +94,7 @@ class Assignment extends Resource implements Schemas\Assignment{
         return $this->Assignment->GetAssigningUser()->GetId();
     }
 
+    // Ilość podejść wykonanych tylko przez bieżącego użytkownika
     public function attempt_count(): int{
         $current_user = $this->GetContext()->GetUser();
         return $this->Assignment->CountUserAttempts($current_user);
@@ -91,8 +103,14 @@ class Assignment extends Resource implements Schemas\Assignment{
     public function attempts(): Schemas\Collection{
         $current_user = $this->GetContext()->GetUser();
         $include_unfinished = $this->GetContext()->GetMethod() != 'GET';
-        $attempts = $this->Assignment->GetUserAttempts($current_user, $include_unfinished);
+        $attempts = [];
         $out_attempts = [];
+
+        if($current_user->GetId() == $this->Assignment->GetAssigningUser()->GetId()){
+            $attempts = \Entities\Attempt::GetAttemptsByAssignment($this->Assignment, $include_unfinished);
+        }else{
+            $attempts = $this->Assignment->GetUserAttempts($current_user, $include_unfinished);
+        }
 
         foreach($attempts as $attempt){
             $out_attempts[$attempt->GetId()] = new Attempt($attempt);

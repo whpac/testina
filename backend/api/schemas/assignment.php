@@ -7,6 +7,7 @@ interface Assignment{
     public function time_limit(): \DateTime;
     public function assignment_date(): \DateTime;
     public function score_current(): ?float;
+    public function scores(): ?Collection;
     public function test(): Test;
     public function assigned_by_id(): string;
 

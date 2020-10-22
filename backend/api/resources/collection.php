@@ -26,9 +26,12 @@ class Collection extends Resource implements Schemas\Collection{
 
     public function __call($name, $args){
         if(!isset($this->Items[$name])) throw new \BadMethodCallException('Indeks '.urlencode($name).' nie istnieje w tej kolekcji.');
-        
+
         $item = $this->Items[$name];
-        $item->SetContext($this->GetContext());
+
+        if($item instanceof Resource)
+            $item->SetContext($this->GetContext());
+
         return $item;
     }
 }

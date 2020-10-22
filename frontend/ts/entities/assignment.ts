@@ -13,6 +13,7 @@ import Attempt from './attempt';
 import AssignmentTargetsLoader from './loaders/assignmenttargetsloader';
 import AssignmentResultsLoader from './loaders/assignmentresultsloader';
 import { StringKeyedCollection } from './question_with_user_answers';
+import UserLoader from './loaders/userloader';
 
 type AssignmentTargetEntity = User | Group | string;
 export type AssignmentTargets = {
@@ -47,6 +48,8 @@ export default class Assignment extends Entity implements PageParams {
     protected _Score: number | null;
     /** Użytkownik, który przypisał test */
     public readonly AssignedBy: User;
+    /** Wyniki poszczególnych użytkowników */
+    protected readonly Scores: StringKeyedCollection<number> | null;
 
     /** Limit podejść */
     public get AttemptLimit() {
@@ -83,10 +86,14 @@ export default class Assignment extends Entity implements PageParams {
      * @param attempt_loader Obiekt ładujący podejścia
      * @param score Średni wynik (lub null, jeśli nie było podejść)
      * @param assigned_by Osoba przypisująca
+     * @param targets_loader Obiekt wczytujący cele przypisań
+     * @param results_loader Obiekt wczytujący wyniki
+     * @param scores Wyniki poszczególnych osób
      */
     constructor(id: number | string, test: Test, attempt_limit: number, deadline: Date, assignment_date: Date,
         attempt_loader: AttemptLoader, score: number | null, assigned_by: User,
-        targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader) {
+        targets_loader: AssignmentTargetsLoader, results_loader: AssignmentResultsLoader,
+        scores: StringKeyedCollection<number> | null) {
 
         super();
 
@@ -104,15 +111,24 @@ export default class Assignment extends Entity implements PageParams {
         this.AttemptLoader = attempt_loader;
         this.TargetsLoader = targets_loader;
         this.ResultsLoader = results_loader;
+        this.Scores = scores;
     }
 
     protected _Attempts: Attempt[] | undefined;
-    /** Zwraca pytania do tego testu */
-    public async GetAttempts() {
+    /** Zwraca podejścia użytkownika do tego przypisania */
+    public async GetAttemptsForUser(user: User) {
         if(this._Attempts === undefined) {
             this._Attempts = await this.AttemptLoader.GetAllForAssignment();
         }
-        return this._Attempts;
+        return this._Attempts.filter((a) => a.User.Id == user.Id);
+    }
+
+    /** Zwraca podejścia bieżącego użytkownika do tego przypisania */
+    public async GetAttemptsForCurrentUser() {
+        let current_user = await UserLoader.GetCurrent();
+        if(current_user === undefined) return [];
+
+        return this.GetAttemptsForUser(current_user);
     }
 
     protected _Targets: AssignmentTargets | undefined;
@@ -135,6 +151,12 @@ export default class Assignment extends Entity implements PageParams {
             }
         }
         return this._Results;
+    }
+
+    public GetScoreForUser(user: User) {
+        if(this.Scores === null) return null;
+        if(this.Scores[user.Id] !== undefined) return this.Scores[user.Id];
+        return null;
     }
 
     /** Czy pozostały jeszcze podejścia */
@@ -161,15 +183,6 @@ export default class Assignment extends Entity implements PageParams {
     /** Czy przypisanie jest aktywne (są wolne podejścia i nie upłynął termin) */
     IsActive() {
         return !this.HasDeadlineExceeded() && this.AreRemainingAttempts();
-    }
-
-    /**
-     * Zwraca wynik danego użytkownika lub undefined, jeśli nie podszedł
-     * @param user Użytkownik, którego wynik zwrócić
-     */
-    async GetUsersScore(user: User): Promise<number | undefined> {
-        let results = await this.GetResults();
-        return results[user.Id].AverageScore;
     }
 
     /**
