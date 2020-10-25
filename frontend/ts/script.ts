@@ -23,6 +23,7 @@ import LoginWithOfficePage from './pages/login_office';
 import Toast from './components/basic/toast';
 import SurveyResultsPage from './pages/survey_results';
 import AccountPage from './pages/account';
+import AttemptAnswers from './pages/attempt_answers';
 
 
 try {
@@ -48,6 +49,7 @@ try {
     pages.RegisterPage(/^ankiety\/wypełnij(\/[0-9a-zA-Z]+)?$/, { CreatePage: () => new FillSurveyPage() });
     pages.RegisterPage('informacje', { CreatePage: () => new AboutPage() });
     pages.RegisterPage('konto', { CreatePage: () => new AccountPage() });
+    pages.RegisterPage(/^podejścia(\/[0-9]+)?$/, { CreatePage: () => new AttemptAnswers() });
     pages.RegisterPage('pomoc', { CreatePage: () => new HelpPage() });
     pages.RegisterPage('testy/biblioteka', { CreatePage: () => new LibraryPage() });
     pages.RegisterPage(/^testy\/edytuj(\/[0-9]+)?$/, { CreatePage: () => new EditTestPage() });
