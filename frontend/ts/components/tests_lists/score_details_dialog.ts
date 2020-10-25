@@ -5,6 +5,7 @@ import { ToDayHourFormat } from '../../utils/dateutils';
 import Test from '../../entities/test';
 import User from '../../entities/user';
 import UserLoader from '../../entities/loaders/userloader';
+import { GoToPage } from '../../1page/page_manager';
 
 export default class ScoreDetailsDialog extends Dialog {
     TBody: HTMLTableSectionElement;
@@ -36,6 +37,7 @@ export default class ScoreDetailsDialog extends Dialog {
         nocontent.classList.add('nocontent-tbody');
         let tr = nocontent.insertRow();
         tr.insertCell().textContent = 'Wczytywanie...';
+        tr.insertCell();
         tr.insertCell();
 
         let close_btn = document.createElement('button');
@@ -79,6 +81,11 @@ export default class ScoreDetailsDialog extends Dialog {
                 more_btn.classList.add('fa', 'fa-ellipsis-h');
                 more_btn.title = 'Wyświetl odpowiedzi';
                 td_btn.appendChild(more_btn);
+
+                more_btn.addEventListener('click', (() => {
+                    this.Hide();
+                    GoToPage('podejścia', attempt);
+                }));
             }
         }
 
