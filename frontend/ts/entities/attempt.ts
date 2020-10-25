@@ -8,9 +8,10 @@ import QuestionLoader, { QuestionDescriptor } from './loaders/questionloader';
 import AttemptLoader, { AttemptDescriptor } from './loaders/attemptloader';
 import ApiEndpoints from './loaders/apiendpoints';
 import JsonBase64Deserializer from '../network/deserializers/jsonbase64_deserializer';
+import PageParams, { SimpleObjectRepresentation } from '../1page/page_params';
 
 /** Klasa reprezentująca podejście */
-export default class Attempt extends Entity {
+export default class Attempt extends Entity implements PageParams {
     /** Unikatowy identyfikator podejścia */
     public readonly Id: number;
     /** Przypisanie, do którego należy to podejście */
@@ -128,6 +129,13 @@ export default class Attempt extends Entity {
         if(response.Status != 201) {
             throw 'Nie udało się zapisać odpowiedzi.';
         }
+    }
+
+    GetSimpleRepresentation(): SimpleObjectRepresentation {
+        return {
+            type: 'attempt',
+            id: this.Id
+        };
     }
 }
 

@@ -106,4 +106,12 @@ export default class AttemptLoader {
 
         return out_array;
     }
+
+    /**
+     * Wczytuje podejście o podanym identyfikatorze
+     * @param attempt_id Identyfikator podejścia
+     */
+    public static async LoadById(attempt_id: number) {
+        return new AttemptLoader().LoadById(attempt_id);
+    }
 }
