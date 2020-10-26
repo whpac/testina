@@ -9,6 +9,7 @@ class Root extends Resource implements Schemas\Root {
     public function GetKeys(): array{
         return [
             'assignments',
+            'attempts',
             'groups',
             'session',
             'static_data',
@@ -52,6 +53,12 @@ class Root extends Resource implements Schemas\Root {
         }
 
         $collection = new AssignmentCollection($out_assignments, null, $link_assignments_res);
+        $collection->SetContext($this->GetContext());
+        return $collection;
+    }
+
+    public function attempts(): Schemas\Collection{
+        $collection = new RootAttempts();
         $collection->SetContext($this->GetContext());
         return $collection;
     }
