@@ -116,6 +116,10 @@ class AttemptAnswers extends Resource {
         ];
     }
 
+    public function GetDefaultKeys(): array{
+        return [];
+    }
+
     public function get(){
         if($this->GetContext()->GetUser()->GetId() != $this->Attempt->GetAssignment()->GetAssigningUser()->GetId()) return null;
 
