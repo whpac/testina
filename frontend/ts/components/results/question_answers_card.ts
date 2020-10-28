@@ -31,7 +31,7 @@ export default class QuestionAnswersCard extends Card {
         this.Header.textContent = 'Pytanie usunięte';
         this.ContentElement.textContent = '';
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot + ' punktów.';
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 
@@ -82,7 +82,7 @@ export default class QuestionAnswersCard extends Card {
             }
         }
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 
@@ -91,7 +91,7 @@ export default class QuestionAnswersCard extends Card {
         this.ContentElement.textContent = 'Wpisana odpowiedź: ' + answers.SuppliedAnswer;
         this.ContentElement.appendChild(document.createElement('br'));
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 }
