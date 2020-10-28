@@ -180,6 +180,20 @@ class UserAnswer extends Entity {
         return new UserAnswer($result->fetch_assoc());
     }
 
+    public static function SaveScoreForQuestion(Attempt $attempt, $question_index, $score){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Update()
+                ->Set('score_got', $score)
+                ->Where('attempt_id', '=', $attempt->GetId())
+                ->Where('question_index', '=', $question_index)
+                ->Run();
+        
+        if($result === false){
+            Logger::Log('Nie udało się zapisać punktacji do pytania: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+        }
+    }
+
     public static /* UserAnswerCollection */ function GetUserAnswersForAttempt(Attempt $attempt){
         $user_answers = new UserAnswerCollection();
         $result = DatabaseManager::GetProvider()

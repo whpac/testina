@@ -98,8 +98,12 @@ class AttemptAnswers extends Resource {
             $answer_sets = $user_answers->GetAnswersByQuestion($question);
             
             foreach($answer_sets as $answer_set){
-                $score_got += $question->CountPoints($answer_set);
+                // answer_set = [answers, q_index]
+                $current_got = $question->CountPoints($answer_set[0]);
+                $score_got += $current_got;
                 $score_max += $question->GetPoints();
+
+                \Entities\UserAnswer::SaveScoreForQuestion($this->Attempt, $answer_set[1], $current_got);
             }
         }
 
