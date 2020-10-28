@@ -3,9 +3,13 @@ import Assignment from '../../entities/assignment';
 import Attempt from '../../entities/attempt';
 import { ToDayHourFormat } from '../../utils/dateutils';
 import Test from '../../entities/test';
+import User from '../../entities/user';
+import UserLoader from '../../entities/loaders/userloader';
+import { GoToPage } from '../../1page/page_manager';
 
 export default class ScoreDetailsDialog extends Dialog {
     TBody: HTMLTableSectionElement;
+    ButtonColumnHeader: HTMLTableHeaderCellElement;
 
     constructor() {
         super();
@@ -23,6 +27,9 @@ export default class ScoreDetailsDialog extends Dialog {
         th_score.textContent = 'Wynik';
         header.appendChild(th_score);
 
+        this.ButtonColumnHeader = document.createElement('th');
+        header.appendChild(this.ButtonColumnHeader);
+
         this.TBody = table.createTBody();
         this.TBody.classList.add('content-tbody');
 
@@ -31,6 +38,7 @@ export default class ScoreDetailsDialog extends Dialog {
         let tr = nocontent.insertRow();
         tr.insertCell().textContent = 'Wczytywanie...';
         tr.insertCell();
+        tr.insertCell();
 
         let close_btn = document.createElement('button');
         close_btn.textContent = 'Zamknij';
@@ -38,11 +46,19 @@ export default class ScoreDetailsDialog extends Dialog {
         this.AddButton(close_btn);
     }
 
-    async Populate(assignment: Assignment) {
-        let attempts_awaiter = assignment.GetAttempts();
+    async Populate(assignment: Assignment, user: User | undefined = undefined) {
+        let attempts_awaiter;
+        if(user === undefined) {
+            attempts_awaiter = assignment.GetAttemptsForCurrentUser();
+        } else {
+            attempts_awaiter = assignment.GetAttemptsForUser(user);
+        }
+
+        let display_more = (assignment.AssignedBy.Id === (await UserLoader.GetCurrent())?.Id);
+        this.ButtonColumnHeader.style.display = display_more ? '' : 'none';
 
         let test = assignment.Test;
-        this.SetHeader(test.Name);
+        this.SetHeader((user !== undefined ? (user.GetFullName() + ' – ') : '') + test.Name);
 
         let attempts = await attempts_awaiter;
         for(let attempt of attempts) {
@@ -55,6 +71,22 @@ export default class ScoreDetailsDialog extends Dialog {
             let td_score = tr.insertCell(-1);
             td_score.classList.add('center');
             td_score.textContent = attempt.GetPercentageScore() + '%';
+
+            if(display_more) {
+                let td_btn = tr.insertCell(-1);
+                td_btn.classList.add('center');
+
+                let more_btn = document.createElement('button');
+                more_btn.classList.add('compact');
+                more_btn.classList.add('fa', 'fa-ellipsis-h');
+                more_btn.title = 'Wyświetl odpowiedzi';
+                td_btn.appendChild(more_btn);
+
+                more_btn.addEventListener('click', (() => {
+                    this.Hide();
+                    GoToPage('podejścia', attempt);
+                }));
+            }
         }
 
         let avg_tr = this.TBody.insertRow(-1);
@@ -68,7 +100,17 @@ export default class ScoreDetailsDialog extends Dialog {
         td_avg_score.classList.add('center');
         td_avg_score.appendChild(em_score = document.createElement('em'));
 
+        if(display_more) {
+            avg_tr.insertCell(-1);
+        }
+
         em_avg.textContent = assignment.Test.ScoreCounting == Test.SCORE_BEST ? 'Najlepszy:' : 'Średnia:';
-        em_score.textContent = assignment.Score + '%';
+        if(user === undefined) {
+            em_score.textContent = assignment.Score + '%';
+        } else {
+            let score = assignment.GetScoreForUser(user);
+            if(score === null) em_score.textContent = 'Nieznany';
+            else em_score.textContent = score + '%';
+        }
     }
 }

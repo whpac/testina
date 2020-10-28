@@ -208,5 +208,30 @@ class Attempt extends Entity {
             throw new \Exception('Nie udało się oznaczyć podejścia jako ukończonego.');
         }
     }
+
+    public static /* User[] */ function GetUsersWhoAttempted(Assignment $assignment){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_ATTEMPTS)
+                ->Select()
+                ->Where('assignment_id', '=', $assignment->GetId())
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się wczytać osób, które podeszły do przypisanego testu '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            throw new \Exception('Nie udało się wczytać osób, które podeszły do testu.');
+        }
+
+        $user_ids = [];
+        for($i = 0; $i < $result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $user_ids[$row['user_id']] = true;
+        }
+
+        $users = [];
+        foreach($user_ids as $user_id => $value){
+            $users[] = new User($user_id);
+        }
+        return $users;
+    }
 }
 ?>

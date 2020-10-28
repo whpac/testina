@@ -34,8 +34,12 @@ export default class ApiEndpoints {
         throw `Obiekt ${name} nie ma reprezentacji w API.`;
     }
 
+    public static GetApiRoot() {
+        return 'api/';
+    }
+
     protected static GetAssignmentUrl(assignment: Assignment) {
-        return `api/assignments/${assignment.Id}`;
+        return this.GetApiRoot() + `assignments/${assignment.Id}`;
     }
 
     protected static GetAttemptUrl(attempt: Attempt) {
@@ -44,7 +48,7 @@ export default class ApiEndpoints {
 
     protected static GetTestUrl(test: Test) {
         if(test.Type == Test.TYPE_SURVEY) return `api/surveys/${test.Id}`;
-        return `api/tests/${test.Id}`;
+        return this.GetApiRoot() + `tests/${test.Id}`;
     }
 
     protected static GetQuestionUrl(question: Question) {
@@ -56,10 +60,10 @@ export default class ApiEndpoints {
     }
 
     protected static GetUserUrl(user: User) {
-        return `api/users/${user.Id}`;
+        return this.GetApiRoot() + `users/${user.Id}`;
     }
 
     protected static GetGroupUrl(group: Group) {
-        return `api/groups/${group.Id}`;
+        return this.GetApiRoot() + `groups/${group.Id}`;
     }
 }

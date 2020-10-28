@@ -13,7 +13,6 @@ export default class AssignedTestRow extends Component {
     AuthorCell: HTMLTableCellElement;
     ScoreCell: HTMLTableCellElement;
     AttemptsCell: HTMLTableCellElement;
-    // ButtonsCell: HTMLTableCellElement;
     SolveCell: HTMLTableCellElement;
     DetailsCell: HTMLTableCellElement;
     SolveButton: HTMLAnchorElement;

@@ -14,6 +14,7 @@ class UserAnswer extends Entity {
     protected /* int */ $question_index;
     protected /* int */ $question_id;
     protected /* string */ $supplied_answer;
+    protected /* float */ $score_got;
 
     protected static /* string */ function GetTableName(){
         return TABLE_USER_ANSWERS;
@@ -63,6 +64,11 @@ class UserAnswer extends Entity {
         return $this->supplied_answer;
     }
 
+    public /* float */ function GetScore(){
+        $this->FetchIfNeeded();
+        return $this->score_got;
+    }
+
     public /* bool */ function IsOpenAnswer(){
         return !($this->GetSuppliedAnswer() === '' || is_null($this->GetSuppliedAnswer()));
     }
@@ -79,6 +85,7 @@ class UserAnswer extends Entity {
                 ->Value('answer_id', $answer->GetId())
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $answer->GetQuestion()->GetId())
+                ->Value('score_got', 0)
                 ->Run();
 
         if($result === false){
@@ -104,6 +111,7 @@ class UserAnswer extends Entity {
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $question->GetId())
                 ->Value('supplied_answer', $answer)
+                ->Value('score_got', 0)
                 ->Run();
 
         if($result === false){
@@ -128,6 +136,7 @@ class UserAnswer extends Entity {
                 ->Value('attempt_id', $attempt->GetId())
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $question->GetId())
+                ->Value('score_got', 0)
                 ->Run();
 
         if($result === false){
@@ -153,6 +162,7 @@ class UserAnswer extends Entity {
                 ->Value('answer_id', $answer_id)
                 ->Value('question_index', $question_index)
                 ->Value('question_id', $question->GetId())
+                ->Value('score_got', 0)
                 ->Run();
 
         if($result === false){
@@ -168,6 +178,20 @@ class UserAnswer extends Entity {
                 ->Run();
 
         return new UserAnswer($result->fetch_assoc());
+    }
+
+    public static function SaveScoreForQuestion(Attempt $attempt, $question_index, $score){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Update()
+                ->Set('score_got', $score)
+                ->Where('attempt_id', '=', $attempt->GetId())
+                ->Where('question_index', '=', $question_index)
+                ->Run();
+        
+        if($result === false){
+            Logger::Log('Nie udało się zapisać punktacji do pytania: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+        }
     }
 
     public static /* UserAnswerCollection */ function GetUserAnswersForAttempt(Attempt $attempt){

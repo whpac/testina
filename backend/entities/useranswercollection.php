@@ -64,7 +64,7 @@ class UserAnswerCollection {
         return $res;
     }
 
-    public /* UserAnswer[][] */ function GetAnswersByQuestion(Question $question){
+    public /* [UserAnswer[], int][] */ function GetAnswersByQuestion(Question $question){
         if(is_null($this->indices_by_question)) $this->GroupIndicesByQuestion();
 
         if(!isset($this->indices_by_question[$question->GetId()])) return [];
@@ -72,7 +72,7 @@ class UserAnswerCollection {
         $answers = [];
 
         foreach($indices as $index){
-            $answers[] = $this->GetAnswersByQuestionIndex($index);
+            $answers[] = [$this->GetAnswersByQuestionIndex($index), $index];
         }
 
         return $answers;

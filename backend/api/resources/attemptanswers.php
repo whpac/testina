@@ -98,14 +98,97 @@ class AttemptAnswers extends Resource {
             $answer_sets = $user_answers->GetAnswersByQuestion($question);
             
             foreach($answer_sets as $answer_set){
-                $score_got += $question->CountPoints($answer_set);
+                // answer_set = [answers, q_index]
+                $current_got = $question->CountPoints($answer_set[0]);
+                $score_got += $current_got;
                 $score_max += $question->GetPoints();
+
+                \Entities\UserAnswer::SaveScoreForQuestion($this->Attempt, $answer_set[1], $current_got);
             }
         }
 
         // Update attempt to reflect the score
         $this->Attempt->UpdateScore($score_got, $score_max);
         $this->Attempt->MarkAsFinished();
+    }
+
+    public function GetKeys(): array{
+        if($this->GetContext()->GetUser()->GetId() != $this->Attempt->GetAssignment()->GetAssigningUser()->GetId()) return [];
+
+        return [
+            'get'
+        ];
+    }
+
+    public function GetDefaultKeys(): array{
+        return [];
+    }
+
+    public function get(){
+        if($this->GetContext()->GetUser()->GetId() != $this->Attempt->GetAssignment()->GetAssigningUser()->GetId()) return null;
+
+        $out_array = [];
+        $user_answers = $this->Attempt->GetUserAnswers()->AsArray();
+
+        foreach($user_answers as $user_answer){
+            $out_array[$user_answer->GetQuestionIndex()]['question_id'] = $user_answer->GetQuestion()->GetId();
+            $out_array[$user_answer->GetQuestionIndex()]['score_got'] = $user_answer->GetScore();
+
+            $answer_id = $user_answer->GetAnswer();
+            if($answer_id instanceof \Entities\Answer) $answer_id = $answer_id->GetId();
+            $out_array[$user_answer->GetQuestionIndex()]['answer_ids'][] = $answer_id;
+            $out_array[$user_answer->GetQuestionIndex()]['supplied_answer'] = $user_answer->GetSuppliedAnswer();
+            $out_array[$user_answer->GetQuestionIndex()]['is_open'] = $user_answer->IsOpenAnswer();
+        }
+
+        $resources = [];
+        foreach($out_array as $q){
+            $resources[] = new AttemptAnswersQuestion($q);
+        }
+
+        $coll = new Collection($resources);
+        $coll->SetContext($this->GetContext());
+        return $coll;
+    }
+}
+
+class AttemptAnswersQuestion extends Resource {
+    protected $Data;
+
+    public function __construct($data){
+        parent::__construct();
+
+        $this->Data = $data;
+    }
+
+    public function GetKeys(): array{
+        return [
+            'question_id',
+            'answer_ids',
+            'supplied_answer',
+            'is_open',
+            'score_got'
+        ];
+    }
+
+    public function question_id(): int{
+        return $this->Data['question_id'];
+    }
+
+    public function answer_ids(): array{
+        return $this->Data['answer_ids'];
+    }
+
+    public function supplied_answer(): string{
+        return $this->Data['supplied_answer'];
+    }
+
+    public function is_open(): bool{
+        return $this->Data['is_open'];
+    }
+
+    public function score_got(): float{
+        return $this->Data['score_got'];
     }
 }
 ?>

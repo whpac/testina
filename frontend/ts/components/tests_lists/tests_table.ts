@@ -90,7 +90,7 @@ export default class TestsTable extends Component {
         td_qcount.classList.add('center', 'wide-screen-only');
         td_qcount.textContent =
             (test.QuestionCount ?? 0).toString() +
-            ' (×' + test.QuestionMultiplier.toString() + ')';
+            ' (×' + test.QuestionMultiplier.toLocaleString() + ')';
 
         let td_date = tr.insertCell(-1);
         td_date.classList.add('center', 'wide-screen-only');

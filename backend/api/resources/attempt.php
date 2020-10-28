@@ -16,6 +16,7 @@ class Attempt extends Resource implements Schemas\Attempt {
     public function GetKeys(): array{
         return [
             'id',
+            'assignment_id',
             'user_id',
             'score',
             'max_score',
@@ -26,6 +27,10 @@ class Attempt extends Resource implements Schemas\Attempt {
 
     public function id(): int{
         return $this->Attempt->GetId();
+    }
+
+    public function assignment_id(): int{
+        return $this->Attempt->GetAssignment()->GetId();
     }
 
     public function user_id(): string{

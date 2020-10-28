@@ -5,10 +5,12 @@ import QuestionLoader, { QuestionDescriptor } from './questionloader';
 import Attempt from '../attempt';
 import Assignment from '../assignment';
 import ApiEndpoints from './apiendpoints';
+import AssignmentLoader from './assignmentloader';
 
 /** Deskryptor podejścia w odpowiedzi z API */
 export interface AttemptDescriptor {
     id: number,
+    assignment_id: number,
     user_id: string,
     score: number | undefined,
     max_score: number,
@@ -58,9 +60,11 @@ export default class AttemptLoader {
      * @param attempt_id Identyfikator podejścia
      */
     public async LoadById(attempt_id: number) {
-        if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
+        let url = '';
+        if(this.Assignment === undefined) url = ApiEndpoints.GetApiRoot() + 'attempts/' + attempt_id.toString();
+        else url = ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts/' + attempt_id.toString();
 
-        let response = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this.Assignment) + '/attempts/' + attempt_id.toString() + '?depth=2', 'GET');
+        let response = await XHR.PerformRequest(url + '?depth=2', 'GET');
         let json = response.Response as AttemptDescriptor;
         return this.CreateFromDescriptor(json);
     }
@@ -70,7 +74,9 @@ export default class AttemptLoader {
      * @param attempt_descriptor Deskryptor podejścia
      */
     public async CreateFromDescriptor(attempt_descriptor: AttemptDescriptor) {
-        if(this.Assignment === undefined) throw 'AttemptLoader.Assignment nie może być undefined.';
+        if(this.Assignment === undefined) {
+            this.Assignment = await AssignmentLoader.LoadById(attempt_descriptor.assignment_id);
+        }
 
         let question_loader = new QuestionLoader(attempt_descriptor.path?.length);
         question_loader.SetTest(this.Assignment.Test);
@@ -105,5 +111,13 @@ export default class AttemptLoader {
         }
 
         return out_array;
+    }
+
+    /**
+     * Wczytuje podejście o podanym identyfikatorze
+     * @param attempt_id Identyfikator podejścia
+     */
+    public static async LoadById(attempt_id: number) {
+        return new AttemptLoader().LoadById(attempt_id);
     }
 }
