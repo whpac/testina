@@ -77,7 +77,7 @@ export default class ScoreDetailsDialog extends Dialog {
                 td_btn.classList.add('center');
 
                 let more_btn = document.createElement('button');
-                more_btn.classList.add('compact', 'todo');
+                more_btn.classList.add('compact');
                 more_btn.classList.add('fa', 'fa-ellipsis-h');
                 more_btn.title = 'Wyświetl odpowiedzi';
                 td_btn.appendChild(more_btn);
