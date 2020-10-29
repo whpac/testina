@@ -67,6 +67,7 @@ class Test extends Resource implements Schemas\Test{
             'final_title',
             'final_text',
             'is_deleted',
+            'do_hide_correct_answers',
             'question_multiplier',
             'question_count'
         ];
@@ -98,6 +99,7 @@ class Test extends Resource implements Schemas\Test{
             'final_title',
             'final_text',
             'is_deleted',
+            'do_hide_correct_answers',
             'question_multiplier',
             'question_count'
         ];
@@ -157,6 +159,10 @@ class Test extends Resource implements Schemas\Test{
 
     public function is_deleted(): bool{
         return $this->Test->IsDeleted();
+    }
+
+    public function do_hide_correct_answers(): bool{
+        return $this->Test->GetDoHideCorrectAnswers();
     }
 
     public function question_multiplier(): float{

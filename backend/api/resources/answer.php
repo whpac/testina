@@ -56,6 +56,7 @@ class Answer extends Resource implements Schemas\Answer{
     }
 
     public function correct(): bool{
+        // ! Dodać sprawdanie, czy poprawność odpowiedzi należy pokazać i ew. zwrócić false
         return $this->Answer->IsCorrect();
     }
 

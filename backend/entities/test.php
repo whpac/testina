@@ -28,6 +28,7 @@ class Test extends EntityWithFlags {
 
     // Maski bitowe flag
     public const FLAG_IS_DELETED = 1;
+    public const FLAG_HIDE_CORRECT_ANSWERS = 2;
 
     protected static /* string */ function GetTableName(){
         return TABLE_TESTS;
@@ -110,6 +111,10 @@ class Test extends EntityWithFlags {
 
     public /* bool */ function IsDeleted(){
         return ($this->GetFlagValue(self::FLAG_IS_DELETED) == 1);
+    }
+
+    public /* bool */ function GetDoHideCorrectAnswers(){
+        return ($this->GetFlagValue(self::FLAG_HIDE_CORRECT_ANSWERS) == 1);
     }
 
     public /* Question[] */ function GetQuestions(){
