@@ -37,8 +37,13 @@ class Test extends Resource implements Schemas\Test{
             TypeValidator::AssertIsString($data->final_text, 'final_text');
             $final_text = $data->final_text;
         }
+        $hide_correct_answers = false;
+        if(isset($data->do_hide_correct_answers)){
+            TypeValidator::AssertIsBool($data->do_hide_correct_answers, 'do_hide_correct_answers');
+            $hide_correct_answers = $data->do_hide_correct_answers;
+        }
 
-        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting, $final_title, $final_text);
+        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting, $final_title, $final_text, $hide_correct_answers);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }

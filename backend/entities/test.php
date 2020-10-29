@@ -172,7 +172,7 @@ class Test extends EntityWithFlags {
         return ($result->num_rows == 1);
     }
 
-    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null, /* string? */ $final_title = null, /* string? */ $final_text = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null, /* string? */ $final_title = null, /* string? */ $final_text = null, /* bool? */ $hide_correct_answers = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
@@ -180,6 +180,10 @@ class Test extends EntityWithFlags {
         if(is_null($score_counting)) $score_counting = $this->GetScoreCounting();
         if(is_null($final_title)) $final_title = $this->GetFinalTitle();
         if(is_null($final_text)) $final_text = $this->GetFinalText();
+        if(is_null($hide_correct_answers)) $hide_correct_answers = $this->GetDoHideCorrectAnswers();
+
+        $flags = [self::FLAG_HIDE_CORRECT_ANSWERS => $hide_correct_answers];
+        $flags_int = self::ConvertFlagsToInt($flags, $this->GetFlags());
 
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_TESTS)
@@ -191,6 +195,7 @@ class Test extends EntityWithFlags {
                 ->Set('score_counting', $score_counting)
                 ->Set('final_title', $final_title)
                 ->Set('final_text', $final_text)
+                ->Set('flags', $flags_int)
                 ->Where('id', '=', $this->id)
                 ->Run();
         
