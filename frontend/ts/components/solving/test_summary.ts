@@ -10,6 +10,7 @@ export default class TestSummary extends Card {
     AverageScoreSubtitle: HTMLSpanElement;
     AverageScoreLink: HTMLAnchorElement;
     AverageScoreNode: Text;
+    ResultsTable: HTMLTableElement;
     ResultsTBody: HTMLTableSectionElement;
     Assignment: Assignment | undefined;
 
@@ -23,7 +24,7 @@ export default class TestSummary extends Card {
         score_header.innerText = 'Twój wynik: ';
         this.AppendChild(score_header);
 
-        score_header.appendChild(this.PercentageScoreNode = document.createTextNode('0'));
+        score_header.appendChild(this.PercentageScoreNode = document.createTextNode('...'));
         score_header.appendChild(document.createTextNode('%.'));
 
         this.AverageScoreSubtitle = document.createElement('span');
@@ -51,11 +52,11 @@ export default class TestSummary extends Card {
         back_button.addEventListener('click', (e) => HandleLinkClick(e, 'testy/lista'));
         back_button_wrapper.appendChild(back_button);
 
-        let result_table = document.createElement('table');
-        result_table.classList.add('table', 'full-width');
-        this.AppendChild(result_table);
+        this.ResultsTable = document.createElement('table');
+        this.ResultsTable.classList.add('table', 'full-width');
+        this.AppendChild(this.ResultsTable);
 
-        let heading_row = result_table.createTHead().insertRow(-1);
+        let heading_row = this.ResultsTable.createTHead().insertRow(-1);
         let th_question = document.createElement('th');
         th_question.innerText = 'Pytanie';
         heading_row.appendChild(th_question);
@@ -63,7 +64,7 @@ export default class TestSummary extends Card {
         th_points.innerText = 'Punkty';
         heading_row.appendChild(th_points);
 
-        this.ResultsTBody = result_table.createTBody();
+        this.ResultsTBody = this.ResultsTable.createTBody();
     }
 
     async Populate(questions: QuestionWithUserAnswers[], assignment: Assignment) {
@@ -71,12 +72,23 @@ export default class TestSummary extends Card {
         let assignment_awaiter = AssignmentLoader.LoadById(assignment.Id);
         this.Assignment = assignment;
 
-        this.DisplayParticularScores(questions);
+        if(!this.Assignment.Test.DoHideCorrectAnswers) {
+            this.DisplayParticularScores(questions);
+            this.ResultsTable.style.display = '';
+        } else {
+            this.ResultsTable.style.display = 'none';
+        }
 
         assignment.Score = (await assignment_awaiter).Score;
         let score = assignment.Score;
         this.AverageScoreNode.textContent = score?.toString() ?? '0';
         this.AverageScoreSubtitle.style.display = '';
+
+        let attempts = await assignment.GetAttemptsForCurrentUser();
+        let current_attempt = attempts[attempts.length - 1];
+        let current_score = 0;
+        if(current_attempt.MaxScore != 0) current_score = 100 * (current_attempt.Score ?? 0) / current_attempt.MaxScore;
+        this.PercentageScoreNode.textContent = Math.round(current_score).toString();
     }
 
     DisplayScoreDetailsDialog() {
@@ -94,7 +106,7 @@ export default class TestSummary extends Card {
         let question_data = [];
 
         for(let question of questions) {
-            let q_got = await question.CountPoints();
+            let q_got = question.CountPoints();
             let q_max = question.GetQuestion().Points;
 
             total_got += q_got;
