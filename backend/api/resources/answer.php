@@ -56,7 +56,10 @@ class Answer extends Resource implements Schemas\Answer{
     }
 
     public function correct(): bool{
-        // ! Dodać sprawdanie, czy poprawność odpowiedzi należy pokazać i ew. zwrócić false
+        $test = $this->Answer->GetQuestion()->GetTest();
+        if($this->GetContext()->GetUser()->GetId() != $test->GetAuthor()->GetId()){
+            if($test->GetDoHideCorrectAnswers()) return false;
+        }
         return $this->Answer->IsCorrect();
     }
 
