@@ -8,6 +8,7 @@ import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import Test from '../../entities/test';
+import { runInThisContext } from 'vm';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -244,6 +245,11 @@ export default class QuestionCard extends Card {
 
         if(this.CurrentQuestion === undefined) return;
 
+        if(this.CurrentQuestion.GetQuestion().Type == Question.TYPE_OPEN_ANSWER) {
+            let user_answer = this.OpenAnswerInput?.value.trim();
+            this.CurrentQuestion.UserSuppliedAnswer = user_answer;
+        }
+
         if(!this.Test.DoHideCorrectAnswers) {
             switch(this.CurrentQuestion.GetQuestion().Type) {
                 case Question.TYPE_SINGLE_CHOICE:
@@ -260,8 +266,6 @@ export default class QuestionCard extends Card {
                     }
                     break;
                 case Question.TYPE_OPEN_ANSWER:
-                    let user_answer = this.OpenAnswerInput?.value.trim();
-                    this.CurrentQuestion.UserSuppliedAnswer = user_answer;
                     if(this.CurrentQuestion.CountPoints() == 0) {
                         this.OpenAnswerInput?.classList.add('error');
                         this.OpenAnswerFeedback?.classList.add('error');
