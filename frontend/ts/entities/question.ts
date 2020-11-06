@@ -50,6 +50,8 @@ export default class Question extends Entity {
     protected _HasOtherAnswer: boolean;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
+    /** Identyfikatory obrazków do pytania */
+    public readonly ImageIds: number[];
 
     /** Treść pytania */
     public get Text() {
@@ -140,7 +142,7 @@ export default class Question extends Entity {
     constructor(id: number, test: Test, text: string, type: number, points: number,
         points_counting: number, max_typos: number, answer_loader: AnswerLoader,
         footer: string | null, order: number, is_optional: boolean, has_na: boolean,
-        has_other: boolean) {
+        has_other: boolean, image_ids: number[]) {
         super();
 
         this.Id = id;
@@ -155,6 +157,7 @@ export default class Question extends Entity {
         this._IsOptional = is_optional;
         this._HasNonApplicableAnswer = has_na;
         this._HasOtherAnswer = has_other;
+        this.ImageIds = image_ids;
 
         this.AnswerCount = answer_loader.AnswerCount;
         this.AnswerLoader = answer_loader;

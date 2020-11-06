@@ -20,6 +20,7 @@ export interface QuestionDescriptor {
     is_optional: boolean;
     has_na: boolean;
     has_other: boolean;
+    image_ids: number[];
 }
 
 export default class QuestionLoader {
@@ -98,7 +99,8 @@ export default class QuestionLoader {
             question_descriptor.order,
             question_descriptor.is_optional,
             question_descriptor.has_na,
-            question_descriptor.has_other
+            question_descriptor.has_other,
+            question_descriptor.image_ids
         );
 
         answer_loader.SetQuestion(question);
