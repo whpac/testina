@@ -16,6 +16,7 @@ export default class TestSettings extends Card {
     protected TimeLimitInput: HTMLInputElement;
 
     protected ScoreCountingSelect: HTMLSelectElement;
+    protected AnswerHideCheckbox: HTMLInputElement;
     protected ErrorWrapper: HTMLElement;
 
     protected Test: Test | undefined;
@@ -130,6 +131,20 @@ export default class TestSettings extends Card {
             this.ScoreCountingSelect.appendChild(option_element);
         }
 
+        let answer_hide_fieldset = document.createElement('div');
+        answer_hide_fieldset.classList.add('fieldset');
+        this.AppendChild(answer_hide_fieldset);
+
+        this.AnswerHideCheckbox = document.createElement('input');
+        this.AnswerHideCheckbox.type = 'checkbox';
+        this.AnswerHideCheckbox.id = 'answer-hide-cb';
+        answer_hide_fieldset.appendChild(this.AnswerHideCheckbox);
+
+        let answer_hide_label = document.createElement('label');
+        answer_hide_label.textContent = 'Nie pokazuj, które odpowiedzi są poprawne, podczas rozwiązywania';
+        answer_hide_label.htmlFor = this.AnswerHideCheckbox.id;
+        answer_hide_fieldset.appendChild(answer_hide_label);
+
         this.ErrorWrapper = document.createElement('p');
         this.ErrorWrapper.classList.add('error-message');
         this.AppendChild(this.ErrorWrapper);
@@ -141,6 +156,7 @@ export default class TestSettings extends Card {
         this.QuestionMultiplierInput.addEventListener('change', this.StateChanged.bind(this));
         this.TimeLimitInput.addEventListener('change', this.StateChanged.bind(this));
         this.ScoreCountingSelect.addEventListener('change', this.StateChanged.bind(this));
+        this.AnswerHideCheckbox.addEventListener('click', this.StateChanged.bind(this));
 
         let btn_save = document.createElement('button');
         btn_save.innerText = 'Zapisz ustawienia';
@@ -164,6 +180,7 @@ export default class TestSettings extends Card {
         this.TestNameInput.value = test.Name;
         this.QuestionMultiplierInput.value = test.QuestionMultiplier.toString();
         this.ScoreCountingSelect.value = test.ScoreCounting.toString();
+        this.AnswerHideCheckbox.checked = test.DoHideCorrectAnswers;
 
         if(test.HasTimeLimit()) {
             this.TimeLimitPresentRadio.checked = true;
@@ -234,6 +251,7 @@ export default class TestSettings extends Card {
             test.QuestionMultiplier = parseFloat(this.QuestionMultiplierInput.value);
             test.TimeLimit = this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0;
             test.ScoreCounting = parseInt(this.ScoreCountingSelect.value);
+            test.DoHideCorrectAnswers = this.AnswerHideCheckbox.checked;
             TestSaver.Update(test);
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);

@@ -50,6 +50,8 @@ export default class Test extends Entity implements PageParams {
     protected _FinalText: string;
     /** Czy usunięto */
     protected _IsDeleted: boolean;
+    /** Czy ukryć poprawne odpowiedzi w pytaniach */
+    protected _DoHideCorrectAnswers: boolean;
     /** Ilość wypełnień ankiety */
     public readonly FillCount: number;
 
@@ -126,6 +128,15 @@ export default class Test extends Entity implements PageParams {
         return this._IsDeleted;
     }
 
+    /** Czy ukryć poprawne odpowiedzi w pytaniach */
+    public get DoHideCorrectAnswers() {
+        return this._DoHideCorrectAnswers;
+    }
+    public set DoHideCorrectAnswers(new_value: boolean) {
+        this._DoHideCorrectAnswers = new_value;
+        this.FireEvent('change');
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
     protected QuestionLoader: QuestionLoader;
     /** Obiekt odpowiedzialny za wczytywanie przypisań */
@@ -151,7 +162,7 @@ export default class Test extends Entity implements PageParams {
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
         assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
         score_counting: number, final_title: string, final_text: string, is_deleted: boolean,
-        fill_count: number) {
+        fill_count: number, do_hide_correct_answers: boolean) {
 
         super();
 
@@ -170,6 +181,7 @@ export default class Test extends Entity implements PageParams {
         this._FinalText = final_text;
         this._IsDeleted = is_deleted;
         this.FillCount = fill_count;
+        this._DoHideCorrectAnswers = do_hide_correct_answers;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;

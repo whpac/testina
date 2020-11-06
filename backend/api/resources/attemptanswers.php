@@ -55,6 +55,9 @@ class AttemptAnswers extends Resource {
 
             if($question->done){
                 TypeValidator::AssertIsArray($question->answers, 'question.answers');
+            }
+
+            if($question->done && count($question->answers) != 0){
                 TypeValidator::AssertIsInt($question->id, 'question.id');
                 TypeValidator::AssertIsBool($question->is_open, 'question.is_open');
 

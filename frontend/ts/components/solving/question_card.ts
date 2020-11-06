@@ -7,10 +7,13 @@ import * as DateUtils from '../../utils/dateutils';
 import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
+import Test from '../../entities/test';
+import { runInThisContext } from 'vm';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
     protected TotalQuestionNumber: Text;
+    protected CurrentScoreWrapper: HTMLElement;
     protected CurrentScore: Text;
     protected QuestionTimerWrapper: HTMLSpanElement;
     protected TimeLeftTimer: Text;
@@ -34,6 +37,7 @@ export default class QuestionCard extends Card {
     protected PointsGot!: number;
     protected PointsMax!: number;
     protected Attempt!: Attempt;
+    protected Test!: Test;
 
     OnTestFinished: ((questions: QuestionWithUserAnswers[]) => void) | undefined;
 
@@ -53,11 +57,11 @@ export default class QuestionCard extends Card {
         q_number.appendChild(this.TotalQuestionNumber = document.createTextNode('0'));
         q_metadata.appendChild(q_number);
 
-        let q_score = document.createElement('span');
-        q_score.classList.add('question-score');
-        q_score.appendChild(this.CurrentScore = document.createTextNode('0'));
-        q_score.appendChild(document.createTextNode('%'));
-        q_metadata.appendChild(q_score);
+        this.CurrentScoreWrapper = document.createElement('span');
+        this.CurrentScoreWrapper.classList.add('question-score');
+        this.CurrentScoreWrapper.appendChild(this.CurrentScore = document.createTextNode('0'));
+        this.CurrentScoreWrapper.appendChild(document.createTextNode('%'));
+        q_metadata.appendChild(this.CurrentScoreWrapper);
 
         this.QuestionTimerWrapper = document.createElement('span');
         this.QuestionTimerWrapper.classList.add('question-timer');
@@ -115,10 +119,12 @@ export default class QuestionCard extends Card {
         let assignment = attempt.Assignment;
         this.AssignmentDeadline = assignment.Deadline;
 
-        let test = assignment.Test;
+        this.Test = assignment.Test;
+        this.CurrentScoreWrapper.style.display = this.Test.DoHideCorrectAnswers ? 'none' : '';
+        if(this.Test.DoHideCorrectAnswers) this.DoneButton.textContent = 'Następne pytanie';
 
-        if(test.HasTimeLimit()) {
-            this.TimeLimit = test.TimeLimit;
+        if(this.Test.HasTimeLimit()) {
+            this.TimeLimit = this.Test.TimeLimit;
             let assignment_time_limit_diff = DateUtils.DiffInSeconds(this.AssignmentDeadline);
             if(this.TimeLimit > assignment_time_limit_diff) this.TimeLimit = undefined;
         } else {
@@ -239,37 +245,42 @@ export default class QuestionCard extends Card {
 
         if(this.CurrentQuestion === undefined) return;
 
-        switch(this.CurrentQuestion.GetQuestion().Type) {
-            case Question.TYPE_SINGLE_CHOICE:
-            case Question.TYPE_MULTI_CHOICE:
-                // Zaznacz odpowiedzi
-                let answers_buttons = document.querySelectorAll('.answer-button');
-                for(let button of answers_buttons) {
-                    let id = (button as HTMLElement).dataset.id ?? '0';
-                    if(this.CurrentQuestion.GetAnswers()[id].Correct) {
-                        button.classList.add('correct');
+        if(this.CurrentQuestion.GetQuestion().Type == Question.TYPE_OPEN_ANSWER) {
+            let user_answer = this.OpenAnswerInput?.value.trim();
+            this.CurrentQuestion.UserSuppliedAnswer = user_answer;
+        }
+
+        if(!this.Test.DoHideCorrectAnswers) {
+            switch(this.CurrentQuestion.GetQuestion().Type) {
+                case Question.TYPE_SINGLE_CHOICE:
+                case Question.TYPE_MULTI_CHOICE:
+                    // Zaznacz odpowiedzi
+                    let answers_buttons = document.querySelectorAll('.answer-button');
+                    for(let button of answers_buttons) {
+                        let id = (button as HTMLElement).dataset.id ?? '0';
+                        if(this.CurrentQuestion.GetAnswers()[id].Correct) {
+                            button.classList.add('correct');
+                        } else {
+                            button.classList.add('wrong');
+                        }
+                    }
+                    break;
+                case Question.TYPE_OPEN_ANSWER:
+                    if(this.CurrentQuestion.CountPoints() == 0) {
+                        this.OpenAnswerInput?.classList.add('error');
+                        this.OpenAnswerFeedback?.classList.add('error');
+                        if(this.OpenAnswerFeedback !== undefined) {
+                            this.OpenAnswerFeedback.textContent = 'Prawidłowa odpowiedź: ' + (await this.CurrentQuestion.GetQuestion().GetAnswers())[0].Text;
+                        }
                     } else {
-                        button.classList.add('wrong');
+                        this.OpenAnswerInput?.classList.add('success');
+                        this.OpenAnswerFeedback?.classList.add('success');
+                        if(this.OpenAnswerFeedback !== undefined) {
+                            this.OpenAnswerFeedback.textContent = 'Dobrze!';
+                        }
                     }
-                }
-                break;
-            case Question.TYPE_OPEN_ANSWER:
-                let user_answer = this.OpenAnswerInput?.value.trim();
-                this.CurrentQuestion.UserSuppliedAnswer = user_answer;
-                if(this.CurrentQuestion.CountPoints() == 0) {
-                    this.OpenAnswerInput?.classList.add('error');
-                    this.OpenAnswerFeedback?.classList.add('error');
-                    if(this.OpenAnswerFeedback !== undefined) {
-                        this.OpenAnswerFeedback.textContent = 'Prawidłowa odpowiedź: ' + (await this.CurrentQuestion.GetQuestion().GetAnswers())[0].Text;
-                    }
-                } else {
-                    this.OpenAnswerInput?.classList.add('success');
-                    this.OpenAnswerFeedback?.classList.add('success');
-                    if(this.OpenAnswerFeedback !== undefined) {
-                        this.OpenAnswerFeedback.textContent = 'Dobrze!';
-                    }
-                }
-                break;
+                    break;
+            }
         }
 
         // Zaktualizuj wynik
@@ -277,6 +288,11 @@ export default class QuestionCard extends Card {
         this.PointsMax += this.CurrentQuestion.GetQuestion().Points;
         this.UpdateScore();
         if(whether_to_save) this.SaveResults();
+        else {
+            if(this.Test.DoHideCorrectAnswers) {
+                this.GoToNextQuestion();
+            }
+        }
     }
 
     protected GoToNextQuestion() {
