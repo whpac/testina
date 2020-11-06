@@ -6,6 +6,7 @@ use Log\Logger;
 use Log\LogChannels;
 
 define('TABLE_QUESTIONS', 'questions');
+define('TABLE_QUESTION_IMAGES', 'question_images');
 
 class Question extends EntityWithFlags {
     protected /* int */ $id;
@@ -111,6 +112,24 @@ class Question extends EntityWithFlags {
 
     public /* Answer[] */ function GetAnswers(){
         return Answer::GetAnswersForQuestion($this);
+    }
+
+    public /* int[] */ function GetImageIds(){
+        $images = [];
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['id'])
+                ->Where('question_id', '=', $this->GetId())
+                ->OrderBy('id', 'ASC')
+                ->OrderBy('order', 'ASC')
+                ->Run();
+
+        for($i=0; $i<$result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $images[] = $row['id'];
+        }
+
+        return $images;
     }
 
     public static /* Question[] */ function GetQuestionsForTest(Test $test){
