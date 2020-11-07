@@ -341,5 +341,20 @@ class Question extends EntityWithFlags {
         // Kiedy nie znaleziono pasującej odpowiedzi, zwróć wynik 0 punktów
         return 0;
     }
+
+    public static function GetImageFileNameById(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['file_name'])
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Obrazek o identyfikatorze '.$image_id.' nie istnieje.', LogChannels::GENERAL);
+            throw new \Exception('Nie odnaleziono obrazka o podanym identyfikatorze.');
+        }
+
+        return $result->fetch_assoc()['file_name'];
+    }
 }
 ?>

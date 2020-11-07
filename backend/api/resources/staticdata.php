@@ -7,7 +7,8 @@ class StaticData extends Resource implements Schemas\StaticData{
 
     public function GetKeys(): array{
         return [
-            'licenses'
+            'licenses',
+            'question_images'
         ];
     }
 
@@ -15,6 +16,12 @@ class StaticData extends Resource implements Schemas\StaticData{
         $licenses = new Licenses();
         $licenses->SetContext($this->GetContext());
         return $licenses;
+    }
+
+    public function question_images(): Schemas\Collection{
+        $question_images = new QuestionImages();
+        $question_images->SetContext($this->GetContext());
+        return $question_images;
     }
 }
 ?>
