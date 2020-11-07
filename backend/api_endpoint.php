@@ -242,6 +242,7 @@ function GetFormatter(){
             case 'application/json': return new Formats\JsonFormatter();
             case 'application/x.json+base64': return new Formats\Base64JsonFormatter();
             case 'application/*': return new Formats\JsonFormatter();
+            case 'image/*': return new Formats\ImageFormatter();
             case '*/*': return new Formats\JsonFormatter();
         }
     }
