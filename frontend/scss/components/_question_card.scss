@@ -17,6 +17,14 @@
     grid-auto-flow: row;
 }
 
+.question-images {
+    margin-bottom:1em; display:grid; grid-auto-flow:column; justify-content:center;
+
+    img {max-height:10vh;}
+
+    &:empty {margin-bottom:0}
+}
+
 .question-answer-buttons {
     display:grid; grid-template-columns:1fr 1fr 1fr 1fr; grid-template-rows:1fr;
     gap:5px; grid-auto-rows:auto; margin-bottom:10px;
