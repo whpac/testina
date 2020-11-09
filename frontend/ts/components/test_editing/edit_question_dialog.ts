@@ -6,6 +6,7 @@ import Test from '../../entities/test';
 
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
+import ImagePicker from './image_picker';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;
@@ -21,6 +22,7 @@ export default class EditQuestionDialog extends Dialog {
     protected TyposAllowRadio: HTMLInputElement;
     protected TyposAllowCountInput: HTMLInputElement;
 
+    protected ImagePicker: ImagePicker;
     protected AnswersTable: AnswersTable;
     protected ErrorWrapper: HTMLElement;
 
@@ -179,6 +181,18 @@ export default class EditQuestionDialog extends Dialog {
         this.TyposFieldset.appendChild(this.TyposAllowCountInput);
 
         question_data_section.appendChild(this.TyposFieldset);
+
+        let files_row = document.createElement('div');
+        files_row.classList.add('grid-form');
+        question_data_section.appendChild(files_row);
+
+        let files_label = document.createElement('label');
+        files_label.textContent = 'Dołącz obrazy:';
+        files_label.htmlFor = 'attach-images';
+        files_row.appendChild(files_label);
+
+        this.ImagePicker = new ImagePicker(files_label.htmlFor);
+        files_row.appendChild(this.ImagePicker.GetElement());
 
         let hr = document.createElement('hr');
         hr.classList.add('spaced', 'wide-screen-only');
