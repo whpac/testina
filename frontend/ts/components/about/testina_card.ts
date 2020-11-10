@@ -43,7 +43,7 @@ export default class TestinaCard extends Card {
         bottom_links.classList.add('center', 'small');
 
         let links: [string, (() => void) | string][] = [
-            ['Regulamin', () => void 0],
+            // ['Regulamin', () => void 0],
             ['Wykorzystane\xa0biblioteki', this.DisplayCredits],
             ['Pomoc', 'pomoc']
         ];
