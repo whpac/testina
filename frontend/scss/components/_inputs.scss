@@ -85,3 +85,7 @@ input[type=text].link-presenter-input {
         color:var(--text-secondary-color); text-align:center; padding:1.5em 0;
     }
 }
+
+input[type=file].visually-hidden{
+    position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);
+}
