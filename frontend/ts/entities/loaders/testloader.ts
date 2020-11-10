@@ -37,7 +37,7 @@ export default class TestLoader {
      * @param test_id Identyfikator testu
      */
     public static async LoadById(test_id: number | string) {
-        let response = await XHR.PerformRequest('api/tests/' + test_id.toString() + '?depth=3', 'GET');
+        let response = await XHR.PerformRequest('api/tests/' + test_id.toString() + '?depth=4', 'GET');
         let json = response.Response as TestDescriptor;
         return TestLoader.CreateFromDescriptor(json);
     }
@@ -89,7 +89,7 @@ export default class TestLoader {
 
     /** Wczytuje wszystkie testy utworzone przez bieżącego użytkownika */
     public static async GetCreatedByCurrentUser() {
-        let response = await XHR.PerformRequest('api/tests?depth=4', 'GET');
+        let response = await XHR.PerformRequest('api/tests?depth=5', 'GET');
         let descriptors = response.Response as Collection<TestDescriptor>;
         let out_array: Test[] = [];
 
