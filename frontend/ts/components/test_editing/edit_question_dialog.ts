@@ -229,6 +229,7 @@ export default class EditQuestionDialog extends Dialog {
         this.TextTextarea.value = question?.Text ?? '';
         this.TypeSelect.value = (question?.Type ?? 0).toString();
         this.PointsInput.value = (question?.Points ?? 1).toString();
+        this.ImagePicker.Populate(question?.ImageIds ?? []);
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
         this.ErrorWrapper.textContent = '';
 
