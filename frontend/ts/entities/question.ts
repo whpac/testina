@@ -265,4 +265,40 @@ export default class Question extends Entity {
             this.Test.OnQuestionRemoved();
         } else throw result;
     }
+
+    /**
+     * Dodaje obraz do pytania
+     * @param image Obraz
+     */
+    public async AddImage(image: File) {
+        return new Promise<void>((resolve, reject) => {
+            let file_reader = new FileReader();
+            file_reader.onload = async () => {
+                if(file_reader.result === null) return reject('Zawartość pliku jest null');
+
+                let request_data = {
+                    type: image.type,
+                    content: btoa(file_reader.result.toString())
+                };
+                let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'POST', request_data);
+
+                if(result.Status != 201) return reject(result);
+                return resolve();
+            };
+            file_reader.readAsBinaryString(image);
+        });
+    }
+
+    /**
+     * Usuwa obrazy o podanych identyfikatorach z pytania
+     * @param image_ids Identyfikatory obrazów
+     */
+    public async RemoveImages(image_ids: number[]) {
+        let request_data = {
+            ids: image_ids
+        };
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'DELETE', request_data);
+
+        if(result.Status != 204) throw result;
+    }
 }
