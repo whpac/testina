@@ -92,7 +92,22 @@ export default class ImagePicker extends Component {
 
         for(let ip of this.ImagePreviewers) {
             if(!ip.IsJustSelected || ip.FileObject === undefined) continue;
+            if(ip.IsDeleted) continue;
+
             files.push(ip.FileObject);
+        }
+
+        return files;
+    }
+
+    public GetFilesToRemove(): number[] {
+        let files = [];
+
+        for(let ip of this.ImagePreviewers) {
+            if(ip.IsJustSelected || ip.ImageId === undefined) continue;
+            if(!ip.IsDeleted) continue;
+
+            files.push(ip.ImageId);
         }
 
         return files;

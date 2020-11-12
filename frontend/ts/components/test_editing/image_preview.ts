@@ -6,6 +6,7 @@ export default class ImagePreview extends Component<'delete' | 'undelete'> {
     public IsDeleted: boolean;
     public readonly IsJustSelected: boolean;
     public readonly FileObject: File | undefined;
+    public readonly ImageId: number | undefined;
     protected DeleteButton: HTMLButtonElement;
     protected UndeleteButton: HTMLButtonElement;
 
@@ -22,6 +23,7 @@ export default class ImagePreview extends Component<'delete' | 'undelete'> {
 
         if(typeof image_id == 'number') {
             img_element.src = 'api/static_data/question_images/' + image_id;
+            this.ImageId = image_id;
         } else {
             const reader = new FileReader();
             reader.onload = () => {
