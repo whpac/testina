@@ -1,8 +1,10 @@
+import NavigationPrevention from '../../1page/navigation_prevention';
 import Component from '../basic/component';
-import ImagePreview from './image_preview';
+import ImagePreview, { ImageType } from './image_preview';
 
 export default class ImagePicker extends Component {
     protected DropContainer: HTMLDivElement;
+    protected EmptyPlaceholder: HTMLDivElement;
 
     public constructor(picker_id: string) {
         super();
@@ -13,10 +15,10 @@ export default class ImagePicker extends Component {
         this.DropContainer.classList.add('file-drop-container');
         this.AppendChild(this.DropContainer);
 
-        let empty_placeholder = document.createElement('div');
-        empty_placeholder.classList.add('no-files-placeholder');
-        empty_placeholder.textContent = 'Upuść pliki tutaj lub kliknij przycisk poniżej.';
-        this.DropContainer.appendChild(empty_placeholder);
+        this.EmptyPlaceholder = document.createElement('div');
+        this.EmptyPlaceholder.classList.add('no-files-placeholder');
+        this.EmptyPlaceholder.textContent = 'Upuść pliki tutaj lub kliknij przycisk poniżej.';
+        this.DropContainer.appendChild(this.EmptyPlaceholder);
 
         let pick_button = document.createElement('button');
         pick_button.textContent = 'Wybierz pliki';
@@ -39,14 +41,21 @@ export default class ImagePicker extends Component {
     }
 
     public Populate(image_ids: number[]) {
+        this.DropContainer.textContent = '';
+        this.DropContainer.appendChild(this.EmptyPlaceholder);
+
         for(let image_id of image_ids) {
-            this.DropContainer.appendChild(new ImagePreview(image_id).GetElement());
+            this.DropContainer.appendChild(new ImagePreview(image_id, ImageType.ALREADY_SAVED).GetElement());
         }
+
+        this.EmptyPlaceholder.style.display = (image_ids.length == 0) ? '' : 'none';
     }
 
     protected HandleFilesSelected(files: FileList) {
         for(let file of files) {
-            this.DropContainer.appendChild(document.createTextNode(file.size.toString()));
+            if(!file.type.startsWith('image/')) { continue; }
+            this.DropContainer.appendChild(new ImagePreview(file, ImageType.JUST_SELECTED).GetElement());
+            NavigationPrevention.Prevent('question-editor');
         }
     }
 
