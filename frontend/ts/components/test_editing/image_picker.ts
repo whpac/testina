@@ -5,10 +5,12 @@ import ImagePreview, { ImageType } from './image_preview';
 export default class ImagePicker extends Component {
     protected DropContainer: HTMLDivElement;
     protected EmptyPlaceholder: HTMLDivElement;
+    protected ImagePreviewers: ImagePreview[];
 
     public constructor(picker_id: string) {
         super();
 
+        this.ImagePreviewers = [];
         this.Element.classList.add('input-like');
 
         this.DropContainer = document.createElement('div');
@@ -45,7 +47,9 @@ export default class ImagePicker extends Component {
         this.DropContainer.appendChild(this.EmptyPlaceholder);
 
         for(let image_id of image_ids) {
-            this.DropContainer.appendChild(new ImagePreview(image_id, ImageType.ALREADY_SAVED).GetElement());
+            let ip = new ImagePreview(image_id, ImageType.ALREADY_SAVED);
+            this.ImagePreviewers.push(ip);
+            this.DropContainer.appendChild(ip.GetElement());
         }
 
         this.EmptyPlaceholder.style.display = (image_ids.length == 0) ? '' : 'none';
@@ -54,7 +58,11 @@ export default class ImagePicker extends Component {
     protected HandleFilesSelected(files: FileList) {
         for(let file of files) {
             if(!file.type.startsWith('image/')) { continue; }
-            this.DropContainer.appendChild(new ImagePreview(file, ImageType.JUST_SELECTED).GetElement());
+
+            let ip = new ImagePreview(file, ImageType.JUST_SELECTED);
+            this.ImagePreviewers.push(ip);
+            this.DropContainer.appendChild(ip.GetElement());
+
             NavigationPrevention.Prevent('question-editor');
         }
     }
@@ -77,5 +85,16 @@ export default class ImagePicker extends Component {
         let files = dt?.files;
 
         if(files !== undefined) this.HandleFilesSelected(files);
+    }
+
+    public GetFilesToAdd(): File[] {
+        let files = [];
+
+        for(let ip of this.ImagePreviewers) {
+            if(!ip.IsJustSelected || ip.FileObject === undefined) continue;
+            files.push(ip.FileObject);
+        }
+
+        return files;
     }
 }

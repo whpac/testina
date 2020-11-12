@@ -5,9 +5,9 @@ import Icon from '../basic/icon';
 export default class ImagePreview extends Component<'delete' | 'undelete'> {
     public IsDeleted: boolean;
     public readonly IsJustSelected: boolean;
+    public readonly FileObject: File | undefined;
     protected DeleteButton: HTMLButtonElement;
     protected UndeleteButton: HTMLButtonElement;
-    protected FileObject: File | undefined;
 
     public constructor(image_id: number | File, image_type: ImageType) {
         super();
