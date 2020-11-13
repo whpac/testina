@@ -345,7 +345,7 @@ class Question extends EntityWithFlags {
     public static function GetImageFileNameById(/* int */ $image_id){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTION_IMAGES)
-                ->Select(['file_name'])
+                ->Select(['file_name', 'type'])
                 ->Where('id', '=', $image_id)
                 ->Run();
 
@@ -355,6 +355,48 @@ class Question extends EntityWithFlags {
         }
 
         return $result->fetch_assoc()['file_name'];
+    }
+
+    public function AttachImage(/* string */ $file_name, /* string */ $mime_type){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Insert()
+                ->Value('question_id', $this->GetId())
+                ->Value('file_name', $file_name)
+                ->Value('order', 0)
+                ->Value('type', $mime_type)
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się dodać obrazka do pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się dodać obrazka do pytania.');
+        }
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['id'])
+                ->Where('file_name', '=', $file_name)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Nie udało się dodać obrazka do pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się dodać obrazka do pytania.');
+        }
+
+        return $result->fetch_assoc()['id'];
+    }
+
+    public function DetachImage(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Delete()
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się usunąć obrazka z pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się usunąć obrazka z pytania.');
+        }
     }
 }
 ?>
