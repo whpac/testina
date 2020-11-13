@@ -45,6 +45,7 @@ export default class ImagePicker extends Component {
     public Populate(image_ids: number[]) {
         this.DropContainer.textContent = '';
         this.DropContainer.appendChild(this.EmptyPlaceholder);
+        this.ImagePreviewers = [];
 
         for(let image_id of image_ids) {
             let ip = new ImagePreview(image_id, ImageType.ALREADY_SAVED);
@@ -57,19 +58,23 @@ export default class ImagePicker extends Component {
 
     protected HandleFilesSelected(files: FileList) {
         for(let file of files) {
-            if(!file.type.startsWith('image/')) { continue; }
+            if(!file.type.startsWith('image/')) continue;
 
             let ip = new ImagePreview(file, ImageType.JUST_SELECTED);
             this.ImagePreviewers.push(ip);
             this.DropContainer.appendChild(ip.GetElement());
 
             NavigationPrevention.Prevent('question-editor');
+            this.EmptyPlaceholder.style.display = 'none';
         }
     }
 
     protected OnFilesSelected(e: Event) {
-        let fileList = (e.target as HTMLInputElement)?.files;
+        if(e.target == null) return;
+        let fileList = (e.target as HTMLInputElement).files;
+
         if(fileList) this.HandleFilesSelected(fileList);
+        (e.target as HTMLInputElement).value = '';
     }
 
     protected OnDragEnterOrLeave(e: DragEvent) {
