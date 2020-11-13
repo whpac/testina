@@ -12,7 +12,7 @@ class TokenManager{
     const TOKEN_TYPE_ACCESS = 0;
     const TOKEN_TYPE_REFRESH = 1;
 
-    const REQUESTED_SCOPES = 'offline_access user.read user.read.all group.read.all';
+    const REQUESTED_SCOPES = 'offline_access user.read user.readbasic.all group.read.all';
 
     /**
      * Rejestruje token dostępu, nadpisując poprzedni (jeśli istniał)
