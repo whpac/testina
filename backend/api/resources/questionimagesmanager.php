@@ -6,7 +6,7 @@ use Api\Validation\ValueValidator;
 use Api\Exceptions\BadRequest;
 use Api\Exceptions\ResourceInaccessible;
 
-define('QUESTION_IMAGES_DIRECTORY', 'question_images');
+define('QUESTION_IMAGES_DIRECTORY', 'question_images/');
 class QuestionImagesManager extends Resource {
     protected $Question;
 
