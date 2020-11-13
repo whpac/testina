@@ -7,6 +7,7 @@ use Api\Exceptions\BadRequest;
 use Api\Exceptions\ResourceInaccessible;
 
 define('QUESTION_IMAGES_DIRECTORY', 'question_images/');
+define('MAX_FILE_SIZE', 512*1024); // 512 kiB
 class QuestionImagesManager extends Resource {
     protected $Question;
 
@@ -31,6 +32,10 @@ class QuestionImagesManager extends Resource {
         $binary_content = base64_decode($source->content, true);
         if($binary_content === false){
             throw new BadRequest('Zawartość pliku z obrazem jest nieprawidłowa.');
+        }
+
+        if(strlen($binary_content) > MAX_FILE_SIZE){
+            throw new BadRequest('Plik przekracza maksymalny dopuszczalny rozmiar '.MAX_FILE_SIZE.' bajtów.');
         }
 
         $file_name = '';
