@@ -270,7 +270,7 @@ export default class Question extends Entity {
      * Dodaje obraz do pytania
      * @param image Obraz
      */
-    public async AddImage(image: File) {
+    public AddImage(image: File) {
         return new Promise<void>((resolve, reject) => {
             let file_reader = new FileReader();
             file_reader.onload = async () => {
@@ -280,14 +280,18 @@ export default class Question extends Entity {
                     type: image.type,
                     content: btoa(file_reader.result.toString())
                 };
-                let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'POST', request_data);
 
-                if(result.Status != 201) return reject(result);
+                try {
+                    let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'POST', request_data);
+                    if(result.Status != 201) return reject(result);
 
-                let image_id = parseInt(result.ContentLocation);
-                if(!isNaN(image_id)) this.ImageIds.push(image_id);
-                this.FireEvent('change');
-                return resolve();
+                    let image_id = parseInt(result.ContentLocation);
+                    if(!isNaN(image_id)) this.ImageIds.push(image_id);
+                    this.FireEvent('change');
+                    return resolve();
+                } catch(e) {
+                    return reject(e);
+                }
             };
             file_reader.readAsBinaryString(image);
         });
