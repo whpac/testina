@@ -283,6 +283,10 @@ export default class Question extends Entity {
                 let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'POST', request_data);
 
                 if(result.Status != 201) return reject(result);
+
+                let image_id = parseInt(result.ContentLocation);
+                if(!isNaN(image_id)) this.ImageIds.push(image_id);
+                this.FireEvent('change');
                 return resolve();
             };
             file_reader.readAsBinaryString(image);
@@ -300,5 +304,11 @@ export default class Question extends Entity {
         let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'DELETE', request_data);
 
         if(result.Status != 204) throw result;
+
+        for(let i = 0; i < this.ImageIds.length; i++) {
+            if(!image_ids.includes(this.ImageIds[i])) continue;
+            this.ImageIds.splice(i, 1);
+        }
+        this.FireEvent('change');
     }
 }
