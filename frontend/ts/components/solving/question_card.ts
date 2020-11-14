@@ -10,6 +10,8 @@ import NavigationPrevention from '../../1page/navigation_prevention';
 import Test from '../../entities/test';
 import { runInThisContext } from 'vm';
 import QuestionImage from './question_image';
+import Component from '../basic/component';
+import ImagePreviewDialog from './image_preview_dialog';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -24,6 +26,7 @@ export default class QuestionCard extends Card {
     protected DoneButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected FinishButton: HTMLButtonElement;
+    protected ImagePreviewDialog: ImagePreviewDialog;
 
     protected OpenAnswerInput: HTMLInputElement | undefined;
     protected OpenAnswerFeedback: HTMLElement | undefined;
@@ -106,6 +109,8 @@ export default class QuestionCard extends Card {
         this.FinishButton.textContent = 'Zakończ test';
         this.FinishButton.addEventListener('click', this.FinishTest.bind(this));
         this.AddButton(this.FinishButton);
+
+        this.ImagePreviewDialog = new ImagePreviewDialog();
     }
 
     async StartTest(attempt: Attempt) {
@@ -175,7 +180,9 @@ export default class QuestionCard extends Card {
         // Wyświetl obrazki dołączone do pytania
         this.ImagesWrapper.textContent = '';
         for(let image_id of this.CurrentQuestion.GetQuestion().ImageIds) {
-            this.ImagesWrapper.appendChild(new QuestionImage(image_id).GetElement());
+            let qi = new QuestionImage(image_id);
+            qi.AddEventListener('requestenlarge', this.OnImageEnlargeRequested.bind(this));
+            this.ImagesWrapper.appendChild(qi.GetElement());
         }
 
         // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
@@ -393,5 +400,11 @@ export default class QuestionCard extends Card {
 
     protected FinishTest() {
         this.OnTestFinished?.(this.Questions);
+    }
+
+    protected OnImageEnlargeRequested(image: Component<string>) {
+        if(!(image instanceof QuestionImage)) return;
+        this.ImagePreviewDialog.SetImage(image.GetImageUrl());
+        this.ImagePreviewDialog.Show();
     }
 }
