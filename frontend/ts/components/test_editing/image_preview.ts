@@ -2,13 +2,14 @@ import NavigationPrevention from '../../1page/navigation_prevention';
 import Component from '../basic/component';
 import Icon from '../basic/icon';
 
-export default class ImagePreview extends Component<'delete' | 'undelete'> {
+export default class ImagePreview extends Component<'delete' | 'undelete' | 'requestenlarge'> {
     public IsDeleted: boolean;
     public readonly IsJustSelected: boolean;
     public readonly FileObject: File | undefined;
     public readonly ImageId: number | undefined;
     protected readonly IsCorrectSize: boolean;
 
+    protected ImageElement: HTMLImageElement;
     protected DeleteButton: HTMLButtonElement;
     protected UndeleteButton: HTMLButtonElement;
 
@@ -22,19 +23,20 @@ export default class ImagePreview extends Component<'delete' | 'undelete'> {
         this.IsJustSelected = (image_type == ImageType.JUST_SELECTED);
         this.IsCorrectSize = true;
 
-        let img_element = document.createElement('img');
-        img_element.title = 'Kliknij, by powiększyć.';
-        this.AppendChild(img_element);
+        this.ImageElement = document.createElement('img');
+        this.ImageElement.title = 'Kliknij, by powiększyć.';
+        this.ImageElement.addEventListener('click', (() => this.FireEvent('requestenlarge')).bind(this));
+        this.AppendChild(this.ImageElement);
 
         if(typeof image_id == 'number') {
-            img_element.src = 'api/static_data/question_images/' + image_id;
+            this.ImageElement.src = 'api/static_data/question_images/' + image_id;
             this.ImageId = image_id;
         } else {
             const reader = new FileReader();
             reader.onload = () => {
                 const result = reader.result;
                 if(result === null) return;
-                img_element.src = result.toString();
+                this.ImageElement.src = result.toString();
             };
             reader.readAsDataURL(image_id);
             this.FileObject = image_id;
@@ -63,7 +65,7 @@ export default class ImagePreview extends Component<'delete' | 'undelete'> {
 
             this.Element.classList.add('oversized');
             this.Element.title = 'Plik jest za duży. Maksymalny rozmiar pliku to 500 kB.';
-            img_element.title = '';
+            this.ImageElement.title = '';
 
             let overlay = document.createElement('div');
             overlay.classList.add('overlay');
@@ -98,6 +100,10 @@ export default class ImagePreview extends Component<'delete' | 'undelete'> {
 
         NavigationPrevention.Prevent('question-editor');
         this.FireEvent('undelete');
+    }
+
+    public GetImageUrl() {
+        return this.ImageElement.src;
     }
 }
 

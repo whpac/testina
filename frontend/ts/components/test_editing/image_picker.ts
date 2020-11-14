@@ -1,11 +1,13 @@
 import NavigationPrevention from '../../1page/navigation_prevention';
 import Component from '../basic/component';
+import ImagePreviewDialog from '../solving/image_preview_dialog';
 import ImagePreview, { ImageType } from './image_preview';
 
 export default class ImagePicker extends Component {
     protected DropContainer: HTMLDivElement;
     protected EmptyPlaceholder: HTMLDivElement;
     protected ImagePreviewers: ImagePreview[];
+    protected ImagePreviewDialog: ImagePreviewDialog;
 
     public constructor(picker_id: string) {
         super();
@@ -40,6 +42,8 @@ export default class ImagePicker extends Component {
 
         pick_button.addEventListener('click', () => file_picker_input.click());
         file_picker_input.addEventListener('change', this.OnFilesSelected.bind(this));
+
+        this.ImagePreviewDialog = new ImagePreviewDialog();
     }
 
     public Populate(image_ids: number[]) {
@@ -51,6 +55,7 @@ export default class ImagePicker extends Component {
             let ip = new ImagePreview(image_id, ImageType.ALREADY_SAVED);
             this.ImagePreviewers.push(ip);
             this.DropContainer.appendChild(ip.GetElement());
+            ip.AddEventListener('requestenlarge', this.OnEnlargeRequested.bind(this));
         }
 
         this.EmptyPlaceholder.style.display = (image_ids.length == 0) ? '' : 'none';
@@ -63,10 +68,17 @@ export default class ImagePicker extends Component {
             let ip = new ImagePreview(file, ImageType.JUST_SELECTED);
             this.ImagePreviewers.push(ip);
             this.DropContainer.appendChild(ip.GetElement());
+            ip.AddEventListener('requestenlarge', this.OnEnlargeRequested.bind(this));
 
             NavigationPrevention.Prevent('question-editor');
             this.EmptyPlaceholder.style.display = 'none';
         }
+    }
+
+    protected OnEnlargeRequested(image: Component<string>) {
+        if(!(image instanceof ImagePreview)) return;
+        this.ImagePreviewDialog.SetImage(image.GetImageUrl());
+        this.ImagePreviewDialog.Show();
     }
 
     protected OnFilesSelected(e: Event) {
