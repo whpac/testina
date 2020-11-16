@@ -342,7 +342,11 @@ class Question extends EntityWithFlags {
         return 0;
     }
 
-    public static function GetImageFileNameById(/* int */ $image_id){
+    /**
+     * Zwraca parę [ścieżka, typ MIME] dla obrazka o podanym identyfikatorze
+     * @param $image_id identyfikator obrazka
+     */
+    public static function GetImageById(/* int */ $image_id){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTION_IMAGES)
                 ->Select(['file_name', 'type'])
@@ -354,7 +358,9 @@ class Question extends EntityWithFlags {
             throw new \Exception('Nie odnaleziono obrazka o podanym identyfikatorze.');
         }
 
-        return $result->fetch_assoc()['file_name'];
+        $row = $result->fetch_assoc();
+
+        return [$row['file_name'], $row['type']];
     }
 
     public function AttachImage(/* string */ $file_name, /* string */ $mime_type){

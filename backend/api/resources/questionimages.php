@@ -19,11 +19,15 @@ class QuestionImages extends Collection {
     }
 
     public function __call($image_id, $args){
-        $filename = \Entities\Question::GetImageFileNameById($image_id);
+        $image = \Entities\Question::GetImageById($image_id);
+        $filename = $image[0];
+        $type = $image[1];
 
         if(!file_exists(QUESTION_IMAGES_DIRECTORY.$filename)){
             throw new ResourceNotFound('Nie znaleziono obrazka '.$image_id);
         }
+
+        OverrideReturnedMime($type);
 
         $content = file_get_contents(QUESTION_IMAGES_DIRECTORY.$filename);
         return $content;
