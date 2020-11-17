@@ -78,7 +78,28 @@ class Question extends Resource implements Schemas\Question{
             'has_na',
             'has_other',
             'answer_count',
-            'answers'
+            'answers',
+            'image_ids',
+            'images'
+        ];
+    }
+
+    public function GetDefaultKeys(): array{
+        return [
+            'id',
+            'text',
+            'type',
+            'points',
+            'points_counting',
+            'max_typos',
+            'footer',
+            'order',
+            'is_optional',
+            'has_na',
+            'has_other',
+            'answer_count',
+            'answers',
+            'image_ids'
         ];
     }
 
@@ -141,6 +162,16 @@ class Question extends Resource implements Schemas\Question{
         $collection = new AnswerCollection($out_answers, $this->Question);
         $collection->SetContext($this->GetContext());
         return $collection;
+    }
+
+    public function image_ids(): array{
+        return $this->Question->GetImageIds();
+    }
+
+    public function images(): QuestionImagesManager{
+        $img_mgr = new QuestionImagesManager($this->Question);
+        $img_mgr->SetContext($this->GetContext());
+        return $img_mgr;
     }
 }
 ?>

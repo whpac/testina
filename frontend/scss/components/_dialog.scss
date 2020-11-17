@@ -16,6 +16,8 @@
     > .content {
         grid-row:2; overflow-y:auto; margin-right:-15px; padding-right:15px;
 
+        &.centered {display:grid; place-content:center;}
+
         > *:first-child, > section > *:first-child {margin-top:0;}
         > *:last-child, > section > *:last-child {margin-bottom:0;}
         .no-margin {margin-top:0; margin-bottom:0;}

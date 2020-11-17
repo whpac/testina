@@ -61,9 +61,6 @@ try{
         throw new Exceptions\BadRequest('Żądanie nie zostało wykonane bezpiecznym protokołem HTTPS.');
     }
 
-    // Wyślij nagłówki odpowiedzi, w tym typ zawartości
-    SendHeaders($formatter->GetContentType());
-
     // Odczytaj żądany zasób i ustaw w nim filtry
     $current_resource = GetResource($target, $context);
     if($current_resource instanceof Api\Resources\Resource) $current_resource->SetFilters($filters);
@@ -72,6 +69,12 @@ try{
         case 'GET':
             // Zserializuj zasób
             $serialized_resource = $formatter->Format($current_resource, $depth);
+
+            // Wyślij nagłówki odpowiedzi, w tym typ zawartości
+            $mime = GetOverridenMime();
+            if(is_null($mime)) $mime = $formatter->GetContentType();
+            SendHeaders($mime);
+
             echo($serialized_resource);
         break;
         case 'POST':
@@ -80,10 +83,17 @@ try{
 
             if(is_null($result)){
                 // Odpowiedz kodem 201 Created
+                SendHeaders($formatter->GetContentType());
                 SetResponseCode(201);
             }else{
                 // Zwróć zasób wynikowy
                 $serialized_resource = $formatter->Format($result, $depth);
+
+                // Wyślij nagłówki odpowiedzi, w tym typ zawartości
+                $mime = GetOverridenMime();
+                if(is_null($mime)) $mime = $formatter->GetContentType();
+                SendHeaders($mime);
+
                 echo($serialized_resource);
             }
         break;
@@ -91,12 +101,14 @@ try{
             // Zaktualizuj zasób
             $current_resource->Update(ParseRequestBody());
             // Odpowiedz kodem 204 No Content
+            SendHeaders($formatter->GetContentType());
             SetResponseCode(204);
         break;
         case 'DELETE':
             // Usuń zasób
             $current_resource->Delete(ParseRequestBody());
             // Odpowiedz kodem 204 No Content
+            SendHeaders($formatter->GetContentType());
             SetResponseCode(204);
         break;
     }
@@ -107,6 +119,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error($e->getMessage());
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\AuthorizationRequired $e){
@@ -115,6 +128,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Musisz być zalogowany, by uzyskać dostęp do tego zasobu.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\ResourceInaccessible $e){
@@ -123,6 +137,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Nie masz wystarczających uprawnień, by uzyskać dostęp do tego zasobu.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\ResourceNotFound $e){
@@ -131,6 +146,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Zasób nie istnieje.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\MethodNotAllowed $e){
@@ -139,6 +155,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Metoda żądania jest nieobsługiwana przez zasób.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\NotAcceptable $e){
@@ -147,6 +164,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Serwer nie obsługuje żądanego formatu odpowiedzi.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(Exceptions\NotImplemented $e){
@@ -155,6 +173,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Nie zaimplementowano tej funkcji.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }catch(\Exception $e){
@@ -163,6 +182,7 @@ try{
 
     if(!is_null($formatter)){
         $error_resource = new \Api\Resources\Error('Wystąpił nieznany błąd.');
+        SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
 }
@@ -242,6 +262,7 @@ function GetFormatter(){
             case 'application/json': return new Formats\JsonFormatter();
             case 'application/x.json+base64': return new Formats\Base64JsonFormatter();
             case 'application/*': return new Formats\JsonFormatter();
+            case 'image/*': return new Formats\ImageFormatter();
             case '*/*': return new Formats\JsonFormatter();
         }
     }
@@ -351,5 +372,23 @@ function ParseQList(string $qlist){
     });
 
     return $parsed;
+}
+
+$overriden_mime = null;
+/**
+ * Nadpisuje zwracany typ MIME
+ * @param $new_mime Nowy zwracany typ MIME
+ */
+function OverrideReturnedMime($new_mime){
+    global $overriden_mime;
+    $overriden_mime = $new_mime;
+}
+
+/**
+ * Zwraca typ MIME, który został nadpisany
+ */
+function GetOverridenMime(){
+    global $overriden_mime;
+    return $overriden_mime;
 }
 ?>

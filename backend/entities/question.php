@@ -6,6 +6,7 @@ use Log\Logger;
 use Log\LogChannels;
 
 define('TABLE_QUESTIONS', 'questions');
+define('TABLE_QUESTION_IMAGES', 'question_images');
 
 class Question extends EntityWithFlags {
     protected /* int */ $id;
@@ -111,6 +112,24 @@ class Question extends EntityWithFlags {
 
     public /* Answer[] */ function GetAnswers(){
         return Answer::GetAnswersForQuestion($this);
+    }
+
+    public /* int[] */ function GetImageIds(){
+        $images = [];
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['id'])
+                ->Where('question_id', '=', $this->GetId())
+                ->OrderBy('id', 'ASC')
+                ->OrderBy('order', 'ASC')
+                ->Run();
+
+        for($i=0; $i<$result->num_rows; $i++){
+            $row = $result->fetch_assoc();
+            $images[] = $row['id'];
+        }
+
+        return $images;
     }
 
     public static /* Question[] */ function GetQuestionsForTest(Test $test){
@@ -321,6 +340,86 @@ class Question extends EntityWithFlags {
 
         // Kiedy nie znaleziono pasującej odpowiedzi, zwróć wynik 0 punktów
         return 0;
+    }
+
+    /**
+     * Zwraca parę [ścieżka, typ MIME] dla obrazka o podanym identyfikatorze
+     * @param $image_id identyfikator obrazka
+     */
+    public static function GetImageById(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['file_name', 'type'])
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Obrazek o identyfikatorze '.$image_id.' nie istnieje.', LogChannels::GENERAL);
+            throw new \Exception('Nie odnaleziono obrazka o podanym identyfikatorze.');
+        }
+
+        $row = $result->fetch_assoc();
+
+        return [$row['file_name'], $row['type']];
+    }
+
+    public static function GetQuestionByImageId(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['question_id'])
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Obrazek o identyfikatorze '.$image_id.' nie istnieje.', LogChannels::GENERAL);
+            throw new \Exception('Nie odnaleziono obrazka o podanym identyfikatorze.');
+        }
+
+        $row = $result->fetch_assoc();
+
+        return new self($row['question_id']);
+    }
+
+    public function AttachImage(/* string */ $file_name, /* string */ $mime_type){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Insert()
+                ->Value('question_id', $this->GetId())
+                ->Value('file_name', $file_name)
+                ->Value('order', 0)
+                ->Value('type', $mime_type)
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się dodać obrazka do pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się dodać obrazka do pytania.');
+        }
+
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['id'])
+                ->Where('file_name', '=', $file_name)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Nie udało się dodać obrazka do pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się dodać obrazka do pytania.');
+        }
+
+        return $result->fetch_assoc()['id'];
+    }
+
+    public function DetachImage(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Delete()
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false){
+            Logger::Log('Nie udało się usunąć obrazka z pytania.', LogChannels::GENERAL);
+            throw new \Exception('Nie udało się usunąć obrazka z pytania.');
+        }
     }
 }
 ?>

@@ -50,6 +50,8 @@ export default class Question extends Entity {
     protected _HasOtherAnswer: boolean;
     /** Ilość odpowiedzi */
     public readonly AnswerCount: number | undefined;
+    /** Identyfikatory obrazków do pytania */
+    public readonly ImageIds: number[];
 
     /** Treść pytania */
     public get Text() {
@@ -140,7 +142,7 @@ export default class Question extends Entity {
     constructor(id: number, test: Test, text: string, type: number, points: number,
         points_counting: number, max_typos: number, answer_loader: AnswerLoader,
         footer: string | null, order: number, is_optional: boolean, has_na: boolean,
-        has_other: boolean) {
+        has_other: boolean, image_ids: number[]) {
         super();
 
         this.Id = id;
@@ -155,6 +157,7 @@ export default class Question extends Entity {
         this._IsOptional = is_optional;
         this._HasNonApplicableAnswer = has_na;
         this._HasOtherAnswer = has_other;
+        this.ImageIds = image_ids;
 
         this.AnswerCount = answer_loader.AnswerCount;
         this.AnswerLoader = answer_loader;
@@ -261,5 +264,55 @@ export default class Question extends Entity {
             this.FireEvent('remove');
             this.Test.OnQuestionRemoved();
         } else throw result;
+    }
+
+    /**
+     * Dodaje obraz do pytania
+     * @param image Obraz
+     */
+    public AddImage(image: File) {
+        return new Promise<void>((resolve, reject) => {
+            let file_reader = new FileReader();
+            file_reader.onload = async () => {
+                if(file_reader.result === null) return reject('Zawartość pliku jest null');
+
+                let request_data = {
+                    type: image.type,
+                    content: btoa(file_reader.result.toString())
+                };
+
+                try {
+                    let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'POST', request_data);
+                    if(result.Status != 201) return reject(result);
+
+                    let image_id = parseInt(result.ContentLocation);
+                    if(!isNaN(image_id)) this.ImageIds.push(image_id);
+                    this.FireEvent('change');
+                    return resolve();
+                } catch(e) {
+                    return reject(e);
+                }
+            };
+            file_reader.readAsBinaryString(image);
+        });
+    }
+
+    /**
+     * Usuwa obrazy o podanych identyfikatorach z pytania
+     * @param image_ids Identyfikatory obrazów
+     */
+    public async RemoveImages(image_ids: number[]) {
+        let request_data = {
+            ids: image_ids
+        };
+        let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(this) + '/images', 'DELETE', request_data);
+
+        if(result.Status != 204) throw result;
+
+        for(let i = 0; i < this.ImageIds.length; i++) {
+            if(!image_ids.includes(this.ImageIds[i])) continue;
+            this.ImageIds.splice(i, 1);
+        }
+        this.FireEvent('change');
     }
 }

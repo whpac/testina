@@ -17,5 +17,6 @@ interface Question{
 
     public function answer_count(): int;
     public function answers(): Collection; // <Answer>
+    public function image_ids(): array; // int[]
 }
 ?>

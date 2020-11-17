@@ -9,6 +9,9 @@ import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import Test from '../../entities/test';
 import { runInThisContext } from 'vm';
+import QuestionImage from './question_image';
+import Component from '../basic/component';
+import ImagePreviewDialog from './image_preview_dialog';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -18,10 +21,12 @@ export default class QuestionCard extends Card {
     protected QuestionTimerWrapper: HTMLSpanElement;
     protected TimeLeftTimer: Text;
     protected QuestionText: HTMLHeadingElement;
+    protected ImagesWrapper: HTMLDivElement;
     protected AnswerWrapper: HTMLDivElement;
     protected DoneButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected FinishButton: HTMLButtonElement;
+    protected ImagePreviewDialog: ImagePreviewDialog;
 
     protected OpenAnswerInput: HTMLInputElement | undefined;
     protected OpenAnswerFeedback: HTMLElement | undefined;
@@ -78,6 +83,10 @@ export default class QuestionCard extends Card {
         this.QuestionText.textContent = 'Treść pytania';
         this.AppendChild(this.QuestionText);
 
+        this.ImagesWrapper = document.createElement('div');
+        this.ImagesWrapper.classList.add('question-images');
+        this.AppendChild(this.ImagesWrapper);
+
         this.AnswerWrapper = document.createElement('div');
         this.AnswerWrapper.classList.add('question-answer-buttons');
         this.AppendChild(this.AnswerWrapper);
@@ -100,6 +109,8 @@ export default class QuestionCard extends Card {
         this.FinishButton.textContent = 'Zakończ test';
         this.FinishButton.addEventListener('click', this.FinishTest.bind(this));
         this.AddButton(this.FinishButton);
+
+        this.ImagePreviewDialog = new ImagePreviewDialog();
     }
 
     async StartTest(attempt: Attempt) {
@@ -166,6 +177,14 @@ export default class QuestionCard extends Card {
         this.OpenAnswerInput = undefined;
         this.AnswerWrapper.textContent = '';
 
+        // Wyświetl obrazki dołączone do pytania
+        this.ImagesWrapper.textContent = '';
+        for(let image_id of this.CurrentQuestion.GetQuestion().ImageIds) {
+            let qi = new QuestionImage(image_id, this.Attempt.Id);
+            qi.AddEventListener('requestenlarge', this.OnImageEnlargeRequested.bind(this));
+            this.ImagesWrapper.appendChild(qi.GetElement());
+        }
+
         // Wyświetl odpowiedzi w sposób odpowiedni do typu pytania
         switch(this.CurrentQuestion.GetQuestion().Type) {
             case Question.TYPE_SINGLE_CHOICE:
@@ -200,6 +219,10 @@ export default class QuestionCard extends Card {
         this.NextButton.style.display = 'none';
         this.FinishButton.style.display = 'none';
         this.DisableAnswers = false;
+
+        if(this.CurrentQuestionNumber + 1 >= this.Questions.length && this.Test.DoHideCorrectAnswers) {
+            this.NextButton.textContent = 'Zatwierdź';
+        }
     }
 
     protected async OnAnswerButtonClick(e: MouseEvent, answer_id: string) {
@@ -377,5 +400,11 @@ export default class QuestionCard extends Card {
 
     protected FinishTest() {
         this.OnTestFinished?.(this.Questions);
+    }
+
+    protected OnImageEnlargeRequested(image: Component<string>) {
+        if(!(image instanceof QuestionImage)) return;
+        this.ImagePreviewDialog.SetImage(image.GetImageUrl());
+        this.ImagePreviewDialog.Show();
     }
 }

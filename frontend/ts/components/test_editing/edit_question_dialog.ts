@@ -6,6 +6,7 @@ import Test from '../../entities/test';
 
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
+import ImagePicker from './image_picker';
 
 export default class EditQuestionDialog extends Dialog {
     protected TextTextarea: HTMLTextAreaElement;
@@ -21,6 +22,7 @@ export default class EditQuestionDialog extends Dialog {
     protected TyposAllowRadio: HTMLInputElement;
     protected TyposAllowCountInput: HTMLInputElement;
 
+    protected ImagePicker: ImagePicker;
     protected AnswersTable: AnswersTable;
     protected ErrorWrapper: HTMLElement;
 
@@ -180,6 +182,14 @@ export default class EditQuestionDialog extends Dialog {
 
         question_data_section.appendChild(this.TyposFieldset);
 
+        let files_label = document.createElement('label');
+        files_label.textContent = 'Dołącz obrazy:';
+        files_label.htmlFor = 'attach-images';
+        question_data_section.appendChild(files_label);
+
+        this.ImagePicker = new ImagePicker(files_label.htmlFor);
+        question_data_section.appendChild(this.ImagePicker.GetElement());
+
         let hr = document.createElement('hr');
         hr.classList.add('spaced', 'wide-screen-only');
         this.AddContent(hr);
@@ -215,6 +225,7 @@ export default class EditQuestionDialog extends Dialog {
         this.TextTextarea.value = question?.Text ?? '';
         this.TypeSelect.value = (question?.Type ?? 0).toString();
         this.PointsInput.value = (question?.Points ?? 1).toString();
+        this.ImagePicker.Populate(question?.ImageIds ?? []);
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
         this.ErrorWrapper.textContent = '';
 
@@ -283,6 +294,7 @@ export default class EditQuestionDialog extends Dialog {
         if(type == Question.TYPE_OPEN_ANSWER) points_counting = Question.COUNTING_OPEN_ANSWER;
 
         let saving_toast = new Toast('Zapisywanie pytania...');
+        let uploading_toast: Toast | undefined;
         saving_toast.Show();
         this.SaveButton.disabled = true;
         this.CancelButton.disabled = true;
@@ -323,6 +335,26 @@ export default class EditQuestionDialog extends Dialog {
                 await answers_table_awaiter;
             }
 
+            saving_toast.Hide();
+
+            let files_to_upload = this.ImagePicker.GetFilesToAdd();
+            let files_to_remove = this.ImagePicker.GetFilesToRemove();
+            if(files_to_upload.length > 0 || files_to_remove.length > 0) {
+                uploading_toast = new Toast(files_to_upload.length > 0 ? 'Przesyłanie obrazków...' : 'Usuwanie obrazków...');
+                let upload_awaiters: Promise<void>[] = [];
+                uploading_toast.Show();
+
+                let remove_awaiter = this.Question.RemoveImages(files_to_remove);
+                for(let file of files_to_upload) {
+                    upload_awaiters.push(this.Question.AddImage(file));
+                }
+
+                for(let awaiter of upload_awaiters) await awaiter;
+                await remove_awaiter;
+
+                uploading_toast.Hide();
+            }
+
             new Toast('Pytanie zostało zapisane.').Show(0);
             this.Hide();
             this.AnswersTable.ClearContent();
@@ -334,9 +366,10 @@ export default class EditQuestionDialog extends Dialog {
             if('Message' in e) {
                 message = ': ' + e.Message;
             }
+            saving_toast.Hide();
+            uploading_toast?.Hide();
             new Toast('Nie udało się zapisać pytania' + message).Show(0);
         } finally {
-            saving_toast.Hide();
             this.SaveButton.disabled = false;
             this.CancelButton.disabled = false;
         }
