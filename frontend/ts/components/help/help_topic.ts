@@ -69,6 +69,15 @@ export default class HelpTopic {
 <p>Wystąpienie któregokolwiek z nich jest liczone jako jedna literówka.</p>`
             ),
             new HelpTopic(
+                'Dołączanie obrazków do pytań', 'dolaczanie_obrazkow_do_pytan',
+                `<p>Do każdego pytania w teście można dołączyć obrazki. Robi się to za pomocą przycisku „Wybierz pliki” lub przeciągając obrazy z menedżera plików bezpośrednio do przeglądarki internetowej. Istnieje ograniczenie wielkości pojedynczego obrazka wynoszące 500 kB, natomiast nie ma limitu obrazków, które można dołączyć.</p>
+<p>Nie jest możliwe dołączanie do pytań plików innych niż obrazki (np. PDF).</p>`
+            ),
+            new HelpTopic(
+                'Ukrywanie poprawności odpowiedzi przed uczniem', 'ukrywanie_poprawnosci_odpowiedzi',
+                `<p>Domyślnie, podczas rozwiązywania testu, uczeń widzi, czy odpowiedzi, które zaznaczył były poprawne. Można to zmienić zaznaczając pole wyboru „Nie pokazuj, które odpowiedzi są poprawne, podczas rozwiązywania” w ustawieniach testu. Nawet jeśli wspomniane pole zostanie zaznaczone, test będzie automatycznie oceniany, a po jego ukończeniu uczeń zobaczy swój wynik (jednak bez wyników za poszczególne pytania).</p>`
+            ),
+            new HelpTopic(
                 'Przypisywanie testu', 'przypisywanie_testu',
                 `<p>Kiedy masz już gotowy test, możesz przypisać go innym osobom. W tym celu udaj się do <a href="testy/biblioteka" target="_blank">Biblioteki testów</a> i kliknij przycisk „Przypisz” obok odpowiedniego testu (jeśli korzystasz z telefonu, najpierw naciścij trzy kropki, a dopiero potem „Przypisz”). Zobaczysz okienko z listą osób i grup.</p>
 <p>Wybierz osoby i/lub grupy, którym chcesz przypisać wybrany test. Jeśli będziesz miał(a) problem ze znalezieniem konkretnych użytkowników, skorzystaj z pola wyszukiwania. Kiedy zaznaczysz wszystkie osoby, które powinny otrzymać test do rozwiązania, kliknij przycisk „Dalej” u dołu okienka.</p>
@@ -79,6 +88,11 @@ export default class HelpTopic {
                 `<p>W tym celu przejdź do <a href="testy/biblioteka" target="_blank">Biblioteki testów</a>. Obok wybranego testu kliknij przycisk z trzema kropkami. W trzecim wierszu będzie się znajdowała informacja o tym, ile razy go przypisano. Jeśli co najmniej raz, to po kliknięciu na liczbę, zostaniesz przeniesiony(-a) do listy wszystkich przypisań.</p>
 <p>Będąc na stronie z listą przypisać możesz udostępnić test dodatkowym osobom lub wyłączyć wybrane osoby z grupy uprawnionych do rozwiązania testu. W tym celu naciśnij przycisk „Edytuj” (na telefonach ma ikonkę ołówka).</p>
 <p>Możesz też sprawdzić wyniki poszczególnych osób – w tym celu naciśnij przycisk „Wyniki”. Ukaże Ci się wtedy lista wszystkich osób razem z ich wynikiem (średnim lub najlepszym – zależy od wyboru przy tworzeniu testu). Widoczna będzie także data ostatniego podejścia oraz liczba podejść.</p>`
+            ),
+            new HelpTopic(
+                'Jak zobaczyć wyniki uczniów?', 'jak_zobaczyc_wyniki_uczniow',
+                `<p>Na liście osób wspomnianej w powyższej odpowiedzi znajdują się średnie lub najlepsze wyniki uczniów. Po kliknięciu na tę liczbę, ukaże się okienko z rezultatami każdego podejścia. Przy wszystkich znajduje się przycisk z trzema kropkami.</p>
+<p>Po kliknięciu tych trzech kropek wyświetli się strona z odpowiedziami ucznia na każde pytanie oraz ze wskazaniem, ile punktów za te odpowiedzi przyznano. Każda niepoprawna, a zaznaczona odpowiedź oraz poprawna i niezaznaczona jest wyróżniana na czerwono.</p>`
             ),
             new HelpTopic(
                 'Co oznacza komunikat „Czas na rozwiązanie testu może być za krótki”?', 'czas_moze_byc_za_krotki',

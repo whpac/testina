@@ -60,6 +60,14 @@ Jak działa ten algorytm Levenshteina? Są trzy rodzaje literówek:
 
 Wystąpienie któregokolwiek z nich jest liczone jako jedna literówka.
 
+# Dołączanie obrazków do pytań
+Do każdego pytania w teście można dołączyć obrazki. Robi się to za pomocą przycisku „Wybierz pliki” lub przeciągając obrazy z menedżera plików bezpośrednio do przeglądarki internetowej. Istnieje ograniczenie wielkości pojedynczego obrazka wynoszące 500 kB, natomiast nie ma limitu obrazków, które można dołączyć.
+
+Nie jest możliwe dołączanie do pytań plików innych niż obrazki (np. PDF).
+
+# Ukrywanie poprawności odpowiedzi przed uczniem
+Domyślnie, podczas rozwiązywania testu, uczeń widzi, czy odpowiedzi, które zaznaczył były poprawne. Można to zmienić zaznaczając pole wyboru „Nie pokazuj, które odpowiedzi są poprawne, podczas rozwiązywania” w ustawieniach testu. Nawet jeśli wspomniane pole zostanie zaznaczone, test będzie automatycznie oceniany, a po jego ukończeniu uczeń zobaczy swój wynik (jednak bez wyników za poszczególne pytania).
+
 # Przypisywanie testu
 Kiedy masz już gotowy test, możesz przypisać go innym osobom. W tym celu udaj się do [Biblioteki testów](testy/biblioteka) i kliknij przycisk „Przypisz” obok odpowiedniego testu (jeśli korzystasz z telefonu, najpierw naciścij trzy kropki, a dopiero potem „Przypisz”). Zobaczysz okienko z listą osób i grup.
 
@@ -73,6 +81,11 @@ W tym celu przejdź do [Biblioteki testów](testy/biblioteka). Obok wybranego te
 Będąc na stronie z listą przypisać możesz udostępnić test dodatkowym osobom lub wyłączyć wybrane osoby z grupy uprawnionych do rozwiązania testu. W tym celu naciśnij przycisk „Edytuj” (na telefonach ma ikonkę ołówka).
 
 Możesz też sprawdzić wyniki poszczególnych osób – w tym celu naciśnij przycisk „Wyniki”. Ukaże Ci się wtedy lista wszystkich osób razem z ich wynikiem (średnim lub najlepszym – zależy od wyboru przy tworzeniu testu). Widoczna będzie także data ostatniego podejścia oraz liczba podejść.
+
+# Jak zobaczyć wyniki uczniów?
+Na liście osób wspomnianej w powyższej odpowiedzi znajdują się średnie lub najlepsze wyniki uczniów. Po kliknięciu na tę liczbę, ukaże się okienko z rezultatami każdego podejścia. Przy wszystkich znajduje się przycisk z trzema kropkami.
+
+Po kliknięciu tych trzech kropek wyświetli się strona z odpowiedziami ucznia na każde pytanie oraz ze wskazaniem, ile punktów za te odpowiedzi przyznano. Każda niepoprawna, a zaznaczona odpowiedź oraz poprawna i niezaznaczona jest wyróżniana na czerwono.
 
 # Co oznacza komunikat „Czas na rozwiązanie testu może być za krótki”?
 Jeśli wybierzesz termin na rozwiązanie testu przypadający w ciągu 24 godzin od momentu przypisywania, wyświetli się ostrzeżenie, że użytkownicy mogą nie mieć czasu na rozwiązanie testu w tym terminie. Jeżeli jesteś pewny(-a), że wybrany termin będzie wystarczający, możesz przypisać test pomimo ostrzeżenia.
