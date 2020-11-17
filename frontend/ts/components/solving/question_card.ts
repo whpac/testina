@@ -180,7 +180,7 @@ export default class QuestionCard extends Card {
         // Wyświetl obrazki dołączone do pytania
         this.ImagesWrapper.textContent = '';
         for(let image_id of this.CurrentQuestion.GetQuestion().ImageIds) {
-            let qi = new QuestionImage(image_id);
+            let qi = new QuestionImage(image_id, this.Attempt.Id);
             qi.AddEventListener('requestenlarge', this.OnImageEnlargeRequested.bind(this));
             this.ImagesWrapper.appendChild(qi.GetElement());
         }

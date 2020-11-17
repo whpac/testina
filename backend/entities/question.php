@@ -363,6 +363,23 @@ class Question extends EntityWithFlags {
         return [$row['file_name'], $row['type']];
     }
 
+    public static function GetQuestionByImageId(/* int */ $image_id){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_QUESTION_IMAGES)
+                ->Select(['question_id'])
+                ->Where('id', '=', $image_id)
+                ->Run();
+
+        if($result === false || $result->num_rows != 1){
+            Logger::Log('Obrazek o identyfikatorze '.$image_id.' nie istnieje.', LogChannels::GENERAL);
+            throw new \Exception('Nie odnaleziono obrazka o podanym identyfikatorze.');
+        }
+
+        $row = $result->fetch_assoc();
+
+        return new self($row['question_id']);
+    }
+
     public function AttachImage(/* string */ $file_name, /* string */ $mime_type){
         $result = DatabaseManager::GetProvider()
                 ->Table(TABLE_QUESTION_IMAGES)
