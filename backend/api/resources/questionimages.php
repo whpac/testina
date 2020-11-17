@@ -27,7 +27,7 @@ class QuestionImages extends Collection {
         $question = \Entities\Question::GetQuestionByImageId($image_id);
         $test = $question->GetTest();
 
-        $is_author= $test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId();
+        $is_author = $test->GetAuthor()->GetId() == $this->GetContext()->GetUser()->GetId();
         if(!$is_author){
             $attempt = new \Entities\Attempt($this->GetAttemptId());
 
