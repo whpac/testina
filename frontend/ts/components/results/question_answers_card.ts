@@ -1,5 +1,6 @@
 import AttemptAnswers from '../../entities/attempt_answers';
 import Question from '../../entities/question';
+import { n } from '../../utils/textutils';
 import Card from '../basic/card';
 
 export default class QuestionAnswersCard extends Card {
@@ -31,7 +32,8 @@ export default class QuestionAnswersCard extends Card {
         this.Header.textContent = 'Pytanie usunięte';
         this.ContentElement.textContent = '';
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów.';
+        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + '.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 
@@ -82,7 +84,9 @@ export default class QuestionAnswersCard extends Card {
             }
         }
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
+        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
+        let total_form = 'możliw' + n(question.Points, 'y', 'e', 'ych');
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + ' na ' + question.Points.toLocaleString() + ' ' + total_form + '.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 
@@ -91,7 +95,9 @@ export default class QuestionAnswersCard extends Card {
         this.ContentElement.textContent = 'Wpisana odpowiedź: ' + answers.SuppliedAnswer;
         this.ContentElement.appendChild(document.createElement('br'));
 
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' punktów na ' + question.Points.toLocaleString() + ' możliwych.';
+        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
+        let total_form = 'możliw' + n(question.Points, 'y', 'e', 'ych');
+        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + ' na ' + question.Points.toLocaleString() + ' ' + total_form + '.';
         this.ContentElement.appendChild(document.createTextNode(pts_text));
     }
 }

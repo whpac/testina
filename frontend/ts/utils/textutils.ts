@@ -4,10 +4,14 @@
  * @param f1 Końcówka formy liczby pojedynczej
  * @param f2 Końcówka formy liczby mnogiej
  * @param f5 Końcówka formy dopełniacza liczby mnogiej
+ * @param ff Końcówka formy dopełniacza liczby pojedynczej (dla ułamków)
  */
-export function n(n: number, f1: string, f2: string, f5?: string) {
+export function n(n: number, f1: string, f2: string, f5?: string, ff?: string) {
     if(n == 1) return f1;
     f5 = f5 ?? f2;
+    ff = ff ?? f5;
+
+    if(n % 1 != 0) return ff;
 
     let n1 = n % 10;
     let n2 = ((n % 100) - n1) / 10;
