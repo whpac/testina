@@ -371,6 +371,8 @@ export default class QuestionCard extends Card {
     }
 
     protected GoToPrevQuestion() {
+        if(!this.Test.DoHideCorrectAnswers) return;
+
         this.DoneButton.style.display = '';
         this.NextButton.style.display = 'none';
 
