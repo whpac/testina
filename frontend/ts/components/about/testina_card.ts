@@ -43,7 +43,7 @@ export default class TestinaCard extends Card {
         bottom_links.classList.add('center', 'small');
 
         let links: [string, (() => void) | string][] = [
-            // ['Regulamin', () => void 0],
+            ['Kontakt', 'mailto:marcinszwarc@hotmail.com'],
             ['Wykorzystane\xa0biblioteki', this.DisplayCredits],
             ['Pomoc', 'pomoc']
         ];
@@ -61,7 +61,8 @@ export default class TestinaCard extends Card {
             a.textContent = link[0];
             if(typeof link[1] == 'string') {
                 a.href = link[1];
-                a.addEventListener('click', (e) => HandleLinkClick(e, link[1] as string));
+                if(!link[1].startsWith('mailto:'))
+                    a.addEventListener('click', (e) => HandleLinkClick(e, link[1] as string));
             } else {
                 a.href = 'javascript:void(0)';
                 a.addEventListener('click', link[1].bind(this));
