@@ -8,10 +8,10 @@ import { ShuffleArray } from '../../utils/arrayutils';
 import Toast from '../basic/toast';
 import NavigationPrevention from '../../1page/navigation_prevention';
 import Test from '../../entities/test';
-import { runInThisContext } from 'vm';
 import QuestionImage from './question_image';
 import Component from '../basic/component';
 import ImagePreviewDialog from './image_preview_dialog';
+import Answer from '../../entities/answer';
 
 export default class QuestionCard extends Card {
     protected CurrentQuestionNumberText: Text;
@@ -23,6 +23,7 @@ export default class QuestionCard extends Card {
     protected QuestionText: HTMLHeadingElement;
     protected ImagesWrapper: HTMLDivElement;
     protected AnswerWrapper: HTMLDivElement;
+    protected PrevButton: HTMLButtonElement;
     protected DoneButton: HTMLButtonElement;
     protected NextButton: HTMLButtonElement;
     protected FinishButton: HTMLButtonElement;
@@ -94,7 +95,7 @@ export default class QuestionCard extends Card {
         this.DoneButton = document.createElement('button');
         this.DoneButton.classList.add('big', 'with-border');
         this.DoneButton.textContent = 'Gotowe';
-        this.DoneButton.addEventListener('click', this.CheckQuestion.bind(this));
+        this.DoneButton.addEventListener('click', (() => this.CheckQuestion()).bind(this));
         this.AddButton(this.DoneButton);
 
         this.NextButton = document.createElement('button');
@@ -109,6 +110,12 @@ export default class QuestionCard extends Card {
         this.FinishButton.textContent = 'Zakończ test';
         this.FinishButton.addEventListener('click', this.FinishTest.bind(this));
         this.AddButton(this.FinishButton);
+
+        this.PrevButton = document.createElement('button');
+        this.PrevButton.classList.add('big', 'with-border');
+        this.PrevButton.textContent = 'Poprzednie pytanie';
+        this.PrevButton.addEventListener('click', (() => this.CheckQuestion(false)).bind(this));
+        this.AddButton(this.PrevButton);
 
         this.ImagePreviewDialog = new ImagePreviewDialog();
     }
@@ -131,8 +138,15 @@ export default class QuestionCard extends Card {
         this.AssignmentDeadline = assignment.Deadline;
 
         this.Test = assignment.Test;
-        this.CurrentScoreWrapper.style.display = this.Test.DoHideCorrectAnswers ? 'none' : '';
-        if(this.Test.DoHideCorrectAnswers) this.DoneButton.textContent = 'Następne pytanie';
+
+        if(this.Test.DoHideCorrectAnswers) {
+            this.CurrentScoreWrapper.style.display = 'none';
+            this.PrevButton.style.display = '';
+            this.DoneButton.textContent = 'Następne pytanie';
+        } else {
+            this.CurrentScoreWrapper.style.display = '';
+            this.PrevButton.style.display = 'none';
+        }
 
         if(this.Test.HasTimeLimit()) {
             this.TimeLimit = this.Test.TimeLimit;
@@ -159,6 +173,12 @@ export default class QuestionCard extends Card {
             this.QuestionText.classList.remove('long');
         }
 
+        if(this.Test.DoHideCorrectAnswers && number > 1) {
+            this.PrevButton.style.display = '';
+        } else {
+            this.PrevButton.style.display = 'none';
+        }
+
         let rows = question_text.split('\n');
         this.QuestionText.textContent = '';
 
@@ -169,9 +189,18 @@ export default class QuestionCard extends Card {
 
         this.CurrentQuestionNumberText.textContent = number.toString();
 
-        let answers = await question.GetQuestion().GetAnswers();
+        let answers: Answer[];
+        if(this.CurrentQuestion.AreAnswersSet) {
+            answers = [];
+            let answer_list = this.CurrentQuestion.GetAnswers();
+            for(let answer_id in answer_list) {
+                answers.push(answer_list[answer_id]);
+            }
+        } else {
+            answers = await question.GetQuestion().GetAnswers();
+            this.CurrentQuestion.SetAnswers(answers);
+        }
         ShuffleArray(answers);
-        this.CurrentQuestion.SetAnswers(answers);
 
         this.OpenAnswerFeedback = undefined;
         this.OpenAnswerInput = undefined;
@@ -199,7 +228,12 @@ export default class QuestionCard extends Card {
                         this.OnAnswerButtonClick(e, answer.Id.toString());
                     }).bind(this));
                     this.AnswerWrapper.appendChild(answer_button);
+
+                    let is_selected = this.CurrentQuestion.GetAnswerSelection(answer.Id.toString());
+                    if(is_selected) answer_button.classList.add('selected');
+                    else answer_button.classList.remove('selected');
                 }
+                console.log(this.CurrentQuestion);
                 break;
             case Question.TYPE_OPEN_ANSWER:
                 let type_label = document.createElement('span');
@@ -208,6 +242,7 @@ export default class QuestionCard extends Card {
 
                 this.OpenAnswerInput = document.createElement('input');
                 this.OpenAnswerInput.type = 'text';
+                this.OpenAnswerInput.value = this.CurrentQuestion.UserSuppliedAnswer ?? '';
                 this.AnswerWrapper.appendChild(this.OpenAnswerInput);
 
                 this.OpenAnswerFeedback = document.createElement('span');
@@ -220,8 +255,11 @@ export default class QuestionCard extends Card {
         this.FinishButton.style.display = 'none';
         this.DisableAnswers = false;
 
-        if(this.CurrentQuestionNumber + 1 >= this.Questions.length && this.Test.DoHideCorrectAnswers) {
-            this.NextButton.textContent = 'Zatwierdź';
+        if((this.CurrentQuestionNumber + 1 >= this.Questions.length) && this.Test.DoHideCorrectAnswers) {
+            this.DoneButton.textContent = 'Zatwierdź';
+        }
+        if((this.CurrentQuestionNumber + 1 < this.Questions.length) && this.Test.DoHideCorrectAnswers) {
+            this.DoneButton.textContent = 'Następne pytanie';
         }
     }
 
@@ -249,7 +287,7 @@ export default class QuestionCard extends Card {
         }
     }
 
-    protected async CheckQuestion() {
+    protected async CheckQuestion(go_next: boolean = true) {
         this.DisableAnswers = true;
         if(this.OpenAnswerInput !== undefined)
             this.OpenAnswerInput.readOnly = true;
@@ -262,7 +300,7 @@ export default class QuestionCard extends Card {
             this.NextButton.style.display = '';
         } else {
             this.FinishButton.style.display = '';
-            this.StopTimer();
+            this.PrevButton.style.display = 'none';
             whether_to_save = true;
         }
 
@@ -310,10 +348,13 @@ export default class QuestionCard extends Card {
         this.PointsGot += this.CurrentQuestion.CountPoints();
         this.PointsMax += this.CurrentQuestion.GetQuestion().Points;
         this.UpdateScore();
-        if(whether_to_save) this.SaveResults();
-        else {
+        if(whether_to_save && go_next) {
+            this.StopTimer();
+            this.SaveResults();
+        } else {
             if(this.Test.DoHideCorrectAnswers) {
-                this.GoToNextQuestion();
+                if(go_next) this.GoToNextQuestion();
+                else this.GoToPrevQuestion();
             }
         }
     }
@@ -323,6 +364,14 @@ export default class QuestionCard extends Card {
         this.NextButton.style.display = 'none';
 
         this.CurrentQuestionNumber++;
+        this.DisplayQuestion(this.Questions[this.CurrentQuestionNumber], this.CurrentQuestionNumber + 1);
+    }
+
+    protected GoToPrevQuestion() {
+        this.DoneButton.style.display = '';
+        this.NextButton.style.display = 'none';
+
+        this.CurrentQuestionNumber--;
         this.DisplayQuestion(this.Questions[this.CurrentQuestionNumber], this.CurrentQuestionNumber + 1);
     }
 
@@ -345,6 +394,7 @@ export default class QuestionCard extends Card {
         this.FinishButton.style.display = '';
         this.NextButton.style.display = 'none';
         this.DoneButton.style.display = 'none';
+        this.PrevButton.style.display = 'none';
 
         let points_max = 0;
         for(let question of this.Questions) {
