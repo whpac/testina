@@ -261,6 +261,9 @@ export default class QuestionCard extends Card {
         if((this.CurrentQuestionNumber + 1 < this.Questions.length) && this.Test.DoHideCorrectAnswers) {
             this.DoneButton.textContent = 'Następne pytanie';
         }
+        if(!this.Test.DoHideCorrectAnswers) {
+            this.DoneButton.textContent = 'Gotowe';
+        }
     }
 
     protected async OnAnswerButtonClick(e: MouseEvent, answer_id: string) {
