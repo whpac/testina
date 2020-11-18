@@ -20,12 +20,19 @@ export default class QuestionWithUserAnswers {
     protected Score: number | undefined;
     /** Czy zaznaczono "nie dotyczy" */
     protected _IsNonApplicableSelected: boolean = false;
+    /** Czy wpisano już odpowiedzi */
+    protected _AreAnswersSet: boolean = false;
     /** Odpowiedź podana przez rozwiązującego */
     public UserSuppliedAnswer: string | undefined;
 
     /** Czy zaznaczono "nie dotyczy" */
     public get IsNonApplicableSelected() {
         return this._IsNonApplicableSelected;
+    }
+
+    /** Czy wpisano już odpowiedzi */
+    public get AreAnswersSet() {
+        return this._AreAnswersSet;
     }
 
     /**
@@ -62,6 +69,7 @@ export default class QuestionWithUserAnswers {
      */
     public SetAnswers(answers: Answer[]) {
         this.Answers = {};
+        this._AreAnswersSet = true;
         for(let answer of answers) {
             this.Answers[answer.Id] = answer;
         }
