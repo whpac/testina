@@ -41,7 +41,7 @@ export default class LoginWithOfficeCard extends Card {
         let link = document.createElement('a');
         link.classList.add('button');
         link.href = `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?
-client_id=7f546198-c3b7-45d0-a98f-091f54cd94b6
+client_id=` + Config.OFFICE_CLIENT_ID + `
 &response_type=code
 &redirect_uri=` + encodeURIComponent(Config.OFFICE_LOGIN_RETURN_ADDRESS) + `
 &response_mode=query
