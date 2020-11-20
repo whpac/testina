@@ -7,9 +7,13 @@ use Session\SessionManager;
 require_once('autoincluder.php');
 
 if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "") && CONFIG_USE_HTTPS){
-    $redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-    header('HTTP/1.1 301 Moved Permanently');
-    header('Location: '.$redirect);
+    if(isset($_GET['redir'])){
+        $redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        header('HTTP/1.1 307 Temporary Redirect');
+        header('Location: '.$redirect);
+    }else{
+        include('https_notice.php');
+    }
     exit;
 }
 

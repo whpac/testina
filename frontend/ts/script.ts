@@ -111,6 +111,7 @@ export async function LoadInitialPage() {
 
     // Jeżeli strona do załadowania nie jest pustym ciągiem - załaduj ją
     if(url_path != '') initial_page = url_path;
+    if(url_path.startsWith('?') || url_path.startsWith('#')) initial_page = default_page + url_path;
 
     // Załaduj stronę
     let is_success = await PageManager.GoToPage(initial_page, undefined, true);

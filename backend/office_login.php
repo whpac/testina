@@ -29,14 +29,18 @@ $code = $_GET['code'];
 $state = $_GET['state'];
 
 // Krok 2. Pobranie tokenów
-$response = TokenManager::ExchangeAuthorizationCodeIntoTokens($code);
-TokenManager::RegisterAccessToken($response->AccessToken, $response->ExpiresIn);
-TokenManager::RegisterRefreshToken($response->RefreshToken);
+try{
+    $response = TokenManager::ExchangeAuthorizationCodeIntoTokens($code);
+    TokenManager::RegisterAccessToken($response->AccessToken, $response->ExpiresIn);
+    TokenManager::RegisterRefreshToken($response->RefreshToken);
 
-// Krok 3. Pobranie informacji o aktualnie zalogowanym użytkowniku
-$user = new Auth\ExternalLogin\OfficeUser();
-Auth\AuthManager::RegisterUserFactory(new Entities\UserFactory());
-Auth\AuthManager::LogInExternalUser($user->GetId());
+    // Krok 3. Pobranie informacji o aktualnie zalogowanym użytkowniku
+    $user = new Auth\ExternalLogin\OfficeUser();
+    Auth\AuthManager::RegisterUserFactory(new Entities\UserFactory());
+    Auth\AuthManager::LogInExternalUser($user->GetId());
+}catch(Exception $e){
+    echo('Wystąpił błąd. '.$e->getMessage());
+}
 
 // Krok 4. Przekierowanie do strony głównej (dokładniej - do strony, którą chciał wyświetlić użytkownik)
 try{
