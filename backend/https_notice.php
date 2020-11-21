@@ -31,7 +31,8 @@
             Możliwe, że przeglądarka wyświetli informację, że strona jest niebezpieczna.
             Wynika to z nie całkiem prawidłowej konfiguracji serwera, ale mimo wszystko połączenie
             jest bezpieczne i szyfrowane. Aby wyświetlić stronę należy klinkąć przycisk „Zaawansowane”,
-            znajdujący się pod ostrzeżeniem, a następnie link „Przejdź do strony... (niebezpiecznej)”.
+            znajdujący się pod ostrzeżeniem, a następnie link „Przejdź do strony... (niebezpiecznej)”
+            lub „Akceptuję ryzyko” (treść zależy od przeglądarki).
         </p>
         <a href="?redir" class="button">Przejdź do Testiny</a>
         <label><input type="checkbox" id="dont-show" /> Nie pokazuj więcej</label>
