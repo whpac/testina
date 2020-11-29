@@ -1,11 +1,13 @@
 import AttemptAnswers from '../../entities/attempt_answers';
 import Question from '../../entities/question';
-import { n } from '../../utils/textutils';
 import Card from '../basic/card';
+import ScorePresenter from './score_presenter';
 
 export default class QuestionAnswersCard extends Card {
     protected Header: HTMLHeadingElement;
     protected ContentElement: HTMLElement;
+
+    protected Question: Question | undefined;
 
     public constructor() {
         super();
@@ -19,6 +21,7 @@ export default class QuestionAnswersCard extends Card {
 
     public Populate(question: Question | undefined, answers: AttemptAnswers) {
         this.ContentElement.textContent = 'Wczytywanie...';
+        this.Question = question;
 
         if(question === undefined) {
             this.DisplayRemovedQuestion(answers);
@@ -32,9 +35,7 @@ export default class QuestionAnswersCard extends Card {
         this.Header.textContent = 'Pytanie usunięte';
         this.ContentElement.textContent = '';
 
-        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + '.';
-        this.ContentElement.appendChild(document.createTextNode(pts_text));
+        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, undefined).GetElement());
     }
 
     protected async DisplayClosedAnswerQuestion(question: Question, answers: AttemptAnswers) {
@@ -84,10 +85,7 @@ export default class QuestionAnswersCard extends Card {
             }
         }
 
-        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
-        let total_form = 'możliw' + n(question.Points, 'y', 'e', 'ych');
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + ' na ' + question.Points.toLocaleString() + ' ' + total_form + '.';
-        this.ContentElement.appendChild(document.createTextNode(pts_text));
+        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, question.Points).GetElement());
     }
 
     protected DisplayOpenAnswerQuestion(question: Question, answers: AttemptAnswers) {
@@ -95,9 +93,6 @@ export default class QuestionAnswersCard extends Card {
         this.ContentElement.textContent = 'Wpisana odpowiedź: ' + answers.SuppliedAnswer;
         this.ContentElement.appendChild(document.createElement('br'));
 
-        let pts_form = 'punkt' + n(answers.ScoreGot, '', 'y', 'ów', 'a');
-        let total_form = 'możliw' + n(question.Points, 'y', 'e', 'ych');
-        let pts_text = 'Przyznano ' + answers.ScoreGot.toLocaleString() + ' ' + pts_form + ' na ' + question.Points.toLocaleString() + ' ' + total_form + '.';
-        this.ContentElement.appendChild(document.createTextNode(pts_text));
+        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, question.Points).GetElement());
     }
 }
