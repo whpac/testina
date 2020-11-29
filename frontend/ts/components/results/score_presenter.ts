@@ -34,7 +34,6 @@ export default class ScorePresenter extends Component<"change-score"> {
         this.Element.appendChild(document.createTextNode('. '));
 
         this.ChangeLink = document.createElement('a');
-        this.ChangeLink.classList.add('todo');
         this.ChangeLink.textContent = 'Zmień';
         this.ChangeLink.addEventListener('click', this.EnterChangeMode.bind(this));
         this.AppendChild(this.ChangeLink);
@@ -84,10 +83,9 @@ export default class ScorePresenter extends Component<"change-score"> {
             alert('Podano niepoprawną liczbę.');
             return;
         }
-        this.SetScoreGot(points);
 
-        // TODO: Save changes
-        alert('TODO: save');
+        this.SetScoreGot(points);
+        this.FireEvent('change-score');
 
         this.ScoreInputWrapper.style.display = 'none';
         this.ScoreGotText.style.display = '';
