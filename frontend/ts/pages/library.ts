@@ -3,6 +3,7 @@ import TestsTable from '../components/tests_lists/tests_table';
 import Card from '../components/basic/card';
 import EmptyLibrary from '../components/tests_lists/empty_states/empty_library';
 import Toast from '../components/basic/toast';
+import UserLoader from '../entities/loaders/userloader';
 
 export default class LibraryPage extends Page {
     TestsListTable: TestsTable;
@@ -66,7 +67,13 @@ export default class LibraryPage extends Page {
         container.removeChild(this.Element);
     }
 
-    CreateTest() {
+    async CreateTest() {
+        let current_user = await UserLoader.GetCurrent();
+        if(current_user?.IsTestCreator !== true) {
+            alert('Nie masz uprawnień do tworzenia testów.');
+            return;
+        }
+
         this.EmptyLibrary.GetElement().style.display = 'none';
         this.LibraryCard.GetElement().style.display = '';
         this.TestsListTable.CreateTest();
@@ -78,5 +85,12 @@ export default class LibraryPage extends Page {
 
     GetTitle() {
         return 'Biblioteka testów';
+    }
+
+    async IsAccessible(): Promise<boolean> {
+        if(!await super.IsAccessible()) return false;
+
+        let current_user = await UserLoader.GetCurrent();
+        return (current_user?.IsTestCreator) ?? false;
     }
 }

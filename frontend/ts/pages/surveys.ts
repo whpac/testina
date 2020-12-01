@@ -5,11 +5,14 @@ import AssignedSurveysCard from '../components/survey_lists/assigned_surveys_car
 import NoSurveys from '../components/survey_lists/no_surveys';
 import Toast from '../components/basic/toast';
 import Test from '../entities/test';
+import UserLoader from '../entities/loaders/userloader';
+import NoSurveysAssigned from '../components/survey_lists/no_surveys_assigned';
 
 export default class SurveysPage extends Page {
     protected AssignedSurveys: AssignedSurveysCard;
     protected SurveyListCard: SurveyListCard;
     protected NoSurveysCreated: NoSurveys;
+    protected NoSurveysAssigned: NoSurveysAssigned;
 
     constructor() {
         super();
@@ -28,6 +31,9 @@ export default class SurveysPage extends Page {
         this.NoSurveysCreated = new NoSurveys(true);
         this.NoSurveysCreated.AddEventListener('create-first-survey', this.CreateSurvey.bind(this));
         this.AppendChild(this.NoSurveysCreated);
+
+        this.NoSurveysAssigned = new NoSurveysAssigned(true);
+        this.AppendChild(this.NoSurveysAssigned);
     }
 
     async LoadInto(container: HTMLElement) {
@@ -36,11 +42,18 @@ export default class SurveysPage extends Page {
         try {
             let assigned_awaiter = this.AssignedSurveys.Populate();
 
-            let surveys = await SurveyLoader.GetCreatedByCurrentUser();
-            this.SurveyListCard.Populate(surveys);
+            if(await this.IsUserPermittedToCreateSurvey()) {
+                let surveys = await SurveyLoader.GetCreatedByCurrentUser();
+                this.SurveyListCard.Populate(surveys);
 
-            this.NoSurveysCreated.GetElement().style.display = surveys.length == 0 ? '' : 'none';
-            this.SurveyListCard.GetElement().style.display = surveys.length == 0 ? 'none' : '';
+                this.NoSurveysCreated.GetElement().style.display = surveys.length == 0 ? '' : 'none';
+                this.SurveyListCard.GetElement().style.display = surveys.length == 0 ? 'none' : '';
+                this.NoSurveysAssigned.GetElement().style.display = 'none';
+            } else {
+                this.SurveyListCard.GetElement().style.display = 'none';
+                this.NoSurveysCreated.GetElement().style.display = 'none';
+                this.NoSurveysAssigned.GetElement().style.display = '';
+            }
 
             await assigned_awaiter;
             this.AssignedSurveys.GetElement().style.display = this.AssignedSurveys.SurveyCount > 0 ? '' : 'none';
@@ -65,6 +78,11 @@ export default class SurveysPage extends Page {
     }
 
     protected async CreateSurvey() {
+        if(!(await this.IsUserPermittedToCreateSurvey())) {
+            alert('Nie masz uprawnień do tworzenia ankiet.');
+            return;
+        }
+
         let creating_toast = new Toast('Tworzenie ankiety...');
         creating_toast.Show();
 
@@ -82,5 +100,10 @@ export default class SurveysPage extends Page {
         } finally {
             creating_toast.Hide();
         }
+    }
+
+    protected async IsUserPermittedToCreateSurvey(): Promise<boolean> {
+        let current_user = await UserLoader.GetCurrent();
+        return (current_user?.IsTestCreator === true);
     }
 }
