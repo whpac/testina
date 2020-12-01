@@ -33,6 +33,7 @@ export default class Navbar {
         this.NavbarRoot.style.display = '';
 
         ChromeManager.MobileHeader?.SetHamburgerButtonVisibility(true);
+        let user_loader = UserLoader.GetCurrent(true);
 
         let ul = document.createElement('ul');
         this.NavbarRoot.appendChild(ul);
@@ -43,10 +44,10 @@ export default class Navbar {
         li.addEventListener('click', this.ToggleVisibility.bind(this));
         li.innerHTML = '<a><i class="icon fa fa-fw fa-bars"></i></a>';
 
+        let link_after_library: HTMLLIElement;
         ul.appendChild(this.CreateNavHeader());
         ul.appendChild(this.CreateNavLink('Testy', 'testy/lista', 'fa-pencil-square-o'));
-        ul.appendChild(this.CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'));
-        ul.appendChild(this.CreateNavLink('Ankiety', 'ankiety', 'fa-bar-chart'));
+        ul.appendChild(link_after_library = this.CreateNavLink('Ankiety', 'ankiety', 'fa-bar-chart'));
         ul.appendChild(this.CreateNavSeparator());
         ul.appendChild(this.CreateNavLink('Konto', 'konto', 'fa-user-o'));
         ul.appendChild(this.CreateNavLink('Wyloguj', async () => {
@@ -73,6 +74,13 @@ export default class Navbar {
 
         this.AttachEventHandlers();
         this.IsDrawn = true;
+
+        let user = await user_loader;
+        if(user?.IsTestCreator === true) {
+            ul.insertBefore(
+                this.CreateNavLink('Biblioteka testów', 'testy/biblioteka', 'fa-files-o'),
+                link_after_library);
+        }
     }
 
     /**
