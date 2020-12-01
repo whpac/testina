@@ -73,6 +73,16 @@ class User extends EntityWithFlags implements \Auth\Users\User {
         return (substr($this->first_name, -1, 1) == 'a');
     }
 
+    public function IsTestCreator(): bool{
+        $groups = $this->GetGroups();
+
+        foreach($groups as $group){
+            if($group->GetId() == CONFIG_TEST_CREATORS_GROUP) return true;
+        }
+
+        return false;
+    }
+
     public /* Group[] */ function GetGroups(): array{
         if($this->AreAllGroupsCached()){
             return $this->GetGroupsFromCache();

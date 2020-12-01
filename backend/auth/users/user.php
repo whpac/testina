@@ -12,6 +12,7 @@ interface User {
     public /* Group[] */ function GetGroups(): array;
 
     public function IsFemale(): bool;
+    public function IsTestCreator(): bool;
 
     //public function GetPriviledges();
 }
