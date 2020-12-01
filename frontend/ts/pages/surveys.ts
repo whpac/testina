@@ -41,8 +41,9 @@ export default class SurveysPage extends Page {
 
         try {
             let assigned_awaiter = this.AssignedSurveys.Populate();
+            let is_survey_creator = await this.IsUserPermittedToCreateSurvey();
 
-            if(await this.IsUserPermittedToCreateSurvey()) {
+            if(is_survey_creator) {
                 let surveys = await SurveyLoader.GetCreatedByCurrentUser();
                 this.SurveyListCard.Populate(surveys);
 
@@ -52,11 +53,13 @@ export default class SurveysPage extends Page {
             } else {
                 this.SurveyListCard.GetElement().style.display = 'none';
                 this.NoSurveysCreated.GetElement().style.display = 'none';
-                this.NoSurveysAssigned.GetElement().style.display = '';
             }
 
             await assigned_awaiter;
             this.AssignedSurveys.GetElement().style.display = this.AssignedSurveys.SurveyCount > 0 ? '' : 'none';
+            if(this.AssignedSurveys.SurveyCount <= 0) {
+                this.NoSurveysAssigned.GetElement().style.display = is_survey_creator ? 'none' : '';
+            }
         } catch(e) {
             let message = '.';
             if('Message' in e) message = ': ' + e.Message;
