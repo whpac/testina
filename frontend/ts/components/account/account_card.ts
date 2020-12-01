@@ -7,6 +7,7 @@ export default class AccountCard extends Card {
     protected Subtitle: HTMLElement;
     protected GroupsText: Text;
     protected GroupsList: HTMLElement;
+    protected TestCreatorText: HTMLElement;
 
     public constructor() {
         super();
@@ -24,6 +25,9 @@ export default class AccountCard extends Card {
 
         this.GroupsList = document.createElement('ul');
         this.AppendChild(this.GroupsList);
+
+        this.TestCreatorText = document.createElement('div');
+        this.AppendChild(this.TestCreatorText);
 
         let processed_data_notice = document.createElement('p');
         processed_data_notice.classList.add('small', 'secondary');
@@ -44,6 +48,7 @@ export default class AccountCard extends Card {
         this.Subtitle.textContent = '';
         this.GroupsText.textContent = 'Wczytywanie Twoich grup...';
         this.GroupsList.textContent = '';
+        this.TestCreatorText.textContent = '';
 
         let groups_awaiter = GroupLoader.GetGroupsWithCurrentUser();
         let current_user = await UserLoader.GetCurrent();
@@ -52,6 +57,8 @@ export default class AccountCard extends Card {
 
         this.Heading.textContent = current_user.GetFullName();
         this.Subtitle.textContent = 'Konto połączone z Office 365';
+        this.TestCreatorText.textContent = current_user.IsTestCreator ?
+            'Masz uprawnienia do tworzenia testów i ankiet.' : 'Nie masz uprawnień do tworzenia testów i ankiet.';
 
         let groups = await groups_awaiter;
         if(groups.length > 0) {
