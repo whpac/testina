@@ -5,9 +5,10 @@ import { StringKeyedCollection } from '../question_with_user_answers';
 
 /** Deskryptor użytkownika w odpowiedzi z API */
 export interface UserDescriptor {
-    id: string,
-    first_name: string,
+    id: string;
+    first_name: string;
     last_name: string;
+    is_test_creator: boolean;
 }
 
 export default class UserLoader {
@@ -21,7 +22,7 @@ export default class UserLoader {
     LoadById(user_id: string | 0): Promise<User>;
     LoadById(user_id: string[]): Promise<User[]>;
     public async LoadById(user_id: string | string[] | 0): Promise<User | User[]> {
-        if(user_id === 0) return new User('0', 'Nieznany', 'użytkownik');
+        if(user_id === 0) return new User('0', 'Nieznany', 'użytkownik', false);
 
         if(typeof user_id == 'string') {
             try {
@@ -34,7 +35,8 @@ export default class UserLoader {
                     return UserLoader.CreateFromDescriptor({
                         id: user_id,
                         first_name: 'Błąd',
-                        last_name: 'wczytywania'
+                        last_name: 'wczytywania',
+                        is_test_creator: false
                     });
                 }
                 throw e;
@@ -74,7 +76,8 @@ export default class UserLoader {
         return new User(
             user_descriptor.id,
             user_descriptor.first_name,
-            user_descriptor.last_name
+            user_descriptor.last_name,
+            user_descriptor.is_test_creator
         );
     }
 

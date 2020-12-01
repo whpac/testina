@@ -56,7 +56,7 @@ export default class TestLoader {
             author = await UserLoader.LoadById(test_descriptor.author_id);
         } catch(e) {
             if(await AuthManager.IsAuthorized()) throw e;
-            author = new User('0', 'Nieznany', 'użytkownik');
+            author = new User('0', 'Nieznany', 'użytkownik', false);
         }
 
         let test = new Test(

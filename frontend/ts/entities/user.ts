@@ -8,14 +8,17 @@ export default class User extends Entity {
     public readonly FirstName: string;
     /** Nazwisko użytkownika */
     public readonly LastName: string;
+    /** Czy może tworzyć testy */
+    public readonly IsTestCreator: boolean;
 
     /**
      * Klasa reprezentująca użytkownika
      * @param id Identyfikator użytkownika
      * @param first_name Imię użytkownika
      * @param last_name Nazwisko użytkownika
+     * @param is_test_creator Czy może tworzyć testy
      */
-    constructor(id: string, first_name: string, last_name: string) {
+    constructor(id: string, first_name: string, last_name: string, is_test_creator: boolean) {
         super();
 
         if(id === undefined || first_name === undefined || last_name === undefined)
@@ -24,6 +27,7 @@ export default class User extends Entity {
         this.Id = id;
         this.FirstName = first_name;
         this.LastName = last_name;
+        this.IsTestCreator = is_test_creator;
     }
 
     /** Zwraca imię i nazwisko użytkownika */

@@ -18,7 +18,8 @@ class User extends Resource implements Schemas\User{
             'id',
             'first_name',
             'last_name',
-            'groups'
+            'groups',
+            'is_test_creator'
         ];
     }
 
@@ -26,7 +27,8 @@ class User extends Resource implements Schemas\User{
         return [
             'id',
             'first_name',
-            'last_name'
+            'last_name',
+            'is_test_creator'
         ];
     }
 
@@ -55,6 +57,11 @@ class User extends Resource implements Schemas\User{
         $collection = new Collection($out_groups);
         $collection->SetContext($this->GetContext());
         return $collection;
+    }
+
+    public function is_test_creator(): bool{
+        if($this->User->GetId() != $this->GetContext()->GetUser()->GetId()) return false;
+        return $this->User->IsTestCreator();
     }
 }
 ?>

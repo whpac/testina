@@ -115,7 +115,7 @@ export default class AssignmentLoader implements Loader<Assignment> {
             assigning_user = await UserLoader.LoadById(assignment_descriptor.assigned_by_id);
         } catch(e) {
             if(await AuthManager.IsAuthorized()) throw e;
-            assigning_user = new User('0', 'Nieznany', 'użytkownik');
+            assigning_user = new User('0', 'Nieznany', 'użytkownik', false);
         }
 
         let assignment = new Assignment(
