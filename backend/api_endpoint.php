@@ -25,6 +25,18 @@ $db = new MySQL(CRED_DATABASE_HOST, CRED_DATABASE_USER, CRED_DATABASE_PASSWORD, 
 $db->Connect();
 DatabaseManager::SetProvider($db);
 
+// Jeżeli żądanie ma na celu jedynie wyczyszczenie pamięci podręcznej,
+// omiń generowanie treści. Zapobiega tworzeniu sesji
+if(isset($_SERVER['HTTP_X_NO_CONTENT'])){
+    try{
+        ClearExpiredCache();
+        header('X-No-Content: 1', true, 204);
+    }catch(\Error $e){
+        header('X-No-Content: 1', true, 500);
+    }
+    return;
+}
+
 $kp = new Session\Key\CookieKeyProvider(CONFIG_SESSION_COOKIE);
 SessionManager::SetKeyProvider($kp);
 SessionManager::Start(CONFIG_SESSION_DURATION);
@@ -187,18 +199,8 @@ try{
     }
 }
 
-// Następne funkcje usuwają przeterminowane tokeny i czyszczą pamięć podręczną
-// Znajdują się tutaj, żeby mogły być wykonywane jak najczęściej
-// Szczególnie ważne jest usuwanie tokenów odświeżania
-try{
-    Auth\ExternalLogin\TokenManager::RemoveExpiredTokens();
-}catch(\Exception $e){ }
-try{
-    \Entities\User::ClearExpiredCache();
-}catch(\Exception $e){ }
-try{
-    \Entities\Group::ClearExpiredCache();
-}catch(\Exception $e){ }
+// Usuń przeterminowane tokeny i wyczyść pamięć podręczną ze starych wpisów
+ClearExpiredCache();
 
 
 /**
@@ -390,5 +392,21 @@ function OverrideReturnedMime($new_mime){
 function GetOverridenMime(){
     global $overriden_mime;
     return $overriden_mime;
+}
+
+/**
+ * Czyści przeterminowane wpisy z pamięci podręcznej.
+ * Sczególnie ważne jest usuwanie tokenów odświeżania
+ */
+function ClearExpiredCache(){
+    try{
+        Auth\ExternalLogin\TokenManager::RemoveExpiredTokens();
+    }catch(\Exception $e){ }
+    try{
+        \Entities\User::ClearExpiredCache();
+    }catch(\Exception $e){ }
+    try{
+        \Entities\Group::ClearExpiredCache();
+    }catch(\Exception $e){ }
 }
 ?>
