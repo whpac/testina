@@ -1,6 +1,8 @@
 import AttemptAnswers from '../../entities/attempt_answers';
 import Question from '../../entities/question';
 import Card from '../basic/card';
+import Component from '../basic/component';
+import Toast from '../basic/toast';
 import ScorePresenter from './score_presenter';
 
 export default class QuestionAnswersCard extends Card {
@@ -8,6 +10,7 @@ export default class QuestionAnswersCard extends Card {
     protected ContentElement: HTMLElement;
 
     protected Question: Question | undefined;
+    protected Answers: AttemptAnswers | undefined;
 
     public constructor() {
         super();
@@ -22,6 +25,7 @@ export default class QuestionAnswersCard extends Card {
     public Populate(question: Question | undefined, answers: AttemptAnswers) {
         this.ContentElement.textContent = 'Wczytywanie...';
         this.Question = question;
+        this.Answers = answers;
 
         if(question === undefined) {
             this.DisplayRemovedQuestion(answers);
@@ -35,7 +39,7 @@ export default class QuestionAnswersCard extends Card {
         this.Header.textContent = 'Pytanie usunięte';
         this.ContentElement.textContent = '';
 
-        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, undefined).GetElement());
+        this.ContentElement.appendChild(this.CreateScorePresenter(answers.ScoreGot, undefined).GetElement());
     }
 
     protected async DisplayClosedAnswerQuestion(question: Question, answers: AttemptAnswers) {
@@ -85,7 +89,7 @@ export default class QuestionAnswersCard extends Card {
             }
         }
 
-        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, question.Points).GetElement());
+        this.ContentElement.appendChild(this.CreateScorePresenter(answers.ScoreGot, question.Points).GetElement());
     }
 
     protected DisplayOpenAnswerQuestion(question: Question, answers: AttemptAnswers) {
@@ -93,6 +97,27 @@ export default class QuestionAnswersCard extends Card {
         this.ContentElement.textContent = 'Wpisana odpowiedź: ' + answers.SuppliedAnswer;
         this.ContentElement.appendChild(document.createElement('br'));
 
-        this.ContentElement.appendChild(new ScorePresenter(answers.ScoreGot, question.Points).GetElement());
+        this.ContentElement.appendChild(this.CreateScorePresenter(answers.ScoreGot, question.Points).GetElement());
+    }
+
+    protected CreateScorePresenter(got: number, total: number | undefined) {
+        let sp = new ScorePresenter(got, total);
+        sp.AddEventListener('change-score', this.OnChangeScoreRequest.bind(this));
+        return sp;
+    }
+
+    protected async OnChangeScoreRequest(score_presenter: Component<string>) {
+        if(!(score_presenter instanceof ScorePresenter)) return;
+        if(this.Answers === undefined) return;
+
+        try {
+            await this.Answers.UpdateScore(score_presenter.ScoreGot);
+        } catch(e) {
+            let message = '.';
+            if('Message' in e) {
+                message = ': ' + e.Message;
+            }
+            new Toast('Nie udało się zmienić wyniku' + message).Show(0);
+        }
     }
 }

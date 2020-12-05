@@ -52,6 +52,7 @@ export default class ScorePresenter extends Component<"change-score"> {
         this.ScoreInput.value = got.toString();
         if(total !== undefined) this.ScoreInput.max = total.toString();
         this.ScoreInput.step = 'any';
+        this.ScoreInput.addEventListener('keyup', this.OnKeyUp.bind(this));
         this.ScoreInputWrapper.appendChild(this.ScoreInput);
         this.ScoreInputWrapper.appendChild(document.createTextNode(' punktów'));
     }
@@ -67,6 +68,11 @@ export default class ScorePresenter extends Component<"change-score"> {
         this.ScoreGotText.style.display = 'none';
         this.ChangeLink.style.display = 'none';
         this.SaveLink.style.display = '';
+    }
+
+    protected OnKeyUp(e: KeyboardEvent) {
+        if(e.key != 'Enter') return;
+        this.SaveChanges();
     }
 
     protected SaveChanges() {
