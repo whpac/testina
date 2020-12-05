@@ -3,6 +3,7 @@ namespace Api\Resources;
 
 use Api\Exceptions;
 use Api\Validation\TypeValidator;
+use Api\Validation\ValueValidator;
 
 class AttemptAnswers extends Resource {
     protected $Attempt;
@@ -115,6 +116,35 @@ class AttemptAnswers extends Resource {
         $this->Attempt->MarkAsFinished();
     }
 
+    public function Update(/* mixed */ $data){
+        TypeValidator::AssertIsObject($data);
+        TypeValidator::AssertIsInt($data->question_index, 'question_index');
+        TypeValidator::AssertIsNumeric($data->new_score, 'new_score');
+        ValueValidator::AssertIsNonNegative($data->new_score);
+
+        $res = \Entities\UserAnswer::SaveScoreForQuestion($this->Attempt, $data->question_index, $data->new_score);
+
+        if(!$res) throw new \Exception('Nie udało się zaktualizować wyniku pytania');
+
+        $user_answers = $this->Attempt->GetUserAnswers();
+        $answered_questions = $user_answers->GetAnsweredQuestions();
+
+        $score_got = 0;
+        $score_max = 0;
+
+        foreach($answered_questions as $question){
+            $answer_sets = $user_answers->GetAnswersByQuestion($question);
+            
+            foreach($answer_sets as $answer_set){
+                // answer_set = [answers, q_index]
+                $score_max += $question->GetPoints();
+                $score_got += \Entities\UserAnswer::GetScoreForAttemptAndQuestionIndex($this->Attempt, $answer_set[1]);
+            }
+        }
+
+        $this->Attempt->UpdateScore($score_got, $score_max);
+    }
+
     public function GetKeys(): array{
         if($this->GetContext()->GetUser()->GetId() != $this->Attempt->GetAssignment()->GetAssigningUser()->GetId()) return [];
 
@@ -135,6 +165,7 @@ class AttemptAnswers extends Resource {
 
         foreach($user_answers as $user_answer){
             $out_array[$user_answer->GetQuestionIndex()]['question_id'] = $user_answer->GetQuestion()->GetId();
+            $out_array[$user_answer->GetQuestionIndex()]['question_index'] = $user_answer->GetQuestionIndex();
             $out_array[$user_answer->GetQuestionIndex()]['score_got'] = $user_answer->GetScore();
 
             $answer_id = $user_answer->GetAnswer();
@@ -167,6 +198,7 @@ class AttemptAnswersQuestion extends Resource {
     public function GetKeys(): array{
         return [
             'question_id',
+            'question_index',
             'answer_ids',
             'supplied_answer',
             'is_open',
@@ -176,6 +208,10 @@ class AttemptAnswersQuestion extends Resource {
 
     public function question_id(): int{
         return $this->Data['question_id'];
+    }
+
+    public function question_index(): int{
+        return $this->Data['question_index'];
     }
 
     public function answer_ids(): array{
