@@ -28,6 +28,7 @@ export interface TestDescriptor {
     assignment_ids: number[];
     fill_count: number | undefined;
     do_hide_correct_answers: boolean;
+    is_marked_manually: boolean;
 }
 
 export default class TestLoader {
@@ -76,7 +77,8 @@ export default class TestLoader {
             test_descriptor.final_text,
             test_descriptor.is_deleted,
             test_descriptor.fill_count ?? 0,
-            test_descriptor.do_hide_correct_answers
+            test_descriptor.do_hide_correct_answers,
+            test_descriptor.is_marked_manually
         );
 
         question_loader.SetTest(test);

@@ -52,6 +52,8 @@ export default class Test extends Entity implements PageParams {
     protected _IsDeleted: boolean;
     /** Czy ukryć poprawne odpowiedzi w pytaniach */
     protected _DoHideCorrectAnswers: boolean;
+    /** Czy test jest oceniany ręcznie */
+    protected _IsMarkedManually: boolean;
     /** Ilość wypełnień ankiety */
     public readonly FillCount: number;
 
@@ -137,6 +139,15 @@ export default class Test extends Entity implements PageParams {
         this.FireEvent('change');
     }
 
+    /** Czy test jest oceniany ręcznie */
+    public get IsMarkedManually() {
+        return this._IsMarkedManually;
+    }
+    public set IsMarkedManually(new_value: boolean) {
+        this._IsMarkedManually = new_value;
+        this.FireEvent('change');
+    }
+
     /** Obiekt odpowiedzialny za wczytywanie pytań do testu */
     protected QuestionLoader: QuestionLoader;
     /** Obiekt odpowiedzialny za wczytywanie przypisań */
@@ -157,12 +168,21 @@ export default class Test extends Entity implements PageParams {
      * @param question_multiplier Mnożnik pytań
      * @param question_loader Obiekt wczytujący pytania
      * @param assignment_loader Obiekt wczytujący przypisania
+     * @param type Rodzaj testu (test/ankieta)
+     * @param description Opis ankiety
+     * @param score_counting Sposób liczenia punktów (maksimum, średnia)
+     * @param final_title Tytuł ekranu na koniec ankiety
+     * @param final_text Treść ekranu na koniec ankiety
+     * @param is_deleted Czy jest usunięty
+     * @param fill_count Ilość wypełnień
+     * @param do_hide_correct_answers Czy ukryć poprawne odpowiedzi
+     * @param marked_manually Czy test jest oceniany ręcznie
      */
     constructor(id: number, name: string, author: User, creation_date: Date, time_limit: number,
         question_multiplier: number, question_loader: QuestionLoader, assignment_count: number | undefined,
         assignment_loader: () => Promise<Assignment[]>, type: number, description: string | null,
         score_counting: number, final_title: string, final_text: string, is_deleted: boolean,
-        fill_count: number, do_hide_correct_answers: boolean) {
+        fill_count: number, do_hide_correct_answers: boolean, marked_manually: boolean) {
 
         super();
 
@@ -182,6 +202,7 @@ export default class Test extends Entity implements PageParams {
         this._IsDeleted = is_deleted;
         this.FillCount = fill_count;
         this._DoHideCorrectAnswers = do_hide_correct_answers;
+        this._IsMarkedManually = marked_manually;
 
         this.QuestionLoader = question_loader;
         this.AssignmentLoader = assignment_loader;
