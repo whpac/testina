@@ -10,7 +10,7 @@ interface AttemptAnswersDescriptor {
     answer_ids: number[];
     supplied_answer: string;
     is_open: boolean;
-    score_got: number;
+    score_got: number | null;
 }
 
 export default class AttemptAnswersLoader {

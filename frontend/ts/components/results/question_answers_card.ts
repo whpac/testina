@@ -100,7 +100,7 @@ export default class QuestionAnswersCard extends Card {
         this.ContentElement.appendChild(this.CreateScorePresenter(answers.ScoreGot, question.Points).GetElement());
     }
 
-    protected CreateScorePresenter(got: number, total: number | undefined) {
+    protected CreateScorePresenter(got: number | null, total: number | undefined) {
         let sp = new ScorePresenter(got, total);
         sp.AddEventListener('change-score', this.OnChangeScoreRequest.bind(this));
         return sp;

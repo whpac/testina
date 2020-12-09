@@ -103,8 +103,11 @@ class AttemptAnswers extends Resource {
             
             foreach($answer_sets as $answer_set){
                 // answer_set = [answers, q_index]
-                $current_got = $question->CountPoints($answer_set[0]);
-                $score_got += $current_got;
+                $current_got = null;
+                if(!$test->IsMarkedManually()){
+                    $current_got = $question->CountPoints($answer_set[0]);
+                    $score_got += $current_got;
+                }
                 $score_max += $question->GetPoints();
 
                 \Entities\UserAnswer::SaveScoreForQuestion($this->Attempt, $answer_set[1], $current_got);
@@ -112,7 +115,11 @@ class AttemptAnswers extends Resource {
         }
 
         // Update attempt to reflect the score
-        $this->Attempt->UpdateScore($score_got, $score_max);
+        if($test->IsMarkedManually()){
+            $this->Attempt->UpdateScore(null, $score_max);
+        }else{
+            $this->Attempt->UpdateScore($score_got, $score_max);
+        }
         $this->Attempt->MarkAsFinished();
     }
 
@@ -226,7 +233,7 @@ class AttemptAnswersQuestion extends Resource {
         return $this->Data['is_open'];
     }
 
-    public function score_got(): float{
+    public function score_got(): ?float{
         return $this->Data['score_got'];
     }
 }

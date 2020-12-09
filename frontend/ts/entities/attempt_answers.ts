@@ -10,14 +10,14 @@ export default class AttemptAnswers {
     public readonly AnswerIds: number[];
     public readonly SuppliedAnswer: string;
     public readonly IsOpen: boolean;
-    public _ScoreGot: number;
+    public _ScoreGot: number | null;
 
     public get ScoreGot() {
         return this._ScoreGot;
     }
 
     public constructor(attempt: Attempt, question_id: number, question_index: number,
-        answer_ids: number[], supplied_answer: string, is_open: boolean, score_got: number) {
+        answer_ids: number[], supplied_answer: string, is_open: boolean, score_got: number | null) {
 
         this.Attempt = attempt;
         this.QuestionId = question_id;

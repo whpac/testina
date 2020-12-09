@@ -3,7 +3,7 @@ import Component from '../basic/component';
 
 export default class ScorePresenter extends Component<"change-score"> {
     protected ScoreGotText: HTMLElement;
-    protected _ScoreGot: number;
+    protected _ScoreGot: number | null;
     protected MaximumScore: number | undefined;
     protected ChangeLink: HTMLAnchorElement;
     protected SaveLink: HTMLAnchorElement;
@@ -11,10 +11,10 @@ export default class ScorePresenter extends Component<"change-score"> {
     protected ScoreInput: HTMLInputElement;
 
     public get ScoreGot() {
-        return this._ScoreGot;
+        return this._ScoreGot ?? 0;
     }
 
-    public constructor(got: number, total: number | undefined) {
+    public constructor(got: number | null, total: number | undefined) {
         super();
 
         this.Element = document.createElement('div');
@@ -49,7 +49,7 @@ export default class ScorePresenter extends Component<"change-score"> {
         this.ScoreInput = document.createElement('input');
         this.ScoreInput.type = 'number';
         this.ScoreInput.min = '0';
-        this.ScoreInput.value = got.toString();
+        this.ScoreInput.value = (got ?? total ?? 0).toString();
         if(total !== undefined) this.ScoreInput.max = total.toString();
         this.ScoreInput.step = 'any';
         this.ScoreInput.addEventListener('keyup', this.OnKeyUp.bind(this));
@@ -57,9 +57,13 @@ export default class ScorePresenter extends Component<"change-score"> {
         this.ScoreInputWrapper.appendChild(document.createTextNode(' punktów'));
     }
 
-    protected SetScoreGot(points: number) {
-        let pts_form = 'punkt' + n(points, '', 'y', 'ów', 'a');
-        this.ScoreGotText.textContent = points.toLocaleString() + ' ' + pts_form;
+    protected SetScoreGot(points: number | null) {
+        if(points === null) {
+            this.ScoreGotText.textContent = '(brak) punktów';
+        } else {
+            let pts_form = 'punkt' + n(points, '', 'y', 'ów', 'a');
+            this.ScoreGotText.textContent = points.toLocaleString() + ' ' + pts_form;
+        }
         this._ScoreGot = points;
     }
 
