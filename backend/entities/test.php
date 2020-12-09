@@ -188,6 +188,8 @@ class Test extends EntityWithFlags {
         if(is_null($hide_correct_answers)) $hide_correct_answers = $this->GetDoHideCorrectAnswers();
         if(is_null($manual_marking)) $manual_marking = $this->IsMarkedManually();
 
+        if($manual_marking) $hide_correct_answers = true;
+
         $flags = [
             self::FLAG_HIDE_CORRECT_ANSWERS => $hide_correct_answers,
             self::FLAG_MANUAL_MARKING => $manual_marking

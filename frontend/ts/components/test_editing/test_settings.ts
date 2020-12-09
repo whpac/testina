@@ -17,6 +17,7 @@ export default class TestSettings extends Card {
 
     protected ScoreCountingSelect: HTMLSelectElement;
     protected AnswerHideCheckbox: HTMLInputElement;
+    protected ManualMarkingCheckbox: HTMLInputElement;
     protected ErrorWrapper: HTMLElement;
 
     protected Test: Test | undefined;
@@ -145,6 +146,20 @@ export default class TestSettings extends Card {
         answer_hide_label.htmlFor = this.AnswerHideCheckbox.id;
         answer_hide_fieldset.appendChild(answer_hide_label);
 
+        let manual_marking_fieldset = document.createElement('div');
+        manual_marking_fieldset.classList.add('fieldset');
+        this.AppendChild(manual_marking_fieldset);
+
+        this.ManualMarkingCheckbox = document.createElement('input');
+        this.ManualMarkingCheckbox.type = 'checkbox';
+        this.ManualMarkingCheckbox.id = 'manual-marking-cb';
+        manual_marking_fieldset.appendChild(this.ManualMarkingCheckbox);
+
+        let manual_marking_label = document.createElement('label');
+        manual_marking_label.textContent = 'Pozostaw test do oceny nauczycielowi';
+        manual_marking_label.htmlFor = this.ManualMarkingCheckbox.id;
+        manual_marking_fieldset.appendChild(manual_marking_label);
+
         this.ErrorWrapper = document.createElement('p');
         this.ErrorWrapper.classList.add('error-message');
         this.AppendChild(this.ErrorWrapper);
@@ -157,6 +172,7 @@ export default class TestSettings extends Card {
         this.TimeLimitInput.addEventListener('change', this.StateChanged.bind(this));
         this.ScoreCountingSelect.addEventListener('change', this.StateChanged.bind(this));
         this.AnswerHideCheckbox.addEventListener('click', this.StateChanged.bind(this));
+        this.ManualMarkingCheckbox.addEventListener('click', this.UpdateAnswerHideEnabledState.bind(this));
 
         let btn_save = document.createElement('button');
         btn_save.innerText = 'Zapisz ustawienia';
@@ -181,6 +197,7 @@ export default class TestSettings extends Card {
         this.QuestionMultiplierInput.value = test.QuestionMultiplier.toString();
         this.ScoreCountingSelect.value = test.ScoreCounting.toString();
         this.AnswerHideCheckbox.checked = test.DoHideCorrectAnswers;
+        this.ManualMarkingCheckbox.checked = test.IsMarkedManually;
 
         if(test.HasTimeLimit()) {
             this.TimeLimitPresentRadio.checked = true;
@@ -190,6 +207,7 @@ export default class TestSettings extends Card {
             this.TimeLimitInput.value = '15';
         }
         this.UpdateTimeLimitInputEnabledState();
+        this.UpdateAnswerHideEnabledState();
         this.IgnoreChange = false;
     }
 
@@ -207,6 +225,15 @@ export default class TestSettings extends Card {
     protected UpdateTimeLimitInputEnabledState() {
         this.StateChanged();
         this.TimeLimitInput.disabled = !this.TimeLimitPresentRadio.checked;
+    }
+
+    /**
+     * Blokuje pole z ukrywaniem poprawnych odpowiedzi
+     */
+    protected UpdateAnswerHideEnabledState() {
+        this.StateChanged();
+        this.AnswerHideCheckbox.checked = true;
+        this.AnswerHideCheckbox.disabled = this.ManualMarkingCheckbox.checked;
     }
 
     /**
@@ -252,6 +279,7 @@ export default class TestSettings extends Card {
             test.TimeLimit = this.TimeLimitPresentRadio.checked ? parseInt(this.TimeLimitInput.value) * 60 : 0;
             test.ScoreCounting = parseInt(this.ScoreCountingSelect.value);
             test.DoHideCorrectAnswers = this.AnswerHideCheckbox.checked;
+            test.IsMarkedManually = this.ManualMarkingCheckbox.checked;
             TestSaver.Update(test);
 
             new Toast('Zmiany w ustawieniach testu zostały zapisane.').Show(0);
