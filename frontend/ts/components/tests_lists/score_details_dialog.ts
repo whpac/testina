@@ -6,6 +6,7 @@ import Test from '../../entities/test';
 import User from '../../entities/user';
 import UserLoader from '../../entities/loaders/userloader';
 import { GoToPage } from '../../1page/page_manager';
+import Icon from '../basic/icon';
 
 export default class ScoreDetailsDialog extends Dialog {
     TBody: HTMLTableSectionElement;
@@ -70,7 +71,13 @@ export default class ScoreDetailsDialog extends Dialog {
 
             let td_score = tr.insertCell(-1);
             td_score.classList.add('center');
-            td_score.textContent = attempt.GetPercentageScore() + '%';
+            let s = attempt.GetPercentageScore();
+            if(s !== undefined) {
+                td_score.textContent = s + '%';
+            } else {
+                td_score.appendChild(new Icon('hourglass-half').GetElement());
+                td_score.title = 'Nauczyciel nie ocenił jeszcze tego podejścia.';
+            }
 
             if(display_more) {
                 let td_btn = tr.insertCell(-1);
@@ -109,7 +116,7 @@ export default class ScoreDetailsDialog extends Dialog {
             em_score.textContent = assignment.Score + '%';
         } else {
             let score = assignment.GetScoreForUser(user);
-            if(score === null) em_score.textContent = 'Nieznany';
+            if(score === null) em_score.textContent = 'Nieoceniony';
             else em_score.textContent = score + '%';
         }
     }

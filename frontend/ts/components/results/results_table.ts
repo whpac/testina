@@ -56,9 +56,9 @@ export default class ResultsTable extends Component {
 
             tds[0].textContent = user.GetFullName();
 
-            let attempt_count_awaiter = assignment.CountUsersAttempts(user);
+            let attempt_count = await assignment.CountUsersAttempts(user);
             let score = assignment.GetScoreForUser(user);
-            if(score === undefined) {
+            if(score === null && attempt_count == 0) {
                 tds[1].textContent = '—';
                 tds[1].title = 'Nie pod' + (user.IsFemale() ? 'eszła' : 'szedł');
             } else {
@@ -69,11 +69,14 @@ export default class ResultsTable extends Component {
                 score_link.title = 'Zobacz wyniki poszczególnych podejść';
                 score_link.href = 'javascript:void(0)';
                 score_link.addEventListener('click', () => this.DisplayScoreDetailsDialog(assignment, user));
-                score_link.textContent = score + '%';
+                if(score !== null) {
+                    score_link.textContent = score + '%';
+                } else {
+                    score_link.textContent = 'brak';
+                }
                 tds[1].appendChild(score_link);
             }
 
-            let attempt_count = await attempt_count_awaiter;
             tds[2].textContent = attempt_count.toString();
             if(attempt_count >= assignment.AttemptLimit && !assignment.AreAttemptsUnlimited()) {
                 tds[2].classList.add('error');

@@ -29,7 +29,7 @@ class Attempt extends Entity {
 
         settype($this->id, 'int');
         settype($this->assignment_id, 'int');
-        settype($this->score, 'float');
+        if(!is_null($this->score)) settype($this->score, 'float');
         settype($this->max_score, 'float');
         settype($this->is_finished, 'int');
     }

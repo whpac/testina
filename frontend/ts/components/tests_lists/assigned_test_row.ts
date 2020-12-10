@@ -5,6 +5,7 @@ import * as DateUtils from '../../utils/dateutils';
 import { HandleLinkClick } from '../../1page/page_manager';
 import ScoreDetailsDialog from './score_details_dialog';
 import AssignmentDetailsDialog from './assignment_details_dialog';
+import Icon from '../basic/icon';
 
 export default class AssignedTestRow extends Component {
     NameCell: HTMLTableCellElement;
@@ -87,7 +88,13 @@ export default class AssignedTestRow extends Component {
     protected DisplayScore(assignment: Assignment) {
         let score = assignment.Score;
         if(score === undefined) {
-            this.ScoreCell.textContent = '—';
+            if(assignment.AttemptCount == 0) {
+                this.ScoreCell.textContent = '—';
+            } else {
+                this.ScoreCell.textContent = '';
+                this.ScoreCell.appendChild(new Icon('hourglass-half').GetElement());
+                this.ScoreCell.title = 'Nauczyciel nie ocenił jeszcze tego testu.';
+            }
         } else {
             this.ScoreCell.textContent = '';
 

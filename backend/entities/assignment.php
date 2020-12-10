@@ -106,6 +106,7 @@ class Assignment extends Entity {
                 $got = $attempt->GetScore();
                 $max = $attempt->GetMaxScore();
 
+                if(is_null($got)) continue;
                 if($got > $max) continue;
                 if($max == 0) continue;
 
@@ -122,6 +123,7 @@ class Assignment extends Entity {
                 $got = $attempt->GetScore();
                 $max = $attempt->GetMaxScore();
 
+                if(is_null($got)) continue;
                 if($got > $max) continue;
 
                 $score_got += $got;
