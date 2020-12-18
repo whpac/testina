@@ -7,6 +7,7 @@ import AssignmentLoader from '../../entities/loaders/assignmentloader';
 
 export default class TestSummary extends Card {
     PercentageScoreNode: Text;
+    ScoreHeaderMainText: Text;
     AverageScoreSubtitle: HTMLSpanElement;
     AverageScoreLink: HTMLAnchorElement;
     AverageScoreNode: Text;
@@ -21,11 +22,10 @@ export default class TestSummary extends Card {
 
         let score_header = document.createElement('h2');
         score_header.classList.add('center');
-        score_header.innerText = 'Twój wynik: ';
         this.AppendChild(score_header);
 
+        score_header.appendChild(this.ScoreHeaderMainText = document.createTextNode('Twój wynik: '));
         score_header.appendChild(this.PercentageScoreNode = document.createTextNode('...'));
-        score_header.appendChild(document.createTextNode('%.'));
 
         this.AverageScoreSubtitle = document.createElement('span');
         this.AverageScoreSubtitle.classList.add('subtitle', 'center');
@@ -79,16 +79,22 @@ export default class TestSummary extends Card {
             this.ResultsTable.style.display = 'none';
         }
 
-        assignment.Score = (await assignment_awaiter).Score;
-        let score = assignment.Score;
-        this.AverageScoreNode.textContent = score?.toString() ?? '0';
-        this.AverageScoreSubtitle.style.display = '';
+        if(this.Assignment.Test.IsMarkedManually) {
+            this.ScoreHeaderMainText.textContent = 'Test oczekuje teraz na ocenienie.';
+            this.PercentageScoreNode.textContent = '';
+        } else {
+            this.ScoreHeaderMainText.textContent = 'Twój wynik: ';
+            assignment.Score = (await assignment_awaiter).Score;
+            let score = assignment.Score;
+            this.AverageScoreNode.textContent = score?.toString() ?? '0';
+            this.AverageScoreSubtitle.style.display = '';
 
-        let attempts = await assignment.GetAttemptsForCurrentUser();
-        let current_attempt = attempts[attempts.length - 1];
-        let current_score = 0;
-        if(current_attempt.MaxScore != 0) current_score = 100 * (current_attempt.Score ?? 0) / current_attempt.MaxScore;
-        this.PercentageScoreNode.textContent = Math.round(current_score).toString();
+            let attempts = await assignment.GetAttemptsForCurrentUser();
+            let current_attempt = attempts[attempts.length - 1];
+            let current_score = 0;
+            if(current_attempt.MaxScore != 0) current_score = 100 * (current_attempt.Score ?? 0) / current_attempt.MaxScore;
+            this.PercentageScoreNode.textContent = Math.round(current_score).toString() + '%.';
+        }
     }
 
     DisplayScoreDetailsDialog() {
@@ -99,7 +105,7 @@ export default class TestSummary extends Card {
         dialog.Show();
     }
 
-    async DisplayParticularScores(questions: QuestionWithUserAnswers[]) {
+    DisplayParticularScores(questions: QuestionWithUserAnswers[]) {
         let total_got = 0;
         let total_max = 0;
 
@@ -136,6 +142,6 @@ export default class TestSummary extends Card {
             score_cell.textContent = (Math.round(question.got * 100) / 100).toLocaleString() + '/' + question.max.toLocaleString();
         }
 
-        this.PercentageScoreNode.textContent = Math.round(100 * total_got / total_max).toString();
+        this.PercentageScoreNode.textContent = Math.round(100 * total_got / total_max).toString() + '%.';
     }
 }
