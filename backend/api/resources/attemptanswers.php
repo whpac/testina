@@ -44,8 +44,14 @@ class AttemptAnswers extends Resource {
             }
         }
 
-        if($this->GetContext()->IsAuthorized()){
-            if(!$assignment->AreRemainingAttempts($this->GetContext()->GetUser())){
+        if($this->GetContext()->IsAuthorized() || $test->GetType() == \Entities\Test::TYPE_TEST){
+            $user = $this->GetContext()->GetUser();
+
+            if(
+                (!$assignment->AreAttemptsUnlimited() &&
+                $assignment->CountUserAttempts($user) < $assignment->GetAttemptLimit()) ||
+                $test->IsDeleted()
+            ){
                 throw new Exceptions\BadRequest('Wykorzystał'.($this->GetContext()->GetUser()->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');
             }
         }
