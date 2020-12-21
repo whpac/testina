@@ -1,9 +1,10 @@
 import XHR from '../network/xhr';
 import XHROptions from '../network/xhr_options';
 import Attempt from './attempt';
+import Entity from './entity';
 import ApiEndpoints from './loaders/apiendpoints';
 
-export default class AttemptAnswers {
+export default class AttemptAnswers extends Entity {
     public readonly Attempt: Attempt;
     public readonly QuestionId: number;
     public readonly QuestionIndex: number;
@@ -18,6 +19,8 @@ export default class AttemptAnswers {
 
     public constructor(attempt: Attempt, question_id: number, question_index: number,
         answer_ids: number[], supplied_answer: string, is_open: boolean, score_got: number | null) {
+
+        super();
 
         this.Attempt = attempt;
         this.QuestionId = question_id;
@@ -41,5 +44,6 @@ export default class AttemptAnswers {
         if(result.Status != 204) throw result;
 
         this._ScoreGot = new_score;
+        this.FireEvent('change');
     }
 }

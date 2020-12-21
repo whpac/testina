@@ -74,6 +74,9 @@ export default class AttemptAnswers extends Page {
                 let answers_card = new QuestionAnswersCard();
                 answers_card.Populate(sorted_questions[user_answer.QuestionId], user_answer);
                 this.QuestionsWrapper.appendChild(answers_card.GetElement());
+                user_answer.AddEventListener('change', (() => {
+                    this.Attempt?.Assignment.InvalidateResults();
+                }).bind(this));
             }
 
             console.log();
