@@ -39,7 +39,7 @@
     gap:5px; grid-auto-rows:auto; margin-bottom:10px;
 
     button {
-        grid-column:auto/span 2;
+        grid-column:auto/span 2; text-transform:none;
 
         &:nth-child(2n+1):last-child {grid-column:2/span 2;}
     }
