@@ -145,7 +145,10 @@ class AttemptAnswers extends Resource {
             foreach($answer_sets as $answer_set){
                 // answer_set = [answers, q_index]
                 $score_max += $question->GetPoints();
-                $score_got += \Entities\UserAnswer::GetScoreForAttemptAndQuestionIndex($this->Attempt, $answer_set[1]);
+                $got = \Entities\UserAnswer::GetScoreForAttemptAndQuestionIndex($this->Attempt, $answer_set[1]);
+
+                if(is_null($got) || is_null($score_got)) $score_got = null;
+                else $score_got += $got;
             }
         }
 
