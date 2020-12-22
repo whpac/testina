@@ -116,7 +116,7 @@ export default class ScoreDetailsDialog extends Dialog {
             em_score.textContent = assignment.Score + '%';
         } else {
             let score = assignment.GetScoreForUser(user);
-            if(score === null) em_score.textContent = 'Nieoceniony';
+            if(score === null || score === undefined) em_score.textContent = 'Nieoceniony';
             else em_score.textContent = score + '%';
         }
     }
