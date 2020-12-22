@@ -1,12 +1,15 @@
+import ConcreteEntity from '../../concrete/concrete_entity';
 import Answer from '../../schemas/answer';
 import Collection from '../../schemas/collection';
 import Question, { QuestionPointsCounting, QuestionType } from '../../schemas/question';
 
-export default class QuestionDecorator implements Question {
+export default class QuestionDecorator extends ConcreteEntity implements Question {
 
     public constructor(
         protected Question: Question
-    ) { }
+    ) {
+        super();
+    }
 
     GetId(): number {
         return this.Question.GetId();
@@ -20,6 +23,7 @@ export default class QuestionDecorator implements Question {
     }
     SetText(new_text: string): void {
         this.Question.SetText(new_text);
+        this.FireEvent('changed');
     }
 
     GetType(): QuestionType {
@@ -27,6 +31,7 @@ export default class QuestionDecorator implements Question {
     }
     SetType(new_type: QuestionType): void {
         this.Question.SetType(new_type);
+        this.FireEvent('changed');
     }
 
     GetPoints(): number {
@@ -34,6 +39,7 @@ export default class QuestionDecorator implements Question {
     }
     SetPoints(new_points: number): void {
         this.Question.SetPoints(new_points);
+        this.FireEvent('changed');
     }
 
     GetPointsCounting(): QuestionPointsCounting {
@@ -41,6 +47,7 @@ export default class QuestionDecorator implements Question {
     }
     SetPointsCounting(new_points_counting: QuestionPointsCounting): void {
         this.Question.SetPointsCounting(new_points_counting);
+        this.FireEvent('changed');
     }
 
     GetMaxTypos(): number {
@@ -48,6 +55,7 @@ export default class QuestionDecorator implements Question {
     }
     SetMaxTypos(new_max_typos: number): void {
         this.Question.SetMaxTypos(new_max_typos);
+        this.FireEvent('changed');
     }
 
     GetFooter(): string {
@@ -55,6 +63,7 @@ export default class QuestionDecorator implements Question {
     }
     SetFooter(new_footer: string): void {
         this.Question.SetFooter(new_footer);
+        this.FireEvent('changed');
     }
 
     GetOrder(): number {
@@ -62,6 +71,7 @@ export default class QuestionDecorator implements Question {
     }
     SetOrder(new_order: number): void {
         this.Question.SetOrder(new_order);
+        this.FireEvent('changed');
     }
 
     IsOptional(): boolean {
@@ -69,6 +79,7 @@ export default class QuestionDecorator implements Question {
     }
     SetIsOptional(new_is_optional: boolean): void {
         this.Question.SetIsOptional(new_is_optional);
+        this.FireEvent('changed');
     }
 
     HasNonApplicableAnswer(): boolean {
@@ -76,6 +87,7 @@ export default class QuestionDecorator implements Question {
     }
     SetHasNonApplicableAnswer(new_has_non_applicable_answer: boolean): void {
         this.Question.SetHasNonApplicableAnswer(new_has_non_applicable_answer);
+        this.FireEvent('changed');
     }
 
     HasOtherAnswer(): boolean {
@@ -83,6 +95,7 @@ export default class QuestionDecorator implements Question {
     }
     SetHasOtherAnswer(new_has_other_answer: boolean): void {
         this.Question.SetHasOtherAnswer(new_has_other_answer);
+        this.FireEvent('changed');
     }
 
     GetAnswers(): Collection<number, Answer> | Promise<Collection<number, Answer>> | PromiseLike<Collection<number, Answer>> {
@@ -90,5 +103,6 @@ export default class QuestionDecorator implements Question {
     }
     SetAnswers(new_answers: Collection<number, Answer>): void {
         this.Question.SetAnswers(new_answers);
+        this.FireEvent('changed');
     }
 }

@@ -1,7 +1,8 @@
 import Answer from './answer';
 import Collection from './collection';
+import Entity from './entity';
 
-export default interface Question {
+export default interface Question extends Entity {
 
     GetId(): number;
     GetTest(): unknown;

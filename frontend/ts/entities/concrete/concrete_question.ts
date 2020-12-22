@@ -2,8 +2,9 @@ import Answer from '../schemas/answer';
 import Collection from '../schemas/collection';
 import Question, { QuestionPointsCounting, QuestionType } from '../schemas/question';
 import ConcreteAnswerCollection from './concrete_answer_collection';
+import ConcreteEntity from './concrete_entity';
 
-export default class ConcreteQuestion implements Question {
+export default class ConcreteQuestion extends ConcreteEntity implements Question {
     protected Answers: Collection<number, Answer>;
 
     public constructor(
@@ -21,6 +22,7 @@ export default class ConcreteQuestion implements Question {
         protected WithOtherAnswer: boolean,
         answers: Iterable<[number, Answer]> = []
     ) {
+        super();
         this.Answers = new ConcreteAnswerCollection(answers);
     }
 

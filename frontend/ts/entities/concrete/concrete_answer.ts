@@ -1,7 +1,8 @@
 import Answer from '../schemas/answer';
 import Question from '../schemas/question';
+import ConcreteEntity from './concrete_entity';
 
-export default class ConcreteAnswer implements Answer {
+export default class ConcreteAnswer extends ConcreteEntity implements Answer {
 
     public constructor(
         protected Id: number,
@@ -9,7 +10,9 @@ export default class ConcreteAnswer implements Answer {
         protected Text: string,
         protected Correct: boolean,
         protected Order: number
-    ) { }
+    ) {
+        super();
+    }
 
     GetId(): number {
         return this.Id;

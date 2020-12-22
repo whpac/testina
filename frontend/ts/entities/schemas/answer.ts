@@ -1,6 +1,7 @@
+import Entity from './entity';
 import Question from './question';
 
-export default interface Answer {
+export default interface Answer extends Entity {
 
     GetId(): number;
     GetQuestion(): Question;

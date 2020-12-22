@@ -1,4 +1,6 @@
-export default interface Collection<TKey, TValue> extends Iterable<[TKey, TValue]> {
+import Entity from './entity';
+
+export default interface Collection<TKey, TValue> extends Iterable<[TKey, TValue]>, Entity {
 
     /**
      * Tworzy nowy element w kolekcji

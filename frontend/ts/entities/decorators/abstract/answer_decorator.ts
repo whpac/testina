@@ -1,11 +1,14 @@
+import ConcreteEntity from '../../concrete/concrete_entity';
 import Answer from '../../schemas/answer';
 import Question from '../../schemas/question';
 
-export default abstract class AnswerDecorator implements Answer {
+export default abstract class AnswerDecorator extends ConcreteEntity implements Answer {
 
     public constructor(
         protected Answer: Answer
-    ) { }
+    ) {
+        super();
+    }
 
     GetId(): number {
         return this.Answer.GetId();
@@ -20,6 +23,7 @@ export default abstract class AnswerDecorator implements Answer {
     }
     SetText(new_text: string): void {
         this.Answer.SetText(new_text);
+        this.FireEvent('changed');
     }
 
     IsCorrect(): boolean {
@@ -27,6 +31,7 @@ export default abstract class AnswerDecorator implements Answer {
     }
     SetIsCorrect(new_correct: boolean): void {
         this.Answer.SetIsCorrect(new_correct);
+        this.FireEvent('changed');
     }
 
     GetOrder(): number {
@@ -34,5 +39,6 @@ export default abstract class AnswerDecorator implements Answer {
     }
     SetOrder(new_order: number): void {
         this.Answer.SetOrder(new_order);
+        this.FireEvent('changed');
     }
 }

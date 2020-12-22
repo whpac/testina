@@ -1,10 +1,13 @@
 import Answer from '../schemas/answer';
 import Collection from '../schemas/collection';
+import ConcreteEntity from './concrete_entity';
 
-export default class ConcreteAnswerCollection implements Collection<number, Answer> {
+export default class ConcreteAnswerCollection extends ConcreteEntity implements Collection<number, Answer> {
     protected Answers: Map<number, Answer>;
 
     public constructor(answers: Iterable<[number, Answer]> = []) {
+        super();
+
         this.Answers = new Map<number, Answer>(answers);
     }
 
