@@ -13,3 +13,10 @@ package-lock.json
 
 # Ignoruj plik z poświadczeniami
 backend/credentials.php
+
+# Ignoruj obrazki do pytań
+backend/question_images/*
+
+# Ignoruj katalog z plikami gotowymi do dystrybucji
+dist
+dist-presets
