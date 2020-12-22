@@ -44,7 +44,7 @@
         &:nth-child(2n+1):last-child {grid-column:2/span 2;}
     }
 
-    input {grid-column:2/span 2; padding:5px 10px;}
+    input, textarea {grid-column:2/span 2; padding:5px 10px;}
     span {grid-column:2/span 2; text-align:center;}
 
     @include media-small {
