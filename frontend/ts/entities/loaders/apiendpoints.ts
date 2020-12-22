@@ -6,11 +6,12 @@ import Question from '../question';
 import Answer from '../answer';
 import User from '../user';
 import Group from '../group';
+import AnswerDecorator from '../decorators/abstract/answer_decorator';
 
 export default class ApiEndpoints {
     public static readonly SurveyFillUrlBeginning = 'http://localhost/p/ankiety/wypełnij/';
 
-    public static GetEntityUrl(entity: Entity) {
+    public static GetEntityUrl(entity: Entity | AnswerDecorator) {
         if(entity instanceof Assignment) {
             return this.GetAssignmentUrl(entity);
         } else if(entity instanceof Attempt) {
@@ -62,5 +63,10 @@ export default class ApiEndpoints {
 
     protected static GetGroupUrl(group: Group) {
         return `api/groups/${group.Id}`;
+    }
+
+
+    protected static GetAnswerDecoratorUrl(answer: AnswerDecorator) {
+        return this.GetQuestionUrl(answer.GetQuestion()) + `/answers/${answer.GetId()}`;
     }
 }
