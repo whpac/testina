@@ -191,7 +191,9 @@ class UserAnswer extends Entity {
         
         if($result === false){
             Logger::Log('Nie udało się zapisać punktacji do pytania: '.DatabaseManager::GetProvider()->GetError(), LogChannels::DATABASE);
+            return false;
         }
+        return true;
     }
 
     public static /* UserAnswerCollection */ function GetUserAnswersForAttempt(Attempt $attempt){
@@ -202,12 +204,31 @@ class UserAnswer extends Entity {
                 ->Where('attempt_id', '=', $attempt->GetId())
                 ->Run();
         
+        if($result === false){
+            throw new \Exception('Nie udało się wczytać odpowiedzi.');
+        }
+        
         for($i=0; $i<$result->num_rows; $i++){
             $row = $result->fetch_assoc();
             $user_answers->Add(new UserAnswer($row));
         }
 
         return $user_answers;
+    }
+
+    public static /* float */ function GetScoreForAttemptAndQuestionIndex(Attempt $attempt, $question_index){
+        $result = DatabaseManager::GetProvider()
+                ->Table(TABLE_USER_ANSWERS)
+                ->Select()
+                ->Where('attempt_id', '=', $attempt->GetId())
+                ->Where('question_index', '=', $question_index)
+                ->Run();
+        
+        if($result === false || $result->num_rows == 0){
+            throw new \Exception('Nie udało się odczytać wyniku pytania.');
+        }
+
+        return $result->fetch_assoc()['score_got'];
     }
 }
 ?>

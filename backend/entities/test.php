@@ -29,6 +29,7 @@ class Test extends EntityWithFlags {
     // Maski bitowe flag
     public const FLAG_IS_DELETED = 1;
     public const FLAG_HIDE_CORRECT_ANSWERS = 2;
+    public const FLAG_MANUAL_MARKING = 4;
 
     protected static /* string */ function GetTableName(){
         return TABLE_TESTS;
@@ -117,6 +118,10 @@ class Test extends EntityWithFlags {
         return ($this->GetFlagValue(self::FLAG_HIDE_CORRECT_ANSWERS) == 1);
     }
 
+    public /* bool */ function IsMarkedManually(){
+        return ($this->GetFlagValue(self::FLAG_MANUAL_MARKING) == 1);
+    }
+
     public /* Question[] */ function GetQuestions(){
         return Question::GetQuestionsForTest($this);
     }
@@ -172,7 +177,7 @@ class Test extends EntityWithFlags {
         return ($result->num_rows == 1);
     }
 
-    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null, /* string? */ $final_title = null, /* string? */ $final_text = null, /* bool? */ $hide_correct_answers = null){
+    public /* bool */ function Update(/* string? */ $name = null, /* float? */ $question_multiplier = null, /* int? */ $time_limit = null, /* string? */ $description = null, /* int? */ $score_counting = null, /* string? */ $final_title = null, /* string? */ $final_text = null, /* bool? */ $hide_correct_answers = null, /* bool? */ $manual_marking = null){
         if(is_null($name)) $name = $this->GetName();
         if(is_null($question_multiplier)) $question_multiplier = $this->GetQuestionMultiplier();
         if(is_null($time_limit)) $time_limit = $this->GetTimeLimit();
@@ -181,8 +186,14 @@ class Test extends EntityWithFlags {
         if(is_null($final_title)) $final_title = $this->GetFinalTitle();
         if(is_null($final_text)) $final_text = $this->GetFinalText();
         if(is_null($hide_correct_answers)) $hide_correct_answers = $this->GetDoHideCorrectAnswers();
+        if(is_null($manual_marking)) $manual_marking = $this->IsMarkedManually();
 
-        $flags = [self::FLAG_HIDE_CORRECT_ANSWERS => $hide_correct_answers];
+        if($manual_marking) $hide_correct_answers = true;
+
+        $flags = [
+            self::FLAG_HIDE_CORRECT_ANSWERS => $hide_correct_answers,
+            self::FLAG_MANUAL_MARKING => $manual_marking
+        ];
         $flags_int = self::ConvertFlagsToInt($flags, $this->GetFlags());
 
         $result = DatabaseManager::GetProvider()

@@ -93,7 +93,7 @@ class Assignment extends Entity {
     }
 
     public /* bool */ function AreRemainingAttempts(\Auth\Users\User $user){
-        return ($this->AreAttemptsUnlimited() || $this->CountUserAttempts($user) < $this->GetAttemptLimit($user)) && !$this->GetTest()->IsDeleted();
+        return ($this->AreAttemptsUnlimited() || $this->CountUserAttempts($user) < $this->GetAttemptLimit()) && !$this->GetTest()->IsDeleted();
     }
 
     public /* int */ function GetAverageScore(\Auth\Users\User $user){
@@ -106,6 +106,7 @@ class Assignment extends Entity {
                 $got = $attempt->GetScore();
                 $max = $attempt->GetMaxScore();
 
+                if(is_null($got)) continue;
                 if($got > $max) continue;
                 if($max == 0) continue;
 
@@ -122,6 +123,7 @@ class Assignment extends Entity {
                 $got = $attempt->GetScore();
                 $max = $attempt->GetMaxScore();
 
+                if(is_null($got)) continue;
                 if($got > $max) continue;
 
                 $score_got += $got;
@@ -218,8 +220,8 @@ class Assignment extends Entity {
         return Attempt::GetAttemptsByUserAndAssignment($user, $this, $include_unfinished);
     }
 
-    public /* int */ function CountUserAttempts(\Auth\Users\User $user){
-        return Attempt::CountAttemptsByUserAndAssignment($user, $this);
+    public /* int */ function CountUserAttempts(\Auth\Users\User $user, bool $strip_unfinished = false){
+        return Attempt::CountAttemptsByUserAndAssignment($user, $this, $strip_unfinished);
     }
 
     public /* ?Attempt */ function GetUsersLastAttempt(\Auth\Users\User $user){

@@ -29,7 +29,7 @@ class Attempt extends Entity {
 
         settype($this->id, 'int');
         settype($this->assignment_id, 'int');
-        settype($this->score, 'float');
+        if(!is_null($this->score)) settype($this->score, 'float');
         settype($this->max_score, 'float');
         settype($this->is_finished, 'int');
     }
@@ -135,7 +135,7 @@ class Attempt extends Entity {
         return $attempts;
     }
 
-    public static /* int */ function CountAttemptsByUserAndAssignment(\Auth\Users\User $user, Assignment $assignment){
+    public static /* int */ function CountAttemptsByUserAndAssignment(\Auth\Users\User $user, Assignment $assignment, bool $strip_unfinished = false){
         $is_survey = $assignment->GetTest()->GetType() == Test::TYPE_SURVEY;
 
         $result = DatabaseManager::GetProvider()
@@ -143,9 +143,9 @@ class Attempt extends Entity {
                 ->Select()
                 ->Where('user_id', '=', $user->GetId())
                 ->AndWhere('assignment_id', '=', $assignment->GetId());
-        if($is_survey) $result = $result->AndWhere('is_finished', '=', 1);
+        if($is_survey && !$strip_unfinished) $result = $result->AndWhere('is_finished', '=', 1);
         $result = $result->Run();
-                
+
         return $result->num_rows;
     }
 

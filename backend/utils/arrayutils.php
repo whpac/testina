@@ -28,7 +28,9 @@ class ArrayUtils{
      */
     public static function QuoteEachString(array $array, string $quote = '"'){
         for($i = 0; $i < count($array); $i++){
-            if(is_string($array[$i])){
+            if(is_null($array[$i])){
+                $array[$i] = 'NULL';
+            }elseif(is_string($array[$i])){
                 $array[$i] = $quote.addslashes($array[$i]).$quote;
             }
         }

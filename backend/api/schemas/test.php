@@ -14,6 +14,7 @@ interface Test{
     public function final_text(): string;
     public function is_deleted(): bool;
     public function do_hide_correct_answers(): bool;
+    public function is_marked_manually(): bool;
     public function question_multiplier(): float;
 
     public function question_count(): int;

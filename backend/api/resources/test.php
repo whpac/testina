@@ -37,13 +37,18 @@ class Test extends Resource implements Schemas\Test{
             TypeValidator::AssertIsString($data->final_text, 'final_text');
             $final_text = $data->final_text;
         }
-        $hide_correct_answers = false;
+        $hide_correct_answers = null;
         if(isset($data->do_hide_correct_answers)){
             TypeValidator::AssertIsBool($data->do_hide_correct_answers, 'do_hide_correct_answers');
             $hide_correct_answers = $data->do_hide_correct_answers;
         }
+        $manual_marking = null;
+        if(isset($data->is_marked_manually)){
+            TypeValidator::AssertIsBool($data->is_marked_manually, 'is_marked_manually');
+            $manual_marking = $data->is_marked_manually;
+        }
 
-        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting, $final_title, $final_text, $hide_correct_answers);
+        $res = $this->Test->Update($data->name, $data->question_multiplier, $data->time_limit, $description, $score_counting, $final_title, $final_text, $hide_correct_answers, $manual_marking);
 
         if(!$res) throw new \Exception('Nie udało się zaktualizować testu.');
     }
@@ -73,6 +78,7 @@ class Test extends Resource implements Schemas\Test{
             'final_text',
             'is_deleted',
             'do_hide_correct_answers',
+            'is_marked_manually',
             'question_multiplier',
             'question_count'
         ];
@@ -105,6 +111,7 @@ class Test extends Resource implements Schemas\Test{
             'final_text',
             'is_deleted',
             'do_hide_correct_answers',
+            'is_marked_manually',
             'question_multiplier',
             'question_count'
         ];
@@ -168,6 +175,10 @@ class Test extends Resource implements Schemas\Test{
 
     public function do_hide_correct_answers(): bool{
         return $this->Test->GetDoHideCorrectAnswers();
+    }
+
+    public function is_marked_manually(): bool{
+        return $this->Test->IsMarkedManually();
     }
 
     public function question_multiplier(): float{

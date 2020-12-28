@@ -29,7 +29,7 @@ export default class QuestionCard extends Card {
     protected FinishButton: HTMLButtonElement;
     protected ImagePreviewDialog: ImagePreviewDialog;
 
-    protected OpenAnswerInput: HTMLInputElement | undefined;
+    protected OpenAnswerInput: HTMLInputElement | HTMLTextAreaElement | undefined;
     protected OpenAnswerFeedback: HTMLElement | undefined;
 
     protected TimeLimit: number | undefined;
@@ -240,8 +240,12 @@ export default class QuestionCard extends Card {
                 type_label.textContent = 'Podaj odpowiedź:';
                 this.AnswerWrapper.appendChild(type_label);
 
-                this.OpenAnswerInput = document.createElement('input');
-                this.OpenAnswerInput.type = 'text';
+                if(this.Test.IsMarkedManually) {
+                    this.OpenAnswerInput = document.createElement('textarea');
+                } else {
+                    this.OpenAnswerInput = document.createElement('input');
+                    this.OpenAnswerInput.type = 'text';
+                }
                 this.OpenAnswerInput.value = this.CurrentQuestion.UserSuppliedAnswer ?? '';
                 this.AnswerWrapper.appendChild(this.OpenAnswerInput);
 

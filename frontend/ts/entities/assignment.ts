@@ -153,8 +153,16 @@ export default class Assignment extends Entity implements PageParams {
         return this._Results;
     }
 
+    public InvalidateResults() {
+        this._Results = undefined;
+        this.ResultsLoader.SaveDescriptors(undefined);
+    }
+
     public GetScoreForUser(user: User) {
         if(this.Scores === null) return null;
+        if(this._Results !== undefined) {
+            if(this._Results[user.Id] !== undefined) return this._Results[user.Id].AverageScore;
+        }
         if(this.Scores[user.Id] !== undefined) return this.Scores[user.Id];
         return null;
     }

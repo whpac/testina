@@ -23,6 +23,7 @@ export default class EditQuestionDialog extends Dialog {
     protected TyposAllowCountInput: HTMLInputElement;
 
     protected ImagePicker: ImagePicker;
+    protected CorrectAnswersManualMarkingInfo: HTMLElement;
     protected AnswersTable: AnswersTable;
     protected ErrorWrapper: HTMLElement;
 
@@ -197,6 +198,11 @@ export default class EditQuestionDialog extends Dialog {
         let answers_section = document.createElement('section');
         this.AddContent(answers_section);
 
+        this.CorrectAnswersManualMarkingInfo = document.createElement('p');
+        this.CorrectAnswersManualMarkingInfo.classList.add('secondary', 'small');
+        this.CorrectAnswersManualMarkingInfo.textContent = 'Ponieważ test będzie oceniany ręcznie, nie musisz zaznaczać, czy podane odpowiedzi są poprawne (w przypadku pytań otwartych: podawać poprawnych odpowiedzi).';
+        answers_section.appendChild(this.CorrectAnswersManualMarkingInfo);
+
         this.AnswersTable = new AnswersTable();
         answers_section.appendChild(this.AnswersTable.GetElement());
 
@@ -228,6 +234,7 @@ export default class EditQuestionDialog extends Dialog {
         this.ImagePicker.Populate(question?.ImageIds ?? []);
         this.UpdateFieldsetVisibilityBasedOnQuestionType();
         this.ErrorWrapper.textContent = '';
+        this.CorrectAnswersManualMarkingInfo.style.display = (this.Test?.IsMarkedManually ?? false) ? '' : 'none';
 
         switch(question?.PointsCounting ?? Question.COUNTING_BINARY) {
             case Question.COUNTING_BINARY:
@@ -393,15 +400,20 @@ export default class EditQuestionDialog extends Dialog {
         }
 
         let minimal_answer_count = 2;
-        if(this.TypeSelect.value == Question.TYPE_OPEN_ANSWER.toString()) minimal_answer_count = 1;
+        if(this.TypeSelect.value == Question.TYPE_OPEN_ANSWER.toString()) {
+            minimal_answer_count = 1;
+            if(this.Test?.IsMarkedManually ?? false) minimal_answer_count = 0;
+        }
         if(this.AnswersTable.CountPresentRows() < minimal_answer_count) {
             errors.push(
                 'Pytanie musi mieć co najmniej ' +
-                (minimal_answer_count == 1 ? 'jeden wariant' : 'dwa warianty') +
+                (minimal_answer_count == 1 ? 'jeden wariant' :
+                    ((minimal_answer_count == 2 ? 'dwa' : minimal_answer_count) + ' warianty')) +
                 ' odpowiedzi.');
         }
 
         let correct_answer_count = this.AnswersTable.CountCorrectRows();
+        if(this.Test?.IsMarkedManually ?? false) correct_answer_count = 1;
         if(this.TypeSelect.value == Question.TYPE_MULTI_CHOICE.toString()
             && correct_answer_count == 0) {
             errors.push('Pytanie wielokrotnego wyboru musi mieć co najmniej jedną poprawną odpowiedź.');

@@ -20,7 +20,8 @@ export default class TestSaver {
             score_counting: test.ScoreCounting,
             final_title: test.FinalTitle,
             final_text: test.FinalText,
-            do_hide_correct_answers: test.DoHideCorrectAnswers
+            do_hide_correct_answers: test.DoHideCorrectAnswers,
+            is_marked_manually: test.IsMarkedManually
         };
         try {
             let result = await XHR.PerformRequest(ApiEndpoints.GetEntityUrl(test), 'PUT', request_data);

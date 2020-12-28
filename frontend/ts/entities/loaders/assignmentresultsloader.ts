@@ -27,7 +27,7 @@ export default class AssignmentResultsLoader {
      * Zapisuje deskryptory wyników do późniejszego wykorzystania
      * @param target_descriptors Deskryptory wyników
      */
-    public SaveDescriptors(target_descriptors: AssignmentResultsDescriptor[]) {
+    public SaveDescriptors(target_descriptors: AssignmentResultsDescriptor[] | undefined) {
         this.ResultDescriptors = target_descriptors;
     }
 

@@ -32,8 +32,14 @@ export default class Attempt extends Entity implements PageParams {
 
     /**
      * Klasa reprezentująca podejście
+     * @param id Identyfikator podejścia lub deskryptor
      * @param assignment Przypisanie, którego częścią jest podejście
-     * @param attempt Identyfikator podejścia lub deskryptor
+     * @param user Osoba, która wykonała podejście
+     * @param score Wynik w podejściu
+     * @param max_score Maksymalny wynik w podejściu
+     * @param begin_time Czas rozpoczęcia
+     * @param path Ścieżka pytań
+     * @param question_loader Obiekt wczytujący pytania
      */
     constructor(id: number, assignment: Assignment, user: User, score: number | undefined,
         max_score: number, begin_time: Date, path: number[] | undefined, question_loader: QuestionLoader | undefined) {
@@ -51,7 +57,7 @@ export default class Attempt extends Entity implements PageParams {
 
     /** Zwraca wynik procentowy uzyskany w podejściu */
     public GetPercentageScore() {
-        if(this.Score === undefined || this.MaxScore === undefined) return 0;
+        if(this.Score === undefined || this.MaxScore === undefined) return undefined;
         if(this.MaxScore == 0) return 0;
 
         return Math.round(100 * this.Score / this.MaxScore);

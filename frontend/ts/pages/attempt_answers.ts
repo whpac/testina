@@ -1,3 +1,4 @@
+import { GoToPage } from '../1page/page_manager';
 import Icon from '../components/basic/icon';
 import Page from '../components/basic/page';
 import Toast from '../components/basic/toast';
@@ -14,6 +15,16 @@ export default class AttemptAnswers extends Page {
 
     public constructor() {
         super();
+
+        let buttons_wrapper = document.createElement('div');
+        buttons_wrapper.classList.add('fixed-buttons-wrapper');
+        this.AppendChild(buttons_wrapper);
+
+        let close_button = document.createElement('button');
+        close_button.classList.add('button', 'header-button');
+        close_button.innerHTML = '<i class="fa fa-times icon"></i><span>Zamknij</span>';
+        close_button.addEventListener('click', () => GoToPage('testy/wyniki', this.Attempt?.Assignment));
+        buttons_wrapper.appendChild(close_button);
 
         this.UserNameText = document.createTextNode('');
         let rest_of_title = document.createElement('span');
@@ -63,6 +74,9 @@ export default class AttemptAnswers extends Page {
                 let answers_card = new QuestionAnswersCard();
                 answers_card.Populate(sorted_questions[user_answer.QuestionId], user_answer);
                 this.QuestionsWrapper.appendChild(answers_card.GetElement());
+                user_answer.AddEventListener('change', (() => {
+                    this.Attempt?.Assignment.InvalidateResults();
+                }).bind(this));
             }
 
             console.log();

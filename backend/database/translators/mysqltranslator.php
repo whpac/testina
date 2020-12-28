@@ -114,6 +114,7 @@ class MySQLTranslator implements Translator {
             $values .= ' `'.$kvp[0].'` = ';
 
             if(is_numeric($kvp[1])) $values .= $kvp[1];
+            elseif(is_null($kvp[1])) $values .= 'NULL';
             else $values .= '"'.addslashes($kvp[1]).'"';
         }
 
