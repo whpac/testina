@@ -1,4 +1,4 @@
-/*
+/**
  * Definiuje zmienne CSS właściwe dla jasnej skórki
  * Posługuję się zmiennymi CSS, a nie SASS, bo dzięki nim
  * do przeglądarki musi trafić tylko jeden arkusz stylów
@@ -51,4 +51,6 @@
     --toast-text-color:#fff;
     --toast-box-shadow:0 5px 15px 2px rgba(0,0,0,0.6);
     --logo-backplate-box-shadow:var(--surface-box-shadow);
+
+    color-scheme:light;
 }

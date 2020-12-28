@@ -1,4 +1,4 @@
-/*
+/**
  * Definiuje zmienne CSS właściwe dla ciemnej skórki
  * Posługuję się zmiennymi CSS, a nie SASS, bo dzięki nim
  * do przeglądarki musi trafić tylko jeden arkusz stylów
@@ -50,4 +50,6 @@
     --toast-text-color:#fff;
     --toast-box-shadow:none;
     --logo-backplate-box-shadow:none;
+
+    color-scheme:dark;
 }
