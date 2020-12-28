@@ -57,7 +57,9 @@ export default class HelpTopic {
 <li>W pytaniach <b>wielokrotnego wyboru</b> autor testu może określić sposób punktowania odpowiedzi:<ul>
     <li><i>zero-jedynkowo</i> – rozwiązujący dostaje punkty wtedy, kiedy (1) zaznaczy wszystkie poprawne odpowiedzi i (2) nie zaznaczy żadnej błędnej;</li>
     <li><i>po ułamku za każdą poprawną odpowiedź</i> – każda poprawna odpowiedź jest warta ułamkowi punktów za pytanie (np. kiedy są dwie poprawne odpowiedzi w pytaniu z 1 punkt, wtedy każda z nich jest warta 0,5 punkta), a każda błędna odpowiedź odejmuje tyle samo punktów (w przykładzie: -0,5 punkta). Rozwiązujący nie może otrzymać za całe pytanie ujemnej liczby punktów.</li></ul></li>
-<li>W pytaniach <b>otwartych</b> sprawdzane jest, czy odpowiedź podana przez rozwiązującego zgadza się z którymkolwiek z wariantów ustawionych w edytorze pytań. Dodatkowo, możliwe jest tolerowanie określonej liczby literówek (domyślnie wyłączone).</li></ul>`
+<li>W pytaniach <b>otwartych</b> sprawdzane jest, czy odpowiedź podana przez rozwiązującego zgadza się z którymkolwiek z wariantów ustawionych w edytorze pytań. Dodatkowo, możliwe jest tolerowanie określonej liczby literówek (domyślnie wyłączone).</li></ul>
+<p>W ustawieniach testu można zaznaczyć opcję „Pozostaw test do oceny nauczycielowi”. W takiej sytuacji, Testina nie oceni odpowiedzi ucznia. W przypadku testów ocenianych ręcznie pytania otwarte pozwalają na dłuższą odpowiedź (wyświetlane jest większe pole tekstowe).</p>
+<p>Niezależnie od wybranego sposobu oceniania, nauczyciel zawsze ma możliwość zmiany wyniku obliczonego przez Testinę. Można to zrobić na stronie z wynikami testu – pod każdym pytaniem znajduje się informacja o liczbie przyznanych punktów i przycisk, służący do zrobienia korekty.</p>`
             ),
             new HelpTopic(
                 'Jak liczone są literówki?', 'jak_liczone_sa_literowki',
@@ -149,6 +151,11 @@ export default class HelpTopic {
                 'Jak zobaczyć wyniki ankiety?', 'jak_zobaczyc_wyniki_ankiety',
                 `<p>Aby zobaczyć wyniki ankiety, którą utworzyłeś(-aś), przejdź na stronę „Ankiety”, a następnie naciśnij przycisk „Wyniki” w odpowiednim wierszu. Przejdziesz wtedy do strony, gdzie zostaną wyświetlone odpowiedzi użytkowników na każde z pytań. Jeśli zdarzyłoby się, że jakieś pytanie nie jest wyświetlane, oznacza to, że nikt na nie nie odpowiedział.</p>
 <p>Do wyników procentowych, pokazywanych przy każdej odpowiedzi, nie są wliczane sytuacje, gdy ktoś nie odpowiedział na dane pytanie (bo na przykład było niewymagane). To oznacza, że jeśli ankietę wypełniło 10 osób, ale tylko 5 odpowiedziało na dane pytanie, wyniki procentowe będą obliczane w odniesieniu do tych 5 respondentów.</p>`
+            ),
+            new HelpTopic(
+                'Dlaczego niektóre zmiany widać dopiero po odświeżeniu strony?', 'pamiec_podreczna',
+                `<p>W celu ograniczenia ilości danych przesyłanych między przeglądarką a serwerem, Testina odświeża informacje co około 30 sekund. To oznacza, że w ciągu pół minuty od zmiany np. wyniku ucznia może być wyświetlany ten sprzed zapisu. Kopia podręczna zasobów znajduje się na urządzeniu użytkownika, dlatego wszystkie zmiany są odzwierciedlane w bazie danych na serwerze natychmiastowo po ich zapisaniu.</p>
+<p>Kliknięcie przycisku „Odśwież” w przeglądarce wymusi pobranie najbardziej aktualnej wersji wszystkich danych prosto z serwera.</p>`
             )
         ];
     }
