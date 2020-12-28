@@ -47,9 +47,10 @@ class AttemptAnswers extends Resource {
         if($this->GetContext()->IsAuthorized() || $test->GetType() == \Entities\Test::TYPE_TEST){
             $user = $this->GetContext()->GetUser();
 
+            // CountUserAttempts nie wlicza nieukończonych podejść
             if(
                 (!$assignment->AreAttemptsUnlimited() &&
-                $assignment->CountUserAttempts($user) < $assignment->GetAttemptLimit()) ||
+                $assignment->CountUserAttempts($user, true) > $assignment->GetAttemptLimit()) ||
                 $test->IsDeleted()
             ){
                 throw new Exceptions\BadRequest('Wykorzystał'.($this->GetContext()->GetUser()->IsFemale() ? 'a' : 'e').'ś już wszystkie podejścia.');

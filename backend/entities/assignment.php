@@ -220,8 +220,8 @@ class Assignment extends Entity {
         return Attempt::GetAttemptsByUserAndAssignment($user, $this, $include_unfinished);
     }
 
-    public /* int */ function CountUserAttempts(\Auth\Users\User $user){
-        return Attempt::CountAttemptsByUserAndAssignment($user, $this);
+    public /* int */ function CountUserAttempts(\Auth\Users\User $user, bool $strip_unfinished = false){
+        return Attempt::CountAttemptsByUserAndAssignment($user, $this, $strip_unfinished);
     }
 
     public /* ?Attempt */ function GetUsersLastAttempt(\Auth\Users\User $user){
