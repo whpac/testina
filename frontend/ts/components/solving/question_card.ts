@@ -233,7 +233,6 @@ export default class QuestionCard extends Card {
                     if(is_selected) answer_button.classList.add('selected');
                     else answer_button.classList.remove('selected');
                 }
-                console.log(this.CurrentQuestion);
                 break;
             case Question.TYPE_OPEN_ANSWER:
                 let type_label = document.createElement('span');
@@ -413,17 +412,18 @@ export default class QuestionCard extends Card {
         this.UpdateScore();
     }
 
-    protected SaveResults() {
-        NavigationPrevention.Unprevent('solving-test');
+    protected async SaveResults() {
         try {
-            this.Attempt.SaveUserAnswers(this.Questions);
+            await this.Attempt.SaveUserAnswers(this.Questions);
             new Toast('Twoje odpowiedzi zostały zapisane').Show(0);
+            NavigationPrevention.Unprevent('solving-test');
         } catch(e) {
             let message = '.';
             if('Message' in e) {
                 message = ': ' + e.Message;
             }
-            new Toast('Nie udało się zapisać odpowiedzi' + message).Show();
+            alert('Nie udało się zapisać odpowiedzi' + message + '\nZamknij to okienko, aby ponowić próbę zapisania odpowiedzi.');
+            setTimeout(this.SaveResults.bind(this), 100);
         }
     }
 
