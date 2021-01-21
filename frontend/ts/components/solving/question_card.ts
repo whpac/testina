@@ -423,7 +423,7 @@ export default class QuestionCard extends Card {
             if('Message' in e) {
                 message = ': ' + e.Message;
             }
-            new Toast('Nie udało się zapisać odpowiedzi' + message);
+            new Toast('Nie udało się zapisać odpowiedzi' + message).Show();
         }
     }
 
@@ -446,6 +446,8 @@ export default class QuestionCard extends Card {
             } else {
                 if(remaining_time <= 60) {
                     this.QuestionTimerWrapper.classList.add('error');
+                } else {
+                    this.QuestionTimerWrapper.classList.remove('error');
                 }
                 this.TimeLeftTimer.textContent = DateUtils.SecondsToTime(remaining_time);
             }
