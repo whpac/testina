@@ -39,7 +39,7 @@ class AttemptAnswers extends Resource {
             $interval = new \DateInterval('PT'.$time_limit.'S');
             $time_limit = $assignment->GetTimeLimit()->add($interval);
 
-            if($time_limit < new \DateTime('-60 seconds')){
+            if($time_limit < new \DateTime('-180 seconds')){
                 throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
             }
         }
