@@ -188,7 +188,7 @@ try{
         SendHeaders($formatter->GetContentType());
         echo($formatter->Format($error_resource));
     }
-}catch(\Exception $e){
+}catch(\Throwable $e){
     SetResponseCode(500);
     Logger::Log('Wystąpił nieznany błąd: '.$e->getMessage(), LogChannels::APPLICATION_ERROR);
 
