@@ -26,10 +26,10 @@ class AttemptAnswers extends Resource {
         /**
          * Sprawdź, czy rozwiązanie nie wpłynęło po czasie
          * Pierwszeństwo ma termin określony w przypisaniu
-         * Użytkownik ma dodatkowy 60-sekundowy bufor na nadesłanie rozwiązań
+         * Użytkownik ma dodatkowy 180-sekundowy bufor na nadesłanie rozwiązań
          */
         $assignment = $this->Attempt->GetAssignment();
-        if($assignment->GetTimeLimit() < (new \DateTime('-60 seconds'))){
+        if($assignment->GetTimeLimit() < (new \DateTime('-180 seconds'))){
             throw new Exceptions\BadRequest('Termin rozwiązania tego testu upłynął.');
         }
 
