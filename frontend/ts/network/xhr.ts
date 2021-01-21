@@ -12,7 +12,7 @@ type XHRResult = {
     ContentLocation: string;
     FromCache: boolean;
 };
-type ResolveFunction = (value?: XHRResult | PromiseLike<XHRResult> | undefined) => void;
+type ResolveFunction = (value: XHRResult | PromiseLike<XHRResult>) => void;
 type RejectFunction = (reason?: any) => void;
 
 export default class XHR {
