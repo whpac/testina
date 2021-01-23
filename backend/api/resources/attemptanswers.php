@@ -5,6 +5,8 @@ use Api\Exceptions;
 use Api\Validation\TypeValidator;
 use Api\Validation\ValueValidator;
 
+use Log\Logger;
+
 class AttemptAnswers extends Resource {
     protected $Attempt;
 
@@ -15,6 +17,8 @@ class AttemptAnswers extends Resource {
     }
 
     public function CreateSubResource(/* object */ $source){
+        Logger::Log('Żądanie zapisania odpowiedzi.', 0);
+
         TypeValidator::AssertIsObject($source);
         TypeValidator::AssertIsArray($source->questions, 'questions');
 
@@ -37,6 +41,7 @@ class AttemptAnswers extends Resource {
         if($test->HasTimeLimit()){
             $time_limit = $test->GetTimeLimit();
             $interval = new \DateInterval('PT'.$time_limit.'S');
+            // ! Limit czasu należy liczyć od rozpoczęcia podejścia...
             $time_limit = $assignment->GetTimeLimit()->add($interval);
 
             if($time_limit < new \DateTime('-180 seconds')){

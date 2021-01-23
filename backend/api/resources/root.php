@@ -11,6 +11,7 @@ class Root extends Resource implements Schemas\Root {
             'assignments',
             'attempts',
             'groups',
+            'file_error',
             'session',
             'static_data',
             'surveys',
@@ -78,6 +79,12 @@ class Root extends Resource implements Schemas\Root {
         $collection = new Collection($out_groups);
         $collection->SetContext($this->GetContext());
         return $collection;
+    }
+
+    public function file_error() {
+        $fe = new FileError();
+        $fe->SetContext($this->GetContext());
+        return $fe;
     }
 
     public function session(): Schemas\Session{

@@ -24,7 +24,10 @@ import Toast from './components/basic/toast';
 import SurveyResultsPage from './pages/survey_results';
 import AccountPage from './pages/account';
 import AttemptAnswers from './pages/attempt_answers';
+import XHR from './network/xhr';
 
+window.addEventListener('error', errorReporter);
+window.addEventListener('unhandledrejection', errorReporter);
 
 try {
     ChromeManager.ApplySiteTheme();
@@ -88,7 +91,7 @@ try {
             }
 
             // Załaduj stronę początkową
-            LoadInitialPage();
+            await LoadInitialPage();
         } catch(e) {
             let message = '.';
             if('Message' in e) message = ': ' + e.Message;
@@ -161,4 +164,31 @@ function ReadStateFromOfficeLogin() {
     if(page === null) return '';
 
     return page;
+}
+
+async function errorReporter(e: PromiseRejectionEvent | ErrorEvent) {
+    let message = '';
+
+    if(e instanceof ErrorEvent) {
+        message = e.message;
+    } else if(e instanceof PromiseRejectionEvent) {
+        message = e.reason;
+
+        if(e.reason instanceof Error) {
+            message = e.reason.message + '; ' + e.reason.stack;
+        } else if('toString' in e.reason && typeof message.toString === 'function') {
+            message = e.reason.toString();
+        }
+    }
+
+    try {
+        await XHR.PerformRequest('api/file_error', {
+            Method: 'POST', RequestData: {
+                error: message
+            }
+        });
+        return true;
+    } catch(e) {
+
+    }
 }
